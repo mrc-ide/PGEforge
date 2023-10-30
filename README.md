@@ -1,2 +1,2 @@
 # PGEforge
-A place for holding tutorials of common software tools in Plasmodium genomic epidemiology.
+A place for holding tutorials related to common software tools in Plasmodium genomic epidemiology.
