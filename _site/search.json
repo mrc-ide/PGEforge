@@ -1,0 +1,408 @@
+[
+  {
+    "objectID": "tool_Rpackage.html",
+    "href": "tool_Rpackage.html",
+    "title": "R package example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tool_Rpackage.html#quarto",
+    "href": "tool_Rpackage.html#quarto",
+    "title": "R package example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tool_Rpackage.html#running-code",
+    "href": "tool_Rpackage.html#running-code",
+    "title": "R package example",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PGEforge",
+    "section": "",
+    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
+  },
+  {
+    "objectID": "tool_jupyter.html",
+    "href": "tool_jupyter.html",
+    "title": "Python library example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tool_jupyter.html#quarto",
+    "href": "tool_jupyter.html#quarto",
+    "title": "Python library example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tool_jupyter.html#running-code",
+    "href": "tool_jupyter.html#running-code",
+    "title": "Python library example",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "tutorial_guidelines.html",
+    "href": "tutorial_guidelines.html",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorial_guidelines.html#quarto",
+    "href": "tutorial_guidelines.html#quarto",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorial_guidelines.html#running-code",
+    "href": "tutorial_guidelines.html#running-code",
+    "title": "Tutorial guidelines",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "MALECOT/MALECOT_installation.html",
+    "href": "MALECOT/MALECOT_installation.html",
+    "title": "MALECOT_installation",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "MALECOT/MALECOT_installation.html#r-markdown",
+    "href": "MALECOT/MALECOT_installation.html#r-markdown",
+    "title": "MALECOT_installation",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "MALECOT/MALECOT_installation.html#including-plots",
+    "href": "MALECOT/MALECOT_installation.html#including-plots",
+    "title": "MALECOT_installation",
+    "section": "Including Plots",
+    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+  },
+  {
+    "objectID": "test_rmd.html",
+    "href": "test_rmd.html",
+    "title": "Rmarkdown file test",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "test_rmd.html#r-markdown",
+    "href": "test_rmd.html#r-markdown",
+    "title": "Rmarkdown file test",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "test_rmd.html#including-plots",
+    "href": "test_rmd.html#including-plots",
+    "title": "Rmarkdown file test",
+    "section": "Including Plots",
+    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+  },
+  {
+    "objectID": "index.html#this-is-a-quarto-website.",
+    "href": "index.html#this-is-a-quarto-website.",
+    "title": "Welcome to the RADISH23 Hackathon",
+    "section": "",
+    "text": "To learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "PGEforge",
+    "section": "",
+    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
+  },
+  {
+    "objectID": "index.html#main-aims",
+    "href": "index.html#main-aims",
+    "title": "RADISH23",
+    "section": "Main aims",
+    "text": "Main aims\nOur aim to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices."
+  },
+  {
+    "objectID": "index.html#tutorial-development",
+    "href": "index.html#tutorial-development",
+    "title": "RADISH23",
+    "section": "Tutorial development",
+    "text": "Tutorial development\nTake a look at the tutorial guidelines for more details."
+  },
+  {
+    "objectID": "example_plasmodium_ped.html",
+    "href": "example_plasmodium_ped.html",
+    "title": "Example Plasmodium pedigree for tskit format and msprime simulations",
+    "section": "",
+    "text": "Shazia Ruybal-Pesántez\n\n\nLast updated: 23 June 2023\nBelow we describe an example pedigree for Plasmodium parasites, the causative agent of malaria. Our aim is to integrate the tskit tree-sequence format into our SIMPLEGEN malaria genetic epidemiology simulator where we simulate malaria transmission and epidemiology forwards-in-time.\n\n\nBrief description of Plasmodium genetics and SIMPLEGEN\nMalaria is caused by Plasmodium parasites that are transmitted from human to human via the Anopheles mosquito vector. The life cycle of the parasite is complex and involves a brief diploid phase in the mosquito midgut where two haploid male and female gametes fuse and undergo meiotic recombination resulting in 4 meiotic progeny (“strain tetrads”), where each meiotic progeny product is an individual haploid “strain”. The figure below shows this process where male gamete of strain A recombines with a female gamete of strain B resulting in meiotic progeny that are clones of the parents (A and B) or recombinants (C and D). Recombination can only occur if the parents are of different strains, otherwise clonal transmission of a single strain will occur.\n\n\n\nlifecycle.jpg\n\n\nIn SIMPLEGEN, we simulate malaria transmission and epidemiology forwards-in-time using our in-built epidemiological model SIMPLEpi. During our simulation, we track all transmission events from human to mosquito and vice versa, as well as the generation of parasite strains with every passage through the mosquito. For each “strain tetrad” we record each strain ID and track them throughout the simulation. At the end of the simulation we have a record of the complete or full Plasmodium strain pedigrees, as shown below.\nIn this simple example, we begin with a founder population of four mosquitos (triangles) each infected with genetically distinct Plasmodium gametes and simulate until t=4 when we sample the “probands” - this is the Plasmodium DNA that would be sequenced when we take a blood sample. The triangles depict mosquitos (specifically the mosquito midgut with a male and female gamete), resulting in the 4 meiotic progeny in the “strain tetrad” where each strain is depicted by a circle and its respective ID. These strains are tracked throughout the simulation. The arrows show when these mosquitos bite a human host (depicted by rectangles) and infect them with particular strains. In this simple example we show both clonal transmission and recombination scenarios. Clonal transmission occurs for strain 13 (blue), but strain 19 (green) recombines at t=2 with strain 11 (red). The recombinant strains (strains 21, 22, 23, 24) are depicted by double circles and subsequently a new color, purple. Recombination then occurs between strain 21 (purple) and strain 25 (blue) at t=4. Note that the colors here only illustrative, in reality every strain should have its own color.\n\n\n\nfull_pedigree.png\n\n\nFor the backwards-in-time genetics to be computationally efficient in SIMPLEGEN, we prune the strain pedigree to keep only the transmission events relevant to the ancestry of the sampled “proband” strains (in the example below we prune everything greyed out).\n\n\n\npruned_pedigree.png\n\n\nSo now we have our pruned strain pedigree for strains 29 and 36 and generate our pedigree (.ped) that will serve as input for msprime as the “initial state” for ancestry simulations.\n\n\n\nfinal_pedigree.png\n\n\n\n\nPlasmodium pedigree for msprime: mock code\nAs described above, we intend to use msprime for simulation of ancestry (recombination and clonal reproduction) and mutations backwards-in-time from our pedigree simulation output, in addition to accessing downstream statistics once in tree-sequence format, such as IBD and the ability to write vcf files, etc. Below, we follow along with the Fixed Pedigree tutorial to illustrate what should occur with our simple pedigree example (notes are included in bold). It is worth noting that because we know the exact ancestral parent-offspring relationships for all our “probands” or sampled strains we will always be working with complete pedigrees.\n\nimport msprime\nimport tskit\nimport io\nimport pandas as pd\nimport networkx as nx\nimport matplotlib.pyplot as plt\nimport drawsvg\n\nHere we define the helper function from the msprime pedigree tutorial to draw the pedigrees.\n\ndef draw_pedigree(ped_ts):\n\n    G = nx.DiGraph()\n    for ind in ped_ts.individuals():\n        time = ped_ts.node(ind.nodes[0]).time\n        pop = ped_ts.node(ind.nodes[0]).population\n        G.add_node(ind.id, time=time, population=pop)\n        for p in ind.parents:\n            if p != tskit.NULL:\n                G.add_edge(ind.id, p)\n    pos = nx.multipartite_layout(G, subset_key=\"time\", align=\"horizontal\")\n    colours = plt.rcParams['axes.prop_cycle'].by_key()['color']\n    node_colours = [colours[node_attr[\"population\"]] for node_attr in G.nodes.values()]\n    nx.draw_networkx(G, pos, with_labels=True, node_color=node_colours)\n    plt.show()\n\nFollowing along with the Fixed Pedigree tutorial, we create a simple .txt file with the pedigree information.\n\nped_txt = \"\"\"\\\n# id parent0 parent1 time is_sample\n36   25   25   0.0 1\n29   22   25   0.0 1\n25   13   13   1.0 0\n22   19   11   2.0 0\n19   5   5   3.0 0\n13   .   .   4.0 0\n11   .   .   4.0 0\n5   .   .  4.0 0\n\"\"\"\n\nWe parse the pedigree with an arbitrary sequence length of 100bp. Note the strain IDs are now renumbered from 0-7.\n\npedigree = msprime.parse_pedigree(io.StringIO(ped_txt), sequence_length = 100)\n\npedigree.individuals\n\n\n\n        \n            \n            \n\n\n\nid\nflags\nlocation\nparents\nmetadata\n\n\n\n\n0\n0\n\n2, 2\n{'file_id': '36'}\n\n\n1\n0\n\n3, 2\n{'file_id': '29'}\n\n\n2\n0\n\n5, 5\n{'file_id': '25'}\n\n\n3\n0\n\n4, 6\n{'file_id': '22'}\n\n\n4\n0\n\n7, 7\n{'file_id': '19'}\n\n\n5\n0\n\n-1, -1\n{'file_id': '13'}\n\n\n6\n0\n\n-1, -1\n{'file_id': '11'}\n\n\n7\n0\n\n-1, -1\n{'file_id': '5'}\n\n\n\n\n        \n    \n\n\nThe tree sequence now has 8 individuals and 16 nodes (diploid). However, we need to be working with haploid individuals with only one node.\n\npedigree.tree_sequence()\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n1\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n1.2 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n0\n8 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n0\n16 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n0\n16 Bytes\n\n\n\nSites\n0\n16 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\nWe visualize the strain pedigree using the tutorial function:\n\ndraw_pedigree(pedigree.tree_sequence())\n\n\n\n\nTo keep with our example from above, the renumbered strain pedigree is shown below.\n\n\n\nfinal_pedigree_ids.png\n\n\nNow we simulate the ancestry using this fixed pedigree and an arbitrary recombination rate of 0.001. Here, recombination should be simulated for nodes from individuals with parents with different strains, for example in the case of 1 and 3. Clonal transmission has occurred for strain 0. Ideally we would also like to keep the recombination event information, perhaps in the metadata - so for example a RE occurs between strain 4 and 6, etc.\n\nped_ts = msprime.sim_ancestry(\n    initial_state=pedigree, model=\"fixed_pedigree\", random_seed=41, recombination_rate=0.001)\n\nped_ts\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n2\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n2.5 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n9\n296 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n0\n16 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n1\n1.0 KiB\n\n\n\nSites\n0\n16 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\n\nnode_labels = {node.id: f\"{node.individual}({node.id})\" for node in ped_ts.nodes()}\nped_ts.draw_svg(y_axis=True,  node_labels=node_labels, size=(800,200))\n\n\n\n\nNow we simulate mutations using an arbitrary mutation rate of 0.005.\n\nped_mts = msprime.sim_mutations(ped_ts, rate = 0.005, random_seed=10)\n\nped_mts\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n2\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n3.7 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n9\n296 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n8\n312 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n2\n1.7 KiB\n\n\n\nSites\n8\n216 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\n\nnode_labels = {node.id: f\"{node.individual}({node.id})\" for node in ped_mts.nodes()}\nped_mts.draw_svg(y_axis=True,  node_labels=node_labels, size=(800,200))\n\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html",
+    "href": "website_docs/tutorial_guidelines.html",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html#quarto",
+    "href": "website_docs/tutorial_guidelines.html#quarto",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html#running-code",
+    "href": "website_docs/tutorial_guidelines.html#running-code",
+    "title": "Tutorial guidelines",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "website_docs/radish23.html",
+    "href": "website_docs/radish23.html",
+    "title": "RADISH 2023",
+    "section": "",
+    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
+  },
+  {
+    "objectID": "website_docs/radish23.html#welcome",
+    "href": "website_docs/radish23.html#welcome",
+    "title": "RADISH 2023",
+    "section": "",
+    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
+  },
+  {
+    "objectID": "website_docs/radish23.html#main-aims",
+    "href": "website_docs/radish23.html#main-aims",
+    "title": "RADISH 2023",
+    "section": "Main aims",
+    "text": "Main aims\nOur aim to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices."
+  },
+  {
+    "objectID": "website_docs/radish23.html#tutorial-development",
+    "href": "website_docs/radish23.html#tutorial-development",
+    "title": "RADISH 2023",
+    "section": "Tutorial development",
+    "text": "Tutorial development\nTake a look at the tutorial guidelines for more details."
+  },
+  {
+    "objectID": "tutorials/MALECOT/MALECOT_installation.html",
+    "href": "tutorials/MALECOT/MALECOT_installation.html",
+    "title": "MALECOT_installation",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "tutorials/MALECOT/MALECOT_installation.html#r-markdown",
+    "href": "tutorials/MALECOT/MALECOT_installation.html#r-markdown",
+    "title": "MALECOT_installation",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "tutorials/MALECOT/MALECOT_installation.html#including-plots",
+    "href": "tutorials/MALECOT/MALECOT_installation.html#including-plots",
+    "title": "MALECOT_installation",
+    "section": "Including Plots",
+    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+  },
+  {
+    "objectID": "tutorials/tests/example_plasmodium_ped.html",
+    "href": "tutorials/tests/example_plasmodium_ped.html",
+    "title": "Example Plasmodium pedigree for tskit format and msprime simulations",
+    "section": "",
+    "text": "Shazia Ruybal-Pesántez\n\n\nLast updated: 23 June 2023\nBelow we describe an example pedigree for Plasmodium parasites, the causative agent of malaria. Our aim is to integrate the tskit tree-sequence format into our SIMPLEGEN malaria genetic epidemiology simulator where we simulate malaria transmission and epidemiology forwards-in-time.\n\n\nBrief description of Plasmodium genetics and SIMPLEGEN\nMalaria is caused by Plasmodium parasites that are transmitted from human to human via the Anopheles mosquito vector. The life cycle of the parasite is complex and involves a brief diploid phase in the mosquito midgut where two haploid male and female gametes fuse and undergo meiotic recombination resulting in 4 meiotic progeny (“strain tetrads”), where each meiotic progeny product is an individual haploid “strain”. The figure below shows this process where male gamete of strain A recombines with a female gamete of strain B resulting in meiotic progeny that are clones of the parents (A and B) or recombinants (C and D). Recombination can only occur if the parents are of different strains, otherwise clonal transmission of a single strain will occur.\n\n\n\nlifecycle.jpg\n\n\nIn SIMPLEGEN, we simulate malaria transmission and epidemiology forwards-in-time using our in-built epidemiological model SIMPLEpi. During our simulation, we track all transmission events from human to mosquito and vice versa, as well as the generation of parasite strains with every passage through the mosquito. For each “strain tetrad” we record each strain ID and track them throughout the simulation. At the end of the simulation we have a record of the complete or full Plasmodium strain pedigrees, as shown below.\nIn this simple example, we begin with a founder population of four mosquitos (triangles) each infected with genetically distinct Plasmodium gametes and simulate until t=4 when we sample the “probands” - this is the Plasmodium DNA that would be sequenced when we take a blood sample. The triangles depict mosquitos (specifically the mosquito midgut with a male and female gamete), resulting in the 4 meiotic progeny in the “strain tetrad” where each strain is depicted by a circle and its respective ID. These strains are tracked throughout the simulation. The arrows show when these mosquitos bite a human host (depicted by rectangles) and infect them with particular strains. In this simple example we show both clonal transmission and recombination scenarios. Clonal transmission occurs for strain 13 (blue), but strain 19 (green) recombines at t=2 with strain 11 (red). The recombinant strains (strains 21, 22, 23, 24) are depicted by double circles and subsequently a new color, purple. Recombination then occurs between strain 21 (purple) and strain 25 (blue) at t=4. Note that the colors here only illustrative, in reality every strain should have its own color.\n\n\n\nfull_pedigree.png\n\n\nFor the backwards-in-time genetics to be computationally efficient in SIMPLEGEN, we prune the strain pedigree to keep only the transmission events relevant to the ancestry of the sampled “proband” strains (in the example below we prune everything greyed out).\n\n\n\npruned_pedigree.png\n\n\nSo now we have our pruned strain pedigree for strains 29 and 36 and generate our pedigree (.ped) that will serve as input for msprime as the “initial state” for ancestry simulations.\n\n\n\nfinal_pedigree.png\n\n\n\n\nPlasmodium pedigree for msprime: mock code\nAs described above, we intend to use msprime for simulation of ancestry (recombination and clonal reproduction) and mutations backwards-in-time from our pedigree simulation output, in addition to accessing downstream statistics once in tree-sequence format, such as IBD and the ability to write vcf files, etc. Below, we follow along with the Fixed Pedigree tutorial to illustrate what should occur with our simple pedigree example (notes are included in bold). It is worth noting that because we know the exact ancestral parent-offspring relationships for all our “probands” or sampled strains we will always be working with complete pedigrees.\n\nimport msprime\nimport tskit\nimport io\nimport pandas as pd\nimport networkx as nx\nimport matplotlib.pyplot as plt\nimport drawsvg\n\nHere we define the helper function from the msprime pedigree tutorial to draw the pedigrees.\n\ndef draw_pedigree(ped_ts):\n\n    G = nx.DiGraph()\n    for ind in ped_ts.individuals():\n        time = ped_ts.node(ind.nodes[0]).time\n        pop = ped_ts.node(ind.nodes[0]).population\n        G.add_node(ind.id, time=time, population=pop)\n        for p in ind.parents:\n            if p != tskit.NULL:\n                G.add_edge(ind.id, p)\n    pos = nx.multipartite_layout(G, subset_key=\"time\", align=\"horizontal\")\n    colours = plt.rcParams['axes.prop_cycle'].by_key()['color']\n    node_colours = [colours[node_attr[\"population\"]] for node_attr in G.nodes.values()]\n    nx.draw_networkx(G, pos, with_labels=True, node_color=node_colours)\n    plt.show()\n\nFollowing along with the Fixed Pedigree tutorial, we create a simple .txt file with the pedigree information.\n\nped_txt = \"\"\"\\\n# id parent0 parent1 time is_sample\n36   25   25   0.0 1\n29   22   25   0.0 1\n25   13   13   1.0 0\n22   19   11   2.0 0\n19   5   5   3.0 0\n13   .   .   4.0 0\n11   .   .   4.0 0\n5   .   .  4.0 0\n\"\"\"\n\nWe parse the pedigree with an arbitrary sequence length of 100bp. Note the strain IDs are now renumbered from 0-7.\n\npedigree = msprime.parse_pedigree(io.StringIO(ped_txt), sequence_length = 100)\n\npedigree.individuals\n\n\n\n        \n            \n            \n\n\n\nid\nflags\nlocation\nparents\nmetadata\n\n\n\n\n0\n0\n\n2, 2\n{'file_id': '36'}\n\n\n1\n0\n\n3, 2\n{'file_id': '29'}\n\n\n2\n0\n\n5, 5\n{'file_id': '25'}\n\n\n3\n0\n\n4, 6\n{'file_id': '22'}\n\n\n4\n0\n\n7, 7\n{'file_id': '19'}\n\n\n5\n0\n\n-1, -1\n{'file_id': '13'}\n\n\n6\n0\n\n-1, -1\n{'file_id': '11'}\n\n\n7\n0\n\n-1, -1\n{'file_id': '5'}\n\n\n\n\n        \n    \n\n\nThe tree sequence now has 8 individuals and 16 nodes (diploid). However, we need to be working with haploid individuals with only one node.\n\npedigree.tree_sequence()\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n1\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n1.2 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n0\n8 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n0\n16 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n0\n16 Bytes\n\n\n\nSites\n0\n16 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\nWe visualize the strain pedigree using the tutorial function:\n\ndraw_pedigree(pedigree.tree_sequence())\n\n\n\n\nTo keep with our example from above, the renumbered strain pedigree is shown below.\n\n\n\nfinal_pedigree_ids.png\n\n\nNow we simulate the ancestry using this fixed pedigree and an arbitrary recombination rate of 0.001. Here, recombination should be simulated for nodes from individuals with parents with different strains, for example in the case of 1 and 3. Clonal transmission has occurred for strain 0. Ideally we would also like to keep the recombination event information, perhaps in the metadata - so for example a RE occurs between strain 4 and 6, etc.\n\nped_ts = msprime.sim_ancestry(\n    initial_state=pedigree, model=\"fixed_pedigree\", random_seed=41, recombination_rate=0.001)\n\nped_ts\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n2\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n2.5 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n9\n296 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n0\n16 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n1\n1.0 KiB\n\n\n\nSites\n0\n16 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\n\nnode_labels = {node.id: f\"{node.individual}({node.id})\" for node in ped_ts.nodes()}\nped_ts.draw_svg(y_axis=True,  node_labels=node_labels, size=(800,200))\n\n\n\n\nNow we simulate mutations using an arbitrary mutation rate of 0.005.\n\nped_mts = msprime.sim_mutations(ped_ts, rate = 0.005, random_seed=10)\n\nped_mts\n\n\n\n            \n              \n              \n                \n                  \n\n\n\n Tree Sequence\n\n\n\n\n\nTrees\n2\n\n\nSequence Length\n100.0\n\n\nTime Units\ngenerations\n\n\nSample Nodes\n4\n\n\nTotal Size\n3.7 KiB\n\n\nMetadata\nNo Metadata\n\n\n\n\n\n\n\nTable\nRows\nSize\nHas Metadata\n\n\n\n\nEdges\n9\n296 Bytes\n\n\n\nIndividuals\n8\n455 Bytes\n✅\n\n\nMigrations\n0\n8 Bytes\n\n\n\nMutations\n8\n312 Bytes\n\n\n\nNodes\n16\n456 Bytes\n\n\n\nPopulations\n1\n224 Bytes\n✅\n\n\nProvenances\n2\n1.7 KiB\n\n\n\nSites\n8\n216 Bytes\n\n\n\n\n\n\n                \n              \n            \n            \n\n\n\nnode_labels = {node.id: f\"{node.individual}({node.id})\" for node in ped_mts.nodes()}\nped_mts.draw_svg(y_axis=True,  node_labels=node_labels, size=(800,200))\n\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "tutorials/tests/tool_jupyter.html",
+    "href": "tutorials/tests/tool_jupyter.html",
+    "title": "Python library example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorials/tests/tool_jupyter.html#quarto",
+    "href": "tutorials/tests/tool_jupyter.html#quarto",
+    "title": "Python library example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorials/tests/tool_jupyter.html#running-code",
+    "href": "tutorials/tests/tool_jupyter.html#running-code",
+    "title": "Python library example",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "tutorials/tests/test_rmd.html",
+    "href": "tutorials/tests/test_rmd.html",
+    "title": "Rmarkdown file test",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "tutorials/tests/test_rmd.html#r-markdown",
+    "href": "tutorials/tests/test_rmd.html#r-markdown",
+    "title": "Rmarkdown file test",
+    "section": "",
+    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+  },
+  {
+    "objectID": "tutorials/tests/test_rmd.html#including-plots",
+    "href": "tutorials/tests/test_rmd.html#including-plots",
+    "title": "Rmarkdown file test",
+    "section": "Including Plots",
+    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+  },
+  {
+    "objectID": "tutorials/tests/tool_Rpackage.html",
+    "href": "tutorials/tests/tool_Rpackage.html",
+    "title": "R package example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorials/tests/tool_Rpackage.html#quarto",
+    "href": "tutorials/tests/tool_Rpackage.html#quarto",
+    "title": "R package example",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "tutorials/tests/tool_Rpackage.html#running-code",
+    "href": "tutorials/tests/tool_Rpackage.html#running-code",
+    "title": "R package example",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "website_docs/data_description.html",
+    "href": "website_docs/data_description.html",
+    "title": "Data description",
+    "section": "",
+    "text": "Some details about the logic behind the data selection"
+  },
+  {
+    "objectID": "website_docs/data_description.html#quarto",
+    "href": "website_docs/data_description.html#quarto",
+    "title": "Data description",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "website_docs/data_description.html#running-code",
+    "href": "website_docs/data_description.html#running-code",
+    "title": "Data description",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "website_docs/contributors.html",
+    "href": "website_docs/contributors.html",
+    "title": "Contributors",
+    "section": "",
+    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
+  },
+  {
+    "objectID": "website_docs/contributors.html#quarto",
+    "href": "website_docs/contributors.html#quarto",
+    "title": "Contributors",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "website_docs/contributors.html#running-code",
+    "href": "website_docs/contributors.html#running-code",
+    "title": "Contributors",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  },
+  {
+    "objectID": "website_docs/contributors.html#main-contributors",
+    "href": "website_docs/contributors.html#main-contributors",
+    "title": "Contributors",
+    "section": "",
+    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
+  },
+  {
+    "objectID": "website_docs/tutorials_overview.html",
+    "href": "website_docs/tutorials_overview.html",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test .rmd and a test .ipynb for demonstration purposes."
+  },
+  {
+    "objectID": "tutorials_overview.html",
+    "href": "tutorials_overview.html",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
+  },
+  {
+    "objectID": "website_docs/tutorials_overview.html#tutorial-details",
+    "href": "website_docs/tutorials_overview.html#tutorial-details",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test .rmd and a test .ipynb for demonstration purposes."
+  },
+  {
+    "objectID": "index.html#a-community-led-effort",
+    "href": "index.html#a-community-led-effort",
+    "title": "PGEforge",
+    "section": "A community-led effort",
+    "text": "A community-led effort\nMost of these resources were developed at the RADISH23 Hackathon by the following contributors."
+  },
+  {
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
+    "title": "PGEforge",
+    "section": "Funding",
+    "text": "Funding"
+  },
+  {
+    "objectID": "website_docs/data_description.html#data-logic",
+    "href": "website_docs/data_description.html#data-logic",
+    "title": "Data description",
+    "section": "",
+    "text": "Some details about the logic behind the data selection"
+  },
+  {
+    "objectID": "website_docs/data_description.html#datasets",
+    "href": "website_docs/data_description.html#datasets",
+    "title": "Data description",
+    "section": "Datasets",
+    "text": "Datasets\nDescription of the available datasets and their locations"
+  },
+  {
+    "objectID": "tutorials/tests/test_python_notebook.html",
+    "href": "tutorials/tests/test_python_notebook.html",
+    "title": "This is a test of a python notebook",
+    "section": "",
+    "text": "import numpy as np\nimport matplotlib.pyplot as plt\n\nWe will display a random plot below\n\nr = np.arange(0, 2, 0.01)\ntheta = 2 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "tutorials_overview.html#tutorial-details",
+    "href": "tutorials_overview.html#tutorial-details",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "href": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  }
+]

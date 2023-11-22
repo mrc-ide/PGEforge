@@ -1,0 +1,45 @@
+---
+title: "Contributors"
+format: html
+---
+
+## Main contributors
+
+PGEforge was supported by the following people, listed alphabetically. 
+
+
+#### Name 1
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
+
+#### Name 2 
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
+
+#### Name 2 
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
+
+#### Name 3
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
+
+#### Name 4
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
+
+#### Name 5
+
+![](img/radish.png){fig-align="left" width="75px"}
+
+**Affiliations:** ABCDE
