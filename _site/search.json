@@ -404,5 +404,12 @@
     "title": "Tutorial guidelines",
     "section": "",
     "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "tutorials/DRpower/to_delete.html",
+    "href": "tutorials/DRpower/to_delete.html",
+    "title": "This is a test file for the DRpower folder - delete",
+    "section": "",
+    "text": "Back to top"
   }
 ]
