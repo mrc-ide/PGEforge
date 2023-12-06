@@ -1,0 +1,71 @@
+project:
+  type: website
+
+# COLORS:
+# magenta: #c82f61
+# gold: #ebab35 
+# light pink: #f9eaf1 
+# deep blue: #030bc8 or #2f3ec7 
+# pantone blue: #325b74
+
+website:
+  title: "PGEforge"
+  repo-url: https://github.com/mrc-ide/PGEforge
+  repo-actions: [edit, issue]
+  favicon: website_docs/img/PGEforge_hex.png
+  
+  back-to-top-navigation: true
+  page-navigation: true
+  
+  page-footer:
+    background: "#f9eaf1"
+    foreground: "#c82f61"
+    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2023"
+    right: 
+      - text: "About"
+        href: website_docs/about.qmd
+      - text: "License"
+        href: website_docs/license.qmd
+    
+  sidebar:
+    background: "#f9eaf1"
+    logo: "website_docs/img/PGEforge_hex.png"
+    pinned: true
+    align: center
+    tools:
+      - icon: github
+        text: "Source code"
+        href: https://github.com/mrc-ide/PGEforge
+    style: "docked"
+    collapse-level: 1
+    contents:
+      - href: index.qmd
+        text: Welcome
+      - href: website_docs/contributors.qmd
+        text: "Contributors"
+      - href: website_docs/radish23.qmd
+        text: "RADISH23 Hackathon"
+      - href: website_docs/tutorial_guidelines.qmd
+        text: "Preparing your tutorial"
+      - section: "Data"
+        contents:
+          - website_docs/data_description.qmd
+      - section: "Tests"
+        contents:
+          - tutorials/tests/test_rmd.Rmd
+          - tutorials/tests/test_python_notebook.ipynb
+      - section: "Tutorials"
+        contents:
+          - tutorials_overview.qmd
+          - section: "Simulation tools"
+            contents:
+            - tutorials/MALECOT/MALECOT_installation.Rmd
+          - section: "Power and study design tools"
+          - section: "Analysis tools"
+
+format:
+  html:
+    theme: [cosmo, website_docs/styles.scss] # note have to edit scss instead of just html so it works across whole website
+    toc: true
+    # fontcolor: "#c82f61"
+    linkcolor: "#c82f61" 
