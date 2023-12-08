@@ -1,13 +1,18 @@
 ---
-title: "Rmarkdown file test"
-author: "Shazia Ruybal-Pesántez"
-date: "`r Sys.Date()`"
+title: "DRpower"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
++------------------+---------------+
+| Tutorial author: | Bob Verity
++------------------+---------------+
+| Tutorial date:   | 8 Dec 2023
++------------------+---------------+
 
 ## R Markdown
 

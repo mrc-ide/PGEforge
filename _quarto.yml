@@ -61,6 +61,8 @@ website:
             contents:
             - tutorials/MALECOT/MALECOT_installation.Rmd
           - section: "Power and study design tools"
+            contents:
+            - tutorials/DRpower/DRpower_background.Rmd
           - section: "Analysis tools"
 
 format:
