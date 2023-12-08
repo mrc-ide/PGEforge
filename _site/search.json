@@ -411,5 +411,26 @@
     "title": "This is a test file for the DRpower folder - delete",
     "section": "",
     "text": "Back to top"
+  },
+  {
+    "objectID": "data/data_description.html",
+    "href": "data/data_description.html",
+    "title": "Data description",
+    "section": "",
+    "text": "Some details about the logic behind the data selection"
+  },
+  {
+    "objectID": "data/data_description.html#data-logic",
+    "href": "data/data_description.html#data-logic",
+    "title": "Data description",
+    "section": "",
+    "text": "Some details about the logic behind the data selection"
+  },
+  {
+    "objectID": "data/data_description.html#datasets",
+    "href": "data/data_description.html#datasets",
+    "title": "Data description",
+    "section": "Datasets",
+    "text": "Datasets\nDescription of the available datasets and links to their locations"
   }
 ]
