@@ -56,14 +56,18 @@ website:
           - tutorials/tests/test_python_notebook.ipynb
       - section: "Tutorials"
         contents:
-          - tutorials_overview.qmd
-          - section: "Simulation tools"
+          - text: "**Overview of all tutorials**"
+            file: tutorials_overview.qmd
+          - section: "DRpower"
             contents:
-            - tutorials/MALECOT/MALECOT_installation.Rmd
-          - section: "Power and study design tools"
-            contents:
-            - tutorials/DRpower/DRpower_background.Rmd
-          - section: "Analysis tools"
+            - text: "Summary"
+              file: tutorials/DRpower/DRpower_background.Rmd
+            - text: "Installation"
+              file: tutorials/DRpower/DRpower_installation.Rmd
+            - text: "Designing a study"
+              file: tutorials/DRpower/DRpower_design.Rmd
+            - text: "Analysis of *pfhrp2/3* data"
+              file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
 
 format:
   html:
