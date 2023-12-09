@@ -11,3 +11,10 @@ All of the data within the subfolder `wgs/pf3k` was derived from the [Pf3k Proje
 
 Each VCF contains 247,496 high-quality (VQSLOD>6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the [Pf7 data set](https://www.malariagen.net/sites/default/files/Pf7_fws.txt), which contains the Pf3k samples. These were not calculated for the *in vitro* lab mixtures.
 
+## Simulated
+All of the data within the subfolder `wgs/simulated` was simulated. In brief, a simulated sample with a given complexity of infection (COI), $K$, is created by randomly sampling $K$ clonal haplotypes ($F_{ws} > 0.95$) from a given country within the [Pf3k Project](https://www.malariagen.net/parasite/pf3k), assigning these haplotypes to $j \leq K$ bites, simulating meiosis if $j < K$, randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from:
+- Democratic Republic of the Congo ($n=40$)
+
+The COI of these samples ranges from one to four, and about half of them have within-host relatedness.
+
+
