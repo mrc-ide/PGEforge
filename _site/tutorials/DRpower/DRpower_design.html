@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Bob Verity">
-<meta name="dcterms.date" content="2023-12-08">
 
-<title>PGEforge - MALECOT_installation</title>
+<title>PGEforge - Designing a drug and diagnostic resistance study</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +63,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/DRpower/DRpower_background.html" rel="next">
-<link href="../../tutorials_overview.html" rel="prev">
+<link href="../../tutorials/DRpower/DRpower_analysis_pfhrp2.html" rel="next">
+<link href="../../tutorials/DRpower/DRpower_installation.html" rel="prev">
 <link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -110,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials_overview.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../../tutorials/MALECOT/MALECOT_installation.html">Simulation tools</a></li><li class="breadcrumb-item"><a href="../../tutorials/MALECOT/MALECOT_installation.html">MALECOT_installation</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials_overview.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../../tutorials/DRpower/DRpower_background.html">DRpower</a></li><li class="breadcrumb-item"><a href="../../tutorials/DRpower/DRpower_design.html">Designing a study</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -214,13 +212,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../tutorials_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials overview</span></a>
+ <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
- <span class="menu-text">Simulation tools</span></a>
+ <span class="menu-text">DRpower</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -228,32 +226,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/MALECOT/MALECOT_installation.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">MALECOT_installation</span></a>
+  <a href="../../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
   </div>
 </li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
- <span class="menu-text">Power and study design tools</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DRpower</span></a>
+  <a href="../../tutorials/DRpower/DRpower_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_design.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Designing a study</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_analysis_pfhrp2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis of <em>pfhrp2/3</em> data</span></a>
   </div>
 </li>
       </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Analysis tools</span></span>
   </li>
       </ul>
   </li>
@@ -267,36 +262,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#r-markdown" id="toc-r-markdown" class="nav-link active" data-scroll-target="#r-markdown">R Markdown</a></li>
-  <li><a href="#including-plots" id="toc-including-plots" class="nav-link" data-scroll-target="#including-plots">Including Plots</a></li>
+  <li><a href="#premise" id="toc-premise" class="nav-link active" data-scroll-target="#premise">Premise</a></li>
+  <li><a href="#sp-mutation-prevalence---margin-of-error-moe-calculation" id="toc-sp-mutation-prevalence---margin-of-error-moe-calculation" class="nav-link" data-scroll-target="#sp-mutation-prevalence---margin-of-error-moe-calculation">SP mutation prevalence - margin of error (MoE) calculation</a></li>
+  <li><a href="#pfkelch13-mutations---presenceabsence-analysis" id="toc-pfkelch13-mutations---presenceabsence-analysis" class="nav-link" data-scroll-target="#pfkelch13-mutations---presenceabsence-analysis"><em>pfkelch13</em> mutations - presence/absence analysis</a></li>
+  <li><a href="#pfhrp23-deletions---comparison-against-5-threshold" id="toc-pfhrp23-deletions---comparison-against-5-threshold" class="nav-link" data-scroll-target="#pfhrp23-deletions---comparison-against-5-threshold"><em>pfhrp2/3</em> deletions - comparison against 5% threshold</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/MALECOT/MALECOT_installation.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/DRpower/DRpower_design.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">MALECOT_installation</h1>
+<h1 class="title">Designing a drug and diagnostic resistance study</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Bob Verity </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">December 8, 2023</p>
-    </div>
-  </div>
   
     
   </div>
@@ -304,32 +290,82 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="r-markdown" class="level2">
-<h2 class="anchored" data-anchor-id="r-markdown">R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  </code></pre>
-</div>
-</div>
+<section id="premise" class="level2">
+<h2 class="anchored" data-anchor-id="premise">Premise</h2>
+<p>Here, we will use <em>DRpower</em> to help us design a prospective malaria molecular surveillance (MMS) study in the Democratic Republic of the Congo (DRC). We are interested in the following questions:</p>
+<ol type="1">
+<li>What is the prevalence of sulfadoxine/pyrimethamine (SP) mutations?</li>
+<li>Are there any <em>pfkelch13</em> mutations?</li>
+<li>What is the prevalence of <em>pfhrp2/3</em> gene deletions, and is this prevalence above 5% (the WHO threshold at which a nationwide change in RDTs is recommended)?</li>
+</ol>
+<p>Based on initial budget calculations, we hope to collect 100 samples from each of 3 sites in each of 10 provinces. We want to know what sort of power we can expect with these numbers for each of the end-points above.</p>
 </section>
-<section id="including-plots" class="level2">
-<h2 class="anchored" data-anchor-id="including-plots">Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="MALECOT_installation_files/figure-html/pressure-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<section id="sp-mutation-prevalence---margin-of-error-moe-calculation" class="level2">
+<h2 class="anchored" data-anchor-id="sp-mutation-prevalence---margin-of-error-moe-calculation">SP mutation prevalence - margin of error (MoE) calculation</h2>
+<p>Our plan is to pool results over the 3 sites within each province to arrive at an estimate of the overall prevalence of SP mutations at the province level. When pooling results, we need to take account of intra-cluster correlation in our confidence intervals (CIs). Failure to do so will lead to unrealistically tight intervals. <em>DRpower</em> provides several functions for calculating the expected margin of error (MoE) given assumptions about sample size and the known prevalence of mutations.</p>
+<p>First, let’s load the package and set the random seed so our results are reproducible:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then we will use the <code>get_margin()</code> function to tell us the MoE we can expect if the prevalence of the mutation is 10%. We set the parameters to represent 3 clusters of 100 samples:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get MoE using simple calculation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] 0.08280703</code></pre>
+<p>We expect 8.3% MoE, meaning we expect to estimate the prevalence to within plus or minus 8.3% (so from 1.7% to 18.3%). This is quite a precise estimate.</p>
+<p>Our worst case MoE will occur when the prevalence of the marker is 50%. We can explore this here:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] 0.1380117</code></pre>
+<p>In the worst case, our MoE goes up to 14%. This is still quite precise.</p>
+<p>However, this approach assumes that we know the level of intra-cluster correlation (ICC) exactly. It also assumes a normal distribution when producing the CI, which may not be appropriate. A more cautious approach is to estimate prevalence using the Bayesian model within <em>DRpower</em>. This model accounts for uncertainty in the ICC. If we plan to use the Bayesian model then we should use the <code>get_margin_Bayesian()</code> function:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get expected MoE via the Bayesian approach</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>##       estimate    CI_2.5   CI_97.5
+## lower   3.8705  3.391827  4.349173
+## upper  25.1018 23.891353 26.312247</code></pre>
+<p>We now only get an estimate of the MoE, although it appears reasonably precise. We could increase the number of <code>reps</code> to make this more precise if we wanted. We can expect our 95% credible interval (CrI) to span from 3.9% to 25.1%. Interestingly, this is narrower at the low end than our simple estimate, but wider at the high end. We can explore our worst case MoE using the same method:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE via the Bayesian approach</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>##       estimate   CI_2.5  CI_97.5
+## lower  33.4947 31.92120 35.06820
+## upper  65.5736 64.12608 67.02112</code></pre>
+<p>In the worst case, we can expect to estimate prevalence from 33.5% to 65.6%. So we should be able to determine roughly which third of the prevalence range the mutation occupies (i.e.&nbsp;“low”, “intermediate” or “high”), but not much more precise than this.</p>
+</section>
+<section id="pfkelch13-mutations---presenceabsence-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="pfkelch13-mutations---presenceabsence-analysis"><em>pfkelch13</em> mutations - presence/absence analysis</h2>
+<p>When it comes to <em>pfkelch13</em>, we are interested in knowing if there are <em>any</em> mutants in the province, rather than estimating the prevalence of mutants. A single positive sample would prove that there are. However, if the prevalence is very low then we may get unlucky and miss all positive samples. We can use the <code>get_power_presence()</code> function to explore our probability of detecting at least one positive sample:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 1%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] 0.6538844</code></pre>
+<p>We can see that for <em>pfkelch13</em> mutants at 1% prevalence, we would only have a 65% chance of detecting one in <em>any</em> of our 3 sites within a province. This is quite low power. Compare that to the result if we assume mutants are at 2% in the province:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 2%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.02</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] 0.8808013</code></pre>
+<p>We now have close to 90% power. So, we can say we are powered to detect rare variants down to around 2%, but if they are less common than this then we risk missing them. Whether or not this is an acceptable level of power depends on programmatic factors, amongst others.</p>
+</section>
+<section id="pfhrp23-deletions---comparison-against-5-threshold" class="level2">
+<h2 class="anchored" data-anchor-id="pfhrp23-deletions---comparison-against-5-threshold"><em>pfhrp2/3</em> deletions - comparison against 5% threshold</h2>
+<p>We plan to follow the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO Master Protocol</a> approach, changing RDTs at a national level if any province has a prevalence of <em>pfhrp2/3</em> deletions significantly over 5%. We can use the <code>get_power()</code> function to calculate our power for a given prevalence of deletions:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power under WHO approach</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>##   prev_thresh power lower upper
+## 1        0.05  59.9 56.79 62.95</code></pre>
+<p>We only have around 60% power under this design. We would obtain a higher power if we assumed the prevalence of <em>pfhrp2/3</em> deletions was higher than 10%, but we would need to be able to justify this assumption with evidence - for example results of a pilot study, or results from neighboring countries.</p>
+<p>In our case, we will instead abandon the threshold comparison approach in favour of a two-step design. Our new plan is to look for the presence of <em>any</em> <em>pfhrp2/3</em> deletions at the province level, and only if these are detected we will perform a followup study in that province. The nice thing here is that we have already performed this power calculation, as it becomes a presence/absence analysis exactly as we did above for <em>pfkelch13</em>. We know that we have power to detect something down to around 2% prevalence.</p>
+<p>For our followup study, we can explore what would happen if we doubled the number of sites in that province:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power with 6 sites of 100</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">6</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>##   prev_thresh power lower upper
+## 1        0.05  78.4 75.72 80.91</code></pre>
+<p>We find that power is around 79%, which is acceptable.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>We have used <em>DRpower</em> to explore the kind of precision and power we can expect for a given study design. This has revealed that:</p>
+<ol type="1">
+<li>When estimating SP mutations, we will have only a rough idea of the prevalence. Probably in the “low” vs.&nbsp;“intermediate” vs.&nbsp;“high” range.</li>
+<li>For <em>pfkelch13</em> mutations, we are powered to detect rare variants down to around 2%. Any lower than this and we run a real risk of missing them.</li>
+<li>For <em>pfhrp2/3</em> deletions, we do not have power under the WHO Master Protocol approach. We have therefore modified our study design to a two-stage process that focuses first on detection, and then on prevalence estimation.</li>
+</ol>
 
 
 </section>
@@ -570,13 +606,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../tutorials_overview.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Tutorials overview</span>
+      <a href="../../tutorials/DRpower/DRpower_installation.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Installation</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../tutorials/DRpower/DRpower_background.html" class="pagination-link">
-        <span class="nav-page-text">DRpower</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../tutorials/DRpower/DRpower_analysis_pfhrp2.html" class="pagination-link">
+        <span class="nav-page-text">Analysis of <em>pfhrp2/3</em> data</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
