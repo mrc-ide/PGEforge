@@ -6,3 +6,4 @@
 /.quarto/
 ignore/
 .DS_Store
+/_site/
