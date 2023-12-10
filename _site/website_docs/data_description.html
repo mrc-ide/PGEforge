@@ -62,6 +62,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -178,13 +180,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials overview</span></a>
+ <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
- <span class="menu-text">Simulation tools</span></a>
+ <span class="menu-text">DRpower</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -192,19 +194,29 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/MALECOT/MALECOT_installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">MALECOT_installation</span></a>
+  <a href="../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/DRpower/DRpower_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/DRpower/DRpower_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Designing a study</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/DRpower/DRpower_analysis_pfhrp2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis of <em>pfhrp2/3</em> data</span></a>
   </div>
 </li>
       </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Power and study design tools</span></span>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">Analysis tools</span></span>
   </li>
       </ul>
   </li>
@@ -218,8 +230,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#data-logic" id="toc-data-logic" class="nav-link active" data-scroll-target="#data-logic">Data logic</a></li>
-  <li><a href="#datasets" id="toc-datasets" class="nav-link" data-scroll-target="#datasets">Datasets</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
+  <ul class="collapse">
+  <li><a href="#whole-genome-sequencing-wgs-data-for-p.-falciparum" id="toc-whole-genome-sequencing-wgs-data-for-p.-falciparum" class="nav-link" data-scroll-target="#whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS) data for <em>P. falciparum</em></a>
+  <ul class="collapse">
+  <li><a href="#pf3k" id="toc-pf3k" class="nav-link" data-scroll-target="#pf3k">Pf3k</a></li>
+  <li><a href="#simulated" id="toc-simulated" class="nav-link" data-scroll-target="#simulated">Simulated</a></li>
+  </ul></li>
+  <li><a href="#pfhrp23-gene-deletion-count-data" id="toc-pfhrp23-gene-deletion-count-data" class="nav-link" data-scroll-target="#pfhrp23-gene-deletion-count-data"><em>Pfhrp2/3</em> gene deletion count data</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/data_description.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -243,15 +262,35 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="data-logic" class="level2">
-<h2 class="anchored" data-anchor-id="data-logic">Data logic</h2>
-<p>Some details about the logic behind the data selection</p>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>PGEforge hosts simulated and empirical datasets of:</p>
+<ul>
+<li>Whole genome sequencing (WGS)</li>
+<li>Microhaplotype data</li>
+<li>SNP barcoding data</li>
+<li><em>pfhrp2/3</em> deletion count data</li>
+</ul>
+<p>They can be located at the <a href="https://github.com/mrc-ide/PGEforge/tree/main/data">PGEforge/data</a> folder.</p>
+<section id="whole-genome-sequencing-wgs-data-for-p.-falciparum" class="level2">
+<h2 class="anchored" data-anchor-id="whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS) data for <em>P. falciparum</em></h2>
+<section id="pf3k" class="level3">
+<h3 class="anchored" data-anchor-id="pf3k">Pf3k</h3>
+<p>All of the data within the subfolder <code>wgs/pf3k</code> was derived from the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (<span class="math inline">\(n=113\)</span>) - Vietnam (<span class="math inline">\(n=97\)</span>) - <em>In vitro</em> mixures of laboratory strains (<span class="math inline">\(n=25\)</span>)</p>
+<p>Each VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the <a href="https://www.malariagen.net/sites/default/files/Pf7_fws.txt">Pf7 data set</a>, which contains the Pf3k samples. These were not calculated for the <em>in vitro</em> lab mixtures.</p>
 </section>
-<section id="datasets" class="level2">
-<h2 class="anchored" data-anchor-id="datasets">Datasets</h2>
-<p>Description of the available datasets and their locations</p>
+<section id="simulated" class="level3">
+<h3 class="anchored" data-anchor-id="simulated">Simulated</h3>
+<p>All of the data within the subfolder <code>wgs/simulated</code> was simulated. In brief, a simulated sample with a given complexity of infection (COI), <span class="math inline">\(K\)</span>, is created by randomly sampling <span class="math inline">\(K\)</span> clonal haplotypes (<span class="math inline">\(F_{ws} &gt; 0.95\)</span>) from a given country within the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>, assigning these haplotypes to <span class="math inline">\(j \leq K\)</span> bites, simulating meiosis if <span class="math inline">\(j &lt; K\)</span>, randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (<span class="math inline">\(n=40\)</span>)</p>
+<p>The COI of these samples ranges from one to four, and about half of them have within-host relatedness.</p>
+</section>
+</section>
+<section id="pfhrp23-gene-deletion-count-data" class="level2">
+<h2 class="anchored" data-anchor-id="pfhrp23-gene-deletion-count-data"><em>Pfhrp2/3</em> gene deletion count data</h2>
+<p>The <em>pfhrp2/3</em> gene deletion count data is available within the subfolder <code>pfhrp2-3_counts</code>. The data come from a study by <a href="https://doi.org/10.1038/s41564-021-00962-4">Feleke et al.&nbsp;(2021)</a>.</p>
 
 
+</section>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
@@ -511,9 +550,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
     <a class="nav-link" href="../website_docs/about.qmd">About</a>
-  </li>  
-    <li class="nav-item">
-    <a class="nav-link" href="../website_docs/license.qmd">License</a>
   </li>  
 </ul>
     </div>

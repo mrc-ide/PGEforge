@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2023-12-09">
 
 <title>PGEforge - Analysis of pfhrp2/3 data</title>
 <style>
@@ -95,6 +94,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 </head>
@@ -262,8 +264,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#r-markdown" id="toc-r-markdown" class="nav-link active" data-scroll-target="#r-markdown">R Markdown</a></li>
-  <li><a href="#including-plots" id="toc-including-plots" class="nav-link" data-scroll-target="#including-plots">Including Plots</a></li>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link active" data-scroll-target="#the-data">The data</a></li>
+  <li><a href="#estimating-the-prevalence" id="toc-estimating-the-prevalence" class="nav-link" data-scroll-target="#estimating-the-prevalence">Estimating the prevalence</a></li>
+  <li><a href="#estimating-the-intra-cluster-correlation" id="toc-estimating-the-intra-cluster-correlation" class="nav-link" data-scroll-target="#estimating-the-intra-cluster-correlation">Estimating the intra-cluster correlation</a></li>
+  <li><a href="#retrospective-power-analysis" id="toc-retrospective-power-analysis" class="nav-link" data-scroll-target="#retrospective-power-analysis">Retrospective power analysis</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -280,12 +285,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-title-meta">
 
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">December 9, 2023</p>
-    </div>
-  </div>
   
     
   </div>
@@ -293,32 +292,192 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="r-markdown" class="level2">
-<h2 class="anchored" data-anchor-id="r-markdown">R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The data</h2>
+<p>The data for this analysis come from a study by <a href="https://doi.org/10.1038/s41564-021-00962-4">Feleke et al.&nbsp;(2021)</a>. See the description in the <a href="../../website_docs/data_description.html">Data section</a> for more details on this dataset. In short, the data come from a prospective, cross-sectional survey conducted in northern and western Ethiopia between 2017-2018. False-negative samples by HRP2-based RDT were sent for genomic sequencing to confirm <em>pfhrp2/3</em> deletions. We are interested in the prevalence of deletions at the province level, and in particular comparing this prevalence against the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO Master Protocol</a> threshold of 5%.</p>
+<p>We start by loading packages:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  </code></pre>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</section>
-<section id="including-plots" class="level2">
-<h2 class="anchored" data-anchor-id="including-plots">Including Plots</h2>
-<p>You can also embed plots, for example:</p>
+<p>After loading the data from the PGEforge data folder, we will focus our attention on the Tigray province:</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import data from PGEforge and filter to Tigray region</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_Tigray <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data/pfhrp2-3_counts"</span>, <span class="st">"Feleke_pfhrp2.csv"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ADMIN1 <span class="sc">==</span> <span class="st">"Tigray"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># display the table</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df_Tigray <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="DRpower_analysis_pfhrp2_files/figure-html/pressure-1.png" class="img-fluid" width="672"></p>
+<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ADMIN1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Site</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Longitude</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Latitude</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Year_start</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Year_end</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Num_pfhrp2_tested</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Num_pfhrp2_deleted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">Ahferom</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">117</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">Atseged Tsimbila</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">Gulomekeda</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">K. Humera</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">176</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">L. Adiabo</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ethiopia</td>
+<td style="text-align: left;">Tigray</td>
+<td style="text-align: left;">T. Adiabo</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2017</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+
+
 </div>
 </div>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<p>Although we have a lot of information here, we only really need the final two columns of this data.frame - the number tested and the number of <em>pfhrp2</em> deletions found.</p>
+</section>
+<section id="estimating-the-prevalence" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-the-prevalence">Estimating the prevalence</h2>
+<p>Nine times out of ten, the thing we’re interested in is the prevalence of <em>pfhrp2/3</em> deletions. We can estimate this using the <code>get_prevalence()</code> function, using values from the data.frame above:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate the prevalence of deletions</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_prevalence</span>(<span class="at">n =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_deleted,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   MAP CrI_lower CrI_upper prob_above_threshold
+1 20.4     14.11     28.93                    1</code></pre>
+</div>
+</div>
+<p>Our point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum <em>a posteriori</em> (MAP) estimate as out point estimate, but other options are available (see ).</p>
+<p>We can also produce a simple plot of the posterior distribution of the prevalence:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the posterior distribution of the prevalence</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_prevalence</span>(<span class="at">n =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_deleted,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DRpower_analysis_pfhrp2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Notice that both the table output and the plot give a probability close to 100% of being above the 5% threshold. Based on these results we would be justified in switching RDTs.</p>
+</section>
+<section id="estimating-the-intra-cluster-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-the-intra-cluster-correlation">Estimating the intra-cluster correlation</h2>
+<p>A second quantity that we might be interested in is the level of intra-cluster correlation. This tells us whether the prevalence is consistent between sites (low ICC) or highly variable between sites (high ICC). A high ICC can be caused by many factors, including a patchy geographic distribution in the prevalence of deletions within the province. Not only is this interesting information in itself, it also provides extremely useful context for future studies in the same region or neighbouring regions.</p>
+<p>We can estimate the ICC using the <code>get_ICC()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate the ICC</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_ICC</span>(<span class="at">n =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_deleted,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     MAP CrI_lower CrI_upper
+1 0.0151         0    0.1031</code></pre>
+</div>
+</div>
+<p>Our point estimate of the ICC is around 0.015. This is below the 0.05 value that we typically assume based on <a href="https://mrc-ide.github.io/DRpower/articles/historical_analysis.html">analysis of historical data</a>, which may imply that the prevalence of <em>pfhrp2</em> deletions is relatively flat in the Tigray province. However, we can also see that the 95% CrI ranges from 0 to 0.103, and so we do not have very strong information here.</p>
+<p>As with prevalence, we can produce a simple plot of the posterior distribution of ICC:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the posterior distribution of the ICC</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ICC</span>(<span class="at">n =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_deleted,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DRpower_analysis_pfhrp2_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Finally, if we really want to understand how prevalence and ICC relate to each other, we can plot the joint distribution of both parameters. Here, we have set the breaks in both the x- and y-dimensions to focus in on the region of interest:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># joint plot of prevalence and ICC</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_joint</span>(<span class="at">n =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_deleted,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">prev_breaks =</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="at">l =</span> <span class="dv">101</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">ICC_breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="at">l =</span> <span class="dv">101</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="DRpower_analysis_pfhrp2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>This shows that there are no strong correlations between parameters, but honestly this is probably more information than we need most of the time.</p>
+</section>
+<section id="retrospective-power-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="retrospective-power-analysis">Retrospective power analysis</h2>
+<p>An interesting question is: given the final sample sizes in the Tigray region, what was our power? This sort of retrospective power analysis can be useful to evaluate the strength of evidence of a study. However, it is obviously far better to perform a power analysis <em>before</em> conducting the study!</p>
+<p>Here, we take the standard approach of assuming the prevalence of deletions is 10% in the region:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power using the actual sample sizes</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> df_Tigray<span class="sc">$</span>Num_pfhrp2_tested, <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  prev_thresh power lower upper
+1        0.05  78.1 75.41 80.63</code></pre>
+</div>
+</div>
+<p>We find that power was around 79%, which is definitely adequate.</p>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>In summary, we estimate from the Feleke et al.&nbsp;(2021) data that the prevalence of <em>pfhrp2</em> deletions in the Tigray region of Ethiopia was 20.4% (CrI 14.11%-28.93%) at the time of the study (2017-2018). We are highly confident that this prevalence is above the WHO threshold of 5%. We find evidence that the intra-cluster correlation may be low in this region (0.015, CrI 0.00-0.103), implying that the prevalence of <em>pfhrp2</em> deletions may be relatively flat. Finally, in a retrospective power analysis we identify that this was a well-powered study, giving us increased confidence in the conclusions.</p>
 
 
 </section>
@@ -577,9 +736,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
     <a class="nav-link" href="../../website_docs/about.qmd">About</a>
-  </li>  
-    <li class="nav-item">
-    <a class="nav-link" href="../../website_docs/license.qmd">License</a>
   </li>  
 </ul>
     </div>

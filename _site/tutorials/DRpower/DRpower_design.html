@@ -96,6 +96,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -292,79 +294,116 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="premise" class="level2">
 <h2 class="anchored" data-anchor-id="premise">Premise</h2>
-<p>Here, we will use <em>DRpower</em> to help us design a prospective malaria molecular surveillance (MMS) study in the Democratic Republic of the Congo (DRC). We are interested in the following questions:</p>
+<p>Here, we will use <em>DRpower</em> to help us design a prospective malaria molecular surveillance (MMS) study. We are interested in the following questions:</p>
 <ol type="1">
 <li>What is the prevalence of sulfadoxine/pyrimethamine (SP) mutations?</li>
-<li>Are there any <em>pfkelch13</em> mutations?</li>
+<li>Are there any <em>pfkelch13</em> mutations in our region?</li>
 <li>What is the prevalence of <em>pfhrp2/3</em> gene deletions, and is this prevalence above 5% (the WHO threshold at which a nationwide change in RDTs is recommended)?</li>
 </ol>
-<p>Based on initial budget calculations, we hope to collect 100 samples from each of 3 sites in each of 10 provinces. We want to know what sort of power we can expect with these numbers for each of the end-points above.</p>
+<p>Based on initial budget calculations, we are aiming to collect 100 samples from each of 3 sites in each of 10 provinces. We want to know what sort of power we can expect with these numbers for each of the end-points above.</p>
 </section>
 <section id="sp-mutation-prevalence---margin-of-error-moe-calculation" class="level2">
 <h2 class="anchored" data-anchor-id="sp-mutation-prevalence---margin-of-error-moe-calculation">SP mutation prevalence - margin of error (MoE) calculation</h2>
-<p>Our plan is to pool results over the 3 sites within each province to arrive at an estimate of the overall prevalence of SP mutations at the province level. When pooling results, we need to take account of intra-cluster correlation in our confidence intervals (CIs). Failure to do so will lead to unrealistically tight intervals. <em>DRpower</em> provides several functions for calculating the expected margin of error (MoE) given assumptions about sample size and the known prevalence of mutations.</p>
+<p>Our plan is to pool results over the 3 sites within each province to arrive at an estimate of the overall prevalence of SP mutations at the province level. When pooling results it is important to take account of intra-cluster correlation (ICC) in our confidence intervals (CIs). Failure to do so will lead to unrealistically tight intervals. <em>DRpower</em> provides several functions for calculating the expected margin of error (MoE) given assumptions about sample size, the ICC, and the known prevalence of mutations.</p>
 <p>First, let’s load the package and set the random seed so our results are reproducible:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Then we will use the <code>get_margin()</code> function to tell us the MoE we can expect if the prevalence of the mutation is 10%. We set the parameters to represent 3 clusters of 100 samples:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get MoE using simple calculation</span></span>
+</div>
+<p>We will use the <code>get_margin()</code> function to tell us the MoE we can expect if the prevalence of a mutation is 10% at the province level. We set the parameters to define 3 clusters of 100 samples. We assume an ICC value of 0.05:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get MoE using simple calculation</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## [1] 0.08280703</code></pre>
-<p>We expect 8.3% MoE, meaning we expect to estimate the prevalence to within plus or minus 8.3% (so from 1.7% to 18.3%). This is quite a precise estimate.</p>
+<div class="cell-output cell-output-stdout">
+<pre><code>    lower     upper 
+ 1.719297 18.280703 </code></pre>
+</div>
+</div>
+<p>This output tells us that we expect our CI to range from 1.7% at the lower end to 18.3% at the upper end when estimating a variant at 10% prevalence. In other words, we expect a MoE of 8.3%. This is precise enough for most purposes.</p>
 <p>Our worst case MoE will occur when the prevalence of the marker is 50%. We can explore this here:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE</span></span>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## [1] 0.1380117</code></pre>
-<p>In the worst case, our MoE goes up to 14%. This is still quite precise.</p>
-<p>However, this approach assumes that we know the level of intra-cluster correlation (ICC) exactly. It also assumes a normal distribution when producing the CI, which may not be appropriate. A more cautious approach is to estimate prevalence using the Bayesian model within <em>DRpower</em>. This model accounts for uncertainty in the ICC. If we plan to use the Bayesian model then we should use the <code>get_margin_Bayesian()</code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get expected MoE via the Bayesian approach</span></span>
+<div class="cell-output cell-output-stdout">
+<pre><code>   lower    upper 
+36.19883 63.80117 </code></pre>
+</div>
+</div>
+<p>In the worst case our MoE goes up to <span class="math inline">\(\pm\)</span> 14%, which is still reasonably precise.</p>
+<p>However, this approach assumes that we know the level of intra-cluster correlation exactly. It also uses a normal approximation when producing CIs, which is a bad approximation when the prevalence is very low or very high. A more cautious approach is to estimate prevalence using the Bayesian model within <em>DRpower</em>. If we plan to use this approach, then we should use the <code>get_margin_Bayesian()</code> function to estimate the MoE:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get expected MoE via the Bayesian approach</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>##       estimate    CI_2.5   CI_97.5
-## lower   3.8705  3.391827  4.349173
-## upper  25.1018 23.891353 26.312247</code></pre>
-<p>We now only get an estimate of the MoE, although it appears reasonably precise. We could increase the number of <code>reps</code> to make this more precise if we wanted. We can expect our 95% credible interval (CrI) to span from 3.9% to 25.1%. Interestingly, this is narrower at the low end than our simple estimate, but wider at the high end. We can explore our worst case MoE using the same method:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE via the Bayesian approach</span></span>
+<div class="cell-output cell-output-stdout">
+<pre><code>      estimate    CI_2.5   CI_97.5
+lower   3.8705  3.391827  4.349173
+upper  25.1018 23.891353 26.312247</code></pre>
+</div>
+</div>
+<p>We should look at the first column of this data.frame when comparing to the previous values. We now find that our credible interval (CrI) is expected to range from 3.8% to 25.1%. This is quite different from what we found under the simpler <code>get_margin()</code> method, being tighter at low prevalence but wider at high prevalence. Note that unlike the previous function these are estimated values, hence they are presented along with a 95% CI. We can make estimate more precise if needed by increasing <code>reps</code>.</p>
+<p>We can explore our worst case MoE using the same method:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE via the Bayesian approach</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>##       estimate   CI_2.5  CI_97.5
-## lower  33.4947 31.92120 35.06820
-## upper  65.5736 64.12608 67.02112</code></pre>
-<p>In the worst case, we can expect to estimate prevalence from 33.5% to 65.6%. So we should be able to determine roughly which third of the prevalence range the mutation occupies (i.e.&nbsp;“low”, “intermediate” or “high”), but not much more precise than this.</p>
+<div class="cell-output cell-output-stdout">
+<pre><code>      estimate   CI_2.5  CI_97.5
+lower  33.4947 31.92120 35.06820
+upper  65.5736 64.12608 67.02112</code></pre>
+</div>
+</div>
+<p>In the worst case we can expect our CI to range from 33.5% to 66.6%, a MoE of around <span class="math inline">\(\pm\)</span> 16.5%. This is slightly higher than before, but still precise enough for most purposes.</p>
 </section>
 <section id="pfkelch13-mutations---presenceabsence-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="pfkelch13-mutations---presenceabsence-analysis"><em>pfkelch13</em> mutations - presence/absence analysis</h2>
-<p>When it comes to <em>pfkelch13</em>, we are interested in knowing if there are <em>any</em> mutants in the province, rather than estimating the prevalence of mutants. A single positive sample would prove that there are. However, if the prevalence is very low then we may get unlucky and miss all positive samples. We can use the <code>get_power_presence()</code> function to explore our probability of detecting at least one positive sample:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 1%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## [1] 0.6538844</code></pre>
-<p>We can see that for <em>pfkelch13</em> mutants at 1% prevalence, we would only have a 65% chance of detecting one in <em>any</em> of our 3 sites within a province. This is quite low power. Compare that to the result if we assume mutants are at 2% in the province:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 2%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.02</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>## [1] 0.8808013</code></pre>
-<p>We now have close to 90% power. So, we can say we are powered to detect rare variants down to around 2%, but if they are less common than this then we risk missing them. Whether or not this is an acceptable level of power depends on programmatic factors, amongst others.</p>
+<p>When it comes to <em>pfkelch13</em>, we are interested in knowing if there are <em>any</em> mutants in the province, rather than estimating the prevalence of mutants. A single positive sample would prove that there are mutants in the province, however, if the prevalence is very low we may get unlucky and miss them. We can use the <code>get_power_presence()</code> function to explore our probability of detecting at least one positive sample:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 1%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.01</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 65.38844</code></pre>
+</div>
+</div>
+<p>We can see that if <em>pfkelch13</em> mutants were at 1% prevalence at the province level then we would have a 65% chance of detecting one in <em>any</em> of our 3 sites. This is quite low power - we normally aim for at least 80%. Compare that to the result if we assume mutants are at 2% in the province:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 2%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.02</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 88.08013</code></pre>
+</div>
+</div>
+<p>We now have close to 90% power. So, we can say we are powered to detect rare variants down to around 2% prevalence, but if they are less common than this we risk missing them. Whether or not this is an acceptable level of sensitivity is a programmatic decision.</p>
 </section>
 <section id="pfhrp23-deletions---comparison-against-5-threshold" class="level2">
 <h2 class="anchored" data-anchor-id="pfhrp23-deletions---comparison-against-5-threshold"><em>pfhrp2/3</em> deletions - comparison against 5% threshold</h2>
-<p>We plan to follow the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO Master Protocol</a> approach, changing RDTs at a national level if any province has a prevalence of <em>pfhrp2/3</em> deletions significantly over 5%. We can use the <code>get_power()</code> function to calculate our power for a given prevalence of deletions:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power under WHO approach</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>##   prev_thresh power lower upper
-## 1        0.05  59.9 56.79 62.95</code></pre>
-<p>We only have around 60% power under this design. We would obtain a higher power if we assumed the prevalence of <em>pfhrp2/3</em> deletions was higher than 10%, but we would need to be able to justify this assumption with evidence - for example results of a pilot study, or results from neighboring countries.</p>
-<p>In our case, we will instead abandon the threshold comparison approach in favour of a two-step design. Our new plan is to look for the presence of <em>any</em> <em>pfhrp2/3</em> deletions at the province level, and only if these are detected we will perform a followup study in that province. The nice thing here is that we have already performed this power calculation, as it becomes a presence/absence analysis exactly as we did above for <em>pfkelch13</em>. We know that we have power to detect something down to around 2% prevalence.</p>
-<p>For our followup study, we can explore what would happen if we doubled the number of sites in that province:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power with 6 sites of 100</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">6</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre><code>##   prev_thresh power lower upper
-## 1        0.05  78.4 75.72 80.91</code></pre>
-<p>We find that power is around 79%, which is acceptable.</p>
+<p>We plan to follow the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO Master Protocol</a>, switching RDTs at a national level if any province has a prevalence of <em>pfhrp2/3</em> deletions significantly over 5%. We can use the <code>get_power_threshold()</code> function to calculate our power under this model. We assume here that the prevalence of deletions at the province level is 10%:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power under WHO approach</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  prev_thresh power lower upper
+1        0.05  59.9 56.79 62.95</code></pre>
+</div>
+</div>
+<p>We only have around 60% power under this design. We would obtain a higher power if we assumed the prevalence of <em>pfhrp2/3</em> deletions was higher than 10%, but we would need to be able to justify this assumption with evidence - for example results of a pilot study, or results from neighbouring countries.</p>
+<p>In our case, we will instead abandon the threshold comparison approach in favour of a two-step design. Our new plan will be to look for the presence of <em>any</em> <em>pfhrp2/3</em> deletions at the province level, and only if they are detected we will perform a follow-up study in that province. The nice thing about this is that we have already performed this power calculation, as it becomes a presence/absence analysis exactly as we did for <em>pfkelch13</em>. We therefore know that we have power to detect single deletions down to around 2% prevalence.</p>
+<p>For our follow-up study, we can explore what would happen if we doubled the number of sites in a province:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power with 6 sites of 100</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">6</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  prev_thresh power lower upper
+1        0.05  78.4 75.72 80.91</code></pre>
+</div>
+</div>
+<p>We find that power is around 79%, which is acceptable. We will therefore go ahead with this two-stage design.</p>
 </section>
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<p>We have used <em>DRpower</em> to explore the kind of precision and power we can expect for a given study design. This has revealed that:</p>
+<p>We have used <em>DRpower</em> to explore the precision and power we can expect for a study design consisting of 100 samples in each of 3 sites within a province. This has revealed that:</p>
 <ol type="1">
-<li>When estimating SP mutations, we will have only a rough idea of the prevalence. Probably in the “low” vs.&nbsp;“intermediate” vs.&nbsp;“high” range.</li>
-<li>For <em>pfkelch13</em> mutations, we are powered to detect rare variants down to around 2%. Any lower than this and we run a real risk of missing them.</li>
-<li>For <em>pfhrp2/3</em> deletions, we do not have power under the WHO Master Protocol approach. We have therefore modified our study design to a two-stage process that focuses first on detection, and then on prevalence estimation.</li>
+<li>When estimating SP mutations we will have good precision at the province level, probably with a MoE of around <span class="math inline">\(\pm\)</span> 15%.</li>
+<li>For <em>pfkelch13</em> mutations, we are powered to detect rare variants down to around 2%. Any lower than this and we run the risk of missing them.</li>
+<li>For <em>pfhrp2/3</em> deletions, we do not have power under the WHO Master Protocol approach. We have therefore modified our study design to a two-stage process that focuses first on detection, and then on prevalence estimation. In provinces where deletions are identified we will run a second phase with at least 6 sites of 100 samples.</li>
 </ol>
 
 
@@ -627,9 +666,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
     <a class="nav-link" href="../../website_docs/about.qmd">About</a>
-  </li>  
-    <li class="nav-item">
-    <a class="nav-link" href="../../website_docs/license.qmd">License</a>
   </li>  
 </ul>
     </div>

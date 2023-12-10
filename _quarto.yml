@@ -24,8 +24,6 @@ website:
     right: 
       - text: "About"
         href: website_docs/about.qmd
-      - text: "License"
-        href: website_docs/license.qmd
     
   sidebar:
     background: "#f9eaf1"
@@ -75,3 +73,6 @@ format:
     toc: true
     # fontcolor: "#c82f61"
     linkcolor: "#c82f61" 
+    
+execute:
+  freeze: auto
