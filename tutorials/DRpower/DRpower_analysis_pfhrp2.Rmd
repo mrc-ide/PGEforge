@@ -17,17 +17,14 @@ We start by loading packages:
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 library(tidyverse)
 library(DRpower)
+library(here)
 ```
 
 After loading the data from the PGEforge data folder, we will focus our attention on the Tigray province:
 
-```{r, echo=FALSE, eval=FALSE}
-df_Tigray <- read.csv("tutorials/DRpower/Feleke_pfhrp2.csv") |>
-  filter(ADMIN1 == "Tigray")
-```
 ```{r}
 # import data from PGEforge and filter to Tigray region
-df_Tigray <- read.csv("Feleke_pfhrp2.csv") |>
+df_Tigray <- read.csv(here("data/pfhrp2-3_counts", "Feleke_pfhrp2.csv")) |>
   filter(ADMIN1 == "Tigray")
 
 # display the table
