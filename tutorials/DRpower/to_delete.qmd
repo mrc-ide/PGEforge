@@ -1,4 +1,0 @@
----
-title: "This is a test file for the DRpower folder - delete"
-editor: visual
----
