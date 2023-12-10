@@ -50,7 +50,7 @@ install.packages("devtools", repos = 'http://cran.us.r-project.org')
 You can then install the *DRpower* package directly from GitHub by running
 
 ```{r, eval = FALSE}
-devtools::install_github("mrc-ide/DRpower", ref = "v1.0.0")
+devtools::install_github("mrc-ide/DRpower", ref = "v1.0.2")
 ```
 
 Assuming everything installed correctly, we need to load the package:
