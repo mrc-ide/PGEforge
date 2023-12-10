@@ -39,12 +39,23 @@ website:
       - section: "Data"
         contents:
           - website_docs/data_description.qmd
-          - text: "The data-DAG"
-      - section: "Installing tools via R-universe"
+          - text: "The data-DAG (TODO)"
+      - section: "The landscape of PGE tools"
+        contents:
+          - text: "The landscaping matrix (TODO)"
+          - text: "Installing via the plasmogenepi.r-universe (TODO)"
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
             file: tutorials_overview.qmd
+          - section: "Templates"
+            contents:
+            - text: "Summary template"
+              file: tutorials/Template/Template_background.Rmd
+            - text: "Template installation"
+              file: tutorials/Template/Template_installation.Rmd
+            - text: "Template analysis"
+              file: tutorials/Template/Template_analysis.Rmd
           - section: "DRpower"
             contents:
             - text: "Summary"
@@ -55,10 +66,10 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
-      - section: "Guiding principles for developing software"
+      - section: "Guiding principles for developing software (TODO)"
         contents:
-          - text: "Recommendations"
-          - text: "How do I get my tool on PGEforge?"
+          - text: "Recommendations (TODO)"
+          - text: "How do I get my tool on PGEforge? (TODO)"
       - section: "Events and meetings"
         contents:
             - text: "RADISH23 Hackathon"
