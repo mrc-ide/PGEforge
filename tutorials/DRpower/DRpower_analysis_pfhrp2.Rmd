@@ -10,7 +10,7 @@ library(kableExtra)
 
 ## The data
 
-The data for this analysis come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4). See the description in the [Data section](TODO) for more details on this dataset. In short, the data come from a prospective, cross-sectional survey conducted in northern and western Ethiopia between 2017-2018. False-negative samples by HRP2-based RDT were sent for genomic sequencing to confirm *pfhrp2/3* deletions. We are interested in the prevalence of deletions at the province level, and in particular comparing this prevalence against the [WHO Master Protocol](https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf) threshold of 5%.
+The data for this analysis come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4). See the description in the [Data section](../../website_docs/data_description.qmd) for more details on this dataset. In short, the data come from a prospective, cross-sectional survey conducted in northern and western Ethiopia between 2017-2018. False-negative samples by HRP2-based RDT were sent for genomic sequencing to confirm *pfhrp2/3* deletions. We are interested in the prevalence of deletions at the province level, and in particular comparing this prevalence against the [WHO Master Protocol](https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf) threshold of 5%.
 
 We start by loading packages:
 

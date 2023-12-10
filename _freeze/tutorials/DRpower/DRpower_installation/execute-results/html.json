@@ -1,0 +1,14 @@
+{
+  "hash": "db8c0252061e0cbdfee4ca9e28a40c54",
+  "result": {
+    "markdown": "---\ntitle: \"Installing DRpower\"\noutput: html_document\n---\n\n\n\n\n## Step 1: install a C++ compiler\n\n*DRpower* is an R package, but it uses C++ code under the hood via the [Rcpp](https://teuder.github.io/rcpp4everyone_en/) package to make calculations faster. When you load the package for the first time, these C++ files must be compiled on your local machine. This requires you to have a C++ compiler installed.\n\nExpand the arrow to see instructions for your operating system:\n<details>\n  <summary>Windows</summary>\n  \n  1. Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/index.html), which contains a series of tools for building R packages.\n  2. Once you have Rtools installed you should be able to compile. \n  \n</details>\n<details>\n  <summary>Mac</summary>\n  \n  1. Open a Terminal window. You can do this by searching (keyboard shortcut command+space) for \"Terminal\".\n  2. Inside the terminal window, type the command `xcode-select --install`. This will prompt you to install Xcode command line tools.\n  3. Once you have Xcode command line tools installed you should be able to compile.\n  \n</details>\n<details>\n  <summary>Linux (Ubuntu)</summary>\n  \n  1. Installing on Linux is a bit more tricky. Start by [installing gcc](https://phoenixnap.com/kb/install-gcc-ubuntu).\n  2. Open a Terminal window.\n  3. Execute the command `sudo apt-get install r-base-dev`.\n  4. You should now be able to compile.\n  \n</details>\n\n<br/>\n\n## Step 2: install and load the R package\n\nIn R, ensure that you have the [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) package installed by running\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(\"devtools\", repos = 'http://cran.us.r-project.org')\n```\n:::\n\n\nYou can then install the *DRpower* package directly from GitHub by running\n\n\n::: {.cell}\n\n```{.r .cell-code}\ndevtools::install_github(\"mrc-ide/DRpower\", ref = \"v1.0.2\")\n```\n:::\n\n\nAssuming everything installed correctly, we need to load the package:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(DRpower)\n```\n:::\n\n\nYou can test that the package is loaded and working by running the following command, which should produce this output:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ncheck_DRpower_loaded()\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nDRpower version 1.0.2 loaded successfully!\n```\n:::\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
