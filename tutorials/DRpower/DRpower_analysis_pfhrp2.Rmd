@@ -20,7 +20,7 @@ library(DRpower)
 library(here)
 ```
 
-After loading the data from the PGEforge data folder, we will focus our attention on the Tigray province:
+After loading the data from the [PGEforge data folder](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html), we will focus our attention on the Tigray province:
 
 ```{r}
 # import data from PGEforge and filter to Tigray region
@@ -45,7 +45,7 @@ get_prevalence(n = df_Tigray$Num_pfhrp2_deleted,
                N = df_Tigray$Num_pfhrp2_tested)
 ```
 
-Our point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum *a posteriori* (MAP) estimate as out point estimate, but other options are available (see \code{?get_prevalence}).
+Our point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum *a posteriori* (MAP) estimate as out point estimate, but other options are available (see `?get_prevalence`).
 
 We can also produce a simple plot of the posterior distribution of the prevalence:
 
