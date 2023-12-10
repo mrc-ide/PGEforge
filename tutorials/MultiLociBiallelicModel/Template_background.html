@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Insert name">
 
-<title>PGEforge - Installing (tool name)</title>
+<title>PGEforge - Insert tool title</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -29,8 +30,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../tutorials/Template/Template_analysis.html" rel="next">
-<link href="../../tutorials/Template/Template_background.html" rel="prev">
 <link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -62,6 +61,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 </head>
 
@@ -74,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../tutorials_overview.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../../tutorials/Template/Template_background.html">Templates</a></li><li class="breadcrumb-item"><a href="../../tutorials/Template/Template_installation.html">Template installation</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Insert tool title</li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -147,13 +149,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
  <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../tutorials_overview.html" class="sidebar-item-text sidebar-link">
@@ -162,13 +164,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
  <span class="menu-text">Templates</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../tutorials/Template/Template_background.html" class="sidebar-item-text sidebar-link">
@@ -177,7 +179,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../tutorials/Template/Template_installation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../tutorials/Template/Template_installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Template installation</span></a>
   </div>
 </li>
@@ -276,23 +278,38 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#step-n-what-to-do" id="toc-step-n-what-to-do" class="nav-link active" data-scroll-target="#step-n-what-to-do">Step N: what to do</a></li>
+  <li><a href="#summary-sheet" id="toc-summary-sheet" class="nav-link active" data-scroll-target="#summary-sheet">Summary sheet</a></li>
+  <li><a href="#purpose" id="toc-purpose" class="nav-link" data-scroll-target="#purpose">Purpose</a></li>
+  <li><a href="#existing-resources" id="toc-existing-resources" class="nav-link" data-scroll-target="#existing-resources">Existing resources</a></li>
+  <li><a href="#citation" id="toc-citation" class="nav-link" data-scroll-target="#citation">Citation</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/Template/Template_installation.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/MultiLociBiallelicModel/Template_background.Rmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Installing (tool name)</h1>
+<h1 class="title">Insert tool title</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Insert name </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">Invalid Date</p>
+    </div>
+  </div>
   
     
   </div>
@@ -300,9 +317,76 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="step-n-what-to-do" class="level2">
-<h2 class="anchored" data-anchor-id="step-n-what-to-do">Step N: what to do</h2>
-<p>Short explanation. For most tools we will use Max’s <a href="https://plasmogenepi.r-universe.dev/builds">plasmogenepi.r-universe</a>, which greatly simplifies installation. For other tools, please list the steps as needed.</p>
+<p><br> <br></p>
+<section id="summary-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="summary-sheet">Summary sheet</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed table-sm small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Main use-cases</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Authors</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Latest version</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">License</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Website</td>
+<td style="text-align: left;"><a href="https://www.google.com" target="_blank">https://www.google.com</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Code repository</td>
+<td style="text-align: left;"><a href="https://www.google.com" target="_blank">https://www.google.com</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Publication</td>
+<td style="text-align: left;"><a href="https://www.google.com" target="_blank">https://www.google.com</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tutorial authors</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tutorial date</td>
+<td style="text-align: left;">TODO</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="purpose" class="level2">
+<h2 class="anchored" data-anchor-id="purpose">Purpose</h2>
+<p>A quick one paragraph description of what the tool does. For an example, see the <a href="https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html">DRpower page</a>.</p>
+</section>
+<section id="existing-resources" class="level2">
+<h2 class="anchored" data-anchor-id="existing-resources">Existing resources</h2>
+<ul>
+<li>Any existing online tutorials?</li>
+<li>Any important papers?</li>
+</ul>
+</section>
+<section id="citation" class="level2">
+<h2 class="anchored" data-anchor-id="citation">Citation</h2>
+<p>BibTeX style citation. For an R package, you can get this using <code>citation(package = "name")</code>:</p>
+<p>Here is an example for DRpower, using <code>citation(package = "DRpower")</code>:</p>
+<pre><code>@Manual{,
+    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},
+    author = {Bob Verity and Shazia Ruybal},
+    note = {R package version 1.0.2},
+  }</code></pre>
 
 
 </section>
@@ -541,18 +625,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="../../tutorials/Template/Template_background.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Summary template</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../../tutorials/Template/Template_analysis.html" class="pagination-link">
-        <span class="nav-page-text">Template analysis</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

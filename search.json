@@ -1,24 +1,325 @@
 [
   {
-    "objectID": "tutorials/MALECOT/MALECOT_installation.html",
-    "href": "tutorials/MALECOT/MALECOT_installation.html",
-    "title": "MALECOT_installation",
+    "objectID": "tutorials/coiaf/Template_analysis.html",
+    "href": "tutorials/coiaf/Template_analysis.html",
+    "title": "Give this whatever name you want",
     "section": "",
-    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
   },
   {
-    "objectID": "tutorials/MALECOT/MALECOT_installation.html#r-markdown",
-    "href": "tutorials/MALECOT/MALECOT_installation.html#r-markdown",
-    "title": "MALECOT_installation",
+    "objectID": "tutorials/coiaf/Template_analysis.html#the-data",
+    "href": "tutorials/coiaf/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
     "section": "",
-    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
   },
   {
-    "objectID": "tutorials/MALECOT/MALECOT_installation.html#including-plots",
-    "href": "tutorials/MALECOT/MALECOT_installation.html#including-plots",
-    "title": "MALECOT_installation",
-    "section": "Including Plots",
-    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+    "objectID": "tutorials/coiaf/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/coiaf/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_analysis.html#summary",
+    "href": "tutorials/coiaf/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_installation.html",
+    "href": "tutorials/coiaf/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/coiaf/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_background.html#summary-sheet",
+    "href": "tutorials/pixelate/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_background.html#purpose",
+    "href": "tutorials/pixelate/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_background.html#existing-resources",
+    "href": "tutorials/pixelate/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_background.html#citation",
+    "href": "tutorials/pixelate/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/rehh/Template_analysis.html",
+    "href": "tutorials/rehh/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/rehh/Template_analysis.html#the-data",
+    "href": "tutorials/rehh/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/rehh/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/rehh/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/rehh/Template_analysis.html#summary",
+    "href": "tutorials/rehh/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/rehh/Template_installation.html",
+    "href": "tutorials/rehh/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/rehh/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/rehh/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_background.html#summary-sheet",
+    "href": "tutorials/THEREALMcCOIL/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_background.html#purpose",
+    "href": "tutorials/THEREALMcCOIL/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_background.html#existing-resources",
+    "href": "tutorials/THEREALMcCOIL/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_background.html#citation",
+    "href": "tutorials/THEREALMcCOIL/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_analysis.html",
+    "href": "tutorials/isoRelate/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_analysis.html#the-data",
+    "href": "tutorials/isoRelate/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/isoRelate/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_analysis.html#summary",
+    "href": "tutorials/isoRelate/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_installation.html",
+    "href": "tutorials/isoRelate/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/isoRelate/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_background.html#summary-sheet",
+    "href": "tutorials/AmpSim/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_background.html#purpose",
+    "href": "tutorials/AmpSim/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_background.html#existing-resources",
+    "href": "tutorials/AmpSim/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_background.html#citation",
+    "href": "tutorials/AmpSim/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_analysis.html",
+    "href": "tutorials/dcifer/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_analysis.html#the-data",
+    "href": "tutorials/dcifer/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/dcifer/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_analysis.html#summary",
+    "href": "tutorials/dcifer/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_installation.html",
+    "href": "tutorials/dcifer/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/dcifer/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_background.html#summary-sheet",
+    "href": "tutorials/DEploidIBD/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_background.html#purpose",
+    "href": "tutorials/DEploidIBD/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_background.html#existing-resources",
+    "href": "tutorials/DEploidIBD/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_background.html#citation",
+    "href": "tutorials/DEploidIBD/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_analysis.html",
+    "href": "tutorials/MALECOT/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_analysis.html#the-data",
+    "href": "tutorials/MALECOT/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/MALECOT/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_analysis.html#summary",
+    "href": "tutorials/MALECOT/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_installation.html",
+    "href": "tutorials/MALECOT/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/MALECOT/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_installation.html",
@@ -107,6 +408,216 @@
   {
     "objectID": "tutorials/Template/Template_background.html#citation",
     "href": "tutorials/Template/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/moire/Template_analysis.html",
+    "href": "tutorials/moire/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/moire/Template_analysis.html#the-data",
+    "href": "tutorials/moire/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/moire/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/moire/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/moire/Template_analysis.html#summary",
+    "href": "tutorials/moire/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/moire/Template_installation.html",
+    "href": "tutorials/moire/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/moire/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/moire/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_background.html#summary-sheet",
+    "href": "tutorials/estMOI/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_background.html#purpose",
+    "href": "tutorials/estMOI/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_background.html#existing-resources",
+    "href": "tutorials/estMOI/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_background.html#citation",
+    "href": "tutorials/estMOI/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_analysis.html",
+    "href": "tutorials/MultiLociBiallelicModel/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_analysis.html#the-data",
+    "href": "tutorials/MultiLociBiallelicModel/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/MultiLociBiallelicModel/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_analysis.html#summary",
+    "href": "tutorials/MultiLociBiallelicModel/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_installation.html",
+    "href": "tutorials/MultiLociBiallelicModel/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/MultiLociBiallelicModel/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_background.html#summary-sheet",
+    "href": "tutorials/paneljudge/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_background.html#purpose",
+    "href": "tutorials/paneljudge/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_background.html#existing-resources",
+    "href": "tutorials/paneljudge/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_background.html#citation",
+    "href": "tutorials/paneljudge/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_analysis.html",
+    "href": "tutorials/hmmIBD/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_analysis.html#the-data",
+    "href": "tutorials/hmmIBD/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/hmmIBD/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_analysis.html#summary",
+    "href": "tutorials/hmmIBD/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_installation.html",
+    "href": "tutorials/hmmIBD/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/hmmIBD/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/BRO/Template_background.html#summary-sheet",
+    "href": "tutorials/BRO/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/BRO/Template_background.html#purpose",
+    "href": "tutorials/BRO/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/BRO/Template_background.html#existing-resources",
+    "href": "tutorials/BRO/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/BRO/Template_background.html#citation",
+    "href": "tutorials/BRO/Template_background.html#citation",
     "title": "Insert tool title",
     "section": "Citation",
     "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
@@ -231,6 +742,216 @@
     "text": "The pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021)."
   },
   {
+    "objectID": "tutorials/BRO/Template_installation.html",
+    "href": "tutorials/BRO/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/BRO/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/BRO/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/BRO/Template_analysis.html",
+    "href": "tutorials/BRO/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/BRO/Template_analysis.html#the-data",
+    "href": "tutorials/BRO/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/BRO/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/BRO/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/BRO/Template_analysis.html#summary",
+    "href": "tutorials/BRO/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_background.html#summary-sheet",
+    "href": "tutorials/hmmIBD/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_background.html#purpose",
+    "href": "tutorials/hmmIBD/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_background.html#existing-resources",
+    "href": "tutorials/hmmIBD/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/hmmIBD/Template_background.html#citation",
+    "href": "tutorials/hmmIBD/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_installation.html",
+    "href": "tutorials/paneljudge/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/paneljudge/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_analysis.html",
+    "href": "tutorials/paneljudge/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_analysis.html#the-data",
+    "href": "tutorials/paneljudge/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/paneljudge/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/paneljudge/Template_analysis.html#summary",
+    "href": "tutorials/paneljudge/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_background.html#summary-sheet",
+    "href": "tutorials/MultiLociBiallelicModel/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_background.html#purpose",
+    "href": "tutorials/MultiLociBiallelicModel/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_background.html#existing-resources",
+    "href": "tutorials/MultiLociBiallelicModel/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/MultiLociBiallelicModel/Template_background.html#citation",
+    "href": "tutorials/MultiLociBiallelicModel/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_installation.html",
+    "href": "tutorials/estMOI/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/estMOI/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_analysis.html",
+    "href": "tutorials/estMOI/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_analysis.html#the-data",
+    "href": "tutorials/estMOI/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/estMOI/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/estMOI/Template_analysis.html#summary",
+    "href": "tutorials/estMOI/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/moire/Template_background.html#summary-sheet",
+    "href": "tutorials/moire/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/moire/Template_background.html#purpose",
+    "href": "tutorials/moire/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/moire/Template_background.html#existing-resources",
+    "href": "tutorials/moire/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/moire/Template_background.html#citation",
+    "href": "tutorials/moire/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
     "objectID": "tutorials/Template/Template_installation.html",
     "href": "tutorials/Template/Template_installation.html",
     "title": "Installing (tool name)",
@@ -341,5 +1062,313 @@
     "title": "DRpower",
     "section": "Citation",
     "text": "Citation\nPlease use the following citation:\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_background.html#summary-sheet",
+    "href": "tutorials/MALECOT/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_background.html#purpose",
+    "href": "tutorials/MALECOT/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_background.html#existing-resources",
+    "href": "tutorials/MALECOT/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/MALECOT/Template_background.html#citation",
+    "href": "tutorials/MALECOT/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_installation.html",
+    "href": "tutorials/DEploidIBD/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/DEploidIBD/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_analysis.html",
+    "href": "tutorials/DEploidIBD/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_analysis.html#the-data",
+    "href": "tutorials/DEploidIBD/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/DEploidIBD/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/DEploidIBD/Template_analysis.html#summary",
+    "href": "tutorials/DEploidIBD/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_background.html#summary-sheet",
+    "href": "tutorials/dcifer/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_background.html#purpose",
+    "href": "tutorials/dcifer/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_background.html#existing-resources",
+    "href": "tutorials/dcifer/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/dcifer/Template_background.html#citation",
+    "href": "tutorials/dcifer/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_installation.html",
+    "href": "tutorials/AmpSim/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/AmpSim/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_analysis.html",
+    "href": "tutorials/AmpSim/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_analysis.html#the-data",
+    "href": "tutorials/AmpSim/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/AmpSim/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/AmpSim/Template_analysis.html#summary",
+    "href": "tutorials/AmpSim/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_background.html#summary-sheet",
+    "href": "tutorials/isoRelate/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_background.html#purpose",
+    "href": "tutorials/isoRelate/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_background.html#existing-resources",
+    "href": "tutorials/isoRelate/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/isoRelate/Template_background.html#citation",
+    "href": "tutorials/isoRelate/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_installation.html",
+    "href": "tutorials/THEREALMcCOIL/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/THEREALMcCOIL/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_analysis.html",
+    "href": "tutorials/THEREALMcCOIL/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_analysis.html#the-data",
+    "href": "tutorials/THEREALMcCOIL/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/THEREALMcCOIL/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/THEREALMcCOIL/Template_analysis.html#summary",
+    "href": "tutorials/THEREALMcCOIL/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/rehh/Template_background.html#summary-sheet",
+    "href": "tutorials/rehh/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/rehh/Template_background.html#purpose",
+    "href": "tutorials/rehh/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/rehh/Template_background.html#existing-resources",
+    "href": "tutorials/rehh/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/rehh/Template_background.html#citation",
+    "href": "tutorials/rehh/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_installation.html",
+    "href": "tutorials/pixelate/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/pixelate/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_analysis.html",
+    "href": "tutorials/pixelate/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_analysis.html#the-data",
+    "href": "tutorials/pixelate/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/pixelate/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/pixelate/Template_analysis.html#summary",
+    "href": "tutorials/pixelate/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_background.html#summary-sheet",
+    "href": "tutorials/coiaf/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_background.html#purpose",
+    "href": "tutorials/coiaf/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_background.html#existing-resources",
+    "href": "tutorials/coiaf/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/coiaf/Template_background.html#citation",
+    "href": "tutorials/coiaf/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
   }
 ]
