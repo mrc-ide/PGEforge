@@ -75,3 +75,6 @@ format:
     toc: true
     # fontcolor: "#c82f61"
     linkcolor: "#c82f61" 
+    code-tools: true
+    code-link: true
+    
