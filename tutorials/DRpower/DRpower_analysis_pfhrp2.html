@@ -580,21 +580,20 @@ display: none;
 <div id="the-data" class="section level2">
 <h2>The data</h2>
 <p>The data for this analysis come from a study by <a href="https://doi.org/10.1038/s41564-021-00962-4">Feleke et
-al. (2021)</a>. See the description in the <a href="TODO">Data
-section</a> for more details on this dataset. In short, the data come
-from a prospective, cross-sectional survey conducted in northern and
-western Ethiopia between 2017-2018. False-negative samples by HRP2-based
-RDT were sent for genomic sequencing to confirm <em>pfhrp2/3</em>
-deletions. We are interested in the prevalence of deletions at the
-province level, and in particular comparing this prevalence against the
-<a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO
+al. (2021)</a>. See the description in the <a href="../../website_docs/data_description.qmd">Data section</a> for more
+details on this dataset. In short, the data come from a prospective,
+cross-sectional survey conducted in northern and western Ethiopia
+between 2017-2018. False-negative samples by HRP2-based RDT were sent
+for genomic sequencing to confirm <em>pfhrp2/3</em> deletions. We are
+interested in the prevalence of deletions at the province level, and in
+particular comparing this prevalence against the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO
 Master Protocol</a> threshold of 5%.</p>
 <p>We start by loading packages:</p>
 <pre class="r"><code>library(tidyverse)
 library(DRpower)
 library(here)</code></pre>
-<p>After loading the data from the PGEforge data folder, we will focus
-our attention on the Tigray province:</p>
+<p>After loading the data from the <a href="https://mrc-ide.github.io/PGEforge/website_docs/data_description.html">PGEforge
+data folder</a>, we will focus our attention on the Tigray province:</p>
 <pre class="r"><code># import data from PGEforge and filter to Tigray region
 df_Tigray &lt;- read.csv(here(&quot;data/pfhrp2-3_counts&quot;, &quot;Feleke_pfhrp2.csv&quot;)) |&gt;
   filter(ADMIN1 == &quot;Tigray&quot;)
@@ -830,7 +829,7 @@ get_prevalence(n = df_Tigray$Num_pfhrp2_deleted,
 <p>Our point estimate of the prevalence is 20.4%, and our Bayesian 95%
 credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the
 maximum <em>a posteriori</em> (MAP) estimate as out point estimate, but
-other options are available (see ).</p>
+other options are available (see <code>?get_prevalence</code>).</p>
 <p>We can also produce a simple plot of the posterior distribution of
 the prevalence:</p>
 <pre class="r"><code># plot the posterior distribution of the prevalence
@@ -896,7 +895,7 @@ deletions is 10% in the region:</p>
 <pre class="r"><code># estimate power using the actual sample sizes
 get_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)</code></pre>
 <pre><code>##   prev_thresh power lower upper
-## 1        0.05  77.4 74.68 79.96</code></pre>
+## 1        0.05  75.9 73.13 78.52</code></pre>
 <p>We find that power was around 79%, which is definitely adequate.</p>
 </div>
 <div id="summary" class="section level2">
