@@ -40,7 +40,7 @@ website:
         contents:
           - website_docs/data_description.qmd
           - text: "The data-DAG (TODO)"
-      - section: "The landscape of PGE tools"
+      - section: "PGE tools landscape"
         contents:
           - text: "The landscaping matrix (TODO)"
           - text: "Installing via the plasmogenepi.r-universe (TODO)"
@@ -66,7 +66,7 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
-      - section: "Guiding principles for developing software (TODO)"
+      - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"
           - text: "How do I get my tool on PGEforge? (TODO)"
