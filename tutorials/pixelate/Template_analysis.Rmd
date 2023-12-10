@@ -1,0 +1,30 @@
+---
+title: "Give this whatever name you want"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+## The data
+
+These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+
+Remember to load any packages, including the tool that you are working on:
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(here)
+```
+
+
+## First analysis section
+
+Make as many sections as you need. Try to break long documents out over multiple pages.
+
+## Summary
+
+It's a good idea to round off with a summary of what we did.
+
+PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
