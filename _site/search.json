@@ -165,7 +165,7 @@
     "href": "tutorials/tests/test_rmd.html#including-plots",
     "title": "Rmarkdown file test",
     "section": "Including Plots",
-    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot."
+    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot.\n\nls\n\ntest_python_notebook.ipynb\ntest_rmd.Rmd\ntest_rmd.html\ntest_rmd.rmarkdown\ntest_rmd_files"
   },
   {
     "objectID": "tutorials/DRpower/to_delete.html",

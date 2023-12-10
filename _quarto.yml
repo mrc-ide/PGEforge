@@ -21,9 +21,6 @@ website:
     background: "#f9eaf1"
     foreground: "#c82f61"
     center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2023"
-    right: 
-      - text: "About"
-        href: website_docs/about.qmd
     
   sidebar:
     background: "#f9eaf1"
@@ -39,19 +36,11 @@ website:
     contents:
       - href: index.qmd
         text: Welcome
-      - href: website_docs/contributors.qmd
-        text: "Contributors"
-      - href: website_docs/radish23.qmd
-        text: "RADISH23 Hackathon"
-      - href: website_docs/tutorial_guidelines.qmd
-        text: "Preparing your tutorial"
       - section: "Data"
         contents:
           - website_docs/data_description.qmd
-      - section: "Tests"
-        contents:
-          - tutorials/tests/test_rmd.Rmd
-          - tutorials/tests/test_python_notebook.ipynb
+          - text: "The data-DAG"
+      - section: "Installing tools via R-universe"
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
@@ -66,6 +55,16 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+      - section: "Guiding principles for developing software"
+        contents:
+          - text: "Recommendations"
+          - text: "How do I get my tool on PGEforge?"
+      - section: "Events and meetings"
+        contents:
+            - text: "RADISH23 Hackathon"
+              file: website_docs/radish23.qmd
+      - href: website_docs/contributors.qmd
+        text: "Contributors"
 
 format:
   html:
