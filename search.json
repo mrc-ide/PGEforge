@@ -60,7 +60,7 @@
     "href": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#estimating-the-prevalence",
     "title": "Analysis of pfhrp2/3 data",
     "section": "Estimating the prevalence",
-    "text": "Estimating the prevalence\nNine times out of ten, the thing we’re interested in is the prevalence of pfhrp2/3 deletions. We can estimate this using the get_prevalence() function, using values from the data.frame above:\n\n# estimate the prevalence of deletions\nget_prevalence(n = df_Tigray$Num_pfhrp2_deleted,\n               N = df_Tigray$Num_pfhrp2_tested)\n\n   MAP CrI_lower CrI_upper prob_above_threshold\n1 20.4     14.11     28.93                    1\n\n\nOur point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum a posteriori (MAP) estimate as out point estimate, but other options are available (see ).\nWe can also produce a simple plot of the posterior distribution of the prevalence:\n\n# plot the posterior distribution of the prevalence\nplot_prevalence(n = df_Tigray$Num_pfhrp2_deleted,\n                N = df_Tigray$Num_pfhrp2_tested)\n\n\n\n\nNotice that both the table output and the plot give a probability close to 100% of being above the 5% threshold. Based on these results we would be justified in switching RDTs."
+    "text": "Estimating the prevalence\nNine times out of ten, the thing we’re interested in is the prevalence of pfhrp2/3 deletions. We can estimate this using the get_prevalence() function, using values from the data.frame above:\n\n# estimate the prevalence of deletions\nget_prevalence(n = df_Tigray$Num_pfhrp2_deleted,\n               N = df_Tigray$Num_pfhrp2_tested)\n\n   MAP CrI_lower CrI_upper prob_above_threshold\n1 20.4     14.11     28.93                    1\n\n\nOur point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum a posteriori (MAP) estimate as out point estimate, but other options are available (see ?get_prevalence).\nWe can also produce a simple plot of the posterior distribution of the prevalence:\n\n# plot the posterior distribution of the prevalence\nplot_prevalence(n = df_Tigray$Num_pfhrp2_deleted,\n                N = df_Tigray$Num_pfhrp2_tested)\n\n\n\n\nNotice that both the table output and the plot give a probability close to 100% of being above the 5% threshold. Based on these results we would be justified in switching RDTs."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#estimating-the-intra-cluster-correlation",
@@ -74,7 +74,7 @@
     "href": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#retrospective-power-analysis",
     "title": "Analysis of pfhrp2/3 data",
     "section": "Retrospective power analysis",
-    "text": "Retrospective power analysis\nAn interesting question is: given the final sample sizes in the Tigray region, what was our power? This sort of retrospective power analysis can be useful to evaluate the strength of evidence of a study. However, it is obviously far better to perform a power analysis before conducting the study!\nHere, we take the standard approach of assuming the prevalence of deletions is 10% in the region:\n\n# estimate power using the actual sample sizes\nget_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  77.9  75.2 80.44\n\n\nWe find that power was around 79%, which is definitely adequate."
+    "text": "Retrospective power analysis\nAn interesting question is: given the final sample sizes in the Tigray region, what was our power? This sort of retrospective power analysis can be useful to evaluate the strength of evidence of a study. However, it is obviously far better to perform a power analysis before conducting the study!\nHere, we take the standard approach of assuming the prevalence of deletions is 10% in the region:\n\n# estimate power using the actual sample sizes\nget_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  76.6 73.85 79.19\n\n\nWe find that power was around 79%, which is definitely adequate."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#summary",
@@ -84,102 +84,46 @@
     "text": "Summary\nIn summary, we estimate from the Feleke et al. (2021) data that the prevalence of pfhrp2 deletions in the Tigray region of Ethiopia was 20.4% (CrI 14.11%-28.93%) at the time of the study (2017-2018). We are highly confident that this prevalence is above the WHO threshold of 5%. We find evidence that the intra-cluster correlation may be low in this region (0.015, CrI 0.00-0.103), implying that the prevalence of pfhrp2 deletions may be relatively flat. Finally, in a retrospective power analysis we identify that this was a well-powered study, giving us increased confidence in the conclusions."
   },
   {
-    "objectID": "tutorials/tests/test_rmd.html",
-    "href": "tutorials/tests/test_rmd.html",
-    "title": "Rmarkdown file test",
+    "objectID": "tutorials/Template/Template_background.html#summary-sheet",
+    "href": "tutorials/Template/Template_background.html#summary-sheet",
+    "title": "Insert tool title",
+    "section": "Summary sheet",
+    "text": "Summary sheet\n\n\n\n\n\nMain use-cases\nTODO\n\n\nAuthors\nTODO\n\n\nLatest version\nTODO\n\n\nLicense\nTODO\n\n\nWebsite\nhttps://www.google.com\n\n\nCode repository\nhttps://www.google.com\n\n\nPublication\nhttps://www.google.com\n\n\nTutorial authors\nTODO\n\n\nTutorial date\nTODO"
+  },
+  {
+    "objectID": "tutorials/Template/Template_background.html#purpose",
+    "href": "tutorials/Template/Template_background.html#purpose",
+    "title": "Insert tool title",
+    "section": "Purpose",
+    "text": "Purpose\nA quick one paragraph description of what the tool does. For an example, see the DRpower page."
+  },
+  {
+    "objectID": "tutorials/Template/Template_background.html#existing-resources",
+    "href": "tutorials/Template/Template_background.html#existing-resources",
+    "title": "Insert tool title",
+    "section": "Existing resources",
+    "text": "Existing resources\n\nAny existing online tutorials?\nAny important papers?"
+  },
+  {
+    "objectID": "tutorials/Template/Template_background.html#citation",
+    "href": "tutorials/Template/Template_background.html#citation",
+    "title": "Insert tool title",
+    "section": "Citation",
+    "text": "Citation\nBibTeX style citation. For an R package, you can get this using citation(package = \"name\"):\nHere is an example for DRpower, using citation(package = \"DRpower\"):\n@Manual{,\n    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},\n    author = {Bob Verity and Shazia Ruybal},\n    note = {R package version 1.0.2},\n  }"
+  },
+  {
+    "objectID": "website_docs/contributors.html",
+    "href": "website_docs/contributors.html",
+    "title": "Contributors",
     "section": "",
-    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
+    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
   },
   {
-    "objectID": "tutorials/tests/test_rmd.html#r-markdown",
-    "href": "tutorials/tests/test_rmd.html#r-markdown",
-    "title": "Rmarkdown file test",
+    "objectID": "website_docs/contributors.html#main-contributors",
+    "href": "website_docs/contributors.html#main-contributors",
+    "title": "Contributors",
     "section": "",
-    "text": "This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.\nWhen you click the Knit button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nsummary(cars)\n\n     speed           dist       \n Min.   : 4.0   Min.   :  2.00  \n 1st Qu.:12.0   1st Qu.: 26.00  \n Median :15.0   Median : 36.00  \n Mean   :15.4   Mean   : 42.98  \n 3rd Qu.:19.0   3rd Qu.: 56.00  \n Max.   :25.0   Max.   :120.00"
-  },
-  {
-    "objectID": "tutorials/tests/test_rmd.html#including-plots",
-    "href": "tutorials/tests/test_rmd.html#including-plots",
-    "title": "Rmarkdown file test",
-    "section": "Including Plots",
-    "text": "Including Plots\nYou can also embed plots, for example:\n\n\n\n\n\nNote that the echo = FALSE parameter was added to the code chunk to prevent printing of the R code that generated the plot.\n\nls\n\ntest_python_notebook.ipynb\ntest_rmd.Rmd\ntest_rmd.rmarkdown\ntest_rmd_files"
-  },
-  {
-    "objectID": "website_docs/data_description.html",
-    "href": "website_docs/data_description.html",
-    "title": "Data description",
-    "section": "",
-    "text": "PGEforge hosts simulated and empirical datasets of:\n\nWhole genome sequencing (WGS)\nMicrohaplotype data\nSNP barcoding data\npfhrp2/3 deletion count data\n\nThey can be located at the PGEforge/data folder.\n\n\n\n\nAll of the data within the subfolder wgs/pf3k was derived from the Pf3k Project. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (\\(n=113\\)) - Vietnam (\\(n=97\\)) - In vitro mixures of laboratory strains (\\(n=25\\))\nEach VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the Pf7 data set, which contains the Pf3k samples. These were not calculated for the in vitro lab mixtures.\n\n\n\nAll of the data within the subfolder wgs/simulated was simulated. In brief, a simulated sample with a given complexity of infection (COI), \\(K\\), is created by randomly sampling \\(K\\) clonal haplotypes (\\(F_{ws} &gt; 0.95\\)) from a given country within the Pf3k Project, assigning these haplotypes to \\(j \\leq K\\) bites, simulating meiosis if \\(j &lt; K\\), randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (\\(n=40\\))\nThe COI of these samples ranges from one to four, and about half of them have within-host relatedness.\n\n\n\n\nThe pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021)."
-  },
-  {
-    "objectID": "website_docs/data_description.html#whole-genome-sequencing-wgs-data-for-p.-falciparum",
-    "href": "website_docs/data_description.html#whole-genome-sequencing-wgs-data-for-p.-falciparum",
-    "title": "Data description",
-    "section": "",
-    "text": "All of the data within the subfolder wgs/pf3k was derived from the Pf3k Project. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (\\(n=113\\)) - Vietnam (\\(n=97\\)) - In vitro mixures of laboratory strains (\\(n=25\\))\nEach VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the Pf7 data set, which contains the Pf3k samples. These were not calculated for the in vitro lab mixtures.\n\n\n\nAll of the data within the subfolder wgs/simulated was simulated. In brief, a simulated sample with a given complexity of infection (COI), \\(K\\), is created by randomly sampling \\(K\\) clonal haplotypes (\\(F_{ws} &gt; 0.95\\)) from a given country within the Pf3k Project, assigning these haplotypes to \\(j \\leq K\\) bites, simulating meiosis if \\(j &lt; K\\), randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (\\(n=40\\))\nThe COI of these samples ranges from one to four, and about half of them have within-host relatedness."
-  },
-  {
-    "objectID": "website_docs/data_description.html#pfhrp23-gene-deletion-count-data",
-    "href": "website_docs/data_description.html#pfhrp23-gene-deletion-count-data",
-    "title": "Data description",
-    "section": "",
-    "text": "The pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021)."
-  },
-  {
-    "objectID": "website_docs/tutorial_guidelines.html",
-    "href": "website_docs/tutorial_guidelines.html",
-    "title": "Tutorial guidelines",
-    "section": "",
-    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
-  },
-  {
-    "objectID": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
-    "href": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
-    "title": "Tutorial guidelines",
-    "section": "",
-    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "PGEforge",
-    "section": "",
-    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
-  },
-  {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "PGEforge",
-    "section": "",
-    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
-  },
-  {
-    "objectID": "index.html#a-community-led-effort",
-    "href": "index.html#a-community-led-effort",
-    "title": "PGEforge",
-    "section": "A community-led effort",
-    "text": "A community-led effort\nMost of these resources were developed at the RADISH23 Hackathon by the following contributors."
-  },
-  {
-    "objectID": "index.html#funding",
-    "href": "index.html#funding",
-    "title": "PGEforge",
-    "section": "Funding",
-    "text": "Funding"
-  },
-  {
-    "objectID": "tutorials_overview.html",
-    "href": "tutorials_overview.html",
-    "title": "Tutorials overview",
-    "section": "",
-    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
-  },
-  {
-    "objectID": "tutorials_overview.html#tutorial-details",
-    "href": "tutorials_overview.html#tutorial-details",
-    "title": "Tutorials overview",
-    "section": "",
-    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
+    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
   },
   {
     "objectID": "website_docs/radish23.html",
@@ -210,65 +154,163 @@
     "text": "Tutorial development\nTake a look at the tutorial guidelines for more details."
   },
   {
-    "objectID": "website_docs/contributors.html",
-    "href": "website_docs/contributors.html",
-    "title": "Contributors",
+    "objectID": "tutorials_overview.html",
+    "href": "tutorials_overview.html",
+    "title": "Tutorials overview",
     "section": "",
-    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
   },
   {
-    "objectID": "website_docs/contributors.html#main-contributors",
-    "href": "website_docs/contributors.html#main-contributors",
-    "title": "Contributors",
+    "objectID": "tutorials_overview.html#tutorial-details",
+    "href": "tutorials_overview.html#tutorial-details",
+    "title": "Tutorials overview",
     "section": "",
-    "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nNote: we can create a ‘listing’ of all tutorials, more details here\nFor now, in the Tests menu option we have a test R markdown (.rmd) and a Python notebook (.ipynb) for demonstration purposes."
   },
   {
-    "objectID": "tutorials/tests/test_python_notebook.html",
-    "href": "tutorials/tests/test_python_notebook.html",
-    "title": "This is a test of a python notebook",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "PGEforge",
     "section": "",
-    "text": "import numpy as np\nimport matplotlib.pyplot as plt\n\nWe will display a random plot below\n\nr = np.arange(0, 2, 0.01)\ntheta = 2 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\n\n\n\n Back to top"
+    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "PGEforge",
+    "section": "",
+    "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
+  },
+  {
+    "objectID": "index.html#a-community-led-effort",
+    "href": "index.html#a-community-led-effort",
+    "title": "PGEforge",
+    "section": "A community-led effort",
+    "text": "A community-led effort\nMost of these resources were developed at the RADISH23 Hackathon by the following contributors."
+  },
+  {
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
+    "title": "PGEforge",
+    "section": "Funding",
+    "text": "Funding"
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html",
+    "href": "website_docs/tutorial_guidelines.html",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "href": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "website_docs/data_description.html",
+    "href": "website_docs/data_description.html",
+    "title": "Data description",
+    "section": "",
+    "text": "PGEforge hosts simulated and empirical datasets of:\n\nWhole genome sequencing (WGS)\nMicrohaplotype data\nSNP barcoding data\npfhrp2/3 deletion count data\n\nThey can be located at the PGEforge/data folder.\n\n\n\n\nAll of the data within the subfolder wgs/pf3k was derived from the Pf3k Project. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (\\(n=113\\)) - Vietnam (\\(n=97\\)) - In vitro mixures of laboratory strains (\\(n=25\\))\nEach VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the Pf7 data set, which contains the Pf3k samples. These were not calculated for the in vitro lab mixtures.\n\n\n\nAll of the data within the subfolder wgs/simulated was simulated. In brief, a simulated sample with a given complexity of infection (COI), \\(K\\), is created by randomly sampling \\(K\\) clonal haplotypes (\\(F_{ws} &gt; 0.95\\)) from a given country within the Pf3k Project, assigning these haplotypes to \\(j \\leq K\\) bites, simulating meiosis if \\(j &lt; K\\), randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (\\(n=40\\))\nThe COI of these samples ranges from one to four, and about half of them have within-host relatedness.\n\n\n\n\nThe pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021)."
+  },
+  {
+    "objectID": "website_docs/data_description.html#whole-genome-sequencing-wgs-data-for-p.-falciparum",
+    "href": "website_docs/data_description.html#whole-genome-sequencing-wgs-data-for-p.-falciparum",
+    "title": "Data description",
+    "section": "",
+    "text": "All of the data within the subfolder wgs/pf3k was derived from the Pf3k Project. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (\\(n=113\\)) - Vietnam (\\(n=97\\)) - In vitro mixures of laboratory strains (\\(n=25\\))\nEach VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the Pf7 data set, which contains the Pf3k samples. These were not calculated for the in vitro lab mixtures.\n\n\n\nAll of the data within the subfolder wgs/simulated was simulated. In brief, a simulated sample with a given complexity of infection (COI), \\(K\\), is created by randomly sampling \\(K\\) clonal haplotypes (\\(F_{ws} &gt; 0.95\\)) from a given country within the Pf3k Project, assigning these haplotypes to \\(j \\leq K\\) bites, simulating meiosis if \\(j &lt; K\\), randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (\\(n=40\\))\nThe COI of these samples ranges from one to four, and about half of them have within-host relatedness."
+  },
+  {
+    "objectID": "website_docs/data_description.html#pfhrp23-gene-deletion-count-data",
+    "href": "website_docs/data_description.html#pfhrp23-gene-deletion-count-data",
+    "title": "Data description",
+    "section": "",
+    "text": "The pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021)."
+  },
+  {
+    "objectID": "tutorials/Template/Template_installation.html",
+    "href": "tutorials/Template/Template_installation.html",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/Template/Template_installation.html#step-n-what-to-do",
+    "href": "tutorials/Template/Template_installation.html#step-n-what-to-do",
+    "title": "Installing (tool name)",
+    "section": "",
+    "text": "Short explanation. For most tools we will use Max’s plasmogenepi.r-universe, which greatly simplifies installation. For other tools, please list the steps as needed."
+  },
+  {
+    "objectID": "tutorials/Template/Template_analysis.html",
+    "href": "tutorials/Template/Template_analysis.html",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/Template/Template_analysis.html#the-data",
+    "href": "tutorials/Template/Template_analysis.html#the-data",
+    "title": "Give this whatever name you want",
+    "section": "",
+    "text": "These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the main Data tab for further details.\nRemember to load any packages, including the tool that you are working on:\n\nlibrary(tidyverse)\nlibrary(here)"
+  },
+  {
+    "objectID": "tutorials/Template/Template_analysis.html#first-analysis-section",
+    "href": "tutorials/Template/Template_analysis.html#first-analysis-section",
+    "title": "Give this whatever name you want",
+    "section": "First analysis section",
+    "text": "First analysis section\nMake as many sections as you need. Try to break long documents out over multiple pages."
+  },
+  {
+    "objectID": "tutorials/Template/Template_analysis.html#summary",
+    "href": "tutorials/Template/Template_analysis.html#summary",
+    "title": "Give this whatever name you want",
+    "section": "Summary",
+    "text": "Summary\nIt’s a good idea to round off with a summary of what we did.\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html",
     "href": "tutorials/DRpower/DRpower_design.html",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "",
     "text": "Here, we will use DRpower to help us design a prospective malaria molecular surveillance (MMS) study. We are interested in the following questions:\n\nWhat is the prevalence of sulfadoxine/pyrimethamine (SP) mutations?\nAre there any pfkelch13 mutations in our region?\nWhat is the prevalence of pfhrp2/3 gene deletions, and is this prevalence above 5% (the WHO threshold at which a nationwide change in RDTs is recommended)?\n\nBased on initial budget calculations, we are aiming to collect 100 samples from each of 3 sites in each of 10 provinces. We want to know what sort of power we can expect with these numbers for each of the end-points above."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html#premise",
     "href": "tutorials/DRpower/DRpower_design.html#premise",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "",
     "text": "Here, we will use DRpower to help us design a prospective malaria molecular surveillance (MMS) study. We are interested in the following questions:\n\nWhat is the prevalence of sulfadoxine/pyrimethamine (SP) mutations?\nAre there any pfkelch13 mutations in our region?\nWhat is the prevalence of pfhrp2/3 gene deletions, and is this prevalence above 5% (the WHO threshold at which a nationwide change in RDTs is recommended)?\n\nBased on initial budget calculations, we are aiming to collect 100 samples from each of 3 sites in each of 10 provinces. We want to know what sort of power we can expect with these numbers for each of the end-points above."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html#sp-mutation-prevalence---margin-of-error-moe-calculation",
     "href": "tutorials/DRpower/DRpower_design.html#sp-mutation-prevalence---margin-of-error-moe-calculation",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "SP mutation prevalence - margin of error (MoE) calculation",
     "text": "SP mutation prevalence - margin of error (MoE) calculation\nOur plan is to pool results over the 3 sites within each province to arrive at an estimate of the overall prevalence of SP mutations at the province level. When pooling results it is important to take account of intra-cluster correlation (ICC) in our confidence intervals (CIs). Failure to do so will lead to unrealistically tight intervals. DRpower provides several functions for calculating the expected margin of error (MoE) given assumptions about sample size, the ICC, and the known prevalence of mutations.\nFirst, let’s load the package and set the random seed so our results are reproducible:\n\nlibrary(DRpower)\nset.seed(1)\n\nWe will use the get_margin() function to tell us the MoE we can expect if the prevalence of a mutation is 10% at the province level. We set the parameters to define 3 clusters of 100 samples. We assume an ICC value of 0.05:\n\n# get MoE using simple calculation\nget_margin(N = 100, n_clust = 3, prevalence = 0.1, ICC = 0.05)\n\n    lower     upper \n 1.719297 18.280703 \n\n\nThis output tells us that we expect our CI to range from 1.7% at the lower end to 18.3% at the upper end when estimating a variant at 10% prevalence. In other words, we expect a MoE of 8.3%. This is precise enough for most purposes.\nOur worst case MoE will occur when the prevalence of the marker is 50%. We can explore this here:\n\n# get worst case MoE\nget_margin(N = 100, n_clust = 3, prevalence = 0.5, ICC = 0.05)\n\n   lower    upper \n36.19883 63.80117 \n\n\nIn the worst case our MoE goes up to \\(\\pm\\) 14%, which is still reasonably precise.\nHowever, this approach assumes that we know the level of intra-cluster correlation exactly. It also uses a normal approximation when producing CIs, which is a bad approximation when the prevalence is very low or very high. A more cautious approach is to estimate prevalence using the Bayesian model within DRpower. If we plan to use this approach, then we should use the get_margin_Bayesian() function to estimate the MoE:\n\n# get expected MoE via the Bayesian approach\nget_margin_Bayesian(N = rep(100, 3), prevalence = 0.1, reps = 1e2)\n\n      estimate    CI_2.5   CI_97.5\nlower   3.8705  3.391827  4.349173\nupper  25.1018 23.891353 26.312247\n\n\nWe should look at the first column of this data.frame when comparing to the previous values. We now find that our credible interval (CrI) is expected to range from 3.8% to 25.1%. This is quite different from what we found under the simpler get_margin() method, being tighter at low prevalence but wider at high prevalence. Note that unlike the previous function these are estimated values, hence they are presented along with a 95% CI. We can make estimate more precise if needed by increasing reps.\nWe can explore our worst case MoE using the same method:\n\n# get worst case MoE via the Bayesian approach\nget_margin_Bayesian(N = rep(100, 3), prevalence = 0.5, reps = 1e2)\n\n      estimate   CI_2.5  CI_97.5\nlower  33.4947 31.92120 35.06820\nupper  65.5736 64.12608 67.02112\n\n\nIn the worst case we can expect our CI to range from 33.5% to 66.6%, a MoE of around \\(\\pm\\) 16.5%. This is slightly higher than before, but still precise enough for most purposes."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html#pfkelch13-mutations---presenceabsence-analysis",
     "href": "tutorials/DRpower/DRpower_design.html#pfkelch13-mutations---presenceabsence-analysis",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "pfkelch13 mutations - presence/absence analysis",
     "text": "pfkelch13 mutations - presence/absence analysis\nWhen it comes to pfkelch13, we are interested in knowing if there are any mutants in the province, rather than estimating the prevalence of mutants. A single positive sample would prove that there are mutants in the province, however, if the prevalence is very low we may get unlucky and miss them. We can use the get_power_presence() function to explore our probability of detecting at least one positive sample:\n\n# get power when prevalence is 1%\nget_power_presence(N = rep(100, 3), prevalence = 0.01, ICC = 0.05)\n\n[1] 65.38844\n\n\nWe can see that if pfkelch13 mutants were at 1% prevalence at the province level then we would have a 65% chance of detecting one in any of our 3 sites. This is quite low power - we normally aim for at least 80%. Compare that to the result if we assume mutants are at 2% in the province:\n\n# get power when prevalence is 2%\nget_power_presence(N = rep(100, 3), prevalence = 0.02, ICC = 0.05)\n\n[1] 88.08013\n\n\nWe now have close to 90% power. So, we can say we are powered to detect rare variants down to around 2% prevalence, but if they are less common than this we risk missing them. Whether or not this is an acceptable level of sensitivity is a programmatic decision."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html#pfhrp23-deletions---comparison-against-5-threshold",
     "href": "tutorials/DRpower/DRpower_design.html#pfhrp23-deletions---comparison-against-5-threshold",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "pfhrp2/3 deletions - comparison against 5% threshold",
     "text": "pfhrp2/3 deletions - comparison against 5% threshold\nWe plan to follow the WHO Master Protocol, switching RDTs at a national level if any province has a prevalence of pfhrp2/3 deletions significantly over 5%. We can use the get_power_threshold() function to calculate our power under this model. We assume here that the prevalence of deletions at the province level is 10%:\n\n# estimate power under WHO approach\nget_power_threshold(N = rep(100, 3), prevalence = 0.1, prev_thresh = 0.05, ICC = 0.05, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  59.9 56.79 62.95\n\n\nWe only have around 60% power under this design. We would obtain a higher power if we assumed the prevalence of pfhrp2/3 deletions was higher than 10%, but we would need to be able to justify this assumption with evidence - for example results of a pilot study, or results from neighbouring countries.\nIn our case, we will instead abandon the threshold comparison approach in favour of a two-step design. Our new plan will be to look for the presence of any pfhrp2/3 deletions at the province level, and only if they are detected we will perform a follow-up study in that province. The nice thing about this is that we have already performed this power calculation, as it becomes a presence/absence analysis exactly as we did for pfkelch13. We therefore know that we have power to detect single deletions down to around 2% prevalence.\nFor our follow-up study, we can explore what would happen if we doubled the number of sites in a province:\n\n# estimate power with 6 sites of 100\nget_power_threshold(N = rep(100, 6), prevalence = 0.1, prev_thresh = 0.05, ICC = 0.05, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  78.4 75.72 80.91\n\n\nWe find that power is around 79%, which is acceptable. We will therefore go ahead with this two-stage design."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_design.html#summary",
     "href": "tutorials/DRpower/DRpower_design.html#summary",
-    "title": "Designing a drug and diagnostic resistance study",
+    "title": "Designing a study with multiple end-points",
     "section": "Summary",
     "text": "Summary\nWe have used DRpower to explore the precision and power we can expect for a study design consisting of 100 samples in each of 3 sites within a province. This has revealed that:\n\nWhen estimating SP mutations we will have good precision at the province level, probably with a MoE of around \\(\\pm\\) 15%.\nFor pfkelch13 mutations, we are powered to detect rare variants down to around 2%. Any lower than this and we run the risk of missing them.\nFor pfhrp2/3 deletions, we do not have power under the WHO Master Protocol approach. We have therefore modified our study design to a two-stage process that focuses first on detection, and then on prevalence estimation. In provinces where deletions are identified we will run a second phase with at least 6 sites of 100 samples."
   },
