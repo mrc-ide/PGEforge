@@ -591,11 +591,12 @@ province level, and in particular comparing this prevalence against the
 Master Protocol</a> threshold of 5%.</p>
 <p>We start by loading packages:</p>
 <pre class="r"><code>library(tidyverse)
-library(DRpower)</code></pre>
+library(DRpower)
+library(here)</code></pre>
 <p>After loading the data from the PGEforge data folder, we will focus
 our attention on the Tigray province:</p>
 <pre class="r"><code># import data from PGEforge and filter to Tigray region
-df_Tigray &lt;- read.csv(&quot;Feleke_pfhrp2.csv&quot;) |&gt;
+df_Tigray &lt;- read.csv(here(&quot;data/pfhrp2-3_counts&quot;, &quot;Feleke_pfhrp2.csv&quot;)) |&gt;
   filter(ADMIN1 == &quot;Tigray&quot;)
 
 # display the table
@@ -895,7 +896,7 @@ deletions is 10% in the region:</p>
 <pre class="r"><code># estimate power using the actual sample sizes
 get_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)</code></pre>
 <pre><code>##   prev_thresh power lower upper
-## 1        0.05    77 74.26 79.58</code></pre>
+## 1        0.05  77.4 74.68 79.96</code></pre>
 <p>We find that power was around 79%, which is definitely adequate.</p>
 </div>
 <div id="summary" class="section level2">
