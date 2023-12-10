@@ -1,0 +1,66 @@
+---
+title: "Installing DRpower"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: install a C++ compiler
+
+*DRpower* is an R package, but it uses C++ code under the hood via the [Rcpp](https://teuder.github.io/rcpp4everyone_en/) package to make calculations faster. When you load the package for the first time, these C++ files must be compiled on your local machine. This requires you to have a C++ compiler installed.
+
+Expand the arrow to see instructions for your operating system:
+<details>
+  <summary>Windows</summary>
+  
+  1. Install [Rtools](https://cran.r-project.org/bin/windows/Rtools/index.html), which contains a series of tools for building R packages.
+  2. Once you have Rtools installed you should be able to compile. 
+  
+</details>
+<details>
+  <summary>Mac</summary>
+  
+  1. Open a Terminal window. You can do this by searching (keyboard shortcut command+space) for "Terminal".
+  2. Inside the terminal window, type the command `xcode-select --install`. This will prompt you to install Xcode command line tools.
+  3. Once you have Xcode command line tools installed you should be able to compile.
+  
+</details>
+<details>
+  <summary>Linux (Ubuntu)</summary>
+  
+  1. Installing on Linux is a bit more tricky. Start by [installing gcc](https://phoenixnap.com/kb/install-gcc-ubuntu).
+  2. Open a Terminal window.
+  3. Execute the command `sudo apt-get install r-base-dev`.
+  4. You should now be able to compile.
+  
+</details>
+
+<br/>
+
+## Step 2: install and load the R package
+
+In R, ensure that you have the [devtools](https://www.r-project.org/nosvn/pandoc/devtools.html) package installed by running
+
+```{r, eval = FALSE}
+install.packages("devtools", repos = 'http://cran.us.r-project.org')
+```
+
+You can then install the *DRpower* package directly from GitHub by running
+
+```{r, eval = FALSE}
+devtools::install_github("mrc-ide/DRpower", ref = "v1.0.2")
+```
+
+Assuming everything installed correctly, we need to load the package:
+
+```{r}
+library(DRpower)
+```
+
+You can test that the package is loaded and working by running the following command, which should produce this output:
+
+```{r}
+check_DRpower_loaded()
+```
