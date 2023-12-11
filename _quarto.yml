@@ -34,7 +34,7 @@ website:
     style: "docked"
     collapse-level: 1
     contents:
-      - href: index.qmd
+      - href: website_docs/homepage.qmd
         text: Welcome
       - section: "Data"
         contents:
@@ -47,7 +47,7 @@ website:
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
-            file: tutorials_overview.qmd
+            file: website_docs/tutorials_overview.qmd
           - section: "Templates"
             contents:
             - text: "Summary template"
@@ -86,5 +86,5 @@ format:
 
 execute:
   freeze: auto
-    code-tools: true
-    code-link: true
+  code-tools: true
+  code-link: true
