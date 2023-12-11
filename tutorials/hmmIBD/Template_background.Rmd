@@ -1,8 +1,8 @@
 ---
-title: "Insert tool title"
+title: "hmmIBD"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
+author: "Steve Schaffner"
+date: "11 December 2023"
 ---
 
 ```{r setup, include=FALSE}
