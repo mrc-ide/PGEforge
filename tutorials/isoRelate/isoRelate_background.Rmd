@@ -1,7 +1,7 @@
 ---
 title: "isoRelate"
 output: html_document
-author: "Lyndan Henden"
+author: "Kirsty McCann"
 date: "12 Dec 2023"
 ---
 
@@ -27,18 +27,30 @@ df_summary |>
 
 ## Purpose
 
-A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+The *isoRelate* R package has been developed with the intention to perform pairwise identity by decent analysis on haploid recombining organisms in the presence of multiclonal infections using SNP genotype data, but can also be applicable to whole genome sequencing data.
+
+*isoRelate* uses a novel statistic that has been developed by inferred IBD status at genomic locations. This statistic is used to identify loci under positive selection and illustrate visually appealling relatedness networks as a means of exploring shared haplotypes within populations.
+
+Appropriate uses for *isoRelate*
+1. Estimate proportion of genome shared IBD between isolate pairs,
+2. Detect genomic regions that are identicial by decent between isolate pairs,
+3. IBD within multiple infections,
+4. Identify loci under positive selection,
+5. Develops networks and is visually appealing.
+
+*isoRelate* performs pairwise relatedness mapping on haploid isolates using a first order continuous time hidden Markov model (HMM).
+Those isolates with multiple infections where the infected individual is carrying multiple genetically distinct strains of the species may have multiplicity of infection (MOI) greater than 1, and isoRelate can analyze them using a diploid model, rather than a haploid model.
+
+To use this tool, *isoRelate* requires PED and MAP formats that contains unphased genotype data for SNPs.
 
 ## Existing resources
 
-- Any existing online tutorials?
-- Any important papers?
+- isoRelate vignettes - https://github.com/bahlolab/isoRelate/blob/master/vignettes/introduction.Rmd
+- Identity-by-descent analyses for measuring population dynamics and selection in recombining pathogens - https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1007279
 
 ## Citation
 
-BibTeX style citation. For an R package, you can get this using `citation(package = "name")`:
-
-Here is an example for DRpower, using `citation(package = "DRpower")`:
+BibTeX style citation. For an R package, you can get this using `citation(package = "isoRelate")`:
 
 ```
 @Manual{,
