@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing coiaf"
 output: html_document
 ---
 
@@ -7,7 +7,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
+## Installation
 
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
+To install the package, run the following code:
+
+```{r}
+install.packages('coiaf', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
 
