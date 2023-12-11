@@ -86,5 +86,5 @@ format:
 
 execute:
   freeze: auto
-    code-tools: true
-    code-link: true
+  code-tools: true
+  code-link: true
