@@ -21,11 +21,6 @@ website:
     background: "#f9eaf1"
     foreground: "#c82f61"
     center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2023"
-    right: 
-      - text: "About"
-        href: website_docs/about.qmd
-      - text: "License"
-        href: website_docs/license.qmd
     
   sidebar:
     background: "#f9eaf1"
@@ -39,25 +34,28 @@ website:
     style: "docked"
     collapse-level: 1
     contents:
-      - href: index.qmd
+      - href: website_docs/homepage.qmd
         text: Welcome
-      - href: website_docs/contributors.qmd
-        text: "Contributors"
-      - href: website_docs/radish23.qmd
-        text: "RADISH23 Hackathon"
-      - href: website_docs/tutorial_guidelines.qmd
-        text: "Preparing your tutorial"
       - section: "Data"
         contents:
           - website_docs/data_description.qmd
-      - section: "Tests"
+          - text: "The data-DAG (TODO)"
+      - section: "PGE tools landscape"
         contents:
-          - tutorials/tests/test_rmd.Rmd
-          - tutorials/tests/test_python_notebook.ipynb
+          - text: "The landscaping matrix (TODO)"
+          - text: "Installing via the plasmogenepi.r-universe (TODO)"
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
-            file: tutorials_overview.qmd
+            file: website_docs/tutorials_overview.qmd
+          - section: "Templates"
+            contents:
+            - text: "Summary template"
+              file: tutorials/Template/Template_background.Rmd
+            - text: "Template installation"
+              file: tutorials/Template/Template_installation.Rmd
+            - text: "Template analysis"
+              file: tutorials/Template/Template_analysis.Rmd
           - section: "DRpower"
             contents:
             - text: "Summary"
@@ -68,6 +66,16 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+      - section: "Guiding principles"
+        contents:
+          - text: "Recommendations (TODO)"
+          - text: "How do I get my tool on PGEforge? (TODO)"
+      - section: "Events and meetings"
+        contents:
+            - text: "RADISH23 Hackathon"
+              file: website_docs/radish23.qmd
+      - href: website_docs/contributors.qmd
+        text: "Contributors"
 
 format:
   html:
@@ -75,3 +83,8 @@ format:
     toc: true
     # fontcolor: "#c82f61"
     linkcolor: "#c82f61" 
+
+execute:
+  freeze: auto
+  code-tools: true
+  code-link: true

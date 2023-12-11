@@ -10,24 +10,21 @@ library(kableExtra)
 
 ## The data
 
-The data for this analysis come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4). See the description in the [Data section](TODO) for more details on this dataset. In short, the data come from a prospective, cross-sectional survey conducted in northern and western Ethiopia between 2017-2018. False-negative samples by HRP2-based RDT were sent for genomic sequencing to confirm *pfhrp2/3* deletions. We are interested in the prevalence of deletions at the province level, and in particular comparing this prevalence against the [WHO Master Protocol](https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf) threshold of 5%.
+The data for this analysis come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4). See the description in the [Data section](../../website_docs/data_description.qmd) for more details on this dataset. In short, the data come from a prospective, cross-sectional survey conducted in northern and western Ethiopia between 2017-2018. False-negative samples by HRP2-based RDT were sent for genomic sequencing to confirm *pfhrp2/3* deletions. We are interested in the prevalence of deletions at the province level, and in particular comparing this prevalence against the [WHO Master Protocol](https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf) threshold of 5%.
 
 We start by loading packages:
 
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 library(tidyverse)
 library(DRpower)
+library(here)
 ```
 
-After loading the data from the PGEforge data folder, we will focus our attention on the Tigray province:
+After loading the data from the [PGEforge data folder](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html), we will focus our attention on the Tigray province:
 
-```{r, echo=FALSE, eval=FALSE}
-df_Tigray <- read.csv("tutorials/DRpower/Feleke_pfhrp2.csv") |>
-  filter(ADMIN1 == "Tigray")
-```
 ```{r}
 # import data from PGEforge and filter to Tigray region
-df_Tigray <- read.csv("Feleke_pfhrp2.csv") |>
+df_Tigray <- read.csv(here("data/pfhrp2-3_counts", "Feleke_pfhrp2.csv")) |>
   filter(ADMIN1 == "Tigray")
 
 # display the table
@@ -48,7 +45,7 @@ get_prevalence(n = df_Tigray$Num_pfhrp2_deleted,
                N = df_Tigray$Num_pfhrp2_tested)
 ```
 
-Our point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum *a posteriori* (MAP) estimate as out point estimate, but other options are available (see \code{?get_prevalence}).
+Our point estimate of the prevalence is 20.4%, and our Bayesian 95% credible interval (CrI) is from 14.11% to 28.93%. Here, we have used the maximum *a posteriori* (MAP) estimate as out point estimate, but other options are available (see `?get_prevalence`).
 
 We can also produce a simple plot of the posterior distribution of the prevalence:
 
