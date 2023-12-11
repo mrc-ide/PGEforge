@@ -1,0 +1,54 @@
+---
+title: "Insert tool title"
+output: html_document
+author: "Insert name"
+date: "Insert todays date"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The moimix package uses whole genome/exome data to estimate the following: 
+
+1.MOI using a binomial mixture model and Fws
+2.within host allele frequencies
+3.minor allele frequencies
+4.
+
+## Existing resources
+
+- Any existing online tutorials?
+- Any important papers?
+
+## Citation
+
+BibTeX style citation. For an R package, you can get this using `citation(package = "name")`:
+
+Here is an example for DRpower, using `citation(package = "DRpower")`:
+
+```
+@Manual{,
+    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},
+    author = {Bob Verity and Shazia Ruybal},
+    note = {R package version 1.0.2},
+  }
+```
