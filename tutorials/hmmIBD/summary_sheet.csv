@@ -1,9 +1,9 @@
 ﻿Main use-cases,Estimating relatedness between parasites, detecting selective sweeps
 Authors,Stephen Schaffner
 Latest version,V2.1.1
-License, GPL-3.0 license
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
+License,GPL-3.0 license
+Website,none
+Code repository,"<a href=""https://github.com/glipsnort/hmmIBD.git"" target=""_blank""> https://github.com/glipsnort/hmmIBD.git</a>"
+Publication,"<a href=""https://doi.org/10.1186/s12936-018-2349-7"" target=""_blank""> hmmIBD: software to infer pairwise identity by descent between haploid genotypes</a>"
 Tutorial authors,TODO
 Tutorial date,TODO
