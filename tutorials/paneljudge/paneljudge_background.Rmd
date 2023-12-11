@@ -1,0 +1,51 @@
+---
+title: "paneljudge"
+output: html_document
+author: "Nick Brazeau"
+date: "December 12, 2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+An R package that judges the "informativeness" of a genetic panel (or barcode) in its ability to infer relatedness. The panel is assessed under simulation with an identity-by-descent hidden-markov model backend. Precision in relatedness estimates indicate the superior panel. 
+
+
+## Existing resources
+Taylor et al. Genetics 212.4 (2019): 1337-1351.  
+Schaffner et al. Malaria journal 17.1 (2018): 196.
+
+## Citation  
+LaVerriere et al., Molecular Ecology Resources 22.6 (2022): 2285-2303   
+
+BibTeX style citation. For an R package, you can get this using `citation(package = "name")`:
+
+Here is an example for DRpower, using `citation(package = "paneljudge")`:
+
+```
+@Manual{,
+    title = {paneljudge: Judge the performance of a panel of genetic markers using
+simulated data},
+    author = {Aimee Taylor and Pierre Jacob},
+    year = {2023},
+    note = {R package version 0.0.0.9000},
+  }
+```
