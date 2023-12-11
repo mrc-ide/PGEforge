@@ -27,12 +27,13 @@ df_summary |>
 
 ## Purpose
 
-The *moire* (Multiplicity Of Infection and allele frequency REcovery) tool can be used to estimate allele frequencies, MOI, and within-host relatedness from genetic data subject to experimental error. It uses a Bayesian approach and can take both polyallelic and SNP data as inputs. This tool also introduces a new metric called effective MOI (eMOI), which combines MOI and within-host relatedness into a unified and comparable measure of genetic diversity.  
+The *moire* (Multiplicity Of Infection and allele frequency REcovery) tool can be used to estimate allele frequencies, MOI, and within-host relatedness from genetic data subject to experimental error. It utilises a Markov Chain Monte Carlo (MCMC) based approach to Bayesian estimation and can take both polyallelic and SNP data as inputs. This tool also introduces a new metric called effective MOI (eMOI), which combines MOI and within-host relatedness into a unified and comparable measure of genetic diversity.  
 
 ## Existing resources
 
 - The [*moire* website](https://eppicenter.github.io/moire/index.htm) provides basic usage instructions
 - Within the [*moire* website](https://eppicenter.github.io/moire/articles/mcmc_demo.html) there is a more in depth tutorial using simulated genotyping data. 
+- The [*moire* Manual](https://plasmogenepi.r-universe.dev/moire/doc/manual.html) includes usage information for all of the functionality.
 
 ## Citation
 
