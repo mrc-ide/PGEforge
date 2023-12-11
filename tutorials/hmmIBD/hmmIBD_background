@@ -1,0 +1,46 @@
+---
+title: "hmmIBD"
+output: html_document
+author: "Steve Schaffner"
+date: "11 December 2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+hmmIBD implements a hidden Markov model (HMM) for detecting genomic regions that are identical by descent (IBD) for pairs of haploid samples. It was written to find large IBD regions in sequenced haploid P. falciparum genomes, but it can be applied to other organisms (including phased diploids) and can find shorter IBD regions as well. The package includes scripts 1) to extract data from a VCF file into the appropriate format, 2) thin markers for better performance, and 3) visualize output.
+
+## Existing resources
+
+
+## Citation
+
+```
+@article{,
+    title = {hmmIBD: software to infer pairwise identity by descent between haploid genotypes},
+    author = {Schaffner, S.F., Taylor, A.R, et al.},
+    journal = {Malaria Journal},
+    volume = 17,
+    pages = 196
+    year = 2018,
+    doi = {https://doi.org/10.1186/s12936-018-2349-7}
+  }
