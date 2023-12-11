@@ -1,5 +1,5 @@
 ---
-title: "Designing a drug and diagnostic resistance study"
+title: "Designing a study with multiple end-points"
 output: html_document
 ---
 
