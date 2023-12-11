@@ -5,24 +5,28 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(kableExtra)
 ```
 
 ## The data
+For this analysis, we will be using VCF generated from whole genome sequencing data from Vietnam. This data is part of the [pf3k dataset](https://www.malariagen.net/parasite/pf3k) and SNP and Indels. It is also available in [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
-
-Remember to load any packages, including the tool that you are working on:
+Remember to load rehh and dependent R packages before running the analysis:
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+library(rehh)
+library(R.utils)
+library(vcfR)
+library(data.table)
+
 ```
 
 
-## First analysis section
+## Convert data from VCF to an object of class haplohh for all 14 chromosomes
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
 
+for (i in c("01","02","03","04","05","06","07","08","09","10","11","12","13","14") {
+k13_h<-data2haplohh(hap_file = "SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz", min_perc_geno.mrk = 10,
+                    vcf_reader = "data.table", verbose = T, polarize_vcf = F, min_maf=0.005,remove_multiple_markers=T, chr.name= )
+		    }
 ## Summary
 
 It's a good idea to round off with a summary of what we did.
