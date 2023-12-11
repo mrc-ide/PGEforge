@@ -9,8 +9,8 @@ PGEforge is a community-built resource for enhancing common software tools in *P
 
 ## A community-led effort
 
-Most of these resources were developed at the [RADISH23 Hackathon](website_docs/radish23.qmd) by the following [contributors](website_docs/contributors.qmd).
+Most of these resources were developed at the [RADISH23 Hackathon](radish23.qmd) by the following [contributors](contributors.qmd).
 
-## Funding
+## Funding 
 
 
