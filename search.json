@@ -375,7 +375,7 @@
     "href": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#retrospective-power-analysis",
     "title": "Analysis of pfhrp2/3 data",
     "section": "Retrospective power analysis",
-    "text": "Retrospective power analysis\nAn interesting question is: given the final sample sizes in the Tigray region, what was our power? This sort of retrospective power analysis can be useful to evaluate the strength of evidence of a study. However, it is obviously far better to perform a power analysis before conducting the study!\nHere, we take the standard approach of assuming the prevalence of deletions is 10% in the region:\n\n# estimate power using the actual sample sizes\nget_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  76.6 73.85 79.19\n\n\nWe find that power was around 79%, which is definitely adequate."
+    "text": "Retrospective power analysis\nAn interesting question is: given the final sample sizes in the Tigray region, what was our power? This sort of retrospective power analysis can be useful to evaluate the strength of evidence of a study. However, it is obviously far better to perform a power analysis before conducting the study!\nHere, we take the standard approach of assuming the prevalence of deletions is 10% in the region:\n\n# estimate power using the actual sample sizes\nget_power_threshold(N = df_Tigray$Num_pfhrp2_tested, prevalence = 0.1, reps = 1e3)\n\n  prev_thresh power lower upper\n1        0.05  79.2 76.55 81.68\n\n\nWe find that power was around 79%, which is definitely adequate."
   },
   {
     "objectID": "tutorials/DRpower/DRpower_analysis_pfhrp2.html#summary",
