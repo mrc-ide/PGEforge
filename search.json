@@ -637,62 +637,6 @@
     "text": "PGEforge was supported by the following people, listed alphabetically.\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE\n\n\n\n\n\n\n\n\nAffiliations: ABCDE"
   },
   {
-    "objectID": "website_docs/tutorials_overview.html",
-    "href": "website_docs/tutorials_overview.html",
-    "title": "Tutorials overview",
-    "section": "",
-    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nTemplates for the various documents can be found in the Template section and an example is provided in the DRpower section."
-  },
-  {
-    "objectID": "website_docs/tutorials_overview.html#tutorial-details",
-    "href": "website_docs/tutorials_overview.html#tutorial-details",
-    "title": "Tutorials overview",
-    "section": "",
-    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nTemplates for the various documents can be found in the Template section and an example is provided in the DRpower section."
-  },
-  {
-    "objectID": "website_docs/radish23.html",
-    "href": "website_docs/radish23.html",
-    "title": "RADISH 2023",
-    "section": "",
-    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
-  },
-  {
-    "objectID": "website_docs/radish23.html#welcome",
-    "href": "website_docs/radish23.html#welcome",
-    "title": "RADISH 2023",
-    "section": "",
-    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
-  },
-  {
-    "objectID": "website_docs/radish23.html#main-aims",
-    "href": "website_docs/radish23.html#main-aims",
-    "title": "RADISH 2023",
-    "section": "Main aims",
-    "text": "Main aims\nOur aim to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices."
-  },
-  {
-    "objectID": "website_docs/radish23.html#tutorial-development",
-    "href": "website_docs/radish23.html#tutorial-development",
-    "title": "RADISH 2023",
-    "section": "Tutorial development",
-    "text": "Tutorial development\nTake a look at the tutorial guidelines for more details."
-  },
-  {
-    "objectID": "website_docs/tutorial_guidelines.html",
-    "href": "website_docs/tutorial_guidelines.html",
-    "title": "Tutorial guidelines",
-    "section": "",
-    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
-  },
-  {
-    "objectID": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
-    "href": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
-    "title": "Tutorial guidelines",
-    "section": "",
-    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
-  },
-  {
     "objectID": "website_docs/data_description.html",
     "href": "website_docs/data_description.html",
     "title": "Data description",
@@ -728,32 +672,88 @@
     "text": "The pfhrp2/3 gene deletion count data is available within the subfolder pfhrp2-3_counts. The data come from a study by Feleke et al. (2021).(Feleke et al. 2021)"
   },
   {
-    "objectID": "website_docs/homepage.html",
-    "href": "website_docs/homepage.html",
+    "objectID": "website_docs/tutorial_guidelines.html",
+    "href": "website_docs/tutorial_guidelines.html",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "href": "website_docs/tutorial_guidelines.html#how-to-prepare-your-tutorial",
+    "title": "Tutorial guidelines",
+    "section": "",
+    "text": "Some guidelines here:\n\nexplanation of directory structure (ie tutorials/MALECOT)\ndescribe example tutorial and what should be included"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "PGEforge",
     "section": "",
     "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
   },
   {
-    "objectID": "website_docs/homepage.html#welcome",
-    "href": "website_docs/homepage.html#welcome",
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
     "title": "PGEforge",
     "section": "",
     "text": "PGEforge is a community-built resource for enhancing common software tools in Plasmodium genomic epidemiology with tutorials and analysis workflows."
   },
   {
-    "objectID": "website_docs/homepage.html#a-community-led-effort",
-    "href": "website_docs/homepage.html#a-community-led-effort",
+    "objectID": "index.html#a-community-led-effort",
+    "href": "index.html#a-community-led-effort",
     "title": "PGEforge",
     "section": "A community-led effort",
     "text": "A community-led effort\nMost of these resources were developed at the RADISH23 Hackathon by the following contributors."
   },
   {
-    "objectID": "website_docs/homepage.html#funding",
-    "href": "website_docs/homepage.html#funding",
+    "objectID": "index.html#funding",
+    "href": "index.html#funding",
     "title": "PGEforge",
     "section": "Funding",
     "text": "Funding"
+  },
+  {
+    "objectID": "website_docs/radish23.html",
+    "href": "website_docs/radish23.html",
+    "title": "RADISH 2023",
+    "section": "",
+    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
+  },
+  {
+    "objectID": "website_docs/radish23.html#welcome",
+    "href": "website_docs/radish23.html#welcome",
+    "title": "RADISH 2023",
+    "section": "",
+    "text": "A cute radish\n\n\nThe Reproducibility, Accessibility, Documentation and Inter-operability Standards Hackathon (RADISH23), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski will take place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA."
+  },
+  {
+    "objectID": "website_docs/radish23.html#main-aims",
+    "href": "website_docs/radish23.html#main-aims",
+    "title": "RADISH 2023",
+    "section": "Main aims",
+    "text": "Main aims\nOur aim to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices."
+  },
+  {
+    "objectID": "website_docs/radish23.html#tutorial-development",
+    "href": "website_docs/radish23.html#tutorial-development",
+    "title": "RADISH 2023",
+    "section": "Tutorial development",
+    "text": "Tutorial development\nTake a look at the tutorial guidelines for more details."
+  },
+  {
+    "objectID": "website_docs/tutorials_overview.html",
+    "href": "website_docs/tutorials_overview.html",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nTemplates for the various documents can be found in the Template section and an example is provided in the DRpower section."
+  },
+  {
+    "objectID": "website_docs/tutorials_overview.html#tutorial-details",
+    "href": "website_docs/tutorials_overview.html#tutorial-details",
+    "title": "Tutorials overview",
+    "section": "",
+    "text": "Some details of the various tutorials and the types of tools, eg simulation, analysis etc\nTemplates for the various documents can be found in the Template section and an example is provided in the DRpower section."
   },
   {
     "objectID": "tutorials/BRO/Template_installation.html",
