@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing moire"
 output: html_document
 ---
 
@@ -7,7 +7,5 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
-
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
-
+# Install moire in R:
+install.packages('moire', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
