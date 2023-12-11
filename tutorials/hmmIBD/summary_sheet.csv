@@ -3,7 +3,7 @@ Authors,Stephen Schaffner
 Latest version,V2.1.1
 License,GPL-3.0 license
 Website,none
-Code repository,"<a href=""https://github.com/glipsnort/hmmIBD.git"" target=""_blank""> https://github.com/glipsnort/hmmIBD.git</a>"
-Publication,"<a href=""https://doi.org/10.1186/s12936-018-2349-7"" target=""_blank""> hmmIBD: software to infer pairwise identity by descent between haploid genotypes</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+Code repository,https://github.com/glipsnort/hmmIBD.git
+Publication,https://doi.org/10.1186/s12936-018-2349-7
+Tutorial authors,Steve Schaffner
+Tutorial date,11 December, 2023
