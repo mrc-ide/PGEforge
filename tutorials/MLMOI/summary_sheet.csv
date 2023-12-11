@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+Main use-cases,MOI estimation
+Authors,"Meraj Hashemi, Kristan Shneider"
+Latest version,70fd9fd
+License,none
+Website,https://github.com/Maths-against-Malaria/MOI-Bias-correction
+Code repository,https://github.com/Maths-against-Malaria/MOI-Bias-correction
+Publication,https://doi.org/10.1371/journal.pone.0261889
+Tutorial authors,Alfred Simkin
+Tutorial date,11-Dec-23
