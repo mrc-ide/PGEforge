@@ -1,0 +1,65 @@
+---
+title: "Tutorial for moimix"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+## The Data
+
+Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+
+Remember to load any packages, including the tool that you are working on:
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(moimix)
+library(SeqArray)
+setwd("/Users/sophieberube/Desktop/PGEforge")
+seqVCF2GDS("/Users/sophieberube/Desktop/PGEforge/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz","/Users/sophieberube/Desktop/PGEforge/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.gds" )
+
+myGDS<- seqOpen("/Users/sophieberube/Desktop/PGEforge/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.gds")
+
+seqSummary(myGDS)
+
+sample.id<- seqGetData(myGDS, "sample.id")
+head(sample.id)
+
+coords<- getCoordinates(myGDS)
+head(coords)
+#remove apicoplast if there are any (not the case in this dataset) b/c of highly variable copy numbers of the apicoplast 
+seqSetFilter(myGDS, 
+             variant.id = coords$variant.id[coords$chromosome != "Pf3D7_API_v3"])
+
+#removes non bialleleic SNPs? 
+
+BAF_estimates<- bafMatrix(myGDS)
+
+class(BAF_estimates)
+
+str(BAF_estimates)
+
+#for one single sample
+#Monoclonal: 
+plot(BAF_estimates, "Bangladesh-38")
+
+#polyclonal
+plot(BAF_estimates, "Ghana-45")
+
+set.seed(333)
+
+counts<- alleleCounts(myGDS)
+```
+
+
+## First analysis section
+
+Make as many sections as you need. Try to break long documents out over multiple pages.
+
+## Summary
+
+It's a good idea to round off with a summary of what we did.
+
+PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
