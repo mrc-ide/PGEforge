@@ -19,7 +19,7 @@ df_summary <- read.csv("summary_sheet.csv", header = FALSE)
 
 # produce formatted table
 df_summary |>
-  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'") |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
   kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
