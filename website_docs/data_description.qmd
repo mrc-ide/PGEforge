@@ -19,7 +19,7 @@ They can be located at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/t
 All of the data within the subfolder `wgs/pf3k` was derived from the [Pf3k Project](https://www.malariagen.net/parasite/pf3k). Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from:
 - Democratic Republic of the Congo ($n=113$)
 - Vietnam ($n=97$)
-- *In vitro* mixures of laboratory strains ($n=25$)
+- *In vitro* mixtures of laboratory strains ($n=25$)
 
 Each VCF contains 247,496 high-quality (VQSLOD>6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the [Pf7 data set](https://www.malariagen.net/sites/default/files/Pf7_fws.txt), which contains the Pf3k samples. These were not calculated for the *in vitro* lab mixtures.
 
@@ -44,13 +44,13 @@ The results file can be found within directory [`amplicon/moz2018_heome1_results
 *  **target_popUID** - A population identifier for the haplotype for this target for this sample  
 *  **readCnt** - The read count for this haplotype for this sample for this target  
 
-### Lab Conrol mixtures 
+### Lab Control mixtures 
 
 Targeted amplicon data from the same 100 target panel as [above](#mozambique-field-samples). Mixtures are made of various combinations of 7 lab strains of P. falciparum and with some mixtures done in replicate at different 4 different parasite densities (10, 100, 1k, 10K. 
 
-![Parasite Densities](amplicon/moz2018_fieldSamples_parasiteDensities.png)
+![Parasite Densities](img/moz2018_fieldSamples_parasiteDensities.png)
 
-![Parasite Mixtures](amplicon/moz2018_fieldSamples_parasiteMixtures.png)
+![Parasite Mixtures](img/moz2018_fieldSamples_parasiteMixtures.png)
 
 Results are organized in a similar 4 column table as above. The results file can be found within directory [`amplicon/moz2018_heome1_results_controlSamples.tsv.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_controlSamples.tsv.gz) along with metadata [`amplicon/moz2018_controlSamples_meta.tsv`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_controlSamples_meta.tsv), [`amplicon/samplesToMixFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/samplesToMixFnp.tab.txt), [`amplicon/mixSetUpFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mixSetUpFnp.tab.txt). 
 
@@ -65,7 +65,7 @@ Results are organized in a similar 4 column table as above. The results file can
 
 SNP barcode data from the sanger 100 SNP Plasmodium falciparum barcode [@Chang2019-ar]. 
 
-[sanger101_snp_barcode_withGenes.bed](snp_barcode/sanger101_snp_barcode_withGenes.bed)  
+[sanger101_snp_barcode_withGenes.bed](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sanger101_snp_barcode_withGenes.bed)  
 
 ### Field Samples  
 
