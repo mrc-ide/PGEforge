@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+﻿Main use-cases,"Estimating complexity of infection, population allele frequencies, and within-host relatedness from polyallelic genomics data."
+Authors,"Maxwell Murphy, Bryan Greenhouse"
+Latest version,v3.1.0
+License,GNU General Public License v3.0
+Website,https://eppicenter.github.io/moire/
+Code repository,https://github.com/EPPIcenter/moire
+Publication,https://doi.org/10.1101/2023.10.03.560769
+Tutorial authors,Kathryn Murie
+Tutorial date,11-Dec-23
