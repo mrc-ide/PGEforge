@@ -48,8 +48,8 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../tutorials_overview.html" rel="next">
-<link href="../index.html" rel="prev">
+<link href="../website_docs/tutorials_overview.html" rel="next">
+<link href="../website_docs/homepage.html" rel="prev">
 <link href="../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -125,7 +125,7 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">
+  <a href="../website_docs/homepage.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
@@ -177,7 +177,7 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials_overview.html" class="sidebar-item-text sidebar-link">
+  <a href="../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
   </div>
 </li>
@@ -307,7 +307,7 @@ div.csl-indent {
   <li><a href="#microhaplotype-data" id="toc-microhaplotype-data" class="nav-link" data-scroll-target="#microhaplotype-data">Microhaplotype data</a>
   <ul class="collapse">
   <li><a href="#mozambique-field-samples" id="toc-mozambique-field-samples" class="nav-link" data-scroll-target="#mozambique-field-samples">Mozambique Field Samples</a></li>
-  <li><a href="#lab-conrol-mixtures" id="toc-lab-conrol-mixtures" class="nav-link" data-scroll-target="#lab-conrol-mixtures">Lab Conrol mixtures</a></li>
+  <li><a href="#lab-control-mixtures" id="toc-lab-control-mixtures" class="nav-link" data-scroll-target="#lab-control-mixtures">Lab Control mixtures</a></li>
   <li><a href="#simulated-data" id="toc-simulated-data" class="nav-link" data-scroll-target="#simulated-data">Simulated data</a></li>
   </ul></li>
   <li><a href="#snp-barcoding-data" id="toc-snp-barcoding-data" class="nav-link" data-scroll-target="#snp-barcoding-data">SNP barcoding data</a>
@@ -355,7 +355,7 @@ div.csl-indent {
 <h2 class="anchored" data-anchor-id="whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS) data for <em>P. falciparum</em></h2>
 <section id="pf3k" class="level3">
 <h3 class="anchored" data-anchor-id="pf3k">Pf3k</h3>
-<p>All of the data within the subfolder <code>wgs/pf3k</code> was derived from the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (<span class="math inline">\(n=113\)</span>) - Vietnam (<span class="math inline">\(n=97\)</span>) - <em>In vitro</em> mixures of laboratory strains (<span class="math inline">\(n=25\)</span>)</p>
+<p>All of the data within the subfolder <code>wgs/pf3k</code> was derived from the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (<span class="math inline">\(n=113\)</span>) - Vietnam (<span class="math inline">\(n=97\)</span>) - <em>In vitro</em> mixtures of laboratory strains (<span class="math inline">\(n=25\)</span>)</p>
 <p>Each VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the <a href="https://www.malariagen.net/sites/default/files/Pf7_fws.txt">Pf7 data set</a>, which contains the Pf3k samples. These were not calculated for the <em>in vitro</em> lab mixtures.</p>
 </section>
 <section id="simulated" class="level3">
@@ -381,18 +381,18 @@ div.csl-indent {
 <li><strong>readCnt</strong> - The read count for this haplotype for this sample for this target</li>
 </ul>
 </section>
-<section id="lab-conrol-mixtures" class="level3">
-<h3 class="anchored" data-anchor-id="lab-conrol-mixtures">Lab Conrol mixtures</h3>
+<section id="lab-control-mixtures" class="level3">
+<h3 class="anchored" data-anchor-id="lab-control-mixtures">Lab Control mixtures</h3>
 <p>Targeted amplicon data from the same 100 target panel as <a href="#mozambique-field-samples">above</a>. Mixtures are made of various combinations of 7 lab strains of P. falciparum and with some mixtures done in replicate at different 4 different parasite densities (10, 100, 1k, 10K.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="amplicon/moz2018_fieldSamples_parasiteDensities.png" class="img-fluid figure-img"></p>
+<p><img src="img/moz2018_fieldSamples_parasiteDensities.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">Parasite Densities</figcaption>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="amplicon/moz2018_fieldSamples_parasiteMixtures.png" class="img-fluid figure-img"></p>
+<p><img src="img/moz2018_fieldSamples_parasiteMixtures.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">Parasite Mixtures</figcaption>
 </figure>
 </div>
@@ -407,7 +407,7 @@ div.csl-indent {
 <section id="snp-barcoding-data" class="level2">
 <h2 class="anchored" data-anchor-id="snp-barcoding-data">SNP barcoding data</h2>
 <p>SNP barcode data from the sanger 100 SNP Plasmodium falciparum barcode <span class="citation" data-cites="Chang2019-ar">(<a href="#ref-Chang2019-ar" role="doc-biblioref">Chang et al. 2019</a>)</span>.</p>
-<p><a href="snp_barcode/sanger101_snp_barcode_withGenes.bed">sanger101_snp_barcode_withGenes.bed</a></p>
+<p><a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sanger101_snp_barcode_withGenes.bed">sanger101_snp_barcode_withGenes.bed</a></p>
 <section id="field-samples" class="level3">
 <h3 class="anchored" data-anchor-id="field-samples">Field Samples</h3>
 <p>The barcode was subsetted from the <a href="#pf3k">above WGS data</a> to just the sanger barcode for the Vietnam and DRC data. The results file can be found within directory <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz"><code>snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz</code></a>, <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz"><code>snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz</code></a></p>
@@ -676,12 +676,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../index.html" class="pagination-link">
+      <a href="../website_docs/homepage.html" class="pagination-link">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Welcome</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../tutorials_overview.html" class="pagination-link">
+      <a href="../website_docs/tutorials_overview.html" class="pagination-link">
         <span class="nav-page-text"><strong>Overview of all tutorials</strong></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
