@@ -83,6 +83,8 @@ format:
     toc: true
     # fontcolor: "#c82f61"
     linkcolor: "#c82f61" 
-    
+
 execute:
   freeze: auto
+    code-tools: true
+    code-link: true
