@@ -34,13 +34,13 @@ website:
     style: "docked"
     collapse-level: 1
     contents:
-      - href: website_docs/homepage.qmd
+      - href: index.qmd
         text: Welcome
       - section: "Data"
         contents:
           - website_docs/data_description.qmd
           - text: "The data-DAG (TODO)"
-      - section: "PGE tools landscape"
+      - section: "Tool landscaping"
         contents:
           - text: "The landscaping matrix (TODO)"
           - text: "Installing via the plasmogenepi.r-universe (TODO)"
