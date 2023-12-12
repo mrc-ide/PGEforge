@@ -27,7 +27,7 @@ df_summary |>
 
 ## Purpose
 
-hmmIBD implements a hidden Markov model (HMM) for detecting genomic regions that are identical by descent (IBD) for pairs of haploid samples. It was written to find large IBD regions in sequenced haploid P. falciparum genomes, but it can be applied to other organisms (including phased diploids) and can find shorter IBD regions as well. The package includes scripts 1) to extract data from a VCF file into the appropriate format, 2) thin markers for better performance, and 3) visualize output.
+hmmIBD implements a hidden Markov model (HMM) for detecting genomic regions that are identical by descent (IBD) for pairs of haploid samples. It was written to find large IBD regions in sequenced haploid P. falciparum genomes, but it can be applied to other organisms (including phased diploids) and can find shorter IBD regions as well. The package includes scripts to extract data from a VCF file into the appropriate format and to thin markers for better performance.
 
 ## Existing resources
 
