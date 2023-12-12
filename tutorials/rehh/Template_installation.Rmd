@@ -32,7 +32,16 @@ data.table::update_dev_pkg()
 latest development version (force install)
 install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table")
 
-## Step 3: load rehh and dependent packages for the analysis
+## Step 3: install bcftools
+
+git clone --recurse-submodules https://github.com/samtools/htslib.git
+git clone https://github.com/samtools/bcftools.git
+cd bcftools
+ # The following is optional:
+ #   autoheader && autoconf && ./configure --enable-libgsl --enable-perl-filters
+make
+
+## Step 4: load rehh and dependent packages for the analysis
 
 library(rehh)
 library(R.utils)
