@@ -16,7 +16,7 @@ The C source code must be compiled before use, and requires no special libraries
 </details>
 <details>
   <summary>Windows</summary>
-    Installation is complicated on Windows. These [two](https://www.guru99.com/c-gcc-install.html) [guides](https://dev.to/gamegods3/how-to-install-gcc-in-windows-10-the-easier-way-422j) may help.
+    Installation is complicated on Windows. These two guides may help: https://www.guru99.com/c-gcc-install.html and https://dev.to/gamegods3/how-to-install-gcc-in-windows-10-the-easier-way-422j.
 
 </details>
 If your compiler is named 'CC', the following command 
