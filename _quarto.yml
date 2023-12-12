@@ -66,6 +66,14 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+          - section: "coiaf"
+            contents:
+            - text: "Summary"
+              file: tutorials/coiaf/coiaf_background.Rmd
+            - text: "Installation"
+              file: tutorials/coiaf/coiaf_installation.Rmd
+            - text: "Estimating COI from SNP daata"
+              file: tutorials/coiaf/coiaf_analysis.Rmd
       - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"

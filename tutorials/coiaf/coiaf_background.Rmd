@@ -1,8 +1,6 @@
 ---
 title: "coiaf"
 output: html_document
-author: "Maxwell Murphy"
-date: "Dec 11, 2023"
 ---
 
 ```{r setup, include=FALSE}

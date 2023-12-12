@@ -1,30 +1,104 @@
 ---
-title: "Give this whatever name you want"
+title: "Running `coiaf`"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(kableExtra)
+knitr::opts_chunk$set(
+  echo = TRUE, warning = FALSE, message = FALSE, error = FALSE
+)
 ```
+
+## Introduction
+
+For this tutorial, we will be using the `coiaf` package to estimate the complexity of infection (COI) from SNP barcode data. Instructions to install this package may be found [here](tutorials/coiaf/coiaf_installation.html).
 
 ## The data
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+`coiaf` expects a matrix of within sample reference allele frequencies (WSAF), as well as an estimate of population level reference allele frequencies (PLAF). The WSAF matrix should have samples in rows and sites in columns. The PLAF should be a vector of length equal to the number of sites. To explore this, we will use simulated SNP barcoding data as described [here](website_docs/data_description.html#simulated-1). We will load the data using the `vcfR` package.
 
-Remember to load any packages, including the tool that you are working on:
-```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+```{r}
+vcf_data <- vcfR::read.vcfR(
+  here::here("data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz")
+)
 ```
 
+To calculate within host allele frequencies, we need to extract the depth of coverage and allele counts
 
-## First analysis section
+```{r}
+coverage <- t(vcfR::extract.gt(vcf_data, element = "DP", as.numeric = TRUE))
+counts_raw <- t(vcfR::extract.gt(vcf_data, element = "AD"))
+counts <- vcfR::masplit(
+  counts_raw, record = 1, sort = FALSE, decreasing = FALSE
+)
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
+# We then directly calculate the WSAF
+wsaf <- counts / coverage
+
+# and estimate the PLAF with the empirical mean across samples
+plaf <- colMeans(wsaf, na.rm = TRUE)
+```
+
+## Running `coiaf`
+
+coiaf calcualtes the COI on a sample by sample basis, so we need to break up the WSAF matrix into a list of data frames
+
+```{r}
+input_data <- purrr::map(seq_len(nrow(wsaf)), function(i) {
+  tibble::tibble(wsmaf = wsaf[i, ], plmaf = plaf) |>
+    tidyr::drop_na()
+})
+```
+
+We can then run `coiaf` on each sample using `purrr::map_dbl`
+
+```{r, cache = TRUE}
+results <- purrr::map_dbl(
+  input_data, ~ coiaf::optimize_coi(.x, data_type = "real")
+)
+
+# We can then combine the results into a data frame with the sample names
+res_df <- data.frame(Patient = rownames(wsaf), COI = results)
+```
+
+## Plotting the results
+
+Now that we have the estimated COI for each sample, we can plot the results. 
+
+```{r}
+library(ggplot2)
+ggplot(res_df, aes(x = COI)) +
+  geom_histogram() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+## Uncertainty quantification
+
+`coiaf` also provides a function to estimate the uncertainty in the COI estimate. This function uses a non-parametric bootstrap to estimate the uncertainty in the COI estimate. Note that this function can take a long time to run, so we will only run it on the first 10 samples.
+
+```{r, cache = TRUE}
+# We can use the same input data as before
+bootstrap_results <- purrr::map(
+  input_data[1:10], ~ coiaf::bootstrap_ci(.x, solution_method = "continuous")
+)
+
+# We can then combine the results into a data frame with the sample names
+bootstrap_df <- data.frame(
+  Patient = rownames(wsaf)[1:10], bootstrap_results |> dplyr::bind_rows()
+)
+```
+
+We can then plot the results for each sample
+
+```{r}
+ggplot(
+  bootstrap_df,
+  aes(x = Patient, y = coi, ymin = conf.low, ymax = conf.high)
+) +
+  geom_pointrange() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
 
 ## Summary
 
-It's a good idea to round off with a summary of what we did.
-
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
+In this tutorial, we have shown how to use `coiaf` to estimate the complexity of infection from SNP barcode data. For more information on the package, please see the [package documentation](https://bailey-lab.github.io/coiaf/). 
