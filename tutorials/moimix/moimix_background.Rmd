@@ -29,9 +29,8 @@ df_summary |>
 
 The moimix package uses biallelic SNP data output in the form of a VCF file from massively parallel sequencing platforms to estimate the following: 
 
-1. MOI using a binomial mixture model and Fws
-2. within host allele frequencies
-3. minor allele frequencies
+1. within host allele frequencies (including minor allele frequencies)
+2. whether an infection is monclonal or not
 
 The package can also be used to transform raw VCF files into other formats such as COIL barcode files and PLINK PED files for further analysis.  
 
