@@ -17,6 +17,7 @@ The main purpose of `DEploidIBD` is to infer complexity of infection (COI), stra
 ## Existing resources
 - There is a [github repository](https://github.com/DEploid-dev/DEploid) containing the source code. Note that both `DEploid` and `DEploidIBD` run from the same codebase, with the later being invoked when the `-ibd` flag is used.
 - There is also a [website](https://deploid.readthedocs.io/en/latest/index.html ) with additional information about installaion and running the tools.
+- For `DEploid`, some examples of how to run the software are available in the [supplementary data](https://academic.oup.com/bioinformatics/article/34/1/9/4091117?login=true#supplementary-data).
 
 ## Citation
 If you run `DEploidIBD`, please use the following citation:
