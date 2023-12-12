@@ -11,7 +11,7 @@ The C source code must be compiled before use, and requires no special libraries
 
 <details>
   <summary>Linux</summary>
-    Follow [these directions](https://phoenixnap.com/kb/install-gcc-ubuntu)
+    Follow these directions: https://phoenixnap.com/kb/install-gcc-ubuntu
 
 </details>
 <details>
