@@ -22,13 +22,13 @@ the relevant install script for your operating system.
 
 Once you have conda/mamba set up you can start insalling the dependancies. You can do this with
 
-```
-conda create -c conda-forge -n estMOI perl curl samtools>=1.12
+``` bash
+mamba create -y -c conda-forge -c bioconda -n estMOI perl curl "samtools>=1.12"
 ```
 
 This will create an environment called `estMOI` that you can activate with
 
-```
+``` bash
 conda activate estMOI
 ```
 
@@ -36,7 +36,7 @@ conda activate estMOI
 
 Finally we can install the script into your path and make it executable with 
 
-```
+``` bash
 curl https://raw.githubusercontent.com/sammy-assefa/estMOI/master/estMOI_1.03 > $CONDA_PREFIX/bin/estMOI
 chmod 755 $CONDA_PREFIX/bin/estMOI
 ```
