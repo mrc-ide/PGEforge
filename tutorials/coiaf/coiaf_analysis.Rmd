@@ -11,11 +11,11 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-For this tutorial, we will be using the `coiaf` package to estimate the complexity of infection (COI) from SNP barcode data. Instructions to install this package may be found [here](tutorials/coiaf/coiaf_installation.html).
+For this tutorial, we will be using the `coiaf` package to estimate the complexity of infection (COI) from SNP barcode data. Instructions to install this package may be found [here](coiaf_installation.html).
 
 ## The data
 
-`coiaf` expects a matrix of within sample reference allele frequencies (WSAF), as well as an estimate of population level reference allele frequencies (PLAF). The WSAF matrix should have samples in rows and sites in columns. The PLAF should be a vector of length equal to the number of sites. To explore this, we will use simulated SNP barcoding data as described [here](website_docs/data_description.html#simulated-1). We will load the data using the `vcfR` package.
+`coiaf` expects a matrix of within sample reference allele frequencies (WSAF), as well as an estimate of population level reference allele frequencies (PLAF). The WSAF matrix should have samples in rows and sites in columns. The PLAF should be a vector of length equal to the number of sites. To explore this, we will use simulated SNP barcoding data as described [here](../../website_docs/data_description.html#simulated-1). We will load the data using the `vcfR` package.
 
 ```{r}
 vcf_data <- vcfR::read.vcfR(
