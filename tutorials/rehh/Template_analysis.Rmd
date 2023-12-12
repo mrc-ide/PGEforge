@@ -8,9 +8,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## The data
-For this analysis, we will be using VCF generated from whole genome sequencing data from Vietnam. This data is part of the [pf3k dataset](https://www.malariagen.net/parasite/pf3k) and SNP and Indels. It is also available in [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+For this analysis, we will be using VCF generated from whole genome sequencing data from Vietnam. 
+This data is part of the [pf3k dataset](https://www.malariagen.net/parasite/pf3k) and SNP and Indels. 
+It is also available in [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
 
-Remember to load rehh and dependent R packages before running the analysis:
+## Process VCF file using bcftools in your terminal
+### Select SNPs at MAF >= 5% on chromosome 13
+bcftools view --min-af 0.05 SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz -v snps -t Pf3D7_13_v3 -Oz -o chr13.vietnam.maf5.snps.vcf.gz
+
+## Move to R and Remember to load rehh and dependent packages before running the analysis:
+
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 library(rehh)
 library(R.utils)
@@ -24,16 +31,38 @@ library(data.table)
 
 ### Convert data from VCF to an object of class haplohh for  chromosome 13
 
-chr13_hh<-data2haplohh(hap_file = "SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz", min_perc_geno.mrk = 90, vcf_reader = "data.table", verbose = T, polarize_vcf = F, min_maf=0.005,remove_multiple_markers=T, chr.name= "Pf3D7_13_v3")
+chr13_hh<-data2haplohh(hap_file = "chr13.vietnam.maf5.snps.vcf.gz", min_perc_geno.mrk = 90, vcf_reader = "data.table", verbose = T, polarize_vcf = F, min_maf=0.005,remove_multiple_markers=T, chr.name= "Pf3D7_13_v3")
 
-### Compute iHH (integrated EHH), iES (integrated EHHS) and inES (integrated normalized EHHS) over chromosome 13
+### Compute iHH (integrated EHH), iES (integrated EHHS) and inES (integrated normalized EHHS) over the entire chromosome 13 and save the results
 
 chr13.res <- scan_hh(chr13_hh,discard_integration_at_border = F,threads = 24)
-
-### Compute iHS and save the results for plotting
+write_tsv(x=chr13.res,file="IHH_IES_INES_Vietnam_chr13.csv")
+### Compute iHS and save the results
 
 chr13.ihs<-ihh2ihs(chr13.res, freqbin = 1, verbose = F, standardize = T)
 write.table(x=chr13.ihs$ihs, file = "Vitenam_ihs_chr13.csv")
+
+### Compute EHH and iHH for a given focal allele (C580Y) and save the results
+
+chr13.res1 <- calc_ehh(chr13_hh,  mrk = "Pf3D7_13_v3:1725259:1725259:C:T", include_nhaplo = TRUE)
+write.table(x=chr13.res1$ehh, file="Vietname_chr13_mutation.csv")
+
+### Plotting EHH around C580Y
+
+res.plot<-plot(chr13.res1, cex = 0.6,lwd=2, main="EHH around C580Y locus")
+
+jpeg("EHH_C580Y_Vietnam.jpeg", width = 38, height = 26, units = "cm", res = 300, pointsize = 8)
+res.plot
+dev.off()
+
+###### Compute furcation and plot
+
+c580y_fur <- calc_furcation(k13_h, mrk = "Pf3D7_13_v3:1725259:1725259:C:T")
+plot(c580y_fur, xlim = c(1.7E+6, 1.8E+6),
+     lwd = 0.05,
+     hap.names = hap.names(k13_h),
+     cex.lab = 0.3)
+
 
 ## Summary
 
