@@ -1,0 +1,50 @@
+---
+title: "hmmibdr"
+output: html_document
+author: "Sophie Berube"
+date: "13/12/2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+This package is an Rcpp wrapper for hmmibd which is implemented in c. However, hmmibdr requires a text file as an input rather than a raw VCF file. Currently, the transformation of raw VCF files to the appropriate text file for hmmibdr is implemented in c and the steps for this and all further analysis with hmmibd can be found in the hmmibd tutorial. 
+
+
+The transformation of raw VCF files into the appropriate text file format for both hmmibd and hmmibdr currently requires the compilation of c code as well as some python functions. Since these are the same requirements that exist for all further analysis using hmmibd, we currently recommend using the hmmibd package directly for all further analysis. 
+
+## Existing resources
+
+- There is a short tutorial on the [GitHub page for hmmibd](https://github.com/OJWatson/hmmibdr/tree/main)
+- See the hmmibd tutorial for further information
+
+## Citation
+
+```
+@Manual{,
+    title = {hmmibdr: HMM Identity by Descent},
+    author = {OJ Watson},
+    year = {2023},
+    note = {R package version 0.2.0},
+  }
+
+```
