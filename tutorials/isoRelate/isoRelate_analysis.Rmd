@@ -1,5 +1,6 @@
 ---
 title: "isoRelate tutorial for generating Identity-by-decent networks: vcf to network"
+author: Kirsty McCann
 output: html_document
 ---
 
@@ -7,7 +8,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
 library(isoRelate)
-library(SeqArray
+library(SeqArray)
+library(igraph)
 ```
 
 ## Useful tutorial examples
@@ -148,16 +150,143 @@ getIBDsummary(ped.genotypes = my_genotypes,
 
 ``` 
 
+## Step 3: Visualising and interpretting IBD Results
+
+There are several ways to visualise and use the IBD results. The follow shows basic visualisations.
+
+```{r, message = FALSE}
+my_proportion <- getIBDproportion(ped.genotypes = my_genotypes,
+                                  ibd.matrix = my_matrix,
+                                  groups = my_groups)
+
+# plot the proportion of pairs IBD
+plotIBDproportions(ibd.proportions = my_proportion,
+                   interval = NULL,
+                   annotation.genes = NULL,
+                   annotation.genes.color = NULL,
+                   highlight.genes = NULL,
+                   highlight.genes.labels = FALSE,
+                   highlight.genes.color = NULL,
+                   highlight.genes.alpha = 0.1,
+                   line.color = NULL,
+                   add.rug = FALSE,
+                   plot.title = "Proportion of pairs IBD in PNG - with stratification",
+                   add.legend = FALSE,
+                   facet.label = TRUE,
+                   facet.scales = "fixed",
+                   subpop.facet = TRUE)
+                          
+``` 
+
+To identify genomic loci with significant amounts of excess IBD we can apply a transformation to the binary IBD matrix to account for variations in isolate relatedness as well as SNP allele frequencies, then calculate a summary statistic that can be used to assess significance.
+
+```{r, message = FALSE}
+
+# calculate the significance of IBD sharing
+my_iR <- getIBDiR(ped.genotypes = my_genotypes, 
+                  ibd.matrix = my_matrix, 
+                  groups = NULL)
+
+# plot the iR statistics
+plotIBDiR(ibd.iR = my_iR, 
+          interval = NULL, 
+          annotation.genes = NULL,
+          annotation.genes.color = NULL,
+          highlight.genes = NULL,
+          highlight.genes.labels = FALSE,
+          highlight.genes.color = NULL,
+          highlight.genes.alpha = 0.1,
+          point.size = 1,
+          point.color = NULL,
+          add.rug = FALSE, 
+          plot.title = "Significance of IBD sharing", 
+          add.legend = FALSE,
+          facet.label = TRUE, 
+          facet.scales = "fixed")
+
+                          
+``` 
+
+A 5% significance threshold would identify regions that have SNPs with -log10 (P-values) > -log10(0.05) as having significant IBD sharing, indicative of positive selection.
+
+Importantly, the function `getIBDiR` can return `NA` values which may occur when there are no IBD pairs or when all pairs are IBD, or when only several isolates are analyzed, among other reasons.
+
+We can investigate the specific isolate pairs that are contributing to the excess IBD sharing on chromosome 7 by creating an IBD network.
+Such a network will identify clusters of isolates sharing a common haplotype over this region. We include our example grouping of isolates
+when plotting the network.
+
+```{r, message = FALSE}
+
+# generate the isolates who are IBD over the Plasmodium falciparum mdr1 gene
+my_i_clusters <- getIBDiclusters(ped.genotypes = my_genotypes, 
+                                 ibd.segments = my_ibd_1, 
+                                 interval = c("Pf3D7_05_v3", 955955, 963095), 
+                                 prop=0, 
+                                 hi.clust = FALSE)
+
+str(my_i_clusters)
+
+# plot the network of clusters
+plotIBDclusters(ped.genotypes = my_genotypes, 
+                clusters = my_i_clusters, 
+                groups = NULL, 
+                vertex.color = NULL, 
+                vertex.frame.color = "white",
+                vertex.size = 4, 
+                vertex.name = FALSE, 
+                edge.color = "gray60", 
+                edge.width = 0.8, 
+                mark.border = "white",
+                mark.col = "gray94", 
+                add.legend = TRUE, 
+                legend.x = -1.5, 
+                legend.y = -0.25, 
+                layout = NULL, 
+                return.layout = FALSE)
+                          
+``` 
+
+Each time the function `plotIBDclusters()` is run the vertex layout will differ. 
+This is an artifact of the R package used to generate the network, `igraph`.
+If the user wishes to keep the network layout the same in multiple subsequent figures then set `return.layout = TRUE` and use the returned layout
+in subsequent `plotIBDclusters()` runs with `layout = my_layout`.
+
+We note that the `i.network` is output as the second object in the list  `my_i_clusters`. If the user wishes to perform quantitative analyses using this network, there are many functions in the `i.graph` package to do so. Please see the `i.graph` documentation for more details on this.
+
+We can also explore networks of isolates sharing a large proportion of their genome IBD. 
+Such isolates may represent duplicate samples or individuals who have identical infections.
 
 
+```{r, message = FALSE}
 
+# generate the isolates who share at least than 90% of their genome IBD
+my_p_clusters <- getIBDpclusters(ped.genotypes = my_genotypes, 
+                                 ibd.segments = my_ibd_1, 
+                                 prop=0.9, 
+                                 hi.clust = FALSE)
 
-
-
-
+# plot the network of clusters
+plotIBDclusters(ped.genotypes = my_genotypes, 
+                clusters = my_p_clusters, 
+                groups = NULL, 
+                vertex.color = NULL, 
+                vertex.frame.color = "white",
+                vertex.size = 4, 
+                vertex.name = FALSE, 
+                edge.color = "gray60", 
+                edge.width = 0.8, 
+                mark.border = "white",
+                mark.col = "gray94", 
+                add.legend = TRUE, 
+                legend.x = -1.5, 
+                legend.y = -0.25, 
+                layout = NULL, 
+                return.layout = FALSE)
+                          
+``` 
 
 ## Summary
 
-It's a good idea to round off with a summary of what we did.
+IsoRelate is an R package that is able to take variant call data to performm identity by descent (IBD) analysis. IsoRelate can handle multiclonal infections. 
 
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
+In this tutorial, a function has been developed to process the vcf file to pedmap format for IsoRelate.
