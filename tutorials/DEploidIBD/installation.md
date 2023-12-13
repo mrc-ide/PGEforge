@@ -27,15 +27,20 @@ git submodule update --init --recursive --remote
 
 #### Step 3: Compile!
 Finally, you can compile `DEploidIBD` with the following commands:
+
 ```
 ./bootstrap
 make
 ```
-If the compilation has run successfully, you should be able to run the executable with:
+
+If the compilation has run successfully, you should be able to run the `DEploidIBD` executable with:
+
 ```
 ./dEploid
 ```
+
 The github repository also includes some example data and commands. For example, you can run:
+
 ```
 ./dEploid \
  -vcf data/testData/PG0390-C.test.vcf \
@@ -52,8 +57,14 @@ export PATH=$PATH:`pwd`
 ```
 Now, you should be able to run `dEploid` from any folder.
 
+*Additional resources: The `DEploid` manual page*
+There are some additional instructions on how to run `DEploid` and the meaning of individual flags available in the github repository. First, navigate into the cloned DEploid directory on your local machine, e.g. `cd DEploid`. Then, run:
+```
+man docs/_build/man/dEploid.1
+```
+
 #### Step 4: Installing other tools required for the tutorial
-In the upcoming sections of the tutorial we will make use of a VCF manipulation tool called [bcftools](https://samtools.github.io/bcftools/bcftools.html). `bcftools` can be installed in a variety of ways, but I would recommend doing so using `conda`.
+In the upcoming sections of the tutorial we will make use of a command-line VCF manipulation tool called [bcftools](https://samtools.github.io/bcftools/bcftools.html). `bcftools` can be installed in a variety of ways, but I would recommend doing so using `conda`.
 
 If you have not already, install `conda` following the appropriate instructions [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
