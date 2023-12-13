@@ -132,7 +132,7 @@ Next, we will remove sites with very low or very high mean read depths. Sites wi
 
 ```
 echo "Filtering based on depth..."
-FINAL_VCF=data_filtered/intermediates/pf3k.DRCongo.biallelic_snp.af05-0.95.dp20-100.vcf.gz
+FINAL_VCF=data_filtered/pf3k.DRCongo.final.vcf.gz
 bcftools view $FILT2_VCF -i 'MEAN(FORMAT/DP) >= 20 & MEAN(FORMAT/DP) <= 100' -Oz -o $FINAL_VCF
 echo "Done."
 ```
