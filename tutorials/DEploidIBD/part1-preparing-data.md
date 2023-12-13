@@ -4,7 +4,7 @@ In this section of the tutorial we will prepare our input data to run `DEploidIB
 - Filter our input VCF file
 - Prepare a file containing population-level allele frequency (PLAF) estimates
 
-#### Pre-requisites
+#### Prerequisites
 Before beginning this section, please make sure you have:
 - git cloned the PGEforge repository so that you can access some example data (TODO: improve)
 - completed the "Installation" section of the tutorial.
