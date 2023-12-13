@@ -41,7 +41,41 @@ Appropriate uses for *isoRelate*
 *isoRelate* performs pairwise relatedness mapping on haploid isolates using a first order continuous time hidden Markov model (HMM).
 Those isolates with multiple infections where the infected individual is carrying multiple genetically distinct strains of the species may have multiplicity of infection (MOI) greater than 1, and isoRelate can analyze them using a diploid model, rather than a haploid model.
 
-To use this tool, *isoRelate* requires PED and MAP formats that contains unphased genotype data for SNPs.
+## Data formats
+
+To use this tool, *isoRelate* requires PED and MAP formats that contains unphased genotype data for SNPs. Previously, generated of ped and map files has not been adequately documented. This tutorial attempts to add additional steps to process vcf data into pedmap format for use in *isoRelate*.
+
+Please note: indels will cause problems when running isoRelate!
+
+The typical pedmap format is as follows:
+1. Family ID
+2. Isolate ID
+3. Paternal ID
+4. Maternal ID
+5. Multiplicity of infection (MOI) (1 = single infection or haploid, 2 = multiple infections or diploid)
+6. Phenotype (1=unaffected, 2=affected, 0=unknown)
+
+The IDs are alphanumeric: the combination of family and isolate ID should uniquely identify a sample.
+Columns 7 onwards (white-space delimited) are the isolate genotypes for biallelic SNPs where the A and B alleles are coded as 1 and 2 respectively and missing genotypes are coded as 0. 
+All SNPs  must have two alleles specified and each allele should be in a separate column.
+For single infections, genotypes should be specified as homozygous. 
+Either Both alleles should be missing (i.e. 0) or neither. Column labels are not required.
+
+Importantly the paternal ID, maternal ID and phenotype columns are not used by isoRelate, however are required for completeness of the pedigree. For this tutorial, these columns have not been included.
+
+Examples of informative family IDs are the sample collection site or country, however family IDs can be the same as the isolate IDs.
+
+The MAP file contains exactly 4 columns of information:
+1. Chromosome 
+2. SNP identifier
+3. Genetic map distance (centi-Morgans or Morgans)
+4. Base-pair position
+
+where each row describes a single marker. 
+Genetic map distances and base-pair positions are expected to be positive values. 
+The MAP file must be ordered by increasing chromosome genetic map distance. 
+SNP identifiers can contain any characters except spaces or tabs; also, you should avoid * symbols in names. 
+The MAP file must contain as many markers as are in the PED file. Column labels are not required.
 
 ## Existing resources
 
