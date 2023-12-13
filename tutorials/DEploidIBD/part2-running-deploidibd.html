@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>PGEforge – part2-running-deploidibd</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../tutorials/DRpower/DRpower_background.html" rel="next">
+<link href="../../tutorials/DEploidIBD/part1-preparing-data.html" rel="prev">
+<link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../website_docs/tutorials_overview.html">Tutorials</a></li><li class="breadcrumb-item"><a href="../../tutorials/DEploidIBD/background.html">DEploidIBD</a></li><li class="breadcrumb-item"><a href="../../tutorials/DEploidIBD/part2-running-deploidibd.html">Part 2: Running DEploidIBD</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
+      <a href="../../index.html" class="sidebar-logo-link">
+      <img src="../../website_docs/img/PGEforge_hex.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      <div class="sidebar-tools-main">
+    <a href="https://github.com/mrc-ide/PGEforge" rel="" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
+</div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../website_docs/data_description.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data description</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">The data-DAG (TODO)</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Tool landscaping</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+ <span class="menu-text">The landscaping matrix (TODO)</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">Installing via the plasmogenepi.r-universe (TODO)</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">coiaf</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/coiaf/coiaf_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/coiaf/coiaf_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/coiaf/coiaf_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Estimating COI from SNP data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">DEploidIBD</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DEploidIBD/background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DEploidIBD/installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DEploidIBD/part1-preparing-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part 1: Preparing your data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DEploidIBD/part2-running-deploidibd.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Part 2: Running DEploidIBD</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">DRpower</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Designing a study</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/DRpower/DRpower_analysis_pfhrp2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis of <em>pfhrp2/3</em> data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">estMOI</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/estMOI/background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/estMOI/installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/estMOI/analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyze data with <code>estMOI</code></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">hmmIBD</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/hmmIBD/hmmIBD_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/hmmIBD/hmmIBD_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/hmmIBD/hmmIBD_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/hmmIBD/hmmIBD_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic IBD analysis with <code>hmmIBD</code></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text">hmmibdr</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/hmmibdr/hmmibdr_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">MLMOI</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/MLMOI/Template_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">moire</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/moire/moire_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/moire/moire_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/moire/moire_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running moire example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text">MultiLociBiallelicModel</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running <code>MultiLociBiallelicModel</code> on bialleic SNP data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
+ <span class="menu-text">paneljudge</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/paneljudge/paneljudge_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/paneljudge/paneljudge_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/paneljudge/paneljudge_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorial for Running <code>paneljudge</code></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text">rehh</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/rehh/Template_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/rehh/Template_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
+ <span class="menu-text">THEREALMcCOIL</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/THEREALMcCOIL/RMCL_background.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/THEREALMcCOIL/RMCL_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../tutorials/THEREALMcCOIL/RMCL_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analyze data with <code>rehh</code></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+ <span class="menu-text">Guiding principles</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+ <span class="menu-text">Recommendations (TODO)</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">How do I get my tool on PGEforge? (TODO)</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false">
+ <span class="menu-text">Events and meetings</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../website_docs/radish23.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RADISH23 Hackathon</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../website_docs/contributors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contributors</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#part-2-reference-panel-free-deconvolution-with-deploidibd" id="toc-part-2-reference-panel-free-deconvolution-with-deploidibd" class="nav-link active" data-scroll-target="#part-2-reference-panel-free-deconvolution-with-deploidibd">Part 2: Reference-panel free deconvolution with <code>DEploidIBD</code></a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/DEploidIBD/part2-running-deploidibd.md" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="part-2-reference-panel-free-deconvolution-with-deploidibd" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-reference-panel-free-deconvolution-with-deploidibd">Part 2: Reference-panel free deconvolution with <code>DEploidIBD</code></h2>
+<section id="overview" class="level4">
+<h4 class="anchored" data-anchor-id="overview">Overview</h4>
+<p>In this section, we are going to run <code>DEploidIBD</code> on a single sample without using a reference panel. After this is completed, <code>DEploidIBD</code> will have produced an estimate of the complexity of infection (COI), the proportions of each strain, and IBD profiles for every pair of strains within the sample. Finally, we will go over the output files and what they contain.</p>
+Here is a schematic of what we will do:
+<p align="center">
+<img src="./misc/part2-schema-01.png" width="500">
+</p>
+</section>
+<section id="prerequisites" class="level4">
+<h4 class="anchored" data-anchor-id="prerequisites">Prerequisites</h4>
+<p>Please ensure you have completed both ‘Installation’ and ‘Part 1’ of the tutorial. At this point, you should have: - Installed <code>DEploidIBD</code> - Installed <code>bcftools</code> - Filtered your input VCF - Created a text file containing population level allele frequency (PLAF) estimates for each SNP from your filtered VCF</p>
+<p>Your directory structure should look like:</p>
+<pre><code>.
+├── data -&gt; /path/to/PGEforge/data
+├── data_filtered
+│   ├── intermediates
+│   ├── pf3k.DRCongo.final.plaf.txt
+│   └── pf3k.DRCongo.final.vcf.gz
+├── results</code></pre>
+</section>
+<section id="running-deploidibd-for-an-individual-sample" class="level4">
+<h4 class="anchored" data-anchor-id="running-deploidibd-for-an-individual-sample">Running DEploidIBD for an individual sample</h4>
+<p><strong>Selecting a sample</strong></p>
+<p><code>DEploidIBD</code> runs on only one sample from a population at a time. This means we need to subset our input VCF down to an individual sample of interest. Let’s first create a folder where we will store per-sample VCFs:</p>
+<pre><code>mkdir -p data_filtered/by_sample</code></pre>
+<p>Next, we will use <code>bcftools</code> to filter our VCF to an individual sample. Here, I have chosen the sample QG0182-C, which is simply the first sample in the metadata file located at <code>PGEforge/data/wgs/pf3k/DRCongo/pf3k.metadata.DRCongo.csv</code>. Let’s define some commands in bash to make our code a bit cleaner:</p>
+<pre><code>TARGET_SAMPLE=QG0182-C
+SAMPLE_VCF=data_filtered/by_sample/pf3k.DRCongo.$TARGET_SAMPLE.vcf.gz</code></pre>
+<p>Our input VCF should be the filtered VCF from the previous part of the tutorial:</p>
+<pre><code>INPUT_VCF=data_filtered/pf3k.DRCongo.final.vcf.gz</code></pre>
+<p>And now we can filter:</p>
+<pre><code>bcftools view $INPUT_VCF -s $TARGET_SAMPLE -Oz -o $SAMPLE_VCF</code></pre>
+<p>If we run:</p>
+<pre><code>bcftools stats $SAMPLE_VCF | grep ^SN</code></pre>
+<p>We should see that our VCF contains only a single sample, and the same number of records as our filtered VCF:</p>
+<pre><code>SN      0       number of samples:      1
+SN      0       number of records:      6933
+SN      0       number of no-ALTs:      0
+SN      0       number of SNPs: 6933
+SN      0       number of MNPs: 0
+SN      0       number of indels:       0
+SN      0       number of others:       0
+SN      0       number of multiallelic sites:   0
+SN      0       number of multiallelic SNP sites:       0</code></pre>
+<p><strong>Running <code>DEploidIBD</code></strong></p>
+<p>Let’s create an output folder to store the results from <code>DEploidIBD</code>:</p>
+<pre><code>RESULT_DIR=results/$TARGET_SAMPLE
+mkdir -p $RESULT_DIR</code></pre>
+<p>Finally, it is time to run <code>DEploidIBD</code></p>
+<pre><code>dEploid -vcf $SAMPLE_VCF -plaf $PLAF_TXT -o $RESULT_DIR/$TARGET_SAMPLE -k 4 -noPanel -ibd</code></pre>
+<p>Here is a table explaining the flags we’ve used:</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>-vcf</code></td>
+<td>Path to input VCF file.</td>
+</tr>
+<tr class="even">
+<td><code>-plaf</code></td>
+<td>Path to PLAF text file. See Part 1 of the tutorial for details</td>
+</tr>
+<tr class="odd">
+<td><code>-k</code></td>
+<td>The <em>maximum</em> COI that will be inferred. The default value is 5, but in practice 4 is probably the limit for WGS data.</td>
+</tr>
+<tr class="even">
+<td><code>-noPanel</code></td>
+<td>Do <em>not</em> use a reference panel for haplotype inference.</td>
+</tr>
+<tr class="odd">
+<td><code>-ibd</code></td>
+<td>Run the IBD model, e.g.&nbsp;<code>DEploidIBD</code>. In this model we handle within-sample IBD</td>
+</tr>
+</tbody>
+</table>
+<p>With these flags, <code>DEploidIBD</code> should take a few minutes to run on a laptop and print some basic information to the screen. Let’s have a look:</p>
+<pre><code>#########################################
+#        dEploid v0.7.1-beta log        #
+#########################################
+Program was compiled on: Mon-11-Dec-2023-17:23:28-UTC
+dEploid version: 47533f7526ed8f7b615750969e9b008054bdc7fc
+lasso version: 
+
+Input data: 
+      PLAF: data_filtered/pf3k.DRCongo.final.plaf.txt
+       VCF: data_filtered/by_sample/pf3k.DRCongo.QG0182-C.vcf.gz
+
+MCMC parameters: 
+        MCMC burn: 0.5
+      MCMC sample: 800
+ MCMC sample rate: 5
+      Random seed: 0
+  IBD Method used: YES
+      Update Prop: NO
+    Update Single: YES
+      Update Pair: YES
+
+Other parameters:
+    Miss copy prob: 0.01
+  Avrg Cent Morgan: 15000
+                 G: 20
+         IBD sigma: 20
+     ScalingFactor: 100
+     VQSLOD:        8
+      Initial prob: 0.00194298 0.895357 7.5923e-16 0.1027
+
+MCMC diagnostic:
+     Accept_ratio: 0
+         Max_llks: -11603.3
+ Final_theta_llks: -8827.36
+        Mean_llks: -8967.05
+        Stdv_llks: 25.5135
+    DIC_by_Dtheta: 18213.5
+      DIC_by_varD: 19236
+
+Run time:
+    Start at: Wed Dec 13 16:02:39 2023
+      End at: Wed Dec 13 16:08:18 2023
+
+Output saved to:
+ IBD method output saved to:
+  Likelihood: results/QG0182-C/QG0182-C.*.llk
+ Proportions: results/QG0182-C/QG0182-C.*.prop
+  Haplotypes: results/QG0182-C/QG0182-C.*.hap
+   IBD probs: results/QG0182-C/QG0182-C.ibd.probs
+
+ IBD probabilities:
+           0-1: 0.740756
+           1-1: 0.259244
+
+ IBD best path llk: 8192.76
+
+         Effective_K: 1.2312
+          Inferred_K: 2
+Adjusted_effective_K: 1.2312
+
+Proportions:
+0.00194298    0.895357  7.5923e-16      0.1027</code></pre>
+<p>The most critical estimates are at the bottom. We can see that <code>DEploidIBD</code> has inferred a COI, here denoted <span class="math inline">\(K\)</span>, of two:</p>
+<pre><code>          Inferred_K: 2</code></pre>
+<p>It also reports another statistic, called the “Effective COI” (<span class="math inline">\(K_{eff}\)</span>), with this sample having <span class="math inline">\(K_{eff}=1.231\)</span>.</p>
+<pre><code>         Effective_K: 1.2312
+          Inferred_K: 2</code></pre>
+<p>Effective COI has the following definition:</p>
+<p><span class="math display">\[
+K_{eff} = \frac{1}{\sum_{j=1}^{K} p_{j}^2}
+\]</span></p>
+<p>As you can see, this statistic takes into account the proportions of the strains in the infection and produces a continuous-valued statistic rather than an interger, as is the case with COI. In particular, <span class="math inline">\(K_{eff}\)</span> will be in the range of <span class="math inline">\([1, K]\)</span>. If the strains in the infection have balanced proportions, the <span class="math inline">\(K_{eff}\)</span> value will be close to <span class="math inline">\(K\)</span>. On the other hand, if strains within the infection have very low proportions, these will contribute only marginally to the <span class="math inline">\(K_{eff}\)</span>, and as a result it can be considerably lower than the COI (<span class="math inline">\(K\)</span>). In our case we can see the inferred proportions are:</p>
+<pre><code>Proportions:
+0.00194298    0.895357  7.5923e-16      0.1027</code></pre>
+<p>The two proportions below 0.01 are discard, so the proportions of our strains of interest are 0.89 and 0.1. This examples why our <span class="math inline">\(K_{eff}=1.231\)</span> value is quite low: these proportions are relatively unbalanced.</p>
+<p>If we look in the metadata file at <code>data/wgs/pf3k/DRCongo/pf3k.metadata.DRCongo.csv</code> we can see that sample QG0182-C has a <span class="math inline">\(F_{ws}\)</span> value of 0.843. Canonically, as sample with <span class="math inline">\(F_{ws} &lt; 0.95\)</span> is classified as polyclonal. So the inference from <code>DEploidIBD</code> of a <span class="math inline">\(K=2\)</span> is consistent with the <span class="math inline">\(F_{ws}\)</span> statistic for this sample.</p>
+<p>Finally, let’s quickly look at the IBD outputs. The average proportion of the genome in each possible IBD configuration is given here:</p>
+<pre><code> IBD probabilities:
+           0-1: 0.740756
+           1-1: 0.259244</code></pre>
+<p>In this case, “1-1: 0.259” indicates that the two strains have an average relatedness of 26% across the genome. The full IBD profile is stored in the file <code>results/QG0182-C/QG0182-C.ibd.probs</code>. This gives, for every SNP posiiton, the probability that the sample is in each IBD configuraion. We can quickly make a plot using R:</p>
+<pre><code>ibd_path &lt;- "results/QG0182-C/QG0182-C.ibd.probs"
+ibd_df &lt;- read.csv(ibd_path, sep="\t", header=F)
+
+# Unfortunately, due to a trailing tab, we have to munge a bit
+columns &lt;- ibd_df[1,1:4]
+ibd_df &lt;- ibd_df[2:nrow(ibd_df), 1:4]
+colnames(ibd_df) &lt;- columns
+
+# We will plot the IBD status of chromosome 1
+chrom14_df &lt;- subset(ibd_df, CHROM == 'Pf3D7_14_v3')
+
+# Plot
+plot(
+    x=chrom14_df[,"POS"], 
+    y=chrom14_df[,"1-1"],
+    main="",
+    xlab="Position (Chromosome 14)",
+    ylab="IBD Probability",
+    type='l',
+    lwd=1.5,
+    col="firebrick",
+    ylim=c(0, 1)
+)</code></pre>
+<p>Which should produce the following plot:</p>
+<p align="center">
+<img src="./misc/QG0182-C.ibd.probs.jpg" width="500">
+</p>
+<p>We can see three high-probability IBD blocks within this figure, and several smaller IBD blocks with a higher degree of uncertainty.</p>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../tutorials/DEploidIBD/part1-preparing-data.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Part 1: Preparing your data</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../tutorials/DRpower/DRpower_background.html" class="pagination-link">
+        <span class="nav-page-text">Summary</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>. © 2023</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
