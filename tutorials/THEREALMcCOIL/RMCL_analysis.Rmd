@@ -37,7 +37,7 @@ As input for `RMCL`, we will start with a variant call file, abbreviated as a [V
 In this section, we will "munge" our VCF data into a "tidy" format following recommendations by the R community in order to make some of the GT column information more useful. We will use the `vcfR` package to make the VCF data "long" with the `extract_gt_tidy` in order to perform these manipulations. Then, before running RMCL, we will need to do some additional reformatting our SNP genotype data into a wide-matrix format. The specific format required by RMCL is described [here] (https://github.com/EPPIcenter/THEREALMcCOIL/tree/master/categorical_method). 
 
 ```{r, results='hide'}
-vcf <- vcfR::read.vcfR("data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
+vcf <- vcfR::read.vcfR("../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
 # extract information
 loci <- vcf@fix[,1:2] %>% 
   tibble::as_tibble() %>% 
@@ -143,7 +143,7 @@ Note, the RMCL uses an MCMC approach to infer the COI of each sample. The output
 
 # Source code, move into correct working directory
 orig_wd <- getwd()
-setwd("tutorials/THEREALMcCOIL/THEREALMcCOIL/categorical_method/")
+setwd("THEREALMcCOIL/categorical_method/")
 source("McCOIL_categorical.R")
 
 # run RMCL 
