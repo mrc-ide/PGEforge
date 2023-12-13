@@ -1,0 +1,210 @@
+---
+title: "THE REAL McCOIL"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+library(vcfR)
+library(tidyverse)
+library(McCOILR)
+library(kableExtra)
+library(DT)
+```
+
+
+# Introduction  
+Prior to running the [THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), you will need install THEREALMcCOIL C++ code from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL) and build it for your machine as below:
+
+1. Clone the code into the directory using the command `git clone https://github.com/EPPIcenter/THEREALMcCOIL.git`. 
+3. Navigate to the categorical method directory: `cd THEREALMcCOIL/categorical_method`
+4. Complete the make/installation: `R CMD SHLIB McCOIL_categorical_code.c llfunction_het.c` (Note, prior to running this make step, you may need to erase prior `.so` and `.o` files).
+
+**For the duration of this tutorial `THEREALMcCOIL` will be abbreviated as RMCL**. 
+
+## Defining COI
+Complexity of infection (also known as multiplicity of infection) is the number of distinct parasite genetic clones, or parasite genotypes, that are within an individual sample. If there is only a single clone, the host is said to have a monoclonal infection. If there is more than one clone, the sample is said to be polyclonal. COI is the count of these distinct clones within a host. 
+<br>
+The RMCL categorical method uses a MCMC approach based on the heterozygous genotype calls to determine the COI (intuition below). 
+<br>
+Although the RMCL has a proportional method as well, we do not explore that functionality in this tutorial.
+
+## The data
+As input for `RMCL`, we will start with a variant call file, abbreviated as a [VCF](chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://samtools.github.io/hts-specs/VCFv4.3.pdf) of the Sanger Barcode from Vietnam. We will then "munge" this file into the wide format of genotype calls needed fro the RMCL categorical method.
+
+### Preparing the data in tidy format
+In this section, we will "munge" our VCF data into a "tidy" format following recommendations by the R community in order to make some of the GT column information more useful. We will use the `vcfR` package to make the VCF data "long" with the `extract_gt_tidy` in order to perform these manipulations. Then, before running RMCL, we will need to do some additional reformatting our SNP genotype data into a wide-matrix format. The specific format required by RMCL is described [here] (https://github.com/EPPIcenter/THEREALMcCOIL/tree/master/categorical_method). 
+
+```{r, results='hide'}
+vcf <- vcfR::read.vcfR("data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
+# extract information
+loci <- vcf@fix[,1:2] %>% 
+  tibble::as_tibble() %>% 
+  dplyr::mutate(POS = as.numeric(POS),
+                Key = 1:dplyr::n()) %>% 
+  dplyr::select(c("CHROM", "POS", "Key"))
+
+# tidy up the DRC data to long format
+vcf_long <- vcf %>% 
+  vcfR::extract_gt_tidy() %>%   # now lets merge the loci information with the individual level information
+  dplyr::full_join(x = loci, y = ., by  = "Key") %>% 
+  # don't need Key anymore
+  dplyr::select(-c("Key")) %>% 
+  dplyr::mutate(
+    gt = dplyr::case_when(gt_GT == "0/0" ~ 0,
+                          gt_GT == "0/1" ~ 0.5,
+                          gt_GT == "1/1" ~ 1)  # change `gt_GT` column to `gt`
+  )
+
+#......................
+# Reformatting into wide format for RMCL  
+#......................
+vcf_RMCL <- vcf_long %>% 
+  dplyr::mutate(loci = paste(CHROM, POS, sep = "|")) %>% 
+  dplyr::select(c("loci", "Indiv", "gt")) %>% 
+  # liftover missing for RMCL 
+  dplyr::mutate(gt = ifelse(is.na(gt), -1, gt)) %>% 
+  tidyr::pivot_wider(names_from = "Indiv",
+                     values_from = "gt")
+
+#......................
+# Reformatting into matrix format for RMCL 
+#......................
+vcf_RMCLmat <- as.matrix(vcf_RMCL[2:ncol(as.matrix(vcf_RMCL))])
+rownames(vcf_RMCLmat) <- vcf_RMCL[["loci"]]
+vcf_RMCLmat <- t(vcf_RMCLmat)
+
+```
+
+
+
+
+## Intuition Behind COI and Heterozygosity 
+Before going further, we will introduce a toy example to illustrate how COI and the number of heterozygous sites are related.
+
+Consider a single biallelic SNP in an infection of unknown COI. The process by which that SNP is either heterozygous or homozygous can be conceptualized as series of coin tosses: each strain in the infection will contribute either the reference or alternative allele as each coin toss in a series contributes either a heads or a tails. A SNP is heterozygous if there is more than one strain present (COI>1), and both the reference and alternative are observed at least once. This is analogous to a series of coin tosses with at least one head and one tail. 
+
+As a result, in samples with higher COIs, there is less of a chance that all alleles are identical (i.e. with more coin tosses, it is less likely that all are heads/tails). The RMCL method uses a likelihood based on the number of heterozygous calls to determine the COI count (i.e. how many coins were tossed to produce that number of heterozgous calls throughout the individual sample genome).
+
+
+```{r, echo=F}
+#' @title COI Coin Toss Conceptual Visualization
+#' @details for a given set of loci, plot results of binomial toss
+
+COIn_toss <- function(COI = 1, loci = 3) {
+  # assertions to do
+  
+  # realizations
+  rt <- lapply(1:loci, function(x){rbinom(n = COI, size = 1, prob = 0.5)})
+  # out
+  tibble::tibble(rt) %>%
+    dplyr::mutate(loci = paste0("Loci_", 1:dplyr::n())) %>%
+    tidyr::unnest(., cols = "rt") %>%
+    dplyr::mutate(coin = case_when(rt == 0 ~ "H",
+                                   rt == 1 ~ "T")) %>%
+    dplyr::group_by(loci) %>%
+    dplyr::summarise(
+      coin_results = paste(coin, collapse = "")) %>%
+    dplyr::mutate(
+      GT = purrr::map_chr(coin_results, function(x) {
+        ifelse(paste(unique(as.vector(stringr::str_split(string = x, pattern = "", simplify = T))), collapse = "") == "H", "Ref",
+               ifelse(paste(unique(as.vector(stringr::str_split(string = x, pattern = "", simplify = T))), collapse = "") == "T", "Alt",
+                      "Het"))
+      })
+    ) %>%
+    dplyr::rename(Loci = loci,
+                  "Coin Results" = "coin_results",
+                  "Genotype Call" = "GT") %>%
+    dplyr::mutate(Locinum = as.numeric(stringr::str_split_fixed(Loci, "_", n = 2)[,2])) %>%
+    dplyr::arrange(Locinum) %>%
+    dplyr::select(-c("Locinum"))
+}
+```
+
+```{r, eval=TRUE, echo=FALSE}
+
+tibble::tibble("COIlvl" = paste0("COI: ", sort(rep(1:3,3)) )) %>% dplyr::bind_cols(., dplyr::bind_rows(
+  COIn_toss(COI = 1, loci = 3),
+  COIn_toss(COI = 3, loci = 3),
+  COIn_toss(COI = 6, loci = 3)
+)) %>% 
+  kbl() %>%
+  kable_classic(full_width = F, html_font = "Cambria")
+```
+
+
+## Running RMCL
+Now run the RMCL using the default settings provided in the [Github](https://github.com/EPPIcenter/THEREALMcCOIL/). Note, you will need to create an output file for your results to be written. 
+<br>
+Note, the RMCL uses an MCMC approach to infer the COI of each sample. The output file contains the mean, median, and credible interval of the chain (after excluding the burn-in).
+
+```{r, results='hide'}
+
+# Source code, move into correct working directory
+orig_wd <- getwd()
+setwd("tutorials/THEREALMcCOIL/THEREALMcCOIL/categorical_method/")
+source("McCOIL_categorical.R")
+
+# run RMCL 
+McCOIL_categorical(vcf_RMCLmat, maxCOI=25, threshold_ind=20, threshold_site=20,
+                   totalrun=1000, burnin=100, M0=15, e1=0.05, e2=0.05, 
+                   err_method=3, path=getwd(), output="output_COI")
+
+# read in our results
+ret <- readr::read_tsv("output_COI_summary.txt")
+
+# Return to our original working directory
+setwd(orig_wd)
+
+```
+
+If you see a message indicating the time it took to run RMCL... then you've successfully estimated COI, congratulations!
+
+## Exploring RMCL outputs
+The outputs from THEREALMcCOIL are written to files in your specified output directory. We have read in the results above with the `readr::read_tsv` function. Below is code to subset to the relevant bits of the output. 
+```{r}
+
+# Load summary data for DRC
+ret_COI <- ret %>% 
+  # Subset to COI results
+  dplyr::filter(CorP == "C") %>%  # subset to COI information
+  # select to rows we care about
+  dplyr::select(-c("file", "CorP")) %>% 
+  dplyr::rename(Indiv = name)
+
+```
+
+We now have a table with each individual's estimated COI (mean and median) as well as the lower and upper credible interval estimates from the MCMC chain. 
+
+```{r}
+ret_COI %>% 
+  DT::datatable(.,
+                rownames = F,
+                extensions='Buttons',
+                options = list(
+                  searching = T,
+                  pageLength = 5,
+                  dom = 'Bfrtip',
+                  autoWidth = TRUE,
+                  buttons = c('csv')))
+
+```
+
+We can then explore the output of COI with basic data visualization techniques. 
+
+```{r}
+ret_COI %>% 
+  ggplot() +
+  geom_pointrange(aes(x = Indiv, y = mean, ymin = quantile0.025, ymax = quantile0.975)) +
+  theme_linedraw() +
+  theme(legend.position = "none") + 
+  labs(y = "COI", x = "Sample") +
+  theme(axis.text.x = element_text(angle = 90, size = 4))
+
+```
+
+
+## Summary
+In this tutorial, we used the RMCL to estimate the COI of various malaria infections. We then visualized the results. One of the hardest parts of running the RMCL is specifying your paths correctly - make sure the function can "see" both the `McCOIL_categorical_code.c` file as well as your output directory and file path. 
