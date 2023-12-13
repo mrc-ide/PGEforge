@@ -197,5 +197,49 @@ The two proportions below 0.01 are discard, so the proportions of our strains of
 If we look in the metadata file at `data/wgs/pf3k/DRCongo/pf3k.metadata.DRCongo.csv` we can see that sample QG0182-C has a $F_{ws}$ value of 0.843. Canonically, as sample with $F_{ws} < 0.95$ is classified as polyclonal. So the inference from `DEploidIBD` of a $K=2$ is consistent with the $F_{ws}$ statistic for this sample.
 
 
+Finally, let's quickly look at the IBD outputs. The average proportion of the genome in each possible IBD configuration is given here:
+
+```
+ IBD probabilities:
+           0-1: 0.740756
+           1-1: 0.259244
+```
+
+In this case, "1-1: 0.259" indicates that the two strains have an average relatedness of 26% across the genome. The full IBD profile is stored in the file `results/QG0182-C/QG0182-C.ibd.probs`. This gives, for every SNP posiiton, the probability that the sample is in each IBD configuraion. We can quickly make a plot using R:
+
+```
+ibd_path <- "results/QG0182-C/QG0182-C.ibd.probs"
+ibd_df <- read.csv(ibd_path, sep="\t", header=F)
+
+# Unfortunately, due to a trailing tab, we have to munge a bit
+columns <- ibd_df[1,1:4]
+ibd_df <- ibd_df[2:nrow(ibd_df), 1:4]
+colnames(ibd_df) <- columns
+
+# We will plot the IBD status of chromosome 1
+chrom14_df <- subset(ibd_df, CHROM == 'Pf3D7_14_v3')
+
+# Plot
+plot(
+    x=chrom14_df[,"POS"], 
+    y=chrom14_df[,"1-1"],
+    main="",
+    xlab="Position (Chromosome 14)",
+    ylab="IBD Probability",
+    type='l',
+    lwd=1.5,
+    col="firebrick",
+    ylim=c(0, 1)
+)
+```
+
+Which should produce the following plot:
+
+<p align="center"><img src="./misc/QG0182-C.ibd.probs.jpg" width="500"></p>
+
+We can see three high-probability IBD blocks within this figure, and several smaller IBD blocks with a higher degree of uncertainty.
+
+
+
 
 
