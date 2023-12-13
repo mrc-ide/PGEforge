@@ -42,7 +42,7 @@ As input for `MIPanalyzer`, we will start with a variant call file, abbreviated 
 # read in the VCF from the main data page 
 # and convert to  mipanalyzer_biallelic object
 #......................
-dat_biallelic <- MIPanalyzer::vcf_to_mipanalyzer_biallelic("~/Documents/Github/PGEforge/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz") 
+dat_biallelic <- MIPanalyzer::vcf_to_mipanalyzer_biallelic("../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz") 
 ```
 The `dat_biallelic` object is a protected MIPanalyzer class (`mipanalyzer_biallelic`) that is tidy and fast container for genomic data. It has slots for sample name, loci (CHROM/POS/ID/REF/ALT/QUAL/FILTER/INFO), coverage (alleleic depth or dp), counts (allelic counts or ad), filter history (upstream manipulations performed on the object), and vcfmeta (the header of the original VCF file). 
 
