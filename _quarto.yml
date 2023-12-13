@@ -88,14 +88,14 @@ website:
             contents:
             - text: "Summary"
               file: tutorials/MLMOI/Template_background.Rmd
-          - section: "moimix"
-            contents:
-            - text: "Summary"
-              file: tutorials/moimix/moimix_background.Rmd
-            - text: "Installation"
-              file: tutorials/moimix/moimix_installation.Rmd
-            - text: "Analyze data with `moimix`"
-              file: tutorials/moimix/moimix_analysis.Rmd
+          # - section: "moimix"
+          #   contents:
+          #   - text: "Summary"
+          #     file: tutorials/moimix/moimix_background.Rmd
+          #   - text: "Installation"
+          #     file: tutorials/moimix/moimix_installation.Rmd
+          #   - text: "Analyze data with `moimix`"
+          #     file: tutorials/moimix/moimix_analysis.Rmd
           - section: "MultiLociBiallelicModel"
             contents:
             - text: "Summary"
@@ -118,8 +118,8 @@ website:
               file: tutorials/rehh/Template_background.Rmd
             - text: "Installation"
               file: tutorials/rehh/Template_installation.Rmd
-            - text: "Analyze data with `rehh`"
-              file: tutorials/rehh/Template_analysis.Rmd
+            # - text: "Analyze data with `rehh`"
+            #   file: tutorials/rehh/Template_analysis.Rmd
       - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"
