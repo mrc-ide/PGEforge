@@ -8,7 +8,7 @@
 **MacOS**
 Use the package manager [Homebrew](https://brew.sh/) to install `autoconf` and other tools necessary for compilation:
 ```
-brew install automake autoconf autoconf-archive cppunit
+brew install pkg-config automake autoconf autoconf-archive cppunit
 ```
 
 **Ubuntu/Debian**
@@ -71,6 +71,11 @@ If you have not already, install `conda` following the appropriate instructions 
 Next, we will create a virtual environment for the tutorial that contains `bcftools` with the following command:
 ```
 conda create -n deploid -c bioconda bcftools
+```
+
+For Mac you can also install `bcftools` by running:
+```
+brew install bcftools
 ```
 
 Once this is done, you should be able to activate your environment with:
