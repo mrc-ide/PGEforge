@@ -56,6 +56,16 @@ website:
               file: tutorials/coiaf/coiaf_installation.Rmd
             - text: "Estimating COI from SNP data"
               file: tutorials/coiaf/coiaf_analysis.Rmd
+          - section: "DEploidIBD"
+            contents:
+            - text: "Summary"
+              file: tutorials/DEploidIBD/background.md
+            - text: "Installation"
+              file: tutorials/DEploidIBD/installation.md
+            - text: "Part 1: Preparing your data"
+              file: tutorials/DEploidIBD/part1-preparing-data.md
+            - text: "Part 2: Running DEploidIBD"
+              file: tutorials/DEploidIBD/part2-running-deploidibd.md
           - section: "DRpower"
             contents:
             - text: "Summary"
@@ -84,6 +94,10 @@ website:
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
               file: tutorials/hmmIBD/hmmIBD_analysis.md
+          - section: "hmmibdr"
+            contents:
+            - text: "Summary"
+              file: tutorials/hmmibdr/hmmibdr_background.Rmd
           - section: "MLMOI"
             contents:
             - text: "Summary"
