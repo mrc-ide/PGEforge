@@ -27,7 +27,7 @@ df_summary |>
 
 ## Purpose
 
-This tool allows you to calculate F stratistics on genetic data. You can read in data from a 
+This tool allows you to calculate F statistics on genetic data. You can read in data from a 
 variety of formats including VCF.
 
 ## Existing resources
