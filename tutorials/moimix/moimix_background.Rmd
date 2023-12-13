@@ -17,7 +17,7 @@ library(kableExtra)
 
 ```{r, echo=FALSE, warning=FALSE}
 # read in summary sheet from file
-df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+df_summary <- read.csv("summary_sheet_moimix.csv", header = FALSE)
 
 # produce formatted table
 df_summary |>
