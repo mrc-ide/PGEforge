@@ -5,26 +5,70 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(kableExtra)
 ```
 
 ## The data
+For this analysis, we will be using VCF generated from whole genome sequencing data from Vietnam. 
+This data is part of the [pf3k dataset](https://www.malariagen.net/parasite/pf3k) and SNP and Indels. 
+It is also available in [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+## Process VCF file using bcftools in your terminal
+### Select SNPs at MAF >= 5% on chromosome 13
+bcftools view --min-af 0.05 SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz -v snps -t Pf3D7_13_v3 -Oz -o chr13.vietnam.maf5.snps.vcf.gz
 
-Remember to load any packages, including the tool that you are working on:
+## Move to R and Remember to load rehh and dependent packages before running the analysis:
+
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+library(rehh)
+library(R.utils)
+library(vcfR)
+library(data.table)
+
+
+setwd("PGEforge/tutorials/rehh") # Change this directory if necessary
+
+## Estimate EHH and iHS along chromosome 13 
+
+### Convert data from VCF to an object of class haplohh for  chromosome 13
+
+chr13_hh<-data2haplohh(hap_file = "chr13.vietnam.maf5.snps2.vcf.gz", min_perc_geno.mrk = 90, vcf_reader = "data.table", verbose = T, polarize_vcf = F, min_maf=0.005,remove_multiple_markers=T, chr.name= "Pf3D7_13_v3")
+
+### Compute iHH (integrated EHH), iES (integrated EHHS) and inES (integrated normalized EHHS) over the entire chromosome 13 and save the results
+
+chr13.res <- scan_hh(chr13_hh,discard_integration_at_border = F,threads = 24)
+write.table(x=chr13.res,file="IHH_IES_INES_Vietnam_chr13.csv")
+### Compute iHS and save the results
+
+chr13.ihs<-ihh2ihs(chr13.res, freqbin = 1, verbose = F, standardize = T)
+write.table(x=chr13.ihs$ihs, file = "Vitenam_ihs_chr13.csv")
+
+### Compute EHH and iHH for a given focal allele (I543T) and save the results
+
+chr13.res1 <- calc_ehh(chr13_hh,  mrk = "Pf3D7_13_v3:1725370:1725370:A:G", include_nhaplo = TRUE)
+write.table(x=chr13.res1$ehh, file="Vietname_chr13_mutation.csv")
+
+### Plotting EHH around I543T
+
+jpeg("EHH_I543T_Vietnam.jpeg", width = 38, height = 26, units = "cm", res = 300, pointsize = 8)
+res.plot<-plot(chr13.res1, cex = 0.6,lwd=2, main="EHH around I543T locus")
+dev.off()
+
+### Compute furcation and plot sourounding I543T mutation
+
+
+i543ty_fur <- calc_furcation(k13_h, mrk = "Pf3D7_13_v3:1725370:1725370:A:G")
+jpeg("Bifurcation_I543T_Vietnam.jpeg", width = 38, height = 26, units = "cm", res = 300, pointsize = 8)
+plot(i543t_fur, xlim = c(1.67E+6, 1.8E+6),
+     lwd = 0.05,
+     hap.names = hap.names(chr13_hh),
+     cex.lab = 0.3)
+dev.off()
+
+### Compute Haplotype length
+i543t_haplen <- calc_haplen(i543t_fur)
+write.table(x=i543t_haplen$haplen, file="Vietname_c580y_haplotype_length.csv")
+jpeg("Halplolength_I543T_Vietnam.jpeg", width = 38, height = 26, units = "cm", res = 300, pointsize = 8)
+plot(i543t_haplen)
+dev.off()
+
 ```
-
-
-## First analysis section
-
-Make as many sections as you need. Try to break long documents out over multiple pages.
-
-## Summary
-
-It's a good idea to round off with a summary of what we did.
-
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
