@@ -27,7 +27,17 @@ df_summary |>
 
 ## Purpose
 
-A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+The purpose of MLMOI is to estimate complexity of infection with various
+corrections for unobservable states. The program also generates simulated
+datasets. The approach seems to involve simulating datasets and checking to see
+if the observed data correlates well with the simulated datasets derived by a
+given model. We were unable to install the package as it has been removed from
+the R-CRAN library, and had difficulty following the vignettes in the archived
+package. More specifically, We had difficulty interpreting unitless numbers
+associated with a given locus for a given sample, and understanding why some
+missing samples (no sample name) had filled in values and other named samples
+had missing values). Manual installation (with no package available) was also
+difficult to follow.
 
 ## Existing resources
 
