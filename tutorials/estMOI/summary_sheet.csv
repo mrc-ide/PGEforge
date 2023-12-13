@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+﻿Main use-cases,Multiplicity of Infection estimation
+Authors,Samuel Assefa
+Latest version,v1.03
+License,Not stated
+Website,https://github.com/sammy-assefa/estMOI
+Code repository,https://github.com/sammy-assefa/estMOI
+Publication,https://academic.oup.com/bioinformatics/article/30/9/1292/235531
+Tutorial authors,Jody Phelan
+Tutorial date,11-Dec-23

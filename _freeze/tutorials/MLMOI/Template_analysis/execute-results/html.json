@@ -1,0 +1,14 @@
+{
+  "hash": "c4d861f7ec95393978dbec1c542525e2",
+  "result": {
+    "markdown": "---\ntitle: \"Give this whatever name you want\"\noutput: html_document\n---\n\n\n\n\n## The data\n\nThese headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.\n\nRemember to load any packages, including the tool that you are working on:\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(here)\n```\n:::\n\n\n\n## First analysis section\n\nMake as many sections as you need. Try to break long documents out over multiple pages.\n\n## Summary\n\nIt's a good idea to round off with a summary of what we did.\n\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
