@@ -1,5 +1,5 @@
 ---
-title: "Give this whatever name you want"
+title: "Analysis tutorial"
 output: html_document
 ---
 
@@ -8,18 +8,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
 ```
 
-## The data
+First we will load the libraries we will need:
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
-
-Remember to load any packages, including the tool that you are working on:
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 library(hierfstat)
 library(vcfR)
 ```
-
-
-## Calculating F statistics
 
 We're going to be using WGS data from Vietnam which was generated for the 
 [Pf3k Project](https://www.malariagen.net/parasite/pf3k). First load in the metadata containing 

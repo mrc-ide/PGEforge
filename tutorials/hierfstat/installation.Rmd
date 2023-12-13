@@ -13,6 +13,10 @@ We can easily install `hierfstat` from the [plasmogenepi](https://plasmogenepi.r
 if(!require("hierfstat"))  install.packages('hierfstat', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
+We will also need `vcfR` to load some data. Install this with:
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+if(!require("vcfR"))  install.packages("vcfR")
+```
 Once this finishes, check that the library loads ok
 
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
