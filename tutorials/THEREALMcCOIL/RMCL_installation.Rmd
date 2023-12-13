@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Installation from Github 
+In order to run the [THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), we will use an R wrapper, [McCOILR](https://github.com/OJWatson/McCOILR) by OJ Watson that encapsulates the code from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL).
+
 ```{r, eval=F}
 library(remotes)
 remotes::install_github("OJWatson/McCOILR")
