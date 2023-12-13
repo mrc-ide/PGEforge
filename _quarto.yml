@@ -72,7 +72,7 @@ website:
               file: tutorials/coiaf/coiaf_background.Rmd
             - text: "Installation"
               file: tutorials/coiaf/coiaf_installation.Rmd
-            - text: "Estimating COI from SNP daata"
+            - text: "Estimating COI from SNP data"
               file: tutorials/coiaf/coiaf_analysis.Rmd
       - section: "Guiding principles"
         contents:
