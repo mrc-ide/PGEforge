@@ -66,6 +66,14 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+          - section: "moire"
+            contents:
+            - text: "Summary"
+              file: tutorials/moire/moire_background.Rmd
+            - text: "Installation"
+              file: tutorials/moire/moire_installation.Rmd
+            - text: "Running moire example"
+              file: tutorials/moire/moire_analysis.Rmd
       - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"
