@@ -1,0 +1,18 @@
+{
+  "hash": "310bb60490ab1e7d04c23986b49db7c3",
+  "result": {
+    "markdown": "---\ntitle: \"MultiLociBiallelicModel\"\noutput: html_document\nauthor: \"Nicholas Hathaway\"\ndate: \"2023-12-11\"\nbibliography: reference.bib\ncode-link: true\ncode-copy: true\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> MOI;prevalence estimates </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> Henri Christian Junior Tsoungui Obama;Kristan Alexander Schneider </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\"> NA </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\"> MIT License </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/Maths-against-Malaria/MultiLociBiallelicModel\" target=\"_blank\"> https://github.com/Maths-against-Malaria/MultiLociBiallelicModel</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/Maths-against-Malaria/MultiLociBiallelicModel\" target=\"_blank\"> https://github.com/Maths-against-Malaria/MultiLociBiallelicModel</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> <a href=\"https://www.frontiersin.org/articles/10.3389/fepid.2022.943625/full\" target=\"_blank\"> https://www.frontiersin.org/articles/10.3389/fepid.2022.943625/full</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\"> Nicholas Hathaway </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\"> 2023-12 </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose  \n\nThe code supplied by this paper does a maximum-likelihood (MLE) method to estimate: \n\n1)  haplotype frequencies and prevalence\n2)  multiplicity of infection (MOI/COI) from SNP data. \n\nThe functions here provide functionality to predict possible haplotype prevalence within the population that lead to the current set of data. Also estimates MOI/COI based on these estimates. Has to take only biallelic SNPs and compuationally can be limited by the number of loci supplied (in publication used 10 loci). \n\n## Existing resources\n\n- Example file can be found [here](https://github.com/Maths-against-Malaria/MultiLociBiallelicModel/blob/main/src/SNP_MLE.R)\n\n## Citation\n\n[@Tsoungui_Obama2022-gz]\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

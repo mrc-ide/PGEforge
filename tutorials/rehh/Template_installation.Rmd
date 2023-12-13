@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing (rehh)"
 output: html_document
 ---
 
@@ -7,7 +7,43 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
+## Step 1: : install the rehh R package
 
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
+Released packages can be installed from CRAN using
+install.packages("rehh")
+The current version of the repository can be installed with help of the R-package devtools by
+install.packages("devtools", repos = 'http://cran.us.r-project.org')
+devtools::install_gitlab("oneoverx/rehh")
 
+## Step 2: install and install the dependencies (R.utils, vcfR and data.table)
+
+R package R.utils is available on CRAN and can be installed in R as
+install.packages("R.utils")
+To install the pre-release version of R.utils that is available in Git branch develop on GitHub, use:
+remotes::install_github("HenrikBengtsson/R.utils", ref="develop")
+vcfR is available at CRAN. To install use:
+install.packages("vcfR")
+The development version of vcfR can be installed through github:
+devtools::install_github(repo="knausb/vcfR")
+data.table R package can be installed from CRAN using
+install.packages("data.table")
+latest development version (only if newer available)
+data.table::update_dev_pkg()
+latest development version (force install)
+install.packages("data.table", repos="https://rdatatable.gitlab.io/data.table")
+
+## Step 3: install bcftools
+
+git clone --recurse-submodules https://github.com/samtools/htslib.git
+git clone https://github.com/samtools/bcftools.git
+cd bcftools
+ # The following is optional:
+ #   autoheader && autoconf && ./configure --enable-libgsl --enable-perl-filters
+make
+
+## Step 4: load rehh and dependent packages for the analysis
+
+library(rehh)
+library(R.utils)
+library(vcfR)
+library(data.table)

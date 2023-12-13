@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+﻿Main use-cases,"Estimating relatedness between parasites, detecting selective sweeps"
+Authors,Stephen Schaffner
+Latest version,V2.1.1
+License,GPL-3.0 license
+Website,none
+Code repository,https://github.com/glipsnort/hmmIBD.git
+Publication,https://doi.org/10.1186/s12936-018-2349-7
+Tutorial authors,Steve Schaffner
+Tutorial date,"11 December, 2023"
