@@ -27,6 +27,7 @@ Your directory structure should look like:
 #### Running DEploidIBD for an individual sample
 
 **Selecting a sample**
+
 `DEploidIBD` runs on only one sample from a population at a time. This means we need to subset our input VCF down to an individual sample of interest. Let's first create a folder where we will store  per-sample VCFs:
 
 ```
@@ -74,6 +75,7 @@ SN      0       number of multiallelic SNP sites:       0
 
 
 **Running `DEploidIBD`**
+
 Let's create an output folder to store the results from `DEploidIBD`:
 
 ```
