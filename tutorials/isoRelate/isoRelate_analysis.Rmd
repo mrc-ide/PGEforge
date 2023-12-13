@@ -19,35 +19,57 @@ The data used in the vignette tutorial is a _Plasmodium falciparum_ dataset from
 
 ## New tutorial
 
-This tutorial focuses on data from the processed vcf stage and works through the process to generate appropriate map and ped files from vcf data within R.
+This tutorial focuses on data from the processed vcf stage and works through the process to generate appropriate map and ped files from vcf data within R. IsoRelate only uses the pedmap format and needs to be formatted correctly to generate appropriate relatedness calculations.
 
 
 ## The data
 
 The data in this tutorial is the SNP barcoding SpotMalariapfPanel_simData_sanger100.vcf.gz (https://mrc-ide.github.io/PGEforge/data/). Please refer to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details on this dataset.
 
-There will be errors if the vcf files include indels. During you're vcf filtering steps, remove indels.
+Currently, indels will cause errors in the pedmap file format. During the vcf filtering steps, opt to remove indels and only keep SNPs.
+
+## Key Functions
+
+Function | Description
+------------------ | --------------------------------------------------
+getGenotypes | reformat the genotypes in the PED/MAP file and perform data filtering
+getIBDparameters | estimate IBD parameters between pairs of isolates
+getIBDsegments | detect IBD segments between pairs of isolates
+getIBDposterior | calculate the posterior probability of IBD sharing per isolate pair
+getIBDsummary | print a summary of the IBD segments detected
+getIBDmatrix | create a binary matrix of IBD/non-IBD for all SNP and pairs
+getIBDproportions | calculate the proportion of pairs IBD at each SNP
+getIBDiR | calculate the significance of excess IBD sharing at each SNP
+getIBDiclusters | create a network of clusters of isolates who are IBD over an **interval**
+getIBDpclusters | create a network of clusters of isolates who share a certain **proportion** of genome IBD
+plotIBDsegments | plot the detected IBD segments across the genome
+plotIBDproportions | plot the proportion of pairs IBD across the genome
+plotIBDiR | plot the significance of excess IBD sharing across the genome
+plotIBDclusters | plot the network of IBD isolates 
 
 ## Step 1
 
 Process your vcf files into pedmap format.
 
-The input for isoRelate is unpahsed genotype data for SNPs in PLINK PED and MAP format (http://www.cog-genomics.org/plink2). You can choose to process your vcf files using PLINK prior to using this workflow. A R script has been developed to improve this process.
-
+The input for isoRelate is unpahsed genotype data for SNPs in PLINK PED and MAP format (http://www.cog-genomics.org/plink2). You can choose to process your vcf files using PLINK prior to using this workflow. However a R script has been developed to improve the speed of this process.
 
 
 ```{r vcf_file_to_pedmap_format}
 showfile.gds(closeall = TRUE)
+
+# vcf_to_gds(input, output)
 vcf_to_gds("pf7.PNG.radish.vcf.gz", "pf7.PNG.radish.gds")  
 
+# gds_to_pedmap(input_gds, output_map, output_ped)
 gds_to_pedmap("pf7.PNG.radish.gds", "my_map.map", "my_ped.ped")
 
 ```
 
 Once you have generated the ped and map files, the next step is to generate ibd metrics.
+
 ## Step 2
 
-```{r ibd_segments}
+```{r reformat}
 # load your ped and map files 
 pedmap <- list()
 pedmap[[1]] <- read.delim("ped_file.ped", 
@@ -55,6 +77,10 @@ pedmap[[1]] <- read.delim("ped_file.ped",
 pedmap[[2]] <- read.delim("map_file.map", stringsAsFactors = FALSE,
                           header=FALSE)
 
+# reform genotypes from the pedmap format ready for isorelate
+# maf = A numeric value denoting the smallest minor allele frequency allowed in the analysis. The default value is 0.01.
+# isolate.max.missing	= A numeric value denoting the maximum proportion of missing data allowed for each isolate. The default value is 0.1.
+# snp.max.missing	= A numeric value denoting the maximum proportion of missing data allowed for each SNP. The default value is 0.1.
 my_genotypes <- isoRelate::getGenotypes(ped.map = pedmap,
                                         reference.ped.map = NULL,
                                         maf = 0.01,
@@ -66,28 +92,38 @@ my_genotypes <- isoRelate::getGenotypes(ped.map = pedmap,
 # recommended to save these files for later use
 readr::write_rds(my_genotypes, "my_genotypes.rds")
 
-# recommended to save these files for later use
+# Estimate the model parameters
 my_parameters <- getIBDparameters(ped.genotypes = my_genotypes,
                                   number.cores = 8)
-readr::write_rds(my_parameters, "ibd_parameters.rds")
-my_parameters <- readr::read_rds("ibd_parameters.rds")
 
+# view these files - optional
+head(my_parameters)
+```
+
+```{r, ibd_segments message = FALSE, eval = TRUE, echo = FALSE}
 # recommended to save these files for later use
+readr::write_rds(my_parameters, "ibd_parameters.rds")
+# my_parameters <- readr::read_rds("ibd_parameters.rds") # can use this command to retrieve your saved file
+
 my_posterior <- getIBDposterior(ped.genotypes = my_genotypes,
                                 parameters = my_parameters,
                                 error=0.001,
                                 number.cores = 8)
-readr::write_rds(my_posterior, "ibd_posterior.rds")
-my_posterior <- readr::read_rds("ibd_posterior.rds")
-
 # recommended to save these files for later use
+readr::write_rds(my_posterior, "ibd_posterior.rds")
+# my_posterior <- readr::read_rds("ibd_posterior.rds") # can use this command to retrieve your saved file
+
+# Here we calculate the ibd segments. Minimum snps refers to 
+# minimum.snps = An integer value denoting the minimum number of SNPs in an IBD segment for it to be reported. The default value is 20 SNPs.
+# minimum.length.bp	= The minimum length of a reported IBD segment. The default value is 50,000 bp.
 my_ibd_1 <- getIBDsegments(ped.genotypes = my_genotypes,
                            parameters = my_parameters,
                            minimum.snps = 1,
                            minimum.length.bp = 1,
                            error = 0.001)
+# recommended to save these files for later use
 readr::write_rds(my_ibd_1, path="ibd_segments_nsnp_1_len_1.rds")
-my_ibd <- readr::read_rds("ibd_segments_nsnp_1_len_1.rds")
+# my_ibd <- readr::read_rds("ibd_segments_nsnp_1_len_1.rds") # can use this command to retrieve your saved file
 
 # recommended to save these files for later use
 my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
@@ -98,8 +134,19 @@ my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
 
 ```
 
+Depending on the research question, you can obtain IBD segments across varying length of IBD segments and including a threshold of SNPs. Each dataset is likely to be different. There is also the option to make the analysis more strigent by lowering the amount of allowed missing data.
 
+Typically the thresholds are set to use the minimum number of SNPs and length of IBD segments reported in order to reduce false positive IBD calls that are most likely due to population linkage disequilibrium from extremely distant relatedness.
 
+We can get a brief summary of the IBD segments as follows.
+
+```{r, message = FALSE}
+
+# get a summary of IBD segments
+getIBDsummary(ped.genotypes = my_genotypes, 
+              ibd.segments = my_ibd) 
+
+``` 
 
 
 
