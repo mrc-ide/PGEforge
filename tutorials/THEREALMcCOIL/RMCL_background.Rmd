@@ -1,0 +1,37 @@
+---
+title: "THE REAL McCOIL"
+output: html_document
+author: "Nick Brazeau" 
+date: "December 12, 2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+THE REAL McCOIL is a method for estimating the complexity of infections within a malaria-infected host, where complexity of infection (COI) is defined as the number of distinct genotypic parasites within the host. This tutorial focuses on the categorical method for estimating COI. 
+
+## Existing resources
+[Chang, HH et al. 2017, PLoS Comp Biol](https://pubmed.ncbi.nlm.nih.gov/28125584/)
+
+## Citation
+Chang HH, Worby CJ, Yeka A, Nankabirwa J, Kamya MR, Staedke SG, Dorsey G, Murphy M, Neafsey DE, Jeffreys AE, Hubbart C, Rockett KA, Amato R, Kwiatkowski DP, Buckee CO, Greenhouse B. THE REAL McCOIL: A method for the concurrent estimation of the complexity of infection and SNP allele frequency for malaria parasites. PLoS Comput Biol. 2017 Jan 26;13(1):e1005348. doi: 10.1371/journal.pcbi.1005348. PMID: 28125584; PMCID: PMC5300274.  
+  
