@@ -120,6 +120,14 @@ website:
               file: tutorials/rehh/Template_installation.Rmd
             # - text: "Analyze data with `rehh`"
             #   file: tutorials/rehh/Template_analysis.Rmd
+          - section: "THEREALMcCOIL"
+            contents:
+            - text: "Summary"
+              file: tutorials/THEREALMcCOIL/RMCL_background.Rmd
+            - text: "Installation"
+              file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
+            - text: "Analyze data with `rehh`"
+              file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
       - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"
