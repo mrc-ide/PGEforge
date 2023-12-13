@@ -1,0 +1,130 @@
+---
+title: "Tutorial for moimix"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+## The Data
+
+We use an example dataset from the Pf3k Project consisting of 113 samples from the Democratic Republic of the Congo and 247,496 biallelic SNPs. See [the main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) of PGEforge website for further details.
+
+
+## Transforming raw VCF files
+
+These functions transform VCF files into GDS files and summarize key aspects including the sample IDs, and the loci that were genotyped. 
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(moimix)
+library(SeqArray)
+
+local_path<- "/Users/sophieberube/Desktop/PGEforge/data/wgs/pf3k/DRCongo/"
+file_name_vcf<- "SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz"
+
+file_name_gds<- "SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.gds"
+
+seqVCF2GDS(paste0(local_path,file_name_vcf),paste0(local_path,file_name_gds))
+
+myGDS<- seqOpen(paste0(local_path,file_name_gds))
+
+seqSummary(myGDS)
+
+sample.id<- seqGetData(myGDS, "sample.id")
+head(sample.id)
+
+coords<- getCoordinates(myGDS)
+head(coords)
+
+```
+
+
+There is also a function that allows loci on the apicoplast to be filtered out.
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+
+seqSetFilter(myGDS, 
+             variant.id = coords$variant.id[coords$chromosome != "Pf3D7_API_v3"])
+
+
+```
+
+
+## Estimating B-allele frequencies
+
+These functions allow the B-allele frequency matrix to be estimated across all samples and all loci. 
+
+For each sample we can also visualize the within sample allele frequency across each locus. 
+
+```{r,warning=FALSE, message=FALSE, error=FALSE}
+
+BAF_estimates<- bafMatrix(myGDS)
+
+str(BAF_estimates)
+
+#for one single sample
+
+plot(BAF_estimates, "QG0182-C")
+
+
+```
+
+## Identifying polyclonal infections using the binomial mixture model 
+
+
+These functions implement a binomial mixture model for each sample to estimate whether a sample is polyclonal and how many clones may be present in that sample. The implementation of the mixture model uses the reference and alternative allele frequencies at each locus as the outcome variable the number of components is user specified and corresponds to the MOI in the sample. 
+
+In order to identify a good candidate MOI to specify in the model, the user can visually inspect the B-allele frequency plots above, and identify how many clusters of within host allele frequencies are present. Note that this package does not allow more than 5 components in the mixture models.  
+
+
+
+
+The model output below shows a model with 2 components. 
+
+```{r,warning=FALSE, message=FALSE, error=FALSE}
+
+set.seed(333)
+
+
+counts<- alleleCounts(myGDS)
+
+m1 <- binommix(counts, sample.id = "QG0182-C", k= 2)
+summary(m1$fits)
+
+m2 <- binommix(counts, sample.id = "QG0182-C", k= 3)
+summary(m2$fits)
+
+```
+
+Both the mean within host allele frequency across loci for each of the components (presumed number of clones in a sample) and the relative weights in each of the components are also output in the estimates. 
+
+```{r,warning=FALSE, message=FALSE, error=FALSE}
+
+estimates<- getTheta(m1$fits)
+estimates
+
+
+plot(BAF_estimates, "QG0182-C")
+abline(h= estimates$mu.hat, col='red')
+
+```
+
+## Using Fws to identify polyclonal infections
+
+Finally Fws is estimated for each sample and a sample can be designated as polyclonal if Fws is estimated to be less than 0.95. 
+
+```{r,warning=FALSE, message=FALSE, error=FALSE}
+
+fws_est<- getFws(myGDS)
+
+hist(fws_est)
+
+fws_est["QG0182-C"]<0.95
+```
+
+
+## Summary
+
+We have taken a VCF file of bialleleic SNP data, estimated B-allele frequencies, visually estimated MOI using the within host allele frequencies, and fit a model to estimate the mean within host frequencies across loci for each of the presumed number of clones in the sample. 
