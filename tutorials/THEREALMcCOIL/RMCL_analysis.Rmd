@@ -9,7 +9,6 @@ editor_options:
 knitr::opts_chunk$set(echo = T, warning = F, message = F)
 library(vcfR)
 library(tidyverse)
-library(McCOILR)
 library(kableExtra)
 library(DT)
 ```
