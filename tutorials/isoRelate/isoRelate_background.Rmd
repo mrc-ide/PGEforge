@@ -41,6 +41,10 @@ Appropriate uses for *isoRelate*
 *isoRelate* performs pairwise relatedness mapping on haploid isolates using a first order continuous time hidden Markov model (HMM).
 Those isolates with multiple infections where the infected individual is carrying multiple genetically distinct strains of the species may have multiplicity of infection (MOI) greater than 1, and isoRelate can analyze them using a diploid model, rather than a haploid model.
 
+The IBD segments are calculated using the Viterbi algorithm, which finds the single most likely sequence of IBD states that could have generated the observed genotypic data. An alternative method to this is to calculate the posterior probability of IBD sharing, which calculates the probability of sharing 0, 1 or 2 alleles IBD at each SNP, given the genotypic data. Thus, in addition to the Viterbi algorithm, we provide a function to generate the average posterior probability of IBD sharing for each isolate pair, which is calculated as; 
+
+$$avePostPr = \frac{PostPr(IBD = 1)}{2} + PostPr(IBD = 2).$$
+
 ## Data formats
 
 To use this tool, *isoRelate* requires PED and MAP formats that contains unphased genotype data for SNPs. Previously, generated of ped and map files has not been adequately documented. This tutorial attempts to add additional steps to process vcf data into pedmap format for use in *isoRelate*.
