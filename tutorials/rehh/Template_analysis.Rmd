@@ -36,16 +36,22 @@ chr13_hh<-data2haplohh(hap_file = "chr13.vietnam.maf5.snps2.vcf.gz", min_perc_ge
 ### Compute iHH (integrated EHH), iES (integrated EHHS) and inES (integrated normalized EHHS) over the entire chromosome 13 and save the results
 
 chr13.res <- scan_hh(chr13_hh,discard_integration_at_border = F,threads = 24)
-write.table(x=chr13.res,file="IHH_IES_INES_Vietnam_chr13.csv")
+
+# You might decide to save the results and run custom downstream analysis and plot.
+# write.table(x=chr13.res,file="IHH_IES_INES_Vietnam_chr13.csv")
 ### Compute iHS and save the results
 
 chr13.ihs<-ihh2ihs(chr13.res, freqbin = 1, verbose = F, standardize = T)
-write.table(x=chr13.ihs$ihs, file = "Vitenam_ihs_chr13.csv")
+
+# You might decide to save the results and run custom downstream analysis and plot. If you run this analysis on all the chromosomes, you could make manhattan plot with LogP of the iHS.
+
+# write.table(x=chr13.ihs$ihs, file = "Vitenam_ihs_chr13.csv")
 
 ### Compute EHH and iHH for a given focal allele (I543T) and save the results
 
 chr13.res1 <- calc_ehh(chr13_hh,  mrk = "Pf3D7_13_v3:1725370:1725370:A:G", include_nhaplo = TRUE)
-write.table(x=chr13.res1$ehh, file="Vietname_chr13_mutation.csv")
+# You might decide to save the results and run custom downstream analysis and plot.
+# write.table(x=chr13.res1$ehh, file="Vietname_chr13_mutation.csv")
 
 ### Plotting EHH around I543T
 
