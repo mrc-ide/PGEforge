@@ -1,8 +1,8 @@
 ---
-title: "Insert tool title"
+title: "moimix"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
+author: "Sophie Berube"
+date: "13-12-2023"
 ---
 
 ```{r setup, include=FALSE}
@@ -32,6 +32,7 @@ The moimix package uses biallelic SNP data output in the form of a VCF file from
 1. within host allele frequencies (including minor allele frequencies)
 2. whether an infection is monclonal or not
 
+No further testing was done since other tools estimate MOI directly as well as within host allele frequencies. 
 
 
 ## Existing resources
