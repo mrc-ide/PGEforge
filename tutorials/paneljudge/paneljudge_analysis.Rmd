@@ -11,6 +11,7 @@ library(paneljudge)
 library(tidyverse)
 library(vcfR)
 library(cowplot)
+library(here)
 ```
 
 ## Terminology 
@@ -31,7 +32,8 @@ As input for `paneljudge`, we will start with a variant call file, abbreviated a
 # vcf and plaf
 #......................
 # read in the VCF from the main data page 
-vcf <- vcfR::read.vcfR("data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz", verbose = F)
+
+vcf <- vcfR::read.vcfR("../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz", verbose = F)
 
 # convert the data into genotype calls
 gtcalls <- vcfR::extract.gt(vcf, as.numeric = T) 
