@@ -8,4 +8,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Install moire in R:
+```{r}
 install.packages('moire', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
