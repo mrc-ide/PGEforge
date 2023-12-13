@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+Main use-cases,Analysis of small variant call files or multiple amplicon data
+Authors,Robert Verity; OJ Watson; Nick Brazeau
+Latest version,v1.1.0
+License,MIT
+Website,"https://mrc-ide.github.io/MIPanalyzer/"
+Code repository,"https://github.com/mrc-ide/MIPanalyzer"
+Publication,"https://pubmed.ncbi.nlm.nih.gov/32355199/"
+Tutorial authors,Nick Brazeau
+Tutorial date,Dec 13 2023
