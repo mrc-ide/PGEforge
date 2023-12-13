@@ -83,7 +83,7 @@ website:
             - text: "Installation"
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
-              file: tutorials/hmmIBD/analysis.md
+              file: tutorials/hmmIBD/hmmIBD_analysis.md
           - section: "MLMOI"
             contents:
             - text: "Summary"
