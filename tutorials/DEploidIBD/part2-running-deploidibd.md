@@ -3,6 +3,9 @@
 #### Overview
 In this section, we are going to run `DEploidIBD` on a single sample without using a reference panel. After this is completed, `DEploidIBD` will have produced an estimate of the complexity of infection (COI), the proportions of each strain, and IBD profiles for every pair of strains within the sample. Finally, we will go over the output files and what they contain.
 
+Here is a schematic of what we will do:
+<p align="center"><img src="./misc/part2-schema-01.png" width="500"></p>
+
 #### Prerequisites
 Please ensure you have completed both 'Installation' and 'Part 1' of the tutorial. At this point, you should have:
 - Installed `DEploidIBD`
