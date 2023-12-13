@@ -1,0 +1,14 @@
+{
+  "hash": "b5f715f517965a1964b3b638b6c5bf34",
+  "result": {
+    "markdown": "---\ntitle: \"Installing MultiLociBiallelicModel\"\noutput: html_document\n---\n\n\n\n\n## Step 1: Downloading Script \n\nThe code for using `MultiLociBiallelicModel` can all be found within 1 R Script. This can be downloaded from their github repo from <https://github.com/Maths-against-Malaria/MultiLociBiallelicModel/blob/main/src/SNPModel.R> or can be downloaded from here [SNPModel.R](SNPModel.R). \n\n\n::: {.cell}\n\n```{.bash .cell-code}\nwget https://github.com/Maths-against-Malaria/MultiLociBiallelicModel/blob/main/src/SNPModel.R\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
