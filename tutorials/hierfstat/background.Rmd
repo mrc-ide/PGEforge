@@ -1,0 +1,46 @@
+---
+title: "Hierfstat"
+output: html_document
+author: "Jody Phelan"
+date: "13-12-2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+This tool allows you to calculate F stratistics on genetic data. You can read in data from a 
+variety of formats including VCF.
+
+## Existing resources
+
+- The original paper with a samll tutorial is available [here](https://www.sciencedirect.com/science/article/pii/S1567134807001037)
+
+## Citation
+
+```
+@Manual{,
+  title = {hierfstat: Estimation and Tests of Hierarchical F-Statistics},
+  author = {Jerome Goudet and Thibaut Jombart},
+  year = {2022},
+  note = {https://www.r-project.org, https://github.com/jgx65/hierfstat},
+}
+```

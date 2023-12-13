@@ -1,0 +1,87 @@
+---
+title: "Give this whatever name you want"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+## The data
+
+These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+
+Remember to load any packages, including the tool that you are working on:
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(hierfstat)
+library(vcfR)
+```
+
+
+## Calculating F statistics
+
+We're going to be using WGS data from Vietnam which was generated for the 
+[Pf3k Project](https://www.malariagen.net/parasite/pf3k). First load in the metadata containing 
+the sample names and information on where the samples were collected.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+meta<-read.csv("../../data/wgs/pf3k/Vietnam/pf3k.metadata.Vietnam.csv")
+```
+
+Then we can load in the genetic data from VCF format.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE, results = 'hide'}
+vcf<-read.vcfR("../../data/wgs/pf3k/Vietnam/SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
+```
+
+Next we extract the genotypes and convert them into a dosage format.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE, results = 'hide'}
+vcf_gts<-extract.gt(vcf)
+
+recode_gt<-function(x){
+  x<-gsub("[|]","/",x)
+  x<-gsub("0/0",0,x)
+  x<-gsub("0/1",1,x)
+  x<-gsub("1/1",2,x)
+  as.numeric(x)
+}
+
+raw_gts<-apply(vcf_gts,MARGIN = 2,function(x){recode_gt(x)})
+
+```
+
+
+Now we can remove loci which are monomorphic.
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+calculate_af<-function(x){
+  sum(x,na.rm = T)/length(x)*2
+}
+af <- apply(raw_gts,MARGIN = 1,calculate_af)
+transposed_gts<-as.data.frame(t(raw_gts[which(af>0 & af<1),]))
+
+```
+
+We now have a matrix where the samples are rows and the columns are loci. Hierfstat requires you to also
+provide population assignments for each sample by adding it to the data as the first column.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+dat<-cbind(meta$site,transposed_gts)
+
+```
+
+Now we are ready to calculate some statistics!
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+results<-basic.stats(dat)
+results$overall
+```
+
+The `results$overall` table contains basic statistics averaged over loci. The 
+statistics presented are defined in eq.7.38– 7.43 pp.164–5 of Nei (1987).
+
+
+## Summary
+
+We loaded in data from VCF format, converted this to dosage and finally calculated basic statistics.
