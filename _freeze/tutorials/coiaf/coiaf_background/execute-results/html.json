@@ -1,0 +1,18 @@
+{
+  "hash": "b2a525fb56bceeaac6980f8d3ecd8497",
+  "result": {
+    "markdown": "---\ntitle: \"coiaf\"\noutput: html_document\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> MOI estimation </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> Aris Paschalidis, OJ Watson </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\"> 0.1.2 </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\"> MIT </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> <a href=\"https://bailey-lab.github.io/coiaf/\" target=\"_blank\"> bailey-lab.github.io/coiaf</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/bailey-lab/coiaf/\" target=\"_blank\"> https://github.com/bailey-lab/coiaf/</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> <a href=\"https://doi.org/10.1371/journal.pcbi.1010247\" target=\"_blank\"> https://doi.org/10.1371/journal.pcbi.1010247</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\"> Maxwell Murphy </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\"> 11-Dec-2023 </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\n\n`coiaf` is a package for estimating complexity of infection (COI) from bi-allelic SNP data. In comparison to other available methods, `coiaf` is fast, accurate, and can be used to estimate COI for a large number of samples.\n\n## Existing resources\n\nThe [coiaf website](https://bailey-lab.github.io/coiaf/) contains a detailed tutorial on how to use the package, as well as a vignette with worked examples.\n\nThe paper describing the package is available [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1010247).\n\n## Citation\n\n::: {.cell}\n\n```{.r .cell-code}\n @article{\n  Paschalidis_Watson_Aydemir_Verity_Bailey_2023, \n  title={coiaf: Directly estimating complexity of infection with allele frequencies}, \n  volume={19},\n  ISSN={1553-7358},\n  DOI={10.1371/journal.pcbi.1010247},\n  number={6},\n  journal={PLOS Computational Biology},\n  publisher={Public Library of Science},\n  author={Paschalidis, Aris and Watson, Oliver J. and Aydemir, Ozkan and Verity, Robert and Bailey, Jeffrey A.},\n  year={2023},\n  month=jun,\n  pages={e1010247},\n  language={en} \n}\n```\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

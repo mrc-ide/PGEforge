@@ -1,8 +1,6 @@
 ---
-title: "Insert tool title"
+title: "MLMOI"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
 ---
 
 ```{r setup, include=FALSE}

@@ -1,0 +1,14 @@
+{
+  "hash": "eb7eb2013336a46fe34ea3c5271ca116",
+  "result": {
+    "markdown": "---\ntitle: \"Installing (tool name)\"\noutput: html_document\n---\n\n\n\n\n## Step N: what to do\n\nShort explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
