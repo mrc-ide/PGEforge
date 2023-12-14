@@ -1,5 +1,5 @@
 ---
-title: "Tool landscaping"
+title: "Overview of tools based on software standards"
 format: html
 ---
 
@@ -10,7 +10,6 @@ library(googlesheets4)
 library(DT)
 ```
 
-We assessed each tool based on whether certain features were present or absent. 
 ```{r echo=F, include=F}
 #Read google sheets data into R
 tool_std_df <- read_sheet('https://docs.google.com/spreadsheets/d/1rvVPGseiwTKF3ARveDlRVa89pQVcCV4bFQTDZOx1PIs/edit#gid=0')
