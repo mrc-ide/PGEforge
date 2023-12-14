@@ -42,7 +42,8 @@ website:
           - text: "The data-DAG (TODO)"
       - section: "Tool landscaping"
         contents:
-          - text: "The landscaping matrix (TODO)"
+          - text: "The landscaping matrix"
+            file: website_docs/tool_landscaping.qmd
           - text: "Installing via the plasmogenepi.r-universe (TODO)"
       - section: "Tutorials"
         contents:
