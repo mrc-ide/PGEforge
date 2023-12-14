@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing MALECOT"
 output: html_document
 ---
 
@@ -7,7 +7,11 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
+## Installation with r-universe
 
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
+MALECOT can be installed using [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/MALECOT) with the following command:
 
+```
+# Install MALECOT in R:
+install.packages('MALECOT', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
