@@ -27,7 +27,7 @@ This tutorial focuses on data from the processed vcf stage and works through the
 
 ## The data
 
-The data in this tutorial is the SNP barcoding SpotMalariapfPanel_simData_sanger100.vcf.gz (https://mrc-ide.github.io/PGEforge/data/). Please refer to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details on this dataset.
+The data in this tutorial is the SNP barcoding SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz (https://mrc-ide.github.io/PGEforge/data/). Please refer to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details on this dataset.
 
 Currently, indels will cause errors in the pedmap file format. During the vcf filtering steps, opt to remove indels and only keep SNPs.
 
@@ -118,7 +118,7 @@ Process your vcf files into pedmap format.
 showfile.gds(closeall = TRUE)
 
 # vcf_to_gds(input, output)
-vcf_to_gds("SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz", "SpotMalariapfPanel_simData_snponly_sanger100.gds")  
+vcf_to_gds("data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz", "SpotMalariapfPanel_simData_snponly_sanger100.gds")  
 
 # gds_to_pedmap(input_gds, output_map, output_ped)
 gds_to_pedmap("SpotMalariapfPanel_simData_snponly_sanger100.gds", "ped_file.ped", "map_file.map")
