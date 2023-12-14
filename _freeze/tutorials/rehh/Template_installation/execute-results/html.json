@@ -1,8 +1,10 @@
 {
-  "hash": "eb7eb2013336a46fe34ea3c5271ca116",
+  "hash": "1f79997362b95242137c03e1227ff73a",
   "result": {
-    "markdown": "---\ntitle: \"Installing (tool name)\"\noutput: html_document\n---\n\n\n\n\n## Step N: what to do\n\nShort explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.\n\n",
-    "supporting": [],
+    "markdown": "---\ntitle: \"Installing (rehh)\"\noutput: html_document\n---\n\n\n\n\n## Step 1: : install the rehh R package\n\nReleased packages can be installed from CRAN using\ninstall.packages(\"rehh\")\nThe current version of the repository can be installed with help of the R-package devtools by\ninstall.packages(\"devtools\", repos = 'http://cran.us.r-project.org')\ndevtools::install_gitlab(\"oneoverx/rehh\")\n\n## Step 2: install and install the dependencies (R.utils, vcfR and data.table)\n\nR package R.utils is available on CRAN and can be installed in R as\ninstall.packages(\"R.utils\")\nTo install the pre-release version of R.utils that is available in Git branch develop on GitHub, use:\nremotes::install_github(\"HenrikBengtsson/R.utils\", ref=\"develop\")\nvcfR is available at CRAN. To install use:\ninstall.packages(\"vcfR\")\nThe development version of vcfR can be installed through github:\ndevtools::install_github(repo=\"knausb/vcfR\")\ndata.table R package can be installed from CRAN using\ninstall.packages(\"data.table\")\nlatest development version (only if newer available)\ndata.table::update_dev_pkg()\nlatest development version (force install)\ninstall.packages(\"data.table\", repos=\"https://rdatatable.gitlab.io/data.table\")\n\n## Step 3: install bcftools\n\ngit clone --recurse-submodules https://github.com/samtools/htslib.git\ngit clone https://github.com/samtools/bcftools.git\ncd bcftools\n # The following is optional:\n #   autoheader && autoconf && ./configure --enable-libgsl --enable-perl-filters\nmake\n\n## Step 4: load rehh and dependent packages for the analysis\n\nlibrary(rehh)\nlibrary(R.utils)\nlibrary(vcfR)\nlibrary(data.table)\n",
+    "supporting": [
+      "Template_installation_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],

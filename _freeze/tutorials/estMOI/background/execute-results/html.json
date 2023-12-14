@@ -1,0 +1,18 @@
+{
+  "hash": "58b218739fe2524896c903174828f796",
+  "result": {
+    "markdown": "---\ntitle: \"estMOI\"\noutput: html_document\nauthor: \"Jody Phelan\"\ndate: \"11-12-2023\"\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> Multiplicity of Infection estimation </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> Samuel Assefa </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\"> v1.03 </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\"> Not stated </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> https://github.com/sammy-assefa/estMOI </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> https://github.com/sammy-assefa/estMOI </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> https://academic.oup.com/bioinformatics/article/30/9/1292/235531 </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\"> Jody Phelan </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\"> 11-Dec-23 </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\n\nestMOI is a Perl script that estimates the MOI locally in the genome and then overall to obtain a global estimate.\nThe inputs are alignment (BAM files), variant regions in the Variant Call Format/VCF and an optional file of regions to exclude from analysis.\nMinimal multiplicity is inferred by considering the maximum number of distinct haplotypes formed by combinations of a user-specified number of single nucleotide polymorphisms (SNPs) on single or paired reads.\n\n## Existing resources\n\n- A manual can be found [here](https://github.com/sammy-assefa/estMOI/blob/master/README.pdf)\n\n\n## Citation\n\nYou can cite the tool using the following publication:\n\n> Assefa, Samuel A et al. “estMOI: estimating multiplicity of infection using parasite deep sequencing data.” Bioinformatics (Oxford, England) vol. 30,9 (2014): 1292-4. doi:10.1093/bioinformatics/btu005",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

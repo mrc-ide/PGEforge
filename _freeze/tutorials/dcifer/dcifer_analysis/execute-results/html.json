@@ -1,0 +1,14 @@
+{
+  "hash": "dc01a66677433fa55c70b67521791ea8",
+  "result": {
+    "markdown": "---\ntitle: \"Using `dcifer` to estimate relatedness from biallelic SNP data\"\noutput: html_document\nauthor: \"Shazia Ruybal-Pesántez\"\ndate: \"11 December 2023\"\n---\n\n\n\n\n## The data\n\nBelow we will demonstrate how to use `dcifer` using biallelic Sanger 100-SNP barcode data in .vcf format. We will use simulated data created by simulating 100 polyclonal infections from Bangladesh (n=50) and Ghana (n=50). See the [PGEforge website](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html#simulated-1) for further details.\n\nRemember to load any packages, including the tool that you are working on:\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(here)\nlibrary(dcifer)\nlibrary(vcfR)\n```\n:::\n\n\n## Wrangling the data\n*Note this will be replaced when we add the function `vcf2long` from PGEhammer*\n\n\n::: {.cell}\n\n```{.r .cell-code}\nvcf <- vcfR::read.vcfR(here(\"data/snp_barcode\", \"SpotMalariapfPanel_simData_sanger100.vcf.gz\"))\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nScanning file to determine attributes.\nFile attributes:\n  meta lines: 76\n  header_line: 77\n  variant count: 100\n  column count: 109\n\nMeta line 76 read in.\nAll meta lines processed.\ngt matrix initialized.\nCharacter matrix gt created.\n  Character matrix gt rows: 100\n  Character matrix gt cols: 109\n  skip: 0\n  nrows: 100\n  row_num: 0\n\nProcessed variant: 100\nAll variants processed\n```\n:::\n\n```{.r .cell-code}\n# extract allele counts\nad <- t(extract.gt(vcf, element = 'AD'))\n  \n  # make df and into long format\ncounts_df <- ad |> \n    as.data.frame() |> \n    rownames_to_column(\"sample_id\") |> \n    pivot_longer(cols = -sample_id, names_to = \"locus\", values_to = \"read_count\")\n  \n  # unnest read_count\nlong_df <- counts_df |>\n    rowwise() |>\n    # split all read count values\n    mutate(read_count = list(str_split(read_count, \",\")[[1]])) |>\n    unnest(cols = read_count) |> \n    group_by(.data$sample_id, locus) |> \n    # create new variable 'allele'\n    mutate(allele = paste0(\"allele-\", rep(1:n()))) |> \n    relocate(allele, .before = read_count)\n```\n:::\n\n\n\n## First analysis section\n\nMake as many sections as you need. Try to break long documents out over multiple pages.\n\n## Summary\n\nIt's a good idea to round off with a summary of what we did.\n\nPS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

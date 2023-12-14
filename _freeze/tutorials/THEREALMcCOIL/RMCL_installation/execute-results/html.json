@@ -1,0 +1,14 @@
+{
+  "hash": "0545f06af1d0fb35fbd53874caf996ca",
+  "result": {
+    "markdown": "---\ntitle: \"THE REAL McCOIL\"\noutput: html_document\n---\n\n\n\n\n\n## Installation from Github \n[THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), can be installed from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL) and built/\"made\" for your machine as below:\n\n1. Clone the code into the directory using the command `git clone https://github.com/EPPIcenter/THEREALMcCOIL.git`. \n3. Navigate to the categorical method directory: `cd THEREALMcCOIL/categorical_method`\n4. Complete the make/installation: `R CMD SHLIB McCOIL_categorical_code.c llfunction_het.c` (Note, prior to running this make step, you may need to erase prior `.so` and `.o` files).\n\n\n### Dependencies\n`THE REAL McCOIL` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: \n\n* Windows\n    - Download and install the appropriate version of [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R. On installation, ensure you check the box to arrange your system PATH as recommended by Rtools\n* Mac OS X\n    - Download and install [XCode](http://itunes.apple.com/us/app/xcode/id497799835?mt=12)\n    - Within XCode go to Preferences : Downloads and install the Command Line Tools\n* Linux (Debian/Ubuntu)\n    - Install the core software development utilities required for R package development as well as LaTeX by executing\n    ```\n    sudo apt-get install r-base-dev texlive-full\n    ```\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

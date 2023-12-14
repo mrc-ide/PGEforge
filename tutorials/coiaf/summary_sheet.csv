@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+﻿Main use-cases, MOI estimation
+Authors,"Aris Paschalidis, OJ Watson"
+Latest version,0.1.2
+License,MIT
+Website,"<a href=""https://bailey-lab.github.io/coiaf/"" target=""_blank""> bailey-lab.github.io/coiaf</a>"
+Code repository,"<a href=""https://github.com/bailey-lab/coiaf/"" target=""_blank""> https://github.com/bailey-lab/coiaf/</a>"
+Publication,"<a href=""https://doi.org/10.1371/journal.pcbi.1010247"" target=""_blank""> https://doi.org/10.1371/journal.pcbi.1010247</a>"
+Tutorial authors,Maxwell Murphy
+Tutorial date,"11-Dec-2023"

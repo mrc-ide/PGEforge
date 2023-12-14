@@ -29,6 +29,11 @@ All of the data within the subfolder `wgs/simulated` was simulated. In brief, a 
 
 The COI of these samples ranges from one to four, and about half of them have within-host relatedness.
 
+
+### Lab isolates sub-setted 
+There are a set of bam files with vcf calls subsetting to just CSP (PF3D7_0304600), CELTOS (PF3D7_1133400), and AMA1 (PF3D7_1216600). These can be found within the [`wgs/labisolate_subset`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset) directory. With metadata describing what is in each file [`wgs/labisolate_subset/allControlMixtures.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlMixtures.tab.txt), [`wgs/labisolate_subset/allControlSampNameToMixName.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlSampNameToMixName.tab.txt)
+
+
 ## Microhaplotype data
 
 ### Mozambique Field Samples 
@@ -78,6 +83,7 @@ The barcode was also explicitly called with several monoclonal lab isolates and 
 ### Simulated  
 
 The barcode was also simulated for 100 samples (50 Bangladesh and 50 Ghana). Data can be found [`snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz). The simulations were created by simulating super infections by sampling the barcode from each of these countries and selecting COIs based on the COIs observed for each country. 
+To use data without indels, the data can be found [`snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz). 
 
 
 ## *Pfhrp2/3* gene deletion count data

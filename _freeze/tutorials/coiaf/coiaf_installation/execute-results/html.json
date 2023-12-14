@@ -1,0 +1,14 @@
+{
+  "hash": "6b18026b10564049cb2c05b65d997cf2",
+  "result": {
+    "markdown": "---\ntitle: \"Installing coiaf\"\noutput: html_document\n---\n\n\n\n\n## Installation\n\nTo install the package, run the following code:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages('coiaf', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

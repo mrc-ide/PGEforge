@@ -1,0 +1,39 @@
+---
+title: "Installing MIPanalyzer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Installing from R-Universe
+You can directly install `MIPanalyzer` from  [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation.  
+
+
+## Installing From Github 
+```{r, eval=F}
+install.packages("remotes")
+remotes::install_github("mrc-ide/MIPanalyzer")
+```
+
+### Dependencies
+`MIPanalyzer` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: 
+
+* Windows
+    - Download and install the appropriate version of [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R. On installation, ensure you check the box to arrange your system PATH as recommended by Rtools
+* Mac OS X
+    - Download and install [XCode](http://itunes.apple.com/us/app/xcode/id497799835?mt=12)
+    - Within XCode go to Preferences : Downloads and install the Command Line Tools
+* Linux (Debian/Ubuntu)
+    - Install the core software development utilities required for R package development as well as LaTeX by executing
+    ```
+    sudo apt-get install r-base-dev texlive-full
+    ```
+
+Assuming everything installed correctly, you can now load the package:
+
+```{r, eval=F}
+library(MIPanalyzer)
+```
+
