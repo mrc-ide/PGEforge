@@ -83,6 +83,7 @@ The barcode was also explicitly called with several monoclonal lab isolates and 
 ### Simulated  
 
 The barcode was also simulated for 100 samples (50 Bangladesh and 50 Ghana). Data can be found [`snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz). The simulations were created by simulating super infections by sampling the barcode from each of these countries and selecting COIs based on the COIs observed for each country. 
+To use data without indels, the data can be found [`snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz). 
 
 
 ## *Pfhrp2/3* gene deletion count data
