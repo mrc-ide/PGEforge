@@ -1,5 +1,5 @@
 ---
-title: "Give this whatever name you want"
+title: "Determining population structure of multi-allelic data"
 output: html_document
 ---
 
@@ -8,23 +8,118 @@ knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
 ```
 
-## The data
+## General
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+MALECOT is a tool designed for discerning population structures within datasets encompassing both bi-allelic and multi-allelic genetic variations. For the purpose of this example, we will analyse a dataset with multi-allelic data.  It's important to note that MALECOT necessitates haplotype data in a wide format for bi-allelic datasets and a long format for multi-allelic datasets. To streamline the conversion of VCF files into the required haplotype formats, we provide the vcf2malecot() function. This function will automatically detect if the dataset contains bi-allelic or multi-allelic data and will return the haplotype table in the correct format. For further information about the function (and additional function), please consult the [PGEHammer function repository](https://github.com/mrc-ide/PGEhammer). 
 
-Remember to load any packages, including the tool that you are working on:
+In this specific example, we exemplify MALECOT's functionality by allocating simulated samples to K=5 subpopulations. Data were produced from VCF files from [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html).
+
+Additional tutorials and further technical information is provided in [MALECOT's website](https://bobverity.github.io/MALECOT/index.html).
+
+## Loading the library
+
+To run MALECOT, first make sure the library has been installed and is accessible in your R environment.
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+#install.packages("devtools",repos='http://cran.us.r-project.org')
+#devtools::install_github("bobverity/malecot")
+library(MALECOT)
+check_MALECOT_loaded()
+source("vcf2malecot.R")
 ```
 
+## Converting vcf data to long
 
-## First analysis section
+The conversion of VCF data into a long format is facilitated by the vcf2malecot() function. In the context of multi-allelic data, this function goes beyond detecting solely homozygous and heterozygous calls within a sample. Instead, for a locus featuring J alleles, any subset of alleles—ranging from a single allele to all J alleles—can be discerned.
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
+The resulting multi-allelic long-format data frame, compatible with MALECOT, comprises three columns: sample_ID, locus, and haplotype. The sample_ID column is a vector of strings containing the sample names. The locus column comprises integer identifiers corresponding to each locus, while the haplotype column features integer identifiers denoting the haplotypes present at each locus for each sample. Notably, the number of haplotypes per locus can vary. However, it is imperative that every locus is represented for each sample. In instances where no haplotype information is available for a specific locus and sample pairing, the value -9 is utilized to signify missing data.
+
+Let's start by loading and inspecting the vcf file.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+vcf_file <- "SpotMalariapfPanel_simData_sanger100.vcf.gz"
+hap_redux <- vcf2malecot(vcf_file)
+colnames(hap_redux) = c('sample_ID', 'locus', 'haplotype')
+head(hap_redux, n = 10)
+```
+The vcf stored in `vcf_file` has been loaded and stored in haplotype format in `hap_redux` follow the aforementioned specifications.
+
+## Create a project
+The next step involves integrating the data into a new project. This integration process is executed through the utilization of the `bind_data_multiallelic()` function.
+ 
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+# create project and bind data
+myproj <- malecot_project()
+myproj <- bind_data_multiallelic(myproj, df = hap_redux)
+```
+
+## Generate a parameter set and running the model
+
+A novel model is crafted by specifying a parameter set through the application of the new_set() function. Subsequently, the Markov Chain Monte Carlo (MCMC) procedure is set in motion using the run_mcmc() function.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+myproj <- new_set(myproj, name = "tutorial multiallelic", COI_model = "nb", COI_max = 20,
+                  estimate_COI_mean = TRUE, COI_dispersion = 2, lambda = 1)
+                  
+myproj <- run_mcmc(myproj, K = 5, burnin = 1e4, converge_test = 1e2, 
+                   samples = 1e4, pb_markdown =  TRUE)
+```
+
+The performance of the MCMC model can be checked with the function ```plot_loglike_dignostic()```. 
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+plot_loglike_dignostic(myproj, K = 5)
+```
+
+To initiate the analysis, an estimation for the number of clusters (Ks) must be supplied. As a general guideline, a larger number of samples enhances the likelihood of the model effectively exploring the sample space. Nevertheless, it's crucial to bear in mind that augmenting the dataset size comes at the cost of increased computational time.
+
+## Structure plots
+
+Structure plots for multi-allelic data can be interpreted as proportion of probability that a sample is allocated to any specific group. The interpretation is the same for bi-allelic and multi-allelic data. Structure plots can be produced with the function ```plot_structure(myproj, K = 5, divide_ind_on = TRUE)```.
+
+## Complexity of infection (COI)
+
+MALECOT estimates and plots COI. For this, we use the ```plot_COI()``` function with depends on loading the ```ggplot2``` library.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+# load ggplot2 package
+library(ggplot2)
+
+# produce plot of posterior COIs
+posterior_COI <- plot_COI(myproj, K = 5)
+posterior_COI
+```
+
+## Posterior allele frequencies
+
+Posterior allele frequencies shows posterior 95% credible intervals for each separate allele. for specific demes.
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+# get correct plotting order
+group_order_k5 <- get_group_order(myproj, K = 5, target_group = mysim$true_group)
+plot_order <- order(group_order_k5)
+
+plot_COI_mean(myproj, K = 5, deme_order = plot_order)
+```
+
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+# produce plot of posterior allele frequencies for this subpopulation
+posterior_p <- plot_p(myproj, K = 5, deme = 1)
+
+# get true simulated allele frequencies for this subpopulation
+sim_p <- mapply(function(x){x[group_order_k5[1], ]}, mysim$true_p, SIMPLIFY = FALSE)
+
+# get plotting results into dataframe
+df <- data.frame(locus = rep(1:10, each = 5),
+                 p = unlist(sim_p),
+                 allele = rep(1:5, 10))
+
+# overlay true allele frequencies onto plot
+posterior_p <- posterior_p + geom_point(aes(x = locus, y = p, group = allele), data = df,
+                                        position = position_dodge(width = 0.9), col = "red", shape = 4)
+
+posterior_p
+```
 
 ## Summary
 
-It's a good idea to round off with a summary of what we did.
-
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
+In this tutorial, we estimated the population structure from multiallelic data derived from a VCF file. 
