@@ -1,0 +1,21 @@
+---
+title: "Tool landscaping"
+format: html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(googlesheets4)
+library(DT)
+```
+
+We assessed each tool based on whether certain features were present or absent. 
+```{r echo=F, include=F}
+#Read google sheets data into R
+tool_std_df <- read_sheet('https://docs.google.com/spreadsheets/d/1rvVPGseiwTKF3ARveDlRVa89pQVcCV4bFQTDZOx1PIs/edit#gid=0')
+```
+
+```{r echo=F}
+datatable(tool_std_df)
+```
