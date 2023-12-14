@@ -66,6 +66,14 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+          - section: "dcifer"
+            contents:
+            - text: "Summary"
+              file: tutorials/dcifer/dcifer_background.Rmd
+            - text: "Installation"
+              file: tutorials/dcifer/dcifer_installation.Rmd
+            - text: "Tutorial"
+              file: tutorials/dcifer/dcifer_analysis.Rmd
       - section: "Guiding principles"
         contents:
           - text: "Recommendations (TODO)"
