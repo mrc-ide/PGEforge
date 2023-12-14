@@ -64,6 +64,10 @@ myproj <- run_mcmc(myproj, K = 5, burnin = 1e4, converge_test = 1e2,
                    samples = 1e4, pb_markdown =  TRUE)
 ```
 
+########################################################
+###A BUG happens here -> Pending correction by Robert...
+########################################################
+
 The performance of the MCMC model can be checked with the function ```plot_loglike_dignostic()```. 
 
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
