@@ -118,13 +118,10 @@ Process your vcf files into pedmap format.
 showfile.gds(closeall = TRUE)
 
 # vcf_to_gds(input, output)
-vcf_to_gds("data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz", "SpotMalariapfPanel_simData_snponly_sanger100.gds")  
-
 # gds_to_pedmap(input_gds, output_map, output_ped)
-gds_to_pedmap("SpotMalariapfPanel_simData_snponly_sanger100.gds", "ped_file.ped", "map_file.map")
+gds_to_pedmap(vcf_to_gds("../../data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz", "SpotMalariapfPanel_simData_snponly_sanger100.gds"), "ped_file.ped", "map_file.map")
 
 ```
-
 
 Once you have generated the ped and map files, the next step is to generate ibd metrics.
 
@@ -151,13 +148,13 @@ my_genotypes <- isoRelate::getGenotypes(ped.map = pedmap,
                                         input.map.distance = "cM")
 
 # recommended to save these files for later use
-readr::write_rds(my_genotypes, "my_genotypes.rds")
+#readr::write_rds(my_genotypes, "my_genotypes.rds")
 
 # Estimate the model parameters
 my_parameters <- getIBDparameters(ped.genotypes = my_genotypes,
                                   number.cores = 8)
 # recommended to save these files for later use
-readr::write_rds(my_parameters, "ibd_parameters.rds")
+#readr::write_rds(my_parameters, "ibd_parameters.rds")
 # my_parameters <- readr::read_rds("ibd_parameters.rds") # can use this command to retrieve your saved file
 
 # view these files - optional
@@ -214,37 +211,6 @@ This file can simply contain sample names and location, but can be as extensive 
 
 To have more control about the metadata that you use, you can load your file and assign specific colours to use in your analysis.
 
-```{r optional}
-# read in a metadata files structured as follows
-# ID   Pop_Level1   Pop_Level2    ...    Pop_Leveln
-metadata <- read.delim("SpotMalaria_metadata.txt", sep="",
-                              header=TRUE, stringsAsFactors = FALSE, na.strings=c(""))
-
-rownames(metadata) <- metadata$sample
-
-# determine population levels from metadata file
-population_levels <- c("country")
-
-# annotate metadata for arbitrary population levels as required
-annotate_metadata <- function(df, population_levels, metadata) {
-  for (level in population_levels) {
-    df[, paste0(population_levels, "1")] <- filtered_metadata[as.character(df$iid1), population_levels]
-    df[, paste0(population_levels, "2")] <- filtered_metadata[as.character(df$iid2), population_levels]
-  }
-  return(df)
-}
-
-# assign population colours (for now)
-pop_colour <- list()
-pop_colour[["country"]] <- data.frame(country=c("Ghana", "Bangladesh"),
-                                         colour=c("#446658", "#84ABC8"),
-                                         row.names=c("Ghana", "Bangladesh"),
-                                         stringsAsFactors = FALSE) %>%
-  tibble::remove_rownames() %>%
-  tibble::column_to_rownames(var="country")
-
-```
-
 ## Step 4: Calculate IBD
 
 ```{r, ibd_segments message = FALSE, eval = TRUE, echo = FALSE}
@@ -253,7 +219,7 @@ my_posterior <- getIBDposterior(ped.genotypes = my_genotypes,
                                 error=0.001,
                                 number.cores = 8)
 # recommended to save these files for later use
-readr::write_rds(my_posterior, "ibd_posterior.rds")
+#readr::write_rds(my_posterior, "ibd_posterior.rds")
 # my_posterior <- readr::read_rds("ibd_posterior.rds") # can use this command to retrieve your saved file
 
 my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
@@ -261,7 +227,7 @@ my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
                            minimum.snps = 1,
                            minimum.length.bp = 20000,
                            error = 0.001)
-readr::write_rds(my_ibd_1, path="ibd_segments_nsnp_1_len_20k.rds")
+#readr::write_rds(my_ibd_1, path="ibd_segments_nsnp_1_len_20k.rds")
 # my_ibd <- readr::read_rds("ibd_segments_nsnp_1_len_1.rds") # can use this command to retrieve your saved file
 
 # Here we calculate the ibd segments. Minimum snps refers to 
