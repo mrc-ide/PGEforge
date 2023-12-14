@@ -84,6 +84,14 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
+          - section: "Hierfstat"
+            contents:
+            - text: "Summary"
+              file: tutorials/hierfstat/background.Rmd
+            - text: "Installation"
+              file: tutorials/hierfstat/installation.Rmd
+            - text: "Analyze data with `hierfstat`"
+              file: tutorials/hierfstat/analysis.Rmd
           - section: "hmmIBD"
             contents:
             - text: "Summary"
