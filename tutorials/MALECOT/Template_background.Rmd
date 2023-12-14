@@ -1,8 +1,8 @@
 ---
-title: "Insert tool title"
+title: "MALECOT"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
+author: "Bob Verity"
+date: "11-Dec-2023"
 ---
 
 ```{r setup, include=FALSE}
@@ -27,23 +27,28 @@ df_summary |>
 
 ## Purpose
 
-A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+The MALECOT R package is intended for the inference of population structure in malaria data. It operates similar to STRUCTURE by dividing the dataset in K subpopulations. Unlike STRUCTURE, it considers that each sample may have multiple genotypes due to complexity of infection (COI).
+
+The tools uses Bayesian Markov Monte Carlo to estimate:
+
+1. Allele frequencies in each subpopulation.
+2. Group allocation (i.e., it allocates each sample to a group).
+3. Complexity of Infection - COI (The number of genotypes represented in each sample).
 
 ## Existing resources
 
-- Any existing online tutorials?
-- Any important papers?
+The [MALECOT website](https://bobverity.github.io/MALECOT/index.html) provides installation intructions, vignettes with different example workflows, recommendations to increase statistical power and performance, and documentation on the functions included in the package.
 
 ## Citation
 
-BibTeX style citation. For an R package, you can get this using `citation(package = "name")`:
-
-Here is an example for DRpower, using `citation(package = "DRpower")`:
+Please use the following citation:
 
 ```
 @Manual{,
-    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},
-    author = {Bob Verity and Shazia Ruybal},
-    note = {R package version 1.0.2},
+    title = {MALECOT: Joint estimation of COI and population structure for malaria
+genetic data},
+    author = {Bob Verity},
+    year = {2023},
+    note = {R package version 0.1.1},
   }
 ```
