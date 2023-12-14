@@ -10,6 +10,7 @@ library(kableExtra)
 library(isoRelate)
 library(SeqArray)
 library(igraph)
+library(dplyr)
 ```
 
 ## Useful tutorial examples
@@ -49,27 +50,85 @@ plotIBDproportions | plot the proportion of pairs IBD across the genome
 plotIBDiR | plot the significance of excess IBD sharing across the genome
 plotIBDclusters | plot the network of IBD isolates 
 
+##PGEhammer function
+
+The input for isoRelate is unpahsed genotype data for SNPs in PLINK PED and MAP format (http://www.cog-genomics.org/plink2). You can choose to process your vcf files using PLINK prior to using this workflow. However a PGEHammer function has been developed to improve the speed of this process.
+
+See below:
+
+```{r wrapper_function}
+vcf_to_gds <- function(vcf_file, gds_file) {
+  
+  # read in VCF file as VCF object and perform quality filtration
+  vcf.file <- (vcf_file)
+  gds.file <- (gds_file)
+  seqVCF2GDS(vcf.file, gds.file)
+}
+
+gds_to_pedmap <- function(gds_file, ped_file, map_file) {
+  snp_data <- seqOpen(gds_file, readonly = TRUE)
+  variants <- data.frame(variant_id = seqGetData(snp_data, "variant.id"),
+                         chr = seqGetData(snp_data, "chromosome"),
+                         pos = seqGetData(snp_data, "position"),
+                         alleles = seqGetData(snp_data, "allele")) %>%
+    group_by(chr, pos) %>% summarise(variant_id=min(variant_id)) %>% 
+    arrange(chr, pos) %>% as.data.frame
+  
+  variants$allele <- seqGetData(snp_data, "allele")
+  samp <- data.frame(sample=seqGetData(snp_data, "sample.id"))
+  samples <- as.character(samp$sample)
+  
+  n_var <- nrow(variants)
+  n_samp <- length(samples)
+
+  genotypes <- seqGetData(snp_data, "genotype") %>% matrix(ncol=n_var, nrow=n_samp)
+  rownames(genotypes) <- samples
+  
+  ## recode genotypes so 1 = ref allele, 2 = alt allele, 0 = missing
+  genotypes <- genotypes + 1
+  genotypes[is.na(genotypes)] <- 0
+  
+  ## extract genotypes at biallelic loci
+  allele_count <- apply(genotypes, 2, max)
+  biallelic <- genotypes[, allele_count<=2]
+  
+  ## label biallelic loci
+  colnames(biallelic) <- (variants[allele_count<=2, ] %>% mutate(name=paste(chr, ":", pos, sep="")))$name
+  
+  ## construct a map file
+  my_map <- variants[allele_count<=2,] %>% mutate(cM=pos/17000) %>%
+    dplyr::select(chr, variant_id, cM, pos)
+  
+  ## write a map file corresponding to biallelic snps
+  write.table(my_map, file=map_file, row.names=FALSE, col.names = FALSE, sep="\t", quote=FALSE)
+  
+  ## write a ped file encoding genotypes at biallelic snps
+  for (sample in samples) {
+    cat(paste0(sample,"\t", sample, "\t0\t0\t1\t0\t", paste(rep(biallelic[sample,], each=2), collapse="\t"), "\n"), file=ped_file, append=TRUE)
+  }
+}
+
+```
+
 ## Step 1
 
 Process your vcf files into pedmap format.
-
-The input for isoRelate is unpahsed genotype data for SNPs in PLINK PED and MAP format (http://www.cog-genomics.org/plink2). You can choose to process your vcf files using PLINK prior to using this workflow. However a R script has been developed to improve the speed of this process.
-
 
 ```{r vcf_file_to_pedmap_format}
 showfile.gds(closeall = TRUE)
 
 # vcf_to_gds(input, output)
-vcf_to_gds("pf7.PNG.radish.vcf.gz", "pf7.PNG.radish.gds")  
+vcf_to_gds("SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz", "SpotMalariapfPanel_simData_snponly_sanger100.gds")  
 
 # gds_to_pedmap(input_gds, output_map, output_ped)
-gds_to_pedmap("pf7.PNG.radish.gds", "my_map.map", "my_ped.ped")
+gds_to_pedmap("SpotMalariapfPanel_simData_snponly_sanger100.gds", "ped_file.ped", "map_file.map")
 
 ```
 
+
 Once you have generated the ped and map files, the next step is to generate ibd metrics.
 
-## Step 2
+## Step 2: Load pedmap files
 
 ```{r reformat}
 # load your ped and map files 
@@ -97,16 +156,98 @@ readr::write_rds(my_genotypes, "my_genotypes.rds")
 # Estimate the model parameters
 my_parameters <- getIBDparameters(ped.genotypes = my_genotypes,
                                   number.cores = 8)
+# recommended to save these files for later use
+readr::write_rds(my_parameters, "ibd_parameters.rds")
+# my_parameters <- readr::read_rds("ibd_parameters.rds") # can use this command to retrieve your saved file
 
 # view these files - optional
 head(my_parameters)
 ```
 
-```{r, ibd_segments message = FALSE, eval = TRUE, echo = FALSE}
-# recommended to save these files for later use
-readr::write_rds(my_parameters, "ibd_parameters.rds")
-# my_parameters <- readr::read_rds("ibd_parameters.rds") # can use this command to retrieve your saved file
+## Step 3: Set IBD groups
 
+```{r metdata}
+my_groups <- my_genotypes[[1]][,1:3]
+my_groups[1:24,"pid"] <- "Ghana"
+my_groups[25,"pid"] <- "Bangladesh"
+my_groups[26,"pid"] <- "Ghana"
+my_groups[27:28,"pid"] <- "Bangladesh"
+my_groups[29:30,"pid"] <- "Ghana"
+my_groups[31:32,"pid"] <- "Bangladesh"
+my_groups[33,"pid"] <- "Bangladesh"
+my_groups[34,"pid"] <- "Ghana"
+my_groups[35:36,"pid"] <- "Ghana"
+my_groups[37:44,"pid"] <- "Bangladesh"
+my_groups[45:46,"pid"] <- "Ghana"
+my_groups[47:48,"pid"] <- "Bangladesh"
+my_groups[49,"pid"] <- "Ghana"
+my_groups[50:48,"pid"] <- "Bangladesh"
+my_groups[51,"pid"] <- "Ghana"
+my_groups[52:57,"pid"] <- "Bangladesh"
+my_groups[58:59,"pid"] <- "Ghana"
+my_groups[60,"pid"] <- "Bangladesh"
+my_groups[61,"pid"] <- "Ghana"
+my_groups[62,"pid"] <- "Bangladesh"
+my_groups[63,"pid"] <- "Ghana"
+my_groups[64:69,"pid"] <- "Bangladesh"
+my_groups[70,"pid"] <- "Ghana"
+my_groups[71:74,"pid"] <- "Bangladesh"
+my_groups[75,"pid"] <- "Ghana"
+my_groups[76:78,"pid"] <- "Bangladesh"
+my_groups[79,"pid"] <- "Ghana"
+my_groups[80:81,"pid"] <- "Bangladesh"
+my_groups[82:83,"pid"] <- "Ghana"
+my_groups[84,"pid"] <- "Bangladesh"
+my_groups[85:86,"pid"] <- "Ghana"
+my_groups[87:91,"pid"] <- "Bangladesh"
+my_groups[92,"pid"] <- "Ghana"
+my_groups[93:95,"pid"] <- "Bangladesh"
+my_groups[96:98,"pid"] <- "Ghana"
+my_groups[99,"pid"] <- "Bangladesh"
+my_groups[100,"pid"] <- "Ghana"
+
+```
+
+## load metadata file (optional)
+
+This file can simply contain sample names and location, but can be as extensive as required for your analysis or research question.
+
+To have more control about the metadata that you use, you can load your file and assign specific colours to use in your analysis.
+
+```{r optional}
+# read in a metadata files structured as follows
+# ID   Pop_Level1   Pop_Level2    ...    Pop_Leveln
+metadata <- read.delim("SpotMalaria_metadata.txt", sep="",
+                              header=TRUE, stringsAsFactors = FALSE, na.strings=c(""))
+
+rownames(metadata) <- metadata$sample
+
+# determine population levels from metadata file
+population_levels <- c("country")
+
+# annotate metadata for arbitrary population levels as required
+annotate_metadata <- function(df, population_levels, metadata) {
+  for (level in population_levels) {
+    df[, paste0(population_levels, "1")] <- filtered_metadata[as.character(df$iid1), population_levels]
+    df[, paste0(population_levels, "2")] <- filtered_metadata[as.character(df$iid2), population_levels]
+  }
+  return(df)
+}
+
+# assign population colours (for now)
+pop_colour <- list()
+pop_colour[["country"]] <- data.frame(country=c("Ghana", "Bangladesh"),
+                                         colour=c("#446658", "#84ABC8"),
+                                         row.names=c("Ghana", "Bangladesh"),
+                                         stringsAsFactors = FALSE) %>%
+  tibble::remove_rownames() %>%
+  tibble::column_to_rownames(var="country")
+
+```
+
+## Step 4: Calculate IBD
+
+```{r, ibd_segments message = FALSE, eval = TRUE, echo = FALSE}
 my_posterior <- getIBDposterior(ped.genotypes = my_genotypes,
                                 parameters = my_parameters,
                                 error=0.001,
@@ -115,70 +256,211 @@ my_posterior <- getIBDposterior(ped.genotypes = my_genotypes,
 readr::write_rds(my_posterior, "ibd_posterior.rds")
 # my_posterior <- readr::read_rds("ibd_posterior.rds") # can use this command to retrieve your saved file
 
+my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
+                           parameters = my_parameters,
+                           minimum.snps = 1,
+                           minimum.length.bp = 20000,
+                           error = 0.001)
+readr::write_rds(my_ibd_1, path="ibd_segments_nsnp_1_len_20k.rds")
+# my_ibd <- readr::read_rds("ibd_segments_nsnp_1_len_1.rds") # can use this command to retrieve your saved file
+
 # Here we calculate the ibd segments. Minimum snps refers to 
 # minimum.snps = An integer value denoting the minimum number of SNPs in an IBD segment for it to be reported. The default value is 20 SNPs.
 # minimum.length.bp	= The minimum length of a reported IBD segment. The default value is 50,000 bp.
-my_ibd_1 <- getIBDsegments(ped.genotypes = my_genotypes,
-                           parameters = my_parameters,
-                           minimum.snps = 1,
-                           minimum.length.bp = 1,
-                           error = 0.001)
-# recommended to save these files for later use
-readr::write_rds(my_ibd_1, path="ibd_segments_nsnp_1_len_1.rds")
-# my_ibd <- readr::read_rds("ibd_segments_nsnp_1_len_1.rds") # can use this command to retrieve your saved file
-
-# recommended to save these files for later use
-my_ibd_20 <- getIBDsegments(ped.genotypes = my_genotypes,
-                           parameters = my_parameters,
-                           minimum.snps = 20,
-                           minimum.length.bp = 20,
-                           error = 0.001)
+# We have used minimum snps=1 across a minimum length bp of 20,000 bps.
 
 ```
 
-Depending on the research question, you can obtain IBD segments across varying length of IBD segments and including a threshold of SNPs. Each dataset is likely to be different. There is also the option to make the analysis more strigent by lowering the amount of allowed missing data.
+## Step 5: Visualise IBD
 
-Typically the thresholds are set to use the minimum number of SNPs and length of IBD segments reported in order to reduce false positive IBD calls that are most likely due to population linkage disequilibrium from extremely distant relatedness.
+```{r}
+# generate the isolates who are IBD over the Plasmodium falciparum mdr1 gene
+my_i_clusters <- getIBDiclusters(ped.genotypes = my_genotypes, 
+                                 ibd.segments = my_ibd_20, 
+                                 interval = c("Pf3D7_05_v3", 955955, 963095), 
+                                 prop=0, 
+                                 hi.clust = FALSE)
 
-We can get a brief summary of the IBD segments as follows.
+# plot the network of clusters
+plotIBDclusters(ped.genotypes = my_genotypes, 
+                clusters = my_i_clusters, 
+                groups = NULL, 
+                vertex.color = NULL, 
+                vertex.frame.color = "white",
+                vertex.size = 8, 
+                vertex.name = FALSE, 
+                edge.color = "gray60", 
+                edge.width = 0.8, 
+                mark.border = "white",
+                mark.col = "gray94", 
+                add.legend = TRUE, 
+                legend.x = -1.5, 
+                legend.y = -0.25, 
+                layout = NULL, 
+                return.layout = TRUE)
 
-```{r, message = FALSE}
-
-# get a summary of IBD segments
-getIBDsummary(ped.genotypes = my_genotypes, 
-              ibd.segments = my_ibd) 
+# the generic figures produced by isoRelate as seen below are not formatted very nicely. To format these figures into nice networks, `igraph` and `ggplot2` is needed.
+# a function will be added to this tutorial to illustrate how to easily create these networks.
 
 ``` 
 
-## Step 3: Visualising and interpretting IBD Results
+A major limitation of running the `plotIBDclusters()` function is that every time it is run the vertex layout will differ which is difficult to maintain each time.
 
-There are several ways to visualise and use the IBD results. The follow shows basic visualisations.
+According to the author of IsoRelate, this issue is an artifact of the R package used to generate the network, `igraph`.
+If the user wishes to keep the network layout the same in multiple subsequent figures then set `return.layout = TRUE` and use the returned layout
+in subsequent `plotIBDclusters()` runs with `layout = my_layout`.
+
+Annother issue with the original tutorial is that the `i.network` output as the second object in the list  `my_i_clusters`. If the user wishes to perform quantitative analyses using this network, there are many functions in the `i.graph` package to do so. Please see the `i.graph` documentation for more details on this.
+Again, a function will be added to this tutorial to improve the ease of generating formatted networks.
+
+
+We can also explore networks of isolates sharing a large proportion of their genome IBD. 
+Such isolates may represent duplicate samples or individuals who have identical infections.
 
 ```{r, message = FALSE}
-my_proportion <- getIBDproportion(ped.genotypes = my_genotypes,
-                                  ibd.matrix = my_matrix,
-                                  groups = my_groups)
+
+# generate the isolates who share at least than 90% of their genome IBD
+my_p_clusters <- getIBDpclusters(ped.genotypes = my_genotypes, 
+                                 ibd.segments = my_ibd_20, 
+                                 prop=0.9, 
+                                 hi.clust = FALSE)
+
+# plot the network of clusters
+plotIBDclusters(ped.genotypes = my_genotypes, 
+                clusters = my_p_clusters, 
+                groups = NULL, 
+                vertex.color = NULL, 
+                vertex.frame.color = "white",
+                vertex.size = 12, 
+                vertex.name = FALSE, 
+                edge.color = "gray60", 
+                edge.width = 0.8, 
+                mark.border = "white",
+                mark.col = "gray94", 
+                add.legend = TRUE, 
+                legend.x = -1.5, 
+                legend.y = -0.25, 
+                layout = NULL, 
+                return.layout = TRUE)
+                          
+``` 
+Next, we use IsoRelate to visualise the IBD segments and the size of these segments across the genome.
+
+```{r, message = FALSE}
+
+# plot IBD segments
+plotIBDsegments(ped.genotypes = my_genotypes, 
+                ibd.segments = my_ibd_20, 
+                interval = NULL,
+                annotation.genes = NULL,
+                annotation.genes.color = NULL,
+                highlight.genes = NULL, 
+                highlight.genes.labels = FALSE,
+                highlight.genes.color = NULL,
+                highlight.genes.alpha = 0.1,
+                segment.height = 1,
+                number.per.page = NULL, 
+                fid.label = FALSE, 
+                iid.label = FALSE, 
+                ylabel.size = 9, 
+                add.rug = FALSE,
+                plot.title = "Distribution of IBD segments in the SpotMalaria dataset", 
+                add.legend = TRUE, 
+                segment.color = NULL)                     
+``` 
+
+There is also an option to visualise the segments in subgroups of IBD pairs of size `number.per.page`. This will give you a clearer visualisation of what IBD segment lengths you have in your dataset.
+
+```{r, message = FALSE}
+
+# plot IBD segments
+plotIBDsegments(ped.genotypes = my_genotypes, 
+                ibd.segments = my_ibd_20, 
+                interval = NULL,
+                annotation.genes = NULL,
+                annotation.genes.color = NULL,
+                highlight.genes = NULL, 
+                highlight.genes.labels = FALSE,
+                highlight.genes.color = NULL,
+                highlight.genes.alpha = 0.1,
+                segment.height = 1,
+                number.per.page = 10, 
+                fid.label = FALSE, 
+                iid.label = FALSE, 
+                ylabel.size = 9, 
+                add.rug = FALSE,
+                plot.title = "Distribution of IBD segments in the SpotMalaria dataset", 
+                add.legend = TRUE, 
+                segment.color = NULL)
+                          
+``` 
+
+The next function of IsoRelate we can use is to calculate the proportion of pairs who are IBD at each SNP and plot the distribution across the genome.
+
+```{r, message = FALSE}
+
+# generate a binary IBD matrix
+my_matrix <- getIBDmatrix(ped.genotypes = my_genotypes, 
+                          ibd.segments = my_ibd_20)
+
+# calculate the proportion of pairs IBD at each SNP
+my_proportion <- getIBDproportion(ped.genotypes = my_genotypes, 
+                                  ibd.matrix = my_matrix, 
+                                  groups = NULL)
 
 # plot the proportion of pairs IBD
-plotIBDproportions(ibd.proportions = my_proportion,
-                   interval = NULL,
+plotIBDproportions(ibd.proportions = my_proportion, 
+                   interval = NULL, 
                    annotation.genes = NULL,
                    annotation.genes.color = NULL,
                    highlight.genes = NULL,
-                   highlight.genes.labels = FALSE,
+                   highlight.genes.labels = TRUE,
                    highlight.genes.color = NULL,
                    highlight.genes.alpha = 0.1,
-                   line.color = NULL,
-                   add.rug = FALSE,
-                   plot.title = "Proportion of pairs IBD in PNG - with stratification",
+                   add.rug = FALSE, 
+                   plot.title = "Proportion of pairs IBD in the SpotMalaria dataset", 
                    add.legend = FALSE,
-                   facet.label = TRUE,
-                   facet.scales = "fixed",
+                   line.color = NULL, 
+                   facet.label = TRUE, 
+                   facet.scales = "fixed", 
+                   subpop.facet = FALSE)
+                          
+``` 
+Here, we see that there is a higher proportion of IBD pairs shared in chromosome 3 compared the the rest of the genome.
+
+You can also use the `my_groups` you generated and stratify your results by variables.
+
+```{r, message = FALSE}
+
+# generate a binary IBD matrix
+my_matrix <- getIBDmatrix(ped.genotypes = my_genotypes, 
+                          ibd.segments = my_ibd_20)
+
+# calculate the proportion of pairs IBD at each SNP
+my_proportion <- getIBDproportion(ped.genotypes = my_genotypes, 
+                                  ibd.matrix = my_matrix, 
+                                  groups = my_groups)
+
+# plot the proportion of pairs IBD
+plotIBDproportions(ibd.proportions = my_proportion, 
+                   interval = NULL, 
+                   annotation.genes = NULL,
+                   annotation.genes.color = NULL,
+                   highlight.genes = NULL,
+                   highlight.genes.labels = TRUE,
+                   highlight.genes.color = NULL,
+                   highlight.genes.alpha = 0.1,
+                   add.rug = FALSE, 
+                   plot.title = "Proportion of pairs IBD in the SpotMalaria dataset", 
+                   add.legend = FALSE,
+                   line.color = NULL, 
+                   facet.label = TRUE, 
+                   facet.scales = "fixed", 
                    subpop.facet = TRUE)
                           
 ``` 
 
-To identify genomic loci with significant amounts of excess IBD we can apply a transformation to the binary IBD matrix to account for variations in isolate relatedness as well as SNP allele frequencies, then calculate a summary statistic that can be used to assess significance.
+One of the most important functions of IsoRelate is the ability to identify genomic loci with significant amounts of excess IBD we can apply a transformation to the binary IBD matrix to account for variations in isolate relatedness as well as SNP allele frequencies, then calculate a summary statistic that can be used to assess significance.
 
 ```{r, message = FALSE}
 
@@ -202,91 +484,13 @@ plotIBDiR(ibd.iR = my_iR,
           plot.title = "Significance of IBD sharing", 
           add.legend = FALSE,
           facet.label = TRUE, 
-          facet.scales = "fixed")
-
-                          
-``` 
-
-A 5% significance threshold would identify regions that have SNPs with -log10 (P-values) > -log10(0.05) as having significant IBD sharing, indicative of positive selection.
-
-Importantly, the function `getIBDiR` can return `NA` values which may occur when there are no IBD pairs or when all pairs are IBD, or when only several isolates are analyzed, among other reasons.
-
-We can investigate the specific isolate pairs that are contributing to the excess IBD sharing on chromosome 7 by creating an IBD network.
-Such a network will identify clusters of isolates sharing a common haplotype over this region. We include our example grouping of isolates
-when plotting the network.
-
-```{r, message = FALSE}
-
-# generate the isolates who are IBD over the Plasmodium falciparum mdr1 gene
-my_i_clusters <- getIBDiclusters(ped.genotypes = my_genotypes, 
-                                 ibd.segments = my_ibd_1, 
-                                 interval = c("Pf3D7_05_v3", 955955, 963095), 
-                                 prop=0, 
-                                 hi.clust = FALSE)
-
-str(my_i_clusters)
-
-# plot the network of clusters
-plotIBDclusters(ped.genotypes = my_genotypes, 
-                clusters = my_i_clusters, 
-                groups = NULL, 
-                vertex.color = NULL, 
-                vertex.frame.color = "white",
-                vertex.size = 4, 
-                vertex.name = FALSE, 
-                edge.color = "gray60", 
-                edge.width = 0.8, 
-                mark.border = "white",
-                mark.col = "gray94", 
-                add.legend = TRUE, 
-                legend.x = -1.5, 
-                legend.y = -0.25, 
-                layout = NULL, 
-                return.layout = FALSE)
-                          
-``` 
-
-Each time the function `plotIBDclusters()` is run the vertex layout will differ. 
-This is an artifact of the R package used to generate the network, `igraph`.
-If the user wishes to keep the network layout the same in multiple subsequent figures then set `return.layout = TRUE` and use the returned layout
-in subsequent `plotIBDclusters()` runs with `layout = my_layout`.
-
-We note that the `i.network` is output as the second object in the list  `my_i_clusters`. If the user wishes to perform quantitative analyses using this network, there are many functions in the `i.graph` package to do so. Please see the `i.graph` documentation for more details on this.
-
-We can also explore networks of isolates sharing a large proportion of their genome IBD. 
-Such isolates may represent duplicate samples or individuals who have identical infections.
-
-
-```{r, message = FALSE}
-
-# generate the isolates who share at least than 90% of their genome IBD
-my_p_clusters <- getIBDpclusters(ped.genotypes = my_genotypes, 
-                                 ibd.segments = my_ibd_1, 
-                                 prop=0.9, 
-                                 hi.clust = FALSE)
-
-# plot the network of clusters
-plotIBDclusters(ped.genotypes = my_genotypes, 
-                clusters = my_p_clusters, 
-                groups = NULL, 
-                vertex.color = NULL, 
-                vertex.frame.color = "white",
-                vertex.size = 4, 
-                vertex.name = FALSE, 
-                edge.color = "gray60", 
-                edge.width = 0.8, 
-                mark.border = "white",
-                mark.col = "gray94", 
-                add.legend = TRUE, 
-                legend.x = -1.5, 
-                legend.y = -0.25, 
-                layout = NULL, 
-                return.layout = FALSE)
-                          
+          facet.scales = "fixed")                 
 ``` 
 
 ## Summary
 
-IsoRelate is an R package that is able to take variant call data to performm identity by descent (IBD) analysis. IsoRelate can handle multiclonal infections. 
+IsoRelate is an R package that is able to take variant call data to perform identity by descent (IBD) analysis. IsoRelate can handle multiclonal infections.
 
-In this tutorial, a function has been developed to process the vcf file to pedmap format for IsoRelate.
+The most significant issue with IsoRelate has been the input data. To address this issue in the tutorial, a PGEhammer function has been developed to process the vcf file to pedmap format for IsoRelate.
+
+The next issue with IsoRelate is the inconsistency of network output format. To address this, it is recommended to take the IBD calculations and develop a network with a combination of visualisation packages including `igraph`, `ggplot2` `ggnetwork`. A PGEhammer function is being developed to simplify this process.
