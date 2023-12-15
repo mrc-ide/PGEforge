@@ -9,16 +9,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Installation from Github 
-In order to run the [THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), we will use an R wrapper, [McCOILR](https://github.com/OJWatson/McCOILR) by OJ Watson that encapsulates the code from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL).
+[THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), can be installed from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL) and built/"made" for your machine as below:
 
-```{r, eval=F}
-library(remotes)
-remotes::install_github("OJWatson/McCOILR")
-```
+1. Clone the code into the directory using the command `git clone https://github.com/EPPIcenter/THEREALMcCOIL.git`. 
+3. Navigate to the categorical method directory: `cd THEREALMcCOIL/categorical_method`
+4. Complete the make/installation: `R CMD SHLIB McCOIL_categorical_code.c llfunction_het.c` (Note, prior to running this make step, you may need to erase prior `.so` and `.o` files).
 
 
 ### Dependencies
-`McCOILR` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: 
+`THE REAL McCOIL` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: 
 
 * Windows
     - Download and install the appropriate version of [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R. On installation, ensure you check the box to arrange your system PATH as recommended by Rtools

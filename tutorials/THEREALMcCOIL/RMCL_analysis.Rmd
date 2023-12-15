@@ -8,7 +8,6 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T, warning = F, message = F)
 library(vcfR)
-library(McCOILR)
 library(tidyverse)
 library(kableExtra)
 library(DT)
@@ -16,6 +15,12 @@ library(DT)
 
 
 # Introduction  
+Prior to running the [THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), you will need install THEREALMcCOIL C++ code from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL) and build it for your machine as below:
+
+1. Clone the code into the directory using the command `git clone https://github.com/EPPIcenter/THEREALMcCOIL.git`. 
+3. Navigate to the categorical method directory: `cd THEREALMcCOIL/categorical_method`
+4. Complete the make/installation: `R CMD SHLIB McCOIL_categorical_code.c llfunction_het.c` (Note, prior to running this make step, you may need to erase prior `.so` and `.o` files).
+
 **For the duration of this tutorial `THEREALMcCOIL` will be abbreviated as RMCL**. 
 
 ## Defining COI
@@ -32,7 +37,7 @@ As input for `RMCL`, we will start with a variant call file, abbreviated as a [V
 In this section, we will "munge" our VCF data into a "tidy" format following recommendations by the R community in order to make some of the GT column information more useful. We will use the `vcfR` package to make the VCF data "long" with the `extract_gt_tidy` in order to perform these manipulations. Then, before running RMCL, we will need to do some additional reformatting our SNP genotype data into a wide-matrix format. The specific format required by RMCL is described [here] (https://github.com/EPPIcenter/THEREALMcCOIL/tree/master/categorical_method). 
 
 ```{r, results='hide'}
-vcf <- vcfR::read.vcfR("~/Documents/Github/PGEforge/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
+vcf <- vcfR::read.vcfR("../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz")
 # extract information
 loci <- vcf@fix[,1:2] %>% 
   tibble::as_tibble() %>% 
@@ -135,8 +140,14 @@ Now run the RMCL using the default settings provided in the [Github](https://git
 Note, the RMCL uses an MCMC approach to infer the COI of each sample. The output file contains the mean, median, and credible interval of the chain (after excluding the burn-in).
 
 ```{r, results='hide'}
+
+# Source code, move into correct working directory
+orig_wd <- getwd()
+setwd("THEREALMcCOIL_EPPIcenter/categorical_method/")
+source("McCOIL_categorical.R")
+
 # run RMCL 
-McCOILR::McCOIL_categorical(vcf_RMCLmat, maxCOI=25, threshold_ind=20, threshold_site=20,
+McCOIL_categorical(vcf_RMCLmat, maxCOI=25, threshold_ind=20, threshold_site=20,
                    totalrun=1000, burnin=100, M0=15, e1=0.05, e2=0.05, 
                    err_method=3, path=getwd(), output="output_COI")
 
