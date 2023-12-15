@@ -1,0 +1,36 @@
+---
+title: "malaria.em"
+output: html_document
+author: "Nicholas Hathaway"
+date: "2023-12-15"
+bibliography: reference.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+Program designed to discern the combinations of mutations at the population level to estimate frequencies of these clonal sequences. This program utilizes an expectation maximization (EM) approach to maximum likelihood estimation of haplotype frequencies from the SNP loci per sample information. 
+
+The code for this program was removed from CRAN in 2014 and does not appear to be activiely maintained. A program that does something similarly is [MultiLociBiallelicModel](../MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd). 
+
+## Citation
+
+[@Li2007-ph]
