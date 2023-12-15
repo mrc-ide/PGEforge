@@ -1,0 +1,45 @@
+---
+title: "Installing moimix"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: Devtools
+
+In R, ensure that you have the devtools package installed. 
+```{r devtools}
+install.packages('devtools', repos = 'http://cran.us.r-project.org')
+```
+
+## Step 2: BiocManager
+
+Install BiocManager, this will allow the installation of other Bioconductor packages required for moimix. 
+
+```{r BiocManager}
+install.packages("BiocManager")
+```
+
+## Step 3: Install Bioconductor packages
+
+Install other Bioconductor packages required for moimix. 
+
+```{r Bioconductor}
+
+BiocManager::install(c("graph", "Rgraphviz", "SeqArray", "SeqVarTools"))
+```
+
+## Step 4: Install moimix 
+
+Install moimix. 
+
+
+```{r moimix}
+
+devtools::install_github("bahlolab/moimix")
+```
+
+
+    

@@ -1,0 +1,55 @@
+---
+title: "Insert tool title"
+output: html_document
+author: "Insert name"
+date: "Insert todays date"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet_moimix.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The moimix package uses biallelic SNP data output in the form of a VCF file from massively parallel sequencing platforms to estimate the following: 
+
+1. within host allele frequencies (including minor allele frequencies)
+2. whether an infection is monclonal or not
+
+
+
+## Existing resources
+
+- The [moimix website](https://bahlolab.github.io/moimix/) gives general information about data inputs, features of the package, and installation.
+-The [moimix vignette](https://bahlolab.github.io/moimix/vignettes/introduction.html) describes individual functions in the package, and shows a step-by-step tutorial.
+- The moimix package uses functions from the flexmix and SeqArray packages.  
+- Lee S, Harrison A, Tessier N, Tavul L, Miotto O, Siba P, Kwiatkowski D, Müller I, Barry AE and Bahlo M, Assessing clonality in malaria parasites using massively parallel sequencing data, 2016, in preparation.
+
+## Citation
+
+```
+@Manual{,
+    title = {moimix: Estimating mulitplicity of infection from high-throughput
+sequencing data},
+    author = {"Stuart Lee"},
+    year = {2023},
+    note = {R package version 0.0.2.9001},
+    url = {https://github.com/bahlolab/moimix},
+  }
+```

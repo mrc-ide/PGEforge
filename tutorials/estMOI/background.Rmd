@@ -1,0 +1,44 @@
+---
+title: "estMOI"
+output: html_document
+author: "Jody Phelan"
+date: "11-12-2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+estMOI is a Perl script that estimates the MOI locally in the genome and then overall to obtain a global estimate.
+The inputs are alignment (BAM files), variant regions in the Variant Call Format/VCF and an optional file of regions to exclude from analysis.
+Minimal multiplicity is inferred by considering the maximum number of distinct haplotypes formed by combinations of a user-specified number of single nucleotide polymorphisms (SNPs) on single or paired reads.
+
+## Existing resources
+
+- A manual can be found [here](https://github.com/sammy-assefa/estMOI/blob/master/README.pdf)
+
+
+## Citation
+
+You can cite the tool using the following publication:
+
+> Assefa, Samuel A et al. “estMOI: estimating multiplicity of infection using parasite deep sequencing data.” Bioinformatics (Oxford, England) vol. 30,9 (2014): 1292-4. doi:10.1093/bioinformatics/btu005

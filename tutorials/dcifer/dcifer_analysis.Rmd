@@ -1,0 +1,85 @@
+---
+title: "Using `dcifer` to estimate relatedness from biallelic SNP data"
+output: html_document
+author: "Kathryn Murie"
+date: "11 December 2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The data
+
+Below we will demonstrate how to use `dcifer` using biallelic Sanger 100-SNP barcode data in .vcf format. We will use data created by simulating 100 polyclonal infections from Bangladesh (n=50) and Ghana (n=50). See the [PGEforge website](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html#simulated-1) for further details.
+
+In this tutorial we will use `PGEhammer` to convert data from the VCF format to the format required by Dcifer. To install the package run the following command
+
+```{r}
+# Install PGEhammer in R:
+install.packages('PGEhammer', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+Now we can load the packages we will need. 
+```{r, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+library(here)
+library(dcifer)
+library(vcfR)
+library(kableExtra)
+library(PGEhammer)
+```
+
+## Wrangling the data
+
+Dcifer requires input data in long format, the long format represents data with each observation on a separate row. This data can be biallelic or multiallelic. 
+In the following steps, we will convert the Variant Call Format (VCF) data to the required long format using the function `vcf2long` from PGEhammer.
+
+
+```{r}
+# Read vcf
+vcf <- read.vcfR(here('data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz'))
+# Convert to long format 
+df <- vcf2long(vcf)
+
+head(df) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Calculate COI and allele frequencies
+
+Before we calculate IBD we first need to calculate COI. Below we use the function `getCOI` that Dcifer provides which uses naive estimation, but you could use another tool for this.
+```{r}
+lrank <- 2
+coi   <- getCOI(dsmp, lrank = lrank)
+```
+
+The last thing we need to do before calculating IBD is to add in allele frequencies. Again we use a function within Dcifer for this, `calcAfreq`. 
+
+```{r}
+afreq <- calcAfreq(dsmp, coi, tol = 1e-5) 
+str(afreq, list.len = 2)
+```
+
+```{r}
+dres0 <- ibdDat(dsmp, coi, afreq, pval = TRUE, confint = TRUE, rnull = 0, 
+                alpha = 0.05, nr = 1e3)   
+```
+
+# Visualising the Data 
+
+Here we use `plotRel` to visualise the data, comparing samples on the axes. Significantly related samples are outlined in red. 
+```{r}
+alpha <- 0.05                          # significance level                    
+dmat <- dres0[, , "estimate"]
+# create symmetric matrix
+dmat[upper.tri(dmat)] <- t(dmat)[upper.tri(t(dmat))]  
+#  determine significant, reverse columns for upper triangle
+isig <- which(dres0[, , "p_value"] <= alpha, arr.ind = TRUE)[, 2:1] 
+plotRel(dmat, isig = isig, draw_diag = TRUE, lwd_diag = 0.5, idlab = TRUE, )
+```
+
+## Summary
+
+In summary, we have used Dcifer to estimate COI and allele frequencies before estimating IBD. Dcifer has extensive [documentation](https://eppicenter.github.io/dcifer), including more details on [other functionality available](https://eppicenter.github.io/dcifer/reference/index.html) within the tool and a [tutorial](https://eppicenter.github.io/dcifer/articles/vigArticle.html) using microhaplotype data.

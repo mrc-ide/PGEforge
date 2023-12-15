@@ -1,0 +1,17 @@
+---
+title: "Installing MultiLociBiallelicModel"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: Downloading Script 
+
+The code for using `MultiLociBiallelicModel` can all be found within 1 R Script. This can be downloaded from their github repo from <https://github.com/Maths-against-Malaria/MultiLociBiallelicModel/blob/main/src/SNPModel.R> or can be downloaded from here [SNPModel.R](SNPModel.R). 
+
+```{bash, eval = F}
+wget https://github.com/Maths-against-Malaria/MultiLociBiallelicModel/blob/main/src/SNPModel.R
+```
+

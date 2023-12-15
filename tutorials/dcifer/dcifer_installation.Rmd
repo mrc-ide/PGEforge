@@ -1,0 +1,17 @@
+---
+title: "Installing dcifer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `dcifer` R package is both on CRAN and part of the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/dcifer). 
+
+You can install it by running the following code: 
+```{r eval=F}
+# Install dcifer in R:
+install.packages('dcifer', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
