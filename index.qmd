@@ -5,7 +5,7 @@ subtitle: "Resources for enhancing **P**lasmodium **G**enomic **E**pidemiology a
 
 ## Welcome
 
-PGEforge is a community-built resource for enhancing common software tools in *Plasmodium* genomic epidemiology with tutorials and analysis workflows. 
+PGEforge is a community-built resource for enhancing common software tools in *Plasmodium* genomic epidemiology with [tutorials](website_docs/tutorials_overview.qmd) and analysis workflows. 
 
 ## A community-led effort
 

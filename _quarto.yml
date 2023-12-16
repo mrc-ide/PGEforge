@@ -42,7 +42,8 @@ website:
           - text: "The data-DAG (TODO)"
       - section: "Tool landscaping"
         contents:
-          - text: "The landscaping matrix (TODO)"
+          - text: "The landscaping matrix"
+            file: website_docs/tool_landscaping.qmd
           - text: "Installing via the plasmogenepi.r-universe (TODO)"
       - section: "Tutorials"
         contents:
@@ -76,6 +77,14 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
+          - section: "dcifer"
+            contents:
+            - text: "Summary"
+              file: tutorials/dcifer/dcifer_background.Rmd
+            - text: "Installation"
+              file: tutorials/dcifer/dcifer_installation.Rmd
+            - text: "Tutorial"
+              file: tutorials/dcifer/dcifer_analysis.Rmd
           - section: "estMOI"
             contents:
             - text: "Summary"
@@ -84,6 +93,14 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
+          - section: "Hierfstat"
+            contents:
+            - text: "Summary"
+              file: tutorials/hierfstat/background.Rmd
+            - text: "Installation"
+              file: tutorials/hierfstat/installation.Rmd
+            - text: "Analyze data with `hierfstat`"
+              file: tutorials/hierfstat/analysis.Rmd
           - section: "hmmIBD"
             contents:
             - text: "Summary"
@@ -98,6 +115,14 @@ website:
             contents:
             - text: "Summary"
               file: tutorials/hmmibdr/hmmibdr_background.Rmd
+          - section: "malaria.em"
+            contents:
+            - text: "Summary"
+              file: tutorials/malariaem/malariaem_background.qmd
+          - section: "MalHaploFreq"
+            contents:
+            - text: "Summary"
+              file: tutorials/MalHaploFreq/MalHaploFreq_background.qmd
           - section: "MLMOI"
             contents:
             - text: "Summary"
@@ -148,11 +173,12 @@ website:
               file: tutorials/THEREALMcCOIL/RMCL_background.Rmd
             - text: "Installation"
               file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
-            - text: "Analyze data with `rehh`"
+            - text: "Analyze data with `THEREALMcCOIL`"
               file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
-      - section: "Guiding principles"
+      - section: "Software standards"
         contents:
-          - text: "Recommendations (TODO)"
+          - text: "Overview by tool"
+            file: website_docs/tools_to_standards.qmd
           - text: "How do I get my tool on PGEforge? (TODO)"
       - section: "Events and meetings"
         contents:

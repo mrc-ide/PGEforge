@@ -1,0 +1,24 @@
+---
+title: "Installing isoRelate"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: Use plasmogenepi.r-universe installaion
+
+plasmogenepi.r-universe [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds),  greatly simplifies package installation. 
+
+To install isoRelate, use the following:
+```{r, eval = FALSE}
+# Install isoRelate in R:
+install.packages('isoRelate', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+Assuming all has been installed correctly with no errors, now load the package in RStudio:
+
+```{r}
+library(isoRelate)
+```

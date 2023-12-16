@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
-Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+﻿Main use-cases,Genetic relatedness between polyclonal infections
+Authors,Inna Gerlovina
+Latest version,1.2.0
+License,MIT
+Website,"<a href=""https://eppicenter.github.io/dcifer/"" target=""_blank""> https://eppicenter.github.io/dcifer/</a>"
+Code repository,"<a href=""https://github.com/EPPIcenter/dcifer"" target=""_blank""> https://github.com/EPPIcenter/dcifer</a>"
+Publication,"<a href=""https://doi.org/10.1093/genetics/iyac126"" target=""_blank""> https://doi.org/10.1093/genetics/iyac126</a>"
+Tutorial authors,Shazia Ruybal-Pesántez
+Tutorial date,11-Dec-23

@@ -1,0 +1,36 @@
+---
+title: "Tools to functions"
+format: html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(googlesheets4)
+library(DT)
+```
+
+```{r echo=F, include=F}
+#Read google sheets data into R
+tool_fxn_df <- read_sheet('https://docs.google.com/spreadsheets/d/1c2HoQgwRygZ2GMd_ENHA_x3dXcq8eIE2ky6vtpXWkCc/edit#gid=0')
+```
+
+```{r echo=F}
+datatable(tool_fxn_df)
+```
+
+```{r echo=F}
+tool_fxn_df %>% 
+  pivot_longer(cols = -Tool, names_to = "Functionality", values_to = "presence") %>% 
+  ggplot(aes(x = Tool, y = Functionality, fill = presence)) +
+    geom_tile(color = "black") +
+    scale_fill_manual(values = c("X" = "lightgreen"), na.value = "transparent") +
+    scale_x_discrete(position = "top", expand = c(0,0)) +
+    scale_y_discrete(expand = c(0,0)) +
+    theme_bw() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(face = "bold", angle = 45, hjust = 0, vjust = 0.2),
+          panel.grid.major = element_blank(),
+          plot.margin = margin(0.5, 2, 0.5, 0.5, "cm"))
+```
+
