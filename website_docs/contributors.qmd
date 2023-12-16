@@ -7,6 +7,18 @@ format: html
 
 PGEforge was supported by the following people, listed alphabetically. 
 
+#### Jorge Amaya-Romero
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Sophie Berube
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
 #### Nick Brazeau
 
 ![](img/people/Brazeau_NF.jpg){fig-align="left" width="100px"}
@@ -19,6 +31,18 @@ PGEforge was supported by the following people, listed alphabetically.
 
 **Affiliations:** EPPIcenter, University of California San Francisco
 
+#### Nicholas Hathaway
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Jason Hendry
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
 #### Kirsty McCann
 
 ![](img/people/KirstyMcCann.jpg){fig-align="left" width="100px"}
@@ -26,20 +50,56 @@ PGEforge was supported by the following people, listed alphabetically.
 **Affiliations:** Centre for Innovation in Infectious Disease and Immunology Research (CIIDIR)
 The Institute for Mental and Physical Health and Clinical Translation (IMPACT), School of Medicine, Deakin University
 
+#### Kathryn Murie
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Max Murphy
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Karamoko Niare
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Jody Phelan
+
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** ABCDE
+
+#### Shazia Ruybal-Pesántez
+
+![](img/people/shazia.jpg){fig-align="left" width="100px"}
+
+**Affiliations:** MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London; Instituto de Microbiología, Universidad San Francisco de Quito
+
 #### Stephen F. Schaffner
 
 ![](img/people/steve_schaffner.jpg){fig-align="left" width="100px"}
 
 **Affiliations:** Broad Institute of Harvard and MIT; Department of Organismic and Evolutionary Biology, Harvard University; Department of Immunology and Infectious Diseases, Harvard T.H. Chan School of Public Health, Harvard University
 
-#### Name 4
+#### Alfred Simkin
 
-![](img/radish.png){fig-align="left" width="75px"}
+![](img/radish.png){fig-align="left" width="100px"}
 
 **Affiliations:** ABCDE
 
-#### Name 5
+#### Bob Verity
 
-![](img/radish.png){fig-align="left" width="75px"}
+![](img/radish.png){fig-align="left" width="100px"}
+
+**Affiliations:** MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London
+
+#### Amy Wesolowski
+
+![](img/radish.png){fig-align="left" width="100px"}
 
 **Affiliations:** ABCDE
