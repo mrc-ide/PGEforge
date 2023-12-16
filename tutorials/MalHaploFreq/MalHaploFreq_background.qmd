@@ -1,0 +1,35 @@
+---
+title: "MalHaploFreq About"
+output: html_document
+author: "Nicholas Hathaway"
+date: "2023-12-15"
+bibliography: reference.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+This tool was created to estimate prevalence of haplotypes (linking up to 3 SNPs together) from SNP loci. This tool requires input determined MOI and does 3 loci. Since the creation of this tool other tools have been created that do similar analysis with additional features, for example [MultiLociBiallelicModel](../MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd) also estimates prevalence but does not require MOI, can do more loci and estimates the MOI from the input data. 
+
+## Citation
+
+[@Hastings2008-mb]
