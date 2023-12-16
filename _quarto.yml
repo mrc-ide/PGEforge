@@ -42,20 +42,31 @@ website:
           - text: "The data-DAG (TODO)"
       - section: "Tool landscaping"
         contents:
-          - text: "The landscaping matrix (TODO)"
+          - text: "The landscaping matrix"
+            file: website_docs/tool_landscaping.qmd
           - text: "Installing via the plasmogenepi.r-universe (TODO)"
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
             file: website_docs/tutorials_overview.qmd
-          - section: "Templates"
+          - section: "coiaf"
             contents:
-            - text: "Summary template"
-              file: tutorials/Template/Template_background.Rmd
-            - text: "Template installation"
-              file: tutorials/Template/Template_installation.Rmd
-            - text: "Template analysis"
-              file: tutorials/Template/Template_analysis.Rmd
+            - text: "Summary"
+              file: tutorials/coiaf/coiaf_background.Rmd
+            - text: "Installation"
+              file: tutorials/coiaf/coiaf_installation.Rmd
+            - text: "Estimating COI from SNP data"
+              file: tutorials/coiaf/coiaf_analysis.Rmd
+          - section: "DEploidIBD"
+            contents:
+            - text: "Summary"
+              file: tutorials/DEploidIBD/background.md
+            - text: "Installation"
+              file: tutorials/DEploidIBD/installation.md
+            - text: "Part 1: Preparing your data"
+              file: tutorials/DEploidIBD/part1-preparing-data.md
+            - text: "Part 2: Running DEploidIBD"
+              file: tutorials/DEploidIBD/part2-running-deploidibd.md
           - section: "DRpower"
             contents:
             - text: "Summary"
@@ -66,9 +77,100 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
-      - section: "Guiding principles"
+          - section: "dcifer"
+            contents:
+            - text: "Summary"
+              file: tutorials/dcifer/dcifer_background.Rmd
+            - text: "Installation"
+              file: tutorials/dcifer/dcifer_installation.Rmd
+            - text: "Tutorial"
+              file: tutorials/dcifer/dcifer_analysis.Rmd
+          - section: "estMOI"
+            contents:
+            - text: "Summary"
+              file: tutorials/estMOI/background.Rmd
+            - text: "Installation"
+              file: tutorials/estMOI/installation.Rmd
+            - text: "Analyze data with `estMOI`"
+              file: tutorials/estMOI/analysis.Rmd
+          - section: "Hierfstat"
+            contents:
+            - text: "Summary"
+              file: tutorials/hierfstat/background.Rmd
+            - text: "Installation"
+              file: tutorials/hierfstat/installation.Rmd
+            - text: "Analyze data with `hierfstat`"
+              file: tutorials/hierfstat/analysis.Rmd
+          - section: "hmmIBD"
+            contents:
+            - text: "Summary"
+              file: tutorials/hmmIBD/hmmIBD_background.Rmd
+            - text: "Overview"
+              file: tutorials/hmmIBD/hmmIBD_overview.md
+            - text: "Installation"
+              file: tutorials/hmmIBD/hmmIBD_installation.md
+            - text: "Basic IBD analysis with `hmmIBD`"
+              file: tutorials/hmmIBD/hmmIBD_analysis.md
+          - section: "hmmibdr"
+            contents:
+            - text: "Summary"
+              file: tutorials/hmmibdr/hmmibdr_background.Rmd
+          - section: "MLMOI"
+            contents:
+            - text: "Summary"
+              file: tutorials/MLMOI/Template_background.Rmd
+          # - section: "moimix"
+          #   contents:
+          #   - text: "Summary"
+          #     file: tutorials/moimix/moimix_background.Rmd
+          #   - text: "Installation"
+          #     file: tutorials/moimix/moimix_installation.Rmd
+          #   - text: "Analyze data with `moimix`"
+          #     file: tutorials/moimix/moimix_analysis.Rmd
+          - section: "moire"
+            contents:
+            - text: "Summary"
+              file: tutorials/moire/moire_background.Rmd
+            - text: "Installation"
+              file: tutorials/moire/moire_installation.Rmd
+            - text: "Running moire example"
+              file: tutorials/moire/moire_analysis.Rmd
+          - section: "MultiLociBiallelicModel"
+            contents:
+            - text: "Summary"
+              file: tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd
+            - text: "Installation"
+              file: tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_installation.qmd
+            - text: "Running `MultiLociBiallelicModel` on bialleic SNP data"
+              file: tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_analysis.qmd
+          - section: "paneljudge"
+            contents:
+            - text: "Summary"
+              file: tutorials/paneljudge/paneljudge_background.Rmd
+            - text: "Installation"
+              file: tutorials/paneljudge/paneljudge_installation.Rmd
+            - text: "Tutorial for Running `paneljudge`"
+              file: tutorials/paneljudge/paneljudge_analysis.Rmd
+          - section: "rehh"
+            contents:
+            - text: "Summary"
+              file: tutorials/rehh/Template_background.Rmd
+            - text: "Installation"
+              file: tutorials/rehh/Template_installation.Rmd
+            # - text: "Analyze data with `rehh`"
+            #   file: tutorials/rehh/Template_analysis.Rmd
+          - section: "THEREALMcCOIL"
+            contents:
+            - text: "Summary"
+              file: tutorials/THEREALMcCOIL/RMCL_background.Rmd
+            - text: "Installation"
+              file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
+            - text: "Analyze data with `THEREALMcCOIL`"
+              file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
+      - section: "Software standards"
         contents:
-          - text: "Recommendations (TODO)"
+          - text: "Overview by tool"
+            file: website_docs/tools_to_standards.qmd
           - text: "How do I get my tool on PGEforge? (TODO)"
       - section: "Events and meetings"
         contents:

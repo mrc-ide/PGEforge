@@ -1,0 +1,18 @@
+---
+title: "Installing coiaf"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Installation
+
+To install the package, run the following code:
+
+```{r, eval=FALSE}
+install.packages('coiaf', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+

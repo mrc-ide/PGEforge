@@ -1,0 +1,47 @@
+---
+title: "dcifer"
+output: html_document
+author: "Shazia Ruybal-Pesántez"
+date: "11 December 2023"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+library(dcifer)
+```
+
+<img src="https://github.com/EPPIcenter/dcifer/raw/main/man/figures/logo.svg" style='width: 200px; position:absolute; top:0; right:0; padding:10px;'/>
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The `dcifer` R package is primarily designed to estimate relatedness between polyclonal infections. The data input types must be biallelic or multiallelic data. 
+
+The approach uses a likelihood function and statistical inference, and provides these alongside relatedness estimates.
+
+## Existing resources
+
+The `dcifer` R package includes built-in functions for reading and reformatting data, performing preparatory steps, and visualizing the results are also included. This is documented in the [`dcifer` R package website](https://eppicenter.github.io/dcifer/index.html). There is also a [tutorial](https://eppicenter.github.io/dcifer/index.html) outlining the analysis process using the `dcifer` R package with microhaplotype data from Mozambique.
+
+## Citation
+The publication associated with the `dcifer` R package can be found [here (Gerlovina 2022 Genetics)](https://doi.org/10.1093/genetics/iyac126).
+
+
+```{r}
+citation(package = "dcifer")
+```

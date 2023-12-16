@@ -1,9 +1,9 @@
-﻿Main use-cases,TODO
-Authors,TODO
-Latest version,TODO
-License,TODO
+﻿Main use-cases,extended haplotype heterozygosity estimation and visualization
+Authors,Alexander Klassmann, Mathieu Gautier, Renaud Vitalis
+Latest version,3.2.2
+License,GPL-2 | GPL-3 [expanded from: GPL (≥ 2)]
 Website,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Code repository,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Publication,"<a href=""https://www.google.com"" target=""_blank""> https://www.google.com</a>"
-Tutorial authors,TODO
-Tutorial date,TODO
+Code repository,"<a href=""https://gitlab.com/oneoverx/rehh"" target=""_blank""> https://gitlab.com/oneoverx/rehh</a>"
+Publication,"<a href=""https://doi.org/10.1093/bioinformatics/bts115"" target=""_blank""> https://doi.org/10.1111/1755-0998.12634</a>"
+Tutorial authors,Karamoko Niaré 
+Tutorial date,12/11/2023
