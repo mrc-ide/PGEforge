@@ -7,30 +7,30 @@ format: html
 
 PGEforge was supported by the following people, listed alphabetically. 
 
+#### Nick Brazeau
 
-#### Name 1
+![](img/people/Brazeau_NF.jpg){fig-align="left" width="100px"}
 
-![](img/radish.png){fig-align="left" width="75px"}
+**Affiliations:** PGY-1, Internal Medicine, Duke University Medical Center
 
-**Affiliations:** ABCDE
+#### Bryan Greenhouse
 
-#### Name 2 
+![](img/people/UCSF_20170322_B_Greenhouse_426.jpeg){fig-align="left" width="100px"}
 
-![](img/radish.png){fig-align="left" width="75px"}
+**Affiliations:** EPPIcenter, University of California San Francisco
 
-**Affiliations:** ABCDE
+#### Kirsty McCann
 
-#### Name 2 
+![](img/people/KirstyMcCann.jpg){fig-align="left" width="100px"}
 
-![](img/radish.png){fig-align="left" width="75px"}
+**Affiliations:** Centre for Innovation in Infectious Disease and Immunology Research (CIIDIR)
+The Institute for Mental and Physical Health and Clinical Translation (IMPACT), School of Medicine, Deakin University
 
-**Affiliations:** ABCDE
+#### Stephen F. Schaffner
 
-#### Name 3
+![](img/people/steve_schaffner.jpg){fig-align="left" width="100px"}
 
-![](img/radish.png){fig-align="left" width="75px"}
-
-**Affiliations:** ABCDE
+**Affiliations:** Broad Institute of Harvard and MIT; Department of Organismic and Evolutionary Biology, Harvard University; Department of Immunology and Infectious Diseases, Harvard T.H. Chan School of Public Health, Harvard University
 
 #### Name 4
 
