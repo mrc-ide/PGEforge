@@ -115,14 +115,14 @@ website:
             contents:
             - text: "Summary"
               file: tutorials/hmmibdr/hmmibdr_background.Rmd
-          # - section: "isoRelate"
-          #   contents:
-          #   - text: "Summary"
-          #     file: tutorials/isoRelate/isoRelate_background.Rmd
-          #   - text: "Installation"
-          #     file: tutorials/isoRelate/isoRelate_installation.Rmd
-            # - text: "Analyze data with `isoRelate`"
-            #   file: tutorials/isoRelate/isoRelate_tutorial.Rmd
+          - section: "malaria.em"
+            contents:
+            - text: "Summary"
+              file: tutorials/malariaem/malariaem_background.qmd
+          - section: "MalHaploFreq"
+            contents:
+            - text: "Summary"
+              file: tutorials/MalHaploFreq/MalHaploFreq_background.qmd
           - section: "MLMOI"
             contents:
             - text: "Summary"
