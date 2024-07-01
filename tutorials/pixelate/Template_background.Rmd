@@ -1,8 +1,6 @@
 ---
-title: "Insert tool title"
+title: "Pixelate"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
 ---
 
 ```{r setup, include=FALSE}
@@ -27,23 +25,14 @@ df_summary |>
 
 ## Purpose
 
-A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+We often need to make maps of prevalence, but these are estimates and should ideally be presented with their associated uncertainty. Displaying uncertainty is challenging because the scale can be difficult to interpret and the information also tends to be presented in a separate map. Pixelate solve this problem by simultaneously presenting predictions and uncertainty in a single map by varying pixel size. Large pixels (and hence "blocky" areas of the map) represent high uncertainty, while small pixels (more "high resolution" areas of the map) represent low uncertainty. This provides an intuitive way of putting all the information in once place.
 
 ## Existing resources
 
-- Any existing online tutorials?
-- Any important papers?
+The Pixelate package contains vignettes with both quick and detailed examples. You can access these vignettes by loading the package and running `vignette("pixelate")`.
 
 ## Citation
 
-BibTeX style citation. For an R package, you can get this using `citation(package = "name")`:
+The method is described in [this arXiv preprint](https://doi.org/10.48550/arXiv.2005.11993):
 
-Here is an example for DRpower, using `citation(package = "DRpower")`:
-
-```
-@Manual{,
-    title = {DRpower: Study design and analysis for pfhrp2/3 deletion prevalence studies},
-    author = {Bob Verity and Shazia Ruybal},
-    note = {R package version 1.0.2},
-  }
-```
+Taylor, Aimee R., James A. Watson, and Caroline O. Buckee. "Pixelate to communicate: visualising uncertainty in maps of disease risk and other spatial continua." arXiv preprint arXiv:2005.11993 (2020).

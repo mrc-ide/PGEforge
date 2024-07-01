@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing Pixelate"
 output: html_document
 ---
 
@@ -7,7 +7,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
+## Installing via the plasmogenepi R-universe
 
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
+The fastest and simplest way to install *DRpower* is via the plasmogenepi R-universe as follows:
 
+```{r, eval=FALSE}
+install.packages('pixelate', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+However, this may not work for some chips, in which case backup instructions are presented below.
