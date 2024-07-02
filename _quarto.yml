@@ -20,7 +20,7 @@ website:
   page-footer:
     background: "#f9eaf1"
     foreground: "#c82f61"
-    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2023"
+    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2024"
     
   sidebar:
     background: "#f9eaf1"
