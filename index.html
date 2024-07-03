@@ -122,9 +122,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Data description</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">The data-DAG (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -143,8 +140,11 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Installing via the plasmogenepi.r-universe (TODO)</span>
-  </li>
+  <div class="sidebar-item-container"> 
+  <a href="./website_docs/R_universe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installing via the plasmogenepi.r-universe</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -584,7 +584,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./tutorials/THEREALMcCOIL/RMCL_analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="./tutorials/THEREALMcCOIL/RMCL_analysis.Rmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Analyze data with <code>THEREALMcCOIL</code></span></a>
   </div>
 </li>
@@ -603,24 +603,59 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation framework</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview by tool</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">How do I get my tool on PGEforge? (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
- <span class="menu-text">Events and meetings</span></a>
+ <span class="menu-text">Analysis workflows</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./website_docs/workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis workflows</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false">
+ <span class="menu-text">How to contribute</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./website_docs/how_to_contribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Add your tool to the list</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+ <span class="menu-text">Events and meetings</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./website_docs/radish23.html" class="sidebar-item-text sidebar-link">
@@ -629,12 +664,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./website_docs/contributors.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Contributors</span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -656,7 +693,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">PGEforge</h1>
-<p class="subtitle lead">Your resource hub for <em>Plasmodium</em> genomic analysis</p>
+<p class="subtitle lead">Resources for enhancing <strong>P</strong>lasmodium <strong>G</strong>enomic <strong>E</strong>pidemiology analysis</p>
 </div>
 
 
@@ -671,6 +708,9 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<div class="custom-title">
+<p>Your resource hub for <br> <em>Plasmodium</em> genomic analysis</p>
+</div>
 <section id="welcome" class="level2">
 <h2 class="anchored" data-anchor-id="welcome">Welcome</h2>
 <p>PGEforge is a community-driven platform designed to simplify <em>Plasmodium</em> genomic data analysis. The process of analyzing genomic data often involves various software tools with different formats, user interfaces, and levels of accessibility. These differences can create barriers, especially for those without strong computational skills.</p>
@@ -680,12 +720,12 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="how-to-use-this-site">How to use this site</h2>
 <p>The site is organized to help you efficiently access and utilize our resources. Here’s an overview of what you’ll find in each section:</p>
 <ul>
-<li><a href="./website_docs/tutorials_overview.html">Data</a>: Access a curated selection of datasets commonly used in genomic analysis. These datasets help you familiarize yourself with standard data formats and are used consistently across our tutorials, ensuring easy comparison of tools.</li>
+<li><a href="./website_docs/data_description.html">Data</a>: Access a curated selection of datasets commonly used in genomic analysis. These datasets help you familiarize yourself with standard data formats and are used consistently across our tutorials, ensuring easy comparison of tools.</li>
 <li><a href="./website_docs/tool_landscaping.html">Tool Landscaping</a>: Discover a wide range of analysis tools, complete with basic information on their functions, where to find them, and whether we offer tutorials for them. We also introduce the “PlasmoGenEpi R-universe,” a website that simplifies tool installation.</li>
 <li><a href="./website_docs/tutorials_overview.html">Tutorials</a>: Explore comprehensive guides covering the entire process of installing software, formatting data, running basic functions, and interpreting outputs. These tutorials are designed to make complex tasks straightforward and accessible.</li>
 <li><a href="./website_docs/tools_to_standards.html">Software Standards</a>: Learn about our objective software standards aimed at guiding developers towards best practices and creating user-friendly tools.</li>
-<li>Workflows: Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines typical workflows and maps tools to various analytical steps.</li>
-<li>How to Contribute: Find out how you can contribute to this community-driven resource. We welcome input from all areas of the research community to continuously improve and expand our platform.</li>
+<li><a href="./website_docs/workflows.html">Analysis Workflows</a>: Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines typical workflows and maps tools to various analytical steps.</li>
+<li><a href="./website_docs/how_to_contribute.html">How to Contribute</a>: Find out how you can contribute to this community-driven resource. We welcome input from all areas of the research community to continuously improve and expand our platform.</li>
 </ul>
 
 

@@ -29,8 +29,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../website_docs/radish23.html" rel="next">
-<link href="../tutorials/THEREALMcCOIL/RMCL_analysis.html" rel="prev">
+<link href="../website_docs/workflows.html" rel="next">
+<link href="../website_docs/software_standards.html" rel="prev">
 <link href="../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -62,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
 <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
 <script src="../site_libs/datatables-binding-0.31/datatables.js"></script>
@@ -84,7 +85,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/tools_to_standards.html">Software standards</a></li><li class="breadcrumb-item"><a href="../website_docs/tools_to_standards.html">Overview by tool</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/software_standards.html">Software standards</a></li><li class="breadcrumb-item"><a href="../website_docs/tools_to_standards.html">Overview by tool</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -133,9 +134,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Data description</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">The data-DAG (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -154,8 +152,11 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Installing via the plasmogenepi.r-universe (TODO)</span>
-  </li>
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/R_universe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installing via the plasmogenepi.r-universe</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -595,7 +596,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/THEREALMcCOIL/RMCL_analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/THEREALMcCOIL/RMCL_analysis.Rmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Analyze data with <code>THEREALMcCOIL</code></span></a>
   </div>
 </li>
@@ -614,24 +615,59 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation framework</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Overview by tool</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">How do I get my tool on PGEforge? (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
- <span class="menu-text">Events and meetings</span></a>
+ <span class="menu-text">Analysis workflows</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis workflows</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false">
+ <span class="menu-text">How to contribute</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/how_to_contribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Add your tool to the list</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+ <span class="menu-text">Events and meetings</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/radish23.html" class="sidebar-item-text sidebar-link">
@@ -640,12 +676,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/contributors.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Contributors</span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -677,8 +715,8 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-da44465ec0297175f19d" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-da44465ec0297175f19d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40"],["MLMOI","MalHaploFreq","malaria.em","FreqEstimationModel","MultiLociBiallelicModel","pfmix","THEREALMcCOIL","McCOILR","coiaf","DEploid","Deploid-r","DEploidIBD","isoRelate","hmmIBD","paneljudge","dcifer","moire","MALECOT","SIMPLEGEN","magenta","DRpower","pixelate","estMOI","forward-dream","moimix","hrp2malaRia","hmmibdr","MIPanalyzer","PlasmoSim","polySimIBD","discent","SNP-slice","BRO","Pv3Rs","\"CDC Bayesian algorithm\"","AmpSeq","AmpSim","rehh","Hierfstat","MicroHaploHet"],[null,null,null,null,"no",null,"no",null,"yes",null,null,null,null,"y","yes","yes","yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y","yes","yes","yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y","yes","yes","yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"no",null,"yes - not comprehensive",null,null,null,null,"y","yes","yes","yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"no",null,"no",null,null,null,null,"n",null,"no","no",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"yes",null,"test data; not results",null,"no",null,null,null,null,"y",null,null,"yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"no",null,"yes",null,null,null,null,"n","(not in standard R package test format but exist)",null,"yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"NA",null,"no",null,"no",null,null,null,null,"NA",null,null,"no",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"NA",null,"no",null,"NA",null,null,null,null,"NA",null,null,"no",null,null,null,null,null,"NA",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"NA",null],[null,null,null,null,"yes",null,"no",null,"yes",null,null,null,null,"y",null,null,"yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"no",null,null,null,null,"y (to stdout)","yes",null,"no",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"?","?",null,"yes",null,null,null,null,null,"?",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y","?",null,"yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y","yes",null,"yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y",null,null,"yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"yes",null,"yes",null,"yes",null,null,null,null,"y","yes",null,"yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"yes",null,"yes",null,null,null,null,"y","yes",null,"no",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"no",null,"no",null,null,null,null,"n",null,null,"yes",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"no",null,"no",null,"no",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"yes",null,"no",null,"no",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"no",null,"no",null,"?",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"?",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"?",null],[null,null,null,null,"no",null,"no",null,"?",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"?",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"?",null],[null,null,null,null,"no",null,"no",null,"?",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"?",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"?",null],[null,null,null,null,"no",null,"no",null,"no",null,null,null,null,"n",null,null,"no",null,null,null,null,null,"no",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"no",null],[null,null,null,null,"yes",null,"no",null,"yes",null,null,null,null,"y",null,null,"yes",null,null,null,null,null,"yes",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"yes",null],[null,null,null,null,"R",null,"R",null,"R",null,null,null,null,"C + Python","R, C++",null,"C++",null,null,null,null,null,"Perl",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"R",null],[null,null,null,null,"R",null,"C++",null,"R",null,null,null,null,"C + Python","R",null,"R",null,null,null,null,null,"Perl",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"R",null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Tool<\/th>\n      <th>Version controlled<\/th>\n      <th>Installation instructions exist<\/th>\n      <th>Usage instructions exist<\/th>\n      <th>Tutorials exist<\/th>\n      <th>Interactive tutorials exist<\/th>\n      <th>Test data sets and results available<\/th>\n      <th>Has unit tests<\/th>\n      <th>Code coverage reported<\/th>\n      <th>% code covered<\/th>\n      <th>Software actively maintained<\/th>\n      <th>Run settings/parameters output<\/th>\n      <th>Runs on windows<\/th>\n      <th>Runs on Mac Intel<\/th>\n      <th>Runs on Mac ARM<\/th>\n      <th>Runs on Linux<\/th>\n      <th>Open source<\/th>\n      <th>Installation via build from source<\/th>\n      <th>Installation via pre-built from repo (e.g. PIP, Conda, CRAN)<\/th>\n      <th>Installation via container<\/th>\n      <th>Installation via direct download<\/th>\n      <th>GitHub branch rules exist<\/th>\n      <th>Master branch protected<\/th>\n      <th>Auto tests required for branch merging<\/th>\n      <th>Run via GUI<\/th>\n      <th>Run via command line<\/th>\n      <th>Implementation language (e.g. C++, R, Python)<\/th>\n      <th>Command line language<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Tool","targets":1},{"name":"Version controlled","targets":2},{"name":"Installation instructions exist","targets":3},{"name":"Usage instructions exist","targets":4},{"name":"Tutorials exist","targets":5},{"name":"Interactive tutorials exist","targets":6},{"name":"Test data sets and results available","targets":7},{"name":"Has unit tests","targets":8},{"name":"Code coverage reported","targets":9},{"name":"% code covered","targets":10},{"name":"Software actively maintained","targets":11},{"name":"Run settings/parameters output","targets":12},{"name":"Runs on windows","targets":13},{"name":"Runs on Mac Intel","targets":14},{"name":"Runs on Mac ARM","targets":15},{"name":"Runs on Linux","targets":16},{"name":"Open source","targets":17},{"name":"Installation via build from source","targets":18},{"name":"Installation via pre-built from repo (e.g. PIP, Conda, CRAN)","targets":19},{"name":"Installation via container","targets":20},{"name":"Installation via direct download","targets":21},{"name":"GitHub branch rules exist","targets":22},{"name":"Master branch protected","targets":23},{"name":"Auto tests required for branch merging","targets":24},{"name":"Run via GUI","targets":25},{"name":"Run via command line","targets":26},{"name":"Implementation language (e.g. C++, R, Python)","targets":27},{"name":"Command line language","targets":28}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-f37441a3c342aeba9893" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-f37441a3c342aeba9893">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40"],["MLMOI","MalHaploFreq","malaria.em","FreqEstimationModel","MultiLociBiallelicModel","pfmix","THEREALMcCOIL","McCOILR","coiaf","DEploid","Deploid-r","DEploidIBD","isoRelate","hmmIBD","paneljudge","dcifer","moire","MALECOT","SIMPLEGEN","magenta","DRpower","pixelate","estMOI","forward-dream","moimix","hrp2malaRia","hmmibdr","MIPanalyzer","PlasmoSim","polySimIBD","discent","SNP-slice","BRO","Pv3Rs","\"CDC Bayesian algorithm\"","AmpSeq","AmpSim","rehh","Hierfstat","MicroHaploHet"],["relegated","superseded ","relegated","yes","no","relegated","yes","relegated","yes","superseded","relegated","yes","yes","yes","yes","yes","yes","yes","in development ","simulator ","yes","no","yes","simulator","superseded","simulator","relegated","yes","simulator","simulator","in development ","in development ","relegated","in development ","in development ","in development ","in development ","yes","yes","in development"],["","","","yes","yes","","yes","","yes","","","yes","yes","yes","yes","yes","yes","yes","","","yes","yes","no","","","","","yes","","","","","","","","","","yes","yes",""],["","","","not really ","yes","","yes","","yes","","","yes","yes","yes","yes","yes","yes","yes","","","yes","yes","yes","","","","","no?","","","","","","","","","","no?","yes",""],["","","","yes ","no","","no","","yes - not comprehensive","","","no","yes","yes","yes","yes","yes","yes","","","yes","yes","no","","","","","yes","","","","","","","","","","yes","yes",""],["","","","no","no","","no","","no","","","no","no","no","no","no","no","no","","","no","no","no","","","","","no","","","","","","","","","","no","no",""],["","","","test data - vignette generates results","yes","","test data; not results","","no","","","yes - there is input and example output figures. But no files for output you could compare directly ","no output, but could compare to figures in tutorial","yes","","","yes","no - tutorial uses simulated data ","","","","","no","","","","","yes","","","","","","","","","","yes","yes",""],["","","","no","no","","no","","yes","","","yes","no","no","(not in standard R package test format but exist)","","yes","yes","","","yes","no","no","","","","","yes","","","","","","","","","","yes","no",""],["","","","no",null,"","no","","no","","","no","no","no","no","","no","no","","","no ","no","no","","","","","no","","","","","","","","","","no","no",""],["","","",null,null,"","no","",null,"","",null,null,null,null,"",null,null,"","",null,null,null,"","","","",null,"","","","","","","","","",null,null,""],["","","","yes","yes","","no","","yes","","","contact author  sha.joe.zhu@gmail.com joe.zhu@roche.com","contact author - lyndal_henden@hotmail.com","yes","yes (has been 10 months since last commit)","","yes","contact author :) ","","","yes","contact author ","no","","","","","yes","","","","","","","","","","contact author ","yes",""],["","","","","yes","","yes","","no","","","no","no","y (to stdout)","yes","","no","","","","","","yes","","","","","","","","","","","","","","","","no",""],["","","","","yes","","yes","","yes","","","yes","no","?","yes","","yes","yes","","","yes","yes","?","","","","","yes","","","","","","","","","","","yes",""],["","","","","yes","","yes","","yes","","","yes","no","yes","yes","","yes","yes","","","yes","yes","yes","","","","","yes","","","","","","","","","","","yes",""],["","","","","yes","","yes","","yes","","","yes","no","yes","yes","","yes","yes","","","yes","yes","yes","","","","","yes","","","","","","","","","","","yes",""],["","","","","yes","","yes","","yes","","","yes","yes? wasm ","yes","yes","","yes","yes","","","","yes","yes","","","","","yes","","","","","","","","","","","yes",""],["","","","yes","yes","","yes","","yes","","","yes","yes","yes","yes","","yes","yes","","","yes","yes","yes","","","","","yes","","","","","","","","","","yes","yes",""],["","","","no","no","","yes","","yes","","","","no","yes","no","","no","no","","","no","no","yes","","","","","no","","","","","","","","","","no","yes",""],["","","","yes","no","","no","","no","","","","yes","no","yes","","yes","yes","","","yes","yes","no","","","","","yes","","","","","","","","","","yes","yes",""],["","","","no","no","","no","","no","","","yes","no","no","no","","no","no","","","no","no","no","","","","","no","","","","","","","","","","no","no",""],["","","","no","yes","","no","","no","","","","no","no","no","","no","no","","","no","no","yes","","","","","no","","","","","","","","","","no","no",""],["","","","","no","","no","","?","","","","","no","","","no","","","","","","?","","","","","","","","","","","","","","","","?",""],["","","","","no","","no","","?","","","","","no","","","no","","","","","","?","","","","","","","","","","","","","","","","?",""],["","","","","no","","no","","?","","","","","no","","","no","","","","","","?","","","","","","","","","","","","","","","","?",""],["","","","no","no","","no","","no","","","no","no","no","no","","no","no","","","no","no","no","","","","","no","","","","","","","","","","no","no",""],["","","","yes","yes","","no","","yes","","","yes","yes","yes","yes","","yes","yes","","","yes","yes","yes","","","","","yes","","","","","","","","","","yes","yes",""],["","","","R","R","","R","","R","","","C++","C++ and R","C + Python","R, C++","","C++","C++ and R","","","C++ and R ","R","Perl","","","","","C++ and R","","","","","","","","","","C and R ","R",""],["","","","R","R","","C++","","R","","","bash","R","C + Python","R","","R","R","","","R","R","Perl","","","","","R","","","","","","","","","","R ","R",""]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Tool<\/th>\n      <th>Version.controlled<\/th>\n      <th>Installation.instructions.exist<\/th>\n      <th>Usage.instructions.exist<\/th>\n      <th>Tutorials.exist<\/th>\n      <th>Interactive.tutorials.exist<\/th>\n      <th>Test.data.sets.and.results.available<\/th>\n      <th>Has.unit.tests<\/th>\n      <th>Code.coverage.reported<\/th>\n      <th>X..code.covered<\/th>\n      <th>Software.actively.maintained<\/th>\n      <th>Run.settings.parameters.output<\/th>\n      <th>Runs.on.windows<\/th>\n      <th>Runs.on.Mac.Intel<\/th>\n      <th>Runs.on.Mac.ARM<\/th>\n      <th>Runs.on.Linux<\/th>\n      <th>Open.source<\/th>\n      <th>Installation.via.build.from.source<\/th>\n      <th>Installation.via.pre.built.from.repo..e.g..PIP..Conda..CRAN.<\/th>\n      <th>Installation.via.container<\/th>\n      <th>Installation.via.direct.download<\/th>\n      <th>GitHub.branch.rules.exist<\/th>\n      <th>Master.branch.protected<\/th>\n      <th>Auto.tests.required.for.branch.merging<\/th>\n      <th>Run.via.GUI<\/th>\n      <th>Run.via.command.line<\/th>\n      <th>Implementation.language..e.g..C....R..Python.<\/th>\n      <th>Command.line.language<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Tool","targets":1},{"name":"Version.controlled","targets":2},{"name":"Installation.instructions.exist","targets":3},{"name":"Usage.instructions.exist","targets":4},{"name":"Tutorials.exist","targets":5},{"name":"Interactive.tutorials.exist","targets":6},{"name":"Test.data.sets.and.results.available","targets":7},{"name":"Has.unit.tests","targets":8},{"name":"Code.coverage.reported","targets":9},{"name":"X..code.covered","targets":10},{"name":"Software.actively.maintained","targets":11},{"name":"Run.settings.parameters.output","targets":12},{"name":"Runs.on.windows","targets":13},{"name":"Runs.on.Mac.Intel","targets":14},{"name":"Runs.on.Mac.ARM","targets":15},{"name":"Runs.on.Linux","targets":16},{"name":"Open.source","targets":17},{"name":"Installation.via.build.from.source","targets":18},{"name":"Installation.via.pre.built.from.repo..e.g..PIP..Conda..CRAN.","targets":19},{"name":"Installation.via.container","targets":20},{"name":"Installation.via.direct.download","targets":21},{"name":"GitHub.branch.rules.exist","targets":22},{"name":"Master.branch.protected","targets":23},{"name":"Auto.tests.required.for.branch.merging","targets":24},{"name":"Run.via.GUI","targets":25},{"name":"Run.via.command.line","targets":26},{"name":"Implementation.language..e.g..C....R..Python.","targets":27},{"name":"Command.line.language","targets":28}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 
@@ -920,13 +958,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../tutorials/THEREALMcCOIL/RMCL_analysis.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Analyze data with <code>THEREALMcCOIL</code></span>
+      <a href="../website_docs/software_standards.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Evaluation framework</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../website_docs/radish23.html" class="pagination-link">
-        <span class="nav-page-text">RADISH23 Hackathon</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../website_docs/workflows.html" class="pagination-link">
+        <span class="nav-page-text">Analysis workflows</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

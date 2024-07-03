@@ -60,6 +60,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
 <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
 <script src="../site_libs/datatables-binding-0.31/datatables.js"></script>
@@ -131,9 +132,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Data description</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">The data-DAG (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -152,8 +150,11 @@ ul.task-list li input[type="checkbox"] {
   </div>
 </li>
           <li class="sidebar-item">
- <span class="menu-text">Installing via the plasmogenepi.r-universe (TODO)</span>
-  </li>
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/R_universe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installing via the plasmogenepi.r-universe</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -593,7 +594,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/THEREALMcCOIL/RMCL_analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../tutorials/THEREALMcCOIL/RMCL_analysis.Rmd" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Analyze data with <code>THEREALMcCOIL</code></span></a>
   </div>
 </li>
@@ -612,24 +613,59 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation framework</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview by tool</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
- <span class="menu-text">How do I get my tool on PGEforge? (TODO)</span>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
- <span class="menu-text">Events and meetings</span></a>
+ <span class="menu-text">Analysis workflows</span></a>
           <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis workflows</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false">
+ <span class="menu-text">How to contribute</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/how_to_contribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Add your tool to the list</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+ <span class="menu-text">Events and meetings</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/radish23.html" class="sidebar-item-text sidebar-link">
@@ -638,12 +674,14 @@ ul.task-list li input[type="checkbox"] {
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/contributors.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Contributors</span></a>
   </div>
 </li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -675,8 +713,8 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-a1676c22bfd75b9a5ebe" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a1676c22bfd75b9a5ebe">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"],["FreqEstimationModel","MultiLociBiallelicModel","THEREALMcCOIL","coiaf","DEploidIBD","isoRelate","hmmIBD","paneljudge","dcifer","moire","MALECOT","DRpower","estMOI","MIPanalyzer","rehh","Hierfstat"],["X","X","X","X","X",null,null,null,null,"X","X",null,"X",null,null,null],[null,null,null,null,"X",null,null,null,null,null,null,null,null,null,null,null],[null,"X",null,null,null,null,null,null,null,null,null,"X",null,null,null,null],["X",null,"X",null,null,null,"X",null,null,"X","X",null,null,null,null,null],[null,"X",null,null,null,null,null,null,null,null,null,null,null,null,null,null],["X",null,null,null,null,null,null,null,null,null,"X",null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,"X",null],[null,null,null,null,"X","X","X","X","X",null,null,null,null,"X","X","X"],[null,null,null,null,"X",null,null,null,null,"X",null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,"X",null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,"X",null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,"X",null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Tool<\/th>\n      <th>Estimate COI<\/th>\n      <th>Phase<\/th>\n      <th>Estimate SNP prevalence<\/th>\n      <th>Estimate SNP allele frequency<\/th>\n      <th>Estimate multi-locus haplotype prevalence<\/th>\n      <th>Estimate multi-locus haplotype frequency<\/th>\n      <th>Identify signs of selection<\/th>\n      <th>Estimate between-host relatedness / genetic distance (e.g. IBD, IBS)<\/th>\n      <th>Estimate within-host relatedness / genetic distance (e.g. IBD, IBS)<\/th>\n      <th>Infer transmission networks<\/th>\n      <th>Infer geographic assignment<\/th>\n      <th>Calculate simple genetic metrics<\/th>\n      <th>Infer structure / clustering<\/th>\n      <th>Estimate copy number variation / deletions<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Tool","targets":1},{"name":"Estimate COI","targets":2},{"name":"Phase","targets":3},{"name":"Estimate SNP prevalence","targets":4},{"name":"Estimate SNP allele frequency","targets":5},{"name":"Estimate multi-locus haplotype prevalence","targets":6},{"name":"Estimate multi-locus haplotype frequency","targets":7},{"name":"Identify signs of selection","targets":8},{"name":"Estimate between-host relatedness / genetic distance (e.g. IBD, IBS)","targets":9},{"name":"Estimate within-host relatedness / genetic distance (e.g. IBD, IBS)","targets":10},{"name":"Infer transmission networks","targets":11},{"name":"Infer geographic assignment","targets":12},{"name":"Calculate simple genetic metrics","targets":13},{"name":"Infer structure / clustering","targets":14},{"name":"Estimate copy number variation / deletions","targets":15}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-bd1efa3f6f992cbad096" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-bd1efa3f6f992cbad096">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"],["FreqEstimationModel","MultiLociBiallelicModel","THEREALMcCOIL","coiaf","DEploidIBD","isoRelate","hmmIBD","paneljudge","dcifer","moire","MALECOT","DRpower","estMOI","MIPanalyzer","rehh","Hierfstat"],["X","X","X","X","X","","","","","X","X","","X","","",""],["","","","","X","","","","","","","","","","",""],["X","X","","","","","","","","","","X","","","",""],["X","","X","","","","X","","","X","X","","","","",""],["X","X","","","","","","","","","","","","","",""],["X","","","","","","","","","","X","","","","",""],["","","","","","","","","","","","","","","X",""],["","","","","X","X","X","X","X","","","","","X","X","X"],["","","","","X","","","","","X","","","","","",""],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["","","","","","","","","","","X","","","","",""],["","","","","","","","X","","","","","","","",""],["","","","","","","","","","","X","","","","",""],["","","","","","","","","","","","X","","","",""],[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],["See email comments","","","","","","","I've added a cross to column m because it computes effective cardinality and diversities (without sample corrections)","","","","","","","",""]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Tool<\/th>\n      <th>Estimate.COI<\/th>\n      <th>Phase<\/th>\n      <th>Estimate.SNP.prevalence<\/th>\n      <th>Estimate.SNP.allele.frequency<\/th>\n      <th>Estimate.multi.locus.haplotype.prevalence<\/th>\n      <th>Estimate.multi.locus.haplotype.frequency<\/th>\n      <th>Identify.signs.of.selection<\/th>\n      <th>Estimate.between.host.relatedness...genetic.distance..e.g..IBD..IBS.<\/th>\n      <th>Estimate.within.host.relatedness...genetic.distance..e.g..IBD..IBS.<\/th>\n      <th>Infer.transmission.networks<\/th>\n      <th>Infer.geographic.assignment<\/th>\n      <th>Calculate.simple.genetic.metrics<\/th>\n      <th>Infer.structure...clustering<\/th>\n      <th>Estimate.copy.number.variation...deletions<\/th>\n      <th>X<\/th>\n      <th>X.1<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Tool","targets":1},{"name":"Estimate.COI","targets":2},{"name":"Phase","targets":3},{"name":"Estimate.SNP.prevalence","targets":4},{"name":"Estimate.SNP.allele.frequency","targets":5},{"name":"Estimate.multi.locus.haplotype.prevalence","targets":6},{"name":"Estimate.multi.locus.haplotype.frequency","targets":7},{"name":"Identify.signs.of.selection","targets":8},{"name":"Estimate.between.host.relatedness...genetic.distance..e.g..IBD..IBS.","targets":9},{"name":"Estimate.within.host.relatedness...genetic.distance..e.g..IBD..IBS.","targets":10},{"name":"Infer.transmission.networks","targets":11},{"name":"Infer.geographic.assignment","targets":12},{"name":"Calculate.simple.genetic.metrics","targets":13},{"name":"Infer.structure...clustering","targets":14},{"name":"Estimate.copy.number.variation...deletions","targets":15},{"name":"X","targets":16},{"name":"X.1","targets":17}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
