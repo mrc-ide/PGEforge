@@ -6,13 +6,12 @@ format: html
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(googlesheets4)
 library(DT)
 ```
 
 ```{r echo=F, include=F}
-#Read google sheets data into R
-tool_std_df <- read_sheet('https://docs.google.com/spreadsheets/d/1rvVPGseiwTKF3ARveDlRVa89pQVcCV4bFQTDZOx1PIs/edit#gid=0')
+#Read csv data into R
+tool_std_df <- read.csv("tables/Tools_to_standards.csv")
 ```
 
 ```{r echo=F}

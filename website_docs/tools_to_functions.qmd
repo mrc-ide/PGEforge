@@ -11,8 +11,8 @@ library(DT)
 ```
 
 ```{r echo=F, include=F}
-#Read google sheets data into R
-tool_fxn_df <- read_sheet('https://docs.google.com/spreadsheets/d/1c2HoQgwRygZ2GMd_ENHA_x3dXcq8eIE2ky6vtpXWkCc/edit#gid=0')
+#Read csv data into R
+tool_fxn_df <- read.csv("tables/Tools_to_functions.csv")
 ```
 
 ```{r echo=F}

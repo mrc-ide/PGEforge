@@ -1,0 +1,17 @@
+Tool,Estimate COI,Phase,Estimate SNP prevalence,Estimate SNP allele frequency,Estimate multi-locus haplotype prevalence,Estimate multi-locus haplotype frequency,Identify signs of selection,"Estimate between-host relatedness / genetic distance (e.g. IBD, IBS)","Estimate within-host relatedness / genetic distance (e.g. IBD, IBS)",Infer transmission networks,Infer geographic assignment,Calculate simple genetic metrics,Infer structure / clustering,Estimate copy number variation / deletions,,
+FreqEstimationModel,X,,X,X,X,X,,,,,,,,,,See email comments
+MultiLociBiallelicModel,X,,X,,X,,,,,,,,,,,
+THEREALMcCOIL,X,,,X,,,,,,,,,,,,
+coiaf,X,,,,,,,,,,,,,,,
+DEploidIBD,X,X,,,,,,X,X,,,,,,,
+isoRelate,,,,,,,,X,,,,,,,,
+hmmIBD,,,,X,,,,X,,,,,,,,
+paneljudge,,,,,,,,X,,,,X,,,,I've added a cross to column m because it computes effective cardinality and diversities (without sample corrections)
+dcifer,,,,,,,,X,,,,,,,,
+moire,X,,,X,,,,,X,,,,,,,
+MALECOT,X,,,X,,X,,,,,X,,X,,,
+DRpower,,,X,,,,,,,,,,,X,,
+estMOI,X,,,,,,,,,,,,,,,
+MIPanalyzer,,,,,,,,X,,,,,,,,
+rehh,,,,,,,X,X,,,,,,,,
+Hierfstat,,,,,,,,X,,,,,,,,
