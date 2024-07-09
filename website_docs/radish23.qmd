@@ -12,12 +12,13 @@ format:
 ![A cute radish](img/radish.png)
 :::
 
-The **R**eproducibility, **A**ccessibility, **D**ocumentation and **I**nter-operability **S**tandards **H**ackathon (**RADISH23**), organised by Bob Verity, Shazia Ruybal, Bryan Greenhouse and Amy Wesolowski took place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA.
+The **R**eproducibility, **A**ccessibility, **D**ocumentation and **I**nter-operability **S**tandards **H**ackathon (**RADISH23**), organised by Bob Verity, Shazia Ruybal-Pesántez, Bryan Greenhouse and Amy Wesolowski took place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA.
 
 ![](img/radish23_group_photo.jpg)
+*For more details on RADISH23 attendees and contributors to PGEforge, see the [Contributors page](website_docs/contributors.qmd) *
 
 ## Main aims
 
 Our aim was to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices.
 
-To view the tutorials developed during RADISH23, see the [Tutorials tab](website_docs/tutorials_overview.qmd).
+To view the tutorials developed during RADISH23, see the [Tutorials](website_docs/tutorials_overview.qmd).

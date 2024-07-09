@@ -9,15 +9,15 @@ PGEforge was supported by the following people, listed alphabetically.
 
 #### Jorge Amaya-Romero
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/jorge.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Immunology and Infectious Disease, Harvard T.H. Chan School of Public Health
 
-#### Sophie Berube
+#### Sophie Bérubéi
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/SophieB.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health
 
 #### Nick Brazeau
 
@@ -33,15 +33,15 @@ PGEforge was supported by the following people, listed alphabetically.
 
 #### Nicholas Hathaway
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/hathaway_nicholas_headshot.jpg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Department of Medicine, University of Massachusetts Chan Medical School
 
 #### Jason Hendry
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/jason.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Max Planck Institute for Infection Biology
 
 #### Kirsty McCann
 
@@ -52,27 +52,27 @@ The Institute for Mental and Physical Health and Clinical Translation (IMPACT), 
 
 #### Kathryn Murie
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/kathryn.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** EPPIcenter, University of California San Francisco
 
 #### Max Murphy
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/max.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** EPPIcenter, University of California San Francisco
 
 #### Karamoko Niare
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/Karamoko_Photo.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Brown University
 
 #### Jody Phelan
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/jody.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** London School of Hygiene and Tropical Medicine
 
 #### Shazia Ruybal-Pesántez
 
@@ -88,18 +88,18 @@ The Institute for Mental and Physical Health and Clinical Translation (IMPACT), 
 
 #### Alfred Simkin
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/alfred.jpeg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Pathology and Laboratory Medicine, Brown University
 
 #### Bob Verity
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/bob.jpeg){fig-align="left" width="100px"}
 
 **Affiliations:** MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London
 
 #### Amy Wesolowski
 
-![](img/radish.png){fig-align="left" width="100px"}
+![](img/people/Wesolowski.jpg){fig-align="left" width="100px"}
 
-**Affiliations:** ABCDE
+**Affiliations:** Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health
