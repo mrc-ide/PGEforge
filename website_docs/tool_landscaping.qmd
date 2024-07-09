@@ -6,13 +6,12 @@ format: html
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(googlesheets4)
 library(DT)
 ```
 
 ```{r echo=F, include=F}
-#Read google sheets data into R
-matrix <- read_sheet('https://docs.google.com/spreadsheets/d/1G5hAF5VK7MG4iDfX1NAJl_-7j8khrbVB0cskKqK7OKc/edit#gid=0')
+#Read csv data into R
+matrix <- read.csv("tables/MMS_software_landscaping.csv")
 ```
 
 ```{r echo=F}

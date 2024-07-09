@@ -20,7 +20,7 @@ website:
   page-footer:
     background: "#f9eaf1"
     foreground: "#c82f61"
-    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2023"
+    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2024"
     
   sidebar:
     background: "#f9eaf1"
@@ -39,12 +39,13 @@ website:
       - section: "Data"
         contents:
           - website_docs/data_description.qmd
-          - text: "The data-DAG (TODO)"
+          #- text: "The data-DAG (TODO)"
       - section: "Tool landscaping"
         contents:
           - text: "The landscaping matrix"
             file: website_docs/tool_landscaping.qmd
-          - text: "Installing via the plasmogenepi.r-universe (TODO)"
+          - text: "Installing via the plasmogenepi.r-universe"
+            file: website_docs/R_universe.qmd
       - section: "Tutorials"
         contents:
           - text: "**Overview of all tutorials**"
@@ -177,15 +178,21 @@ website:
               file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
       - section: "Software standards"
         contents:
+          - website_docs/software_standards.qmd
           - text: "Overview by tool"
             file: website_docs/tools_to_standards.qmd
-          - text: "How do I get my tool on PGEforge? (TODO)"
-      - section: "Events and meetings"
+      - section: "Analysis workflows"
         contents:
+          - website_docs/workflows.qmd
+      - section: "How to contribute"
+        contents:
+          - website_docs/how_to_contribute.qmd
+          - section: "Events and meetings"
+            contents:
             - text: "RADISH23 Hackathon"
               file: website_docs/radish23.qmd
-      - href: website_docs/contributors.qmd
-        text: "Contributors"
+          - href: website_docs/contributors.qmd
+            text: "Contributors"
 
 format:
   html:
