@@ -20,7 +20,7 @@ website:
   page-footer:
     background: "#f9eaf1"
     foreground: "#c82f61"
-    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2024"
+    center: "This website is built with ❤️, [![](https://www.r-project.org/Rlogo.png){fig-alt='R' width=20px}](https://www.r-project.org) and [![](https://quarto.org/quarto.png){fig-alt='Quarto' width=65px}](https://quarto.org/). &copy; 2024"
     
   sidebar:
     background: "#f9eaf1"
