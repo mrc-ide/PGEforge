@@ -8,18 +8,14 @@ format: html
 Understanding the different types of genomic data formats is essential for anyone involved in *Plasmodium* genomic analysis, especially beginners or end-users of various analysis tools. Here we briefly cover the primary data formats used in malaria research and common input file formats such as `.vcf`, `.fasta`, and others.
 
 #### Genomic data generation
-Before we jump into the different data formats, it is important to understand how malaria genomic data are generated. The variety in data formats arises from different molecular marker panels and available methodologies. The figure below illustrates how different genotyping approaches capture distinct aspects of the *Plasmodium* genome and genomic data are 'generated' using different techniques and genotyping platforms. 
+Before we jump into the different data formats, it is important to understand how malaria genomic data are generated. The variety in data formats arises from different molecular marker panels and available methodologies. The figure below illustrates how different genotyping approaches capture distinct aspects of the *Plasmodium* genome and how genomic data are 'generated' using different techniques and genotyping platforms. Next-generation sequencing is now the most common approach due to significant decreases in cost and its high-throughput nature both for whole genome sequencing but also sequencing of specific molecular markers or genomic regions of interest, also known as [targeted sequencing](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing).
 
 ::: {.column-margin}
-Some explanatory text here?
+<br>
+Targeted sequencing is similar to WGS, but sample preparation workflow requires an extra step: target enrichment either by [hybridization capture](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/hybridization-capture) or [PCR amplicons](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/amplicon-sequencing). These methods are often used for enriching longer and shorter genomic regions, respectively.
 :::
 
 ![Figure sourced from [Ruybal-Pesántez et al 2024, *Molecular markers for malaria genetic epidemiology: progress and pitfalls*](https://doi.org/10.1016/j.pt.2023.11.006)](img/genetic_variation_types.png)
-
-::: {.column-margin}
-The affordability and high-throughput nature of next-generation sequencing have led to the development of many SNP and microhaplotype genotyping panels for targeted sequencing.
-:::
-
 
 ::: {.column-margin}
 <br>
@@ -31,7 +27,9 @@ Raw sequencing data is processed by bioinformatic pipelines to call alleles and 
 Raw sequence data from next-generation sequencing platforms is processed through bioinformatic pipelines into structured formats suitable for further downstream genomic analysis. Typically this process involves a series of steps. Initially, the raw data undergoes quality control to remove low-quality reads and contaminants. The cleaned data is then aligned to a reference genome, which helps identify the position of each sequence read. From this alignment, variants can be 'called', which means variants are identified through differences between the sample and the reference genome. These variants are compiled into Variant Call Format (`.vcf`) files. Alternatively, the entire cleaned and aligned sequences can be compiled into FASTA format (`.fasta`) files, which represent the sequences in a text-based format. Additionally, haplotypes may also be called, which means combinations of alleles at multiple loci are identified. These haplotypes are often tabulated in `.csv` or text-based formats.
 
 ::: {.column-margin}
-Some explanatory text here?
+<br>
+<br>
+Bioinformatic pipelines in malaria genomics need to account for the unique characteristics of *Plasmodium* genomes, such as high AT content and extensive polymorphism.
 :::
 
 #### Common input formats
@@ -62,7 +60,7 @@ When working with *Plasmodium* genomic data, several input file formats are comm
 ::: {.column-margin}
 <br>
 <br>
-Figure sourced and modified from [Wikipedia](https://en.wikipedia.org/wiki/Variant_Call_Format).
+Figure sourced and modified from [Wikipedia](https://en.wikipedia.org/wiki/Variant_Call_Format)
 :::
 
 - [`.fasta`](https://en.wikipedia.org/wiki/FASTA_format): Widely used for representing nucleotide and protein sequences, in which nucleotides or amino acids are represented using single-letter codes. Each entry begins with a header line starting with > followed by a unique sequence ID and description line, and then the sequence data itself, with one letter per nucleic or amino acid. 
@@ -86,8 +84,4 @@ More details on the datasets hosted on PGEforge can be found in the links below:
 - [SNP barcoding data](website_docs/data_snps.qmd)
 - [*pfhrp2/3* deletion count data](website_docs/data_counts.qmd)
 
-::: {.column-margin}
-Some explanatory text here?
-:::
-
-They can be located at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder. 
+They can be accessed at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder on Github. 
