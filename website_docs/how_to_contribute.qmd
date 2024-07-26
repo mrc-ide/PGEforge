@@ -4,27 +4,27 @@ format: html
 ---
 
 ## How to contribute to PGEforge
-Welcome to the PGEforge community! We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to a sustainable ecosystem of existing and new tools for *Plasmodium* genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims:
+Welcome to the PGEforge community! We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for *Plasmodium* genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our [community rules](#community-rules).
 
 ## Add your tool to the List
 
 If you have developed a new *Plasmodium* genomic data analysis tool or identified a tool that is missing tutorial resources, you can develop them and contribute them to PGEforge! Follow these steps to contribute: 
 
-**Step 1**:
+**Step 1:**
 In PGEforge we focus on *Plasmodium* genomic **data analysis** tools. The tool(s) should meet the following criteria: 
 
 - Is a downstream analysis tool. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
 - Is a tool that is specifically engineered for *Plasmodium*. While there are many generic methods that can be applied to any type of genetic data (e.g. F-statistics and other population genetic metrics), we did not seek to evaluate these tools.
 
-**Step 2**:
+**Step 2:**
 Take a look at the [tool landscaping](website_docs/tool_landscaping.qmd) in case we have already evaluated that specific tool. In some instances, we opted to not develop tutorial resources for tools where there was difficulty installing and running the software, run-time errors, or if the tool was clearly superseded by more recent tools. You will find more details in the [tool landscaping](website_docs/tool_landscaping.qmd).
 
-**Step 3**:
+**Step 3:**
 If you have reached this point and have found a tool that is missing from PGEforge, great! We provide all the templates that you need to get started. For every tool, we develop the following resources:  
 
-  - *Summary Document*: Provide an overview of the tool, including its main purpose, use cases, license, code repository, relevant publications, and citation details. Fill in these details in the template .csv file and then "Render" the accompanying .qmd file to display the information in a nicely formatted table. 
-  - *Installation Instructions*: Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and *not* already in the [PlasmoGenEpi R-universe](website_docs/R_universe.qmd), please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.
-  - *Fully Worked Tutorials*: Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated [canonical datasets](website_docs/data_description.qmd) for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible. 
+  - *Summary Document:* Provide an overview of the tool, including its main purpose, use cases, license, code repository, relevant publications, and citation details. Fill in these details in the template .csv file and then "Render" the accompanying .qmd file to display the information in a nicely formatted table. 
+  - *Installation Instructions:* Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and *not* already in the [PlasmoGenEpi R-universe](website_docs/R_universe.qmd), please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.
+  - *Fully Worked Tutorials:* Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated [canonical datasets](website_docs/data_description.qmd) for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible. 
 
 You can find the templates for all of these documents in our [Github repository](https://github.com/mrc-ide/PGEforge/tree/main/tutorials/Template) and example tutorials in the [Tutorials section](website_docs/tutorials_overview.qmd).
 
@@ -48,16 +48,18 @@ There are two ways to do this:
 - Add your headshot photo to the [`website_docs/img/people`](https://github.com/mrc-ide/PGEforge/tree/main/website_docs/img/people) folder
 - Add your name in alphabetical order to the [website_docs/contributors.qmd](https://github.com/mrc-ide/PGEforge/blob/main/website_docs/contributors.qmd) and reference your photo by using the following code ```![](img/people/yourname.jpeg){fig-align="left" width="100px"}```.
 
-
 ## Contributing guidelines for GitHub
 
 To ensure a smooth and efficient collaboration process, please follow these guidelines when contributing to our GitHub repository:
 
-- **Create a New Branch**: Start by creating a new branch from the `develop` branch. This keeps your changes separate until they are ready to be reviewed and merged.
-- **Pull Request (PR) for Review**: Once you have made your changes, create a PR into the `develop` branch. Our team will review your PR and provide feedback or approve it for merging. Never make any changes to the `main` branch, and please always PR into `develop`.
+- **Create a New Branch:** Start by creating a new branch from the `develop` branch. This keeps your changes separate until they are ready to be reviewed and merged.
+- **Pull Request (PR) for Review:** Once you have made your changes, create a PR into the `develop` branch. Our team will review your PR and provide feedback or approve it for merging. Never make any changes to the `main` branch, and please always PR into `develop`.
 
-### To be developed
+### Future areas to be developed?
 - Focuses on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. We did not consider applications to mosquito genetics, despite some tools and techniques being applicable to both organisms. 
 
 ## Thank you! 
 Thank you for your interest in contributing to PGEforge. Your efforts help us build a stronger, more inclusive research community making *Plasmodium* genomic analysis accessible to all!
+
+## Community rules
+PGEforge is dedicated to creating an inclusive, respectful, and engaging community. We believe in open collaboration and active participation, empowering each other to share and gain knowledge, resources, and opportunities as a community. We believe in the benefits of a wide range of perspectives, experiences and ideas. We welcome contributions from everyone who shares our goals and wants to contribute, regardless of age, gender identity, sexual orientation, disability, ethnicity, nationality, race, religion, education, level of experience, career stage, or socioeconomic status. PGEforge aims to foster a harassment-free experience for everyone and expects all contributors to demonstrate empathy, kindness, and respect, and to engage constructively with differing viewpoints. Unacceptable behaviors, including harassment, discriminatory language, and personal attacks, will not be tolerated. By fostering a positive and inclusive community, we aim to empower everyone to contribute and collaborate effectively to a vibrant and growing PGEforge community. 
