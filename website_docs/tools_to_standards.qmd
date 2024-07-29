@@ -6,6 +6,7 @@ format: html
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(janitor)
 library(DT)
 ```
 
@@ -15,5 +16,24 @@ tool_std_df <- read.csv("tables/Tools_to_standards.csv")
 ```
 
 ```{r echo=F}
-datatable(tool_std_df)
+tool_std_df <- tool_std_df %>% 
+  clean_names(case = "title",
+              abbreviations = c("ARM", "e.g.", "PIP", "CRAN", "Github", "GUI")) %>% 
+  rename("Implementation Language E.g. C, R, Python" = "Implementation Language E.g.c r Python")
+
+datatable(tool_std_df,
+          extensions = c('FixedColumns', 'FixedHeader'),
+          options = list(
+            pageLength = nrow(tool_std_df),
+            fixedHeader = T,
+            scrollY = "600px",
+            scrollX = T,
+            fixedColumns = list(leftColumns = 2),
+            dom = "ft",
+            autoWidth = T
+          ),
+          caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
+                                            "Last updated: 15 Dec 2023"),
+          class = 'white-space: nowrap'
+          )
 ```

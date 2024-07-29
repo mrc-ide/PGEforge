@@ -3,9 +3,21 @@ title: "Software standards"
 format: html
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(kableExtra)
+```
+
+```{r read data, echo=F, include=F}
+#Read csv data into R
+stds <- read.csv("tables/Objective_software_standards.csv")
+```
+
 ## Framework for evaluating software standards in *Plasmodium* genomics
 
-PGEforge aims to foster an ecosystem of high-quality, user-friendly tools that can be seamlessly integrated into genomic analysis workflows. One of the biggest challenges is the XXXX. 
+PGEforge aims to foster an ecosystem of high-quality, user-friendly tools that can be seamlessly integrated into genomic analysis workflows. One of the biggest challenges is the variability and lack of systematic assessment of existing tools, which often do not adhere to best practices in software development, including [FAIR standards](https://doi.org/10.1038/sdata.2016.18), maintenance, and usability.
 
 Working towards this goal, a robust software standards evaluation framework was formulated to guide the development and assessment of tools used in *Plasmodium* genomic data analysis. This framework is crucial in addressing the variability and challenges associated with existing software tools but also to guide development of new tools, ensuring that they meet high standards of usability, accessibility, and reliability. This framework not only helps in maintaining consistency and reliability across different tools but also promotes best practices in software development, contributing to the overall advancement of tools for malaria genomic research.
 
@@ -15,19 +27,31 @@ One of the primary objectives of this framework is to define ‘ideal’ softwar
 - Comprehensive documentation
 - Ease of installation
 - Compatibility across different operating systems
-- Standardization of data input formats 
+- Standardization or interoperability of data input formats 
 
 ### Evaluation criteria 
-To implement these standards, PGEforge has developed a set of measurable criteria that can be applied to evaluate the performance and usability of various tools. These criteria include:
+To implement these standards, PGEforge has developed a set of measurable criteria that can be applied to evaluate the performance and usability of various tools.
+
+::: {.column-margin}
+<br>
+<br>
+The evaluation criteria encompass the following key themes, in line with the 'ideal' software practices:
 
 - Quality and comprehensiveness of documentation
 - Simplicity of installation processes
-- Robustness of the tools in handling different data formats
+- Compatibility across operating systems
+- Active tool maintenance 
+:::
 
-Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](website_docs/tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
+```{r echo=F}
+stds %>% 
+  clean_names(case = "sentence") %>% 
+  kable()
+```
+
 
 ### Tool evaluation
-
+During the [2023 RADISH23 hackathon](website_docs/radish23.qmd), we evaluated *Plasmodium* genomic data analysis tools against the objective software standards. The resulting evaluation matrix can be found [here](website_docs/tools_to_standards.qmd). Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](website_docs/tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
 
 ### Future work: tool benchmarking
 Future work will focus on formal benchmarking, including the use of [canonical simulated and empirical datasets](website_docs/data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We will host these types of benchmarking in PGEforge in the near future.
