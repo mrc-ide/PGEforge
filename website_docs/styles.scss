@@ -20,4 +20,11 @@ a{
     text-align: center;
     font-weight: bold;
     font-size: 48px; /* Adjust the size as needed */
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+    justify-content: space-between; /* Ensures there's space between the text and image */
+}
+
+.title-image {
+    margin-left: 20px; /* Adds space between the text and the image */
 }

@@ -3,9 +3,13 @@ title: "PGEforge"
 subtitle: "Resources for enhancing **P**lasmodium **G**enomic **E**pidemiology analysis"
 ---
 
-<div class="custom-title">
-Your resource hub for <br> *Plasmodium* genomic analysis
-</div>
+<!-- <div class="custom-title"> -->
+<!-- Your resource hub for <br> *Plasmodium* genomic analysis -->
+
+<!-- ![](website_docs/img/pgeforge_ecosystem.png){class="title-image" width="300px"} -->
+<!-- </div> -->
+
+![](website_docs/img/pgeforge_header.png)
 
 ## Welcome
 
