@@ -1,0 +1,8 @@
+---
+title: "*pfhrp2/3* deletion count data"
+format: html
+bibliography: ../references/references.bib
+---
+
+## *Pfhrp2/3* gene deletion count data
+The *pfhrp2/3* gene deletion count data is available within the subfolder `pfhrp2-3_counts`. The data come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4).[@Feleke2021-bo] 

@@ -1,0 +1,24 @@
+---
+title: "Single nucleotide polymorphism (SNP) data"
+format: html
+bibliography: ../references/references.bib
+---
+
+## SNP barcoding data
+
+SNP barcode data from the sanger 100 SNP Plasmodium falciparum barcode [@Chang2019-ar]. 
+
+[sanger101_snp_barcode_withGenes.bed](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sanger101_snp_barcode_withGenes.bed)  
+
+### Field Samples  
+
+The barcode was subsetted from the [above WGS data](#pf3k) to just the sanger barcode for the Vietnam and DRC data. The results file can be found within directory [`snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz), [`snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz)
+
+### Lab Isolates  
+
+The barcode was also explicitly called with several monoclonal lab isolates and then lab created mixtures of these isolates. Data can be found [`snp_barcode/controls_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/controls_sanger100.vcf.gz) with meta data with what mixtures are what found [`snp_barcode/allControlMixtures.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlMixtures.tab.txt) and [`snp_barcode/allControlSampNameToMixName.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlSampNameToMixName.tab.txt)
+
+### Simulated  
+
+The barcode was also simulated for 100 samples (50 Bangladesh and 50 Ghana). Data can be found [`snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz). The simulations were created by simulating super infections by sampling the barcode from each of these countries and selecting COIs based on the COIs observed for each country. 
+To use data without indels, the data can be found [`snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz). 
