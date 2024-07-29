@@ -11,14 +11,8 @@ Your resource hub for <br> *Plasmodium* genomic analysis
 
 PGEforge is a community-driven platform designed to simplify *Plasmodium* genomic data analysis. The process of analyzing genomic data often involves various software tools with different formats, user interfaces, and levels of accessibility. These differences can create barriers, especially for those without strong computational skills.
 
-Although there are numerous existing software tools available to analyze data for malaria genomic surveillance, there is little
-guidance outlining how to choose, use, or assemble these tools to translate genetic data into interpretable and actionable results. For example, estimating the extent of antimalarial resistance from sequence data requires several different steps depending on the
-number and type of relevant polymorphisms and outcomes of interest. To improve the accessibility, accuracy, and reproducibility of
-genomic surveillance, a roadmap is needed to guide the specific analysis functionalities needed for any given end result, as well as
-knowledge of which tools are available to perform those functionalities.
 Although there are numerous existing software tools available to analyze data for malaria genomic surveillance, there is little guidance outlining how to choose, use, or assemble these tools to translate genetic data into interpretable and actionable results. For example, estimating the extent of antimalarial resistance from sequence data requires several different steps depending on the number and type of relevant polymorphisms and outcomes of interest. To improve the accessibility, accuracy, and reproducibility of genomic surveillance, a roadmap is needed to guide the specific analysis functionalities needed for any given end result, as well as knowledge of which tools are available to perform those functionalities.
 
-An adjacent but extremely important challenge is the large variation in software standards of currently available tools for analyzing Plasmodium genomic data, often limiting the accessibility and utility of these tools. Many tools are challenging to use due to inadequate documentation, difficulty in installation due to operating system incompatibility or poorly documented dependencies, and requirements for data to be input in specific, nonstandard formats.
 An adjacent but extremely important challenge is the large variation in software standards of currently available tools for analyzing *Plasmodium* genomic data, often limiting the accessibility and utility of these tools. Many tools are challenging to use due to inadequate documentation, difficulty in installation due to operating system incompatibility or poorly documented dependencies, and requirements for data to be input in specific, nonstandard formats.
 
 ## Our motivation
