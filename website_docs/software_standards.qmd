@@ -27,7 +27,18 @@ One of the primary objectives of this framework is to define ‘ideal’ softwar
 - Comprehensive documentation
 - Ease of installation
 - Compatibility across different operating systems
-- Standardization or interoperability of data input formats 
+
+Additionally, during the [2023 RADISH23 hackathon](website_docs/radish23.qmd), focused discussions highlighted the following software practices that are not necessarily essential, but are "nice-to-have's": 
+
+- Uses standard data input formats 
+- Computationally efficient
+- Informative error handling
+- Multiple languages for tutorials
+- Minimal dependencies
+- Modular code (eg split into functions)
+- Well annotated code
+
+These practices can guide development of new tools and/or improvement of existing tools. 
 
 ### Evaluation criteria 
 To implement these standards, PGEforge has developed a set of measurable criteria that can be applied to evaluate the performance and usability of various tools.
