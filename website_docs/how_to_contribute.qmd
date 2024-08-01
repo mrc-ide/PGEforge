@@ -17,23 +17,22 @@ In PGEforge we focus on *Plasmodium* genomic **data analysis** tools. The tool(s
 - Is a tool that is specifically engineered for *Plasmodium*. While there are many generic methods that can be applied to any type of genetic data (e.g. F-statistics and other population genetic metrics), we did not seek to evaluate these tools.
 
 **Step 2:**
-Take a look at the [tool landscaping](website_docs/tool_landscaping.qmd) in case we have already evaluated that specific tool. In some instances, we opted to not develop tutorial resources for tools where there was difficulty installing and running the software, run-time errors, or if the tool was clearly superseded by more recent tools. You will find more details in the [tool landscaping](website_docs/tool_landscaping.qmd).
+Take a look at the [tool landscaping](tool_landscaping.qmd) in case we have already evaluated that specific tool. In some instances, we opted to not develop tutorial resources for tools where there was difficulty installing and running the software, run-time errors, or if the tool was clearly superseded by more recent tools. You will find more details in the [tool landscaping](tool_landscaping.qmd).
 
 **Step 3:**
 If you have reached this point and have found a tool that is missing from PGEforge, great! We provide all the templates that you need to get started. For every tool, we develop the following resources:  
 
   - *Summary Document:* Provide an overview of the tool, including its main purpose, use cases, license, code repository, relevant publications, and citation details. Fill in these details in the template .csv file and then "Render" the accompanying .qmd file to display the information in a nicely formatted table. 
-  - *Installation Instructions:* Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and *not* already in the [PlasmoGenEpi R-universe](website_docs/R_universe.qmd), please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.
-  - *Fully Worked Tutorials:* Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated [canonical datasets](website_docs/data_description.qmd) for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible. 
+  - *Installation Instructions:* Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and *not* already in the [PlasmoGenEpi R-universe](R_universe.qmd), please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.
+  - *Fully Worked Tutorials:* Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated [canonical datasets](data_description.qmd) for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible. 
 
-You can find the templates for all of these documents in our [Github repository](https://github.com/mrc-ide/PGEforge/tree/main/tutorials/Template) and example tutorials in the [Tutorials section](website_docs/tutorials_overview.qmd).
+You can find the templates for all of these documents in our [Github repository](https://github.com/mrc-ide/PGEforge/tree/main/tutorials/Template) and example tutorials in the [Tutorials section](tutorials_overview.qmd).
 
-## Contribute to the development of `PGEhammer`
+**Please make sure to follow our [GitHub contribution guidelines](#contributing-guidelines-for-github).**
 
-**Do we want to include this?**
 
 ## Add yourself as a contributor
-Everyone who contributes to PGEforge is listed as a [contributor](website_docs/contributors.qmd). 
+Everyone who contributes to PGEforge is listed as a [contributor](contributors.qmd). 
 
 There are two ways to do this:
 

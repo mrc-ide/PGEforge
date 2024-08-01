@@ -75,13 +75,13 @@ Figure sourced from [Wikipedia](https://en.wikipedia.org/wiki/FASTA_format)
 - `.txt` or `.csv`: Simple text and comma-separated values formats that are often used to represent haplotype or count data. 
 
 ## Available datasets in PGEforge 
-As part of the PGEforge community resource, we have compiled simulated and empirical datasets of these common data formats. These datasets are used in the [tool tutorials](website_docs/tutorials_overview.qmd) to make them fully reproducible and are freely available for anyone to use.
+As part of the PGEforge community resource, we have compiled simulated and empirical datasets of these common data formats. These datasets are used in the [tool tutorials](tutorials_overview.qmd) to make them fully reproducible and are freely available for anyone to use.
 
 More details on the datasets hosted on PGEforge can be found in the links below:
 
-- [Whole genome sequencing (WGS)](website_docs/data_wgs.qmd)
-- [Microhaplotype data](website_docs/data_mhaps.qmd) 
-- [SNP barcoding data](website_docs/data_snps.qmd)
-- [*pfhrp2/3* deletion count data](website_docs/data_counts.qmd)
+- [Whole genome sequencing (WGS)](data_wgs.qmd)
+- [Microhaplotype data](data_mhaps.qmd) 
+- [SNP barcoding data](data_snps.qmd)
+- [*pfhrp2/3* deletion count data](data_counts.qmd)
 
 They can be accessed at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder on Github. 

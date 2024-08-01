@@ -28,7 +28,7 @@ One of the primary objectives of this framework is to define ‘ideal’ softwar
 - Ease of installation
 - Compatibility across different operating systems
 
-Additionally, during the [2023 RADISH23 hackathon](website_docs/radish23.qmd), focused discussions highlighted the following software practices that are not necessarily essential, but are "nice-to-have's": 
+Additionally, during the [2023 RADISH23 hackathon](radish23.qmd), focused discussions highlighted the following software practices that are not necessarily essential, but are "nice-to-have's": 
 
 - Uses standard data input formats 
 - Computationally efficient
@@ -62,7 +62,7 @@ stds %>%
 
 
 ### Tool evaluation
-During the [2023 RADISH23 hackathon](website_docs/radish23.qmd), we evaluated *Plasmodium* genomic data analysis tools against the objective software standards. The resulting evaluation matrix can be found [here](website_docs/tools_to_standards.qmd). Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](website_docs/tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
+During the [2023 RADISH23 hackathon](radish23.qmd), we evaluated *Plasmodium* genomic data analysis tools against the objective software standards. The resulting evaluation matrix can be found [here](tools_to_standards.qmd). Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
 
 ### Future work: tool benchmarking
-Future work will focus on formal benchmarking, including the use of [canonical simulated and empirical datasets](website_docs/data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We will host these types of benchmarking in PGEforge in the near future.
+Future work will focus on formal benchmarking, including the use of [canonical simulated and empirical datasets](data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We will host these types of benchmarking in PGEforge in the near future.

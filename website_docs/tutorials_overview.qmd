@@ -11,10 +11,10 @@ The following resources are available for each tool:
 
 - A summary document detailing the main purpose and use cases, license, code repository, relevant publication(s), citation information and links to any additional resources
 - Complete installation instructions
-- A fully reproducible and worked-through tutorial showing example usage of the tool and its functionalities. This often uses the [canonical simulated or empirical datasets](website_docs/data_description.qmd) as input data
+- A fully reproducible and worked-through tutorial showing example usage of the tool and its functionalities. This often uses the [canonical simulated or empirical datasets](data_description.qmd) as input data
 
 ## How to contribute
 
 This is a live resource and we plan to continue adding to this as new tools become available! We hope this will grow into a common resource for analysis of malaria genetic data. 
 
-If you are interested in contributing, there are [templates available](https://mrc-ide.github.io/PGEforge/tutorials/Template/Template_background.html) and [instructions](website_docs/how_to_contribute.qmd) on how to get started. 
+If you are interested in contributing, there are [templates available](https://mrc-ide.github.io/PGEforge/tutorials/Template/Template_background.html) and [instructions](how_to_contribute.qmd) on how to get started. 
