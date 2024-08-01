@@ -33,7 +33,7 @@ jobs:
 
     - name: Render quarto website
       run: |
-        R -e 'library(quarto); quarto::quarto render()'
+        R -e 'library(quarto); quarto::quarto_render()'
 
     - name: Upload check results
       if: failure()
