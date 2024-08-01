@@ -6,7 +6,7 @@ format: html
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
-library(googlesheets4)
+# library(googlesheets4)
 library(DT)
 ```
 
