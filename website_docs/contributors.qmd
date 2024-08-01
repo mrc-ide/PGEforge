@@ -105,4 +105,4 @@ The Institute for Mental and Physical Health and Clinical Translation (IMPACT), 
 **Affiliations:** Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health
 
 ## Community rules
-All contributors to PGEforge adhere to our [community rules](website_docs/how_to_contribute.qmd#community-rules).
+All contributors to PGEforge adhere to our [community rules](how_to_contribute.qmd#community-rules).

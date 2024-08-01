@@ -48,4 +48,4 @@ install.packages('DRpower',
                            'https://cloud.r-project.org'))
 ```
 
-All the [tool tutorials](website_docs/tutorials_overview.qmd) in PGEforge have installation instructions, and where applicable, provide instructions for installation via the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds).
+All the [tool tutorials](tutorials_overview.qmd) in PGEforge have installation instructions, and where applicable, provide instructions for installation via the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds).

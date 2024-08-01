@@ -4,7 +4,7 @@ format: html
 ---
 
 ## Overview
-During the [2023 RADISH23 hackathon](website_docs/radish23.qmd), we conducted a landscaping exercise of available tools that are commonly applied to *Plasmodium* genetic data. In order to limit the scope of this exercise we applied the following constraints:
+During the [2023 RADISH23 hackathon](radish23.qmd), we conducted a landscaping exercise of available tools that are commonly applied to *Plasmodium* genetic data. In order to limit the scope of this exercise we applied the following constraints:
 
 - Focus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
 - Focus on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. We did not consider applications to mosquito genetics, despite some tools and techniques being applicable to both organisms.

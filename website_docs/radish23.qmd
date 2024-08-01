@@ -31,9 +31,9 @@ The event was primarily coding-based and hands-on with the aim that the material
 ![](img/PXL_20231213_195311094.jpg){ width=400 height=300}
 :::
 
-Prior to the hackathon, we carried out a [scoping/landscaping exercise](website_docs/tool_landscaping.qmd) to identify all available analysis tools and evaluated them against a set of [software standards](website_docs/software_standards.qmd), identifying those that are superseded or relegated and those we would prioritize during the hackathon. With those priority tools in mind, [comprehensive guides](website_docs/tutorials_overview.qmd) were developed for the tools, including summary documents, installation aids and tutorials. 
+Prior to the hackathon, we carried out a [scoping/landscaping exercise](tool_landscaping.qmd) to identify all available analysis tools and evaluated them against a set of [software standards](software_standards.qmd), identifying those that are superseded or relegated and those we would prioritize during the hackathon. With those priority tools in mind, [comprehensive guides](tutorials_overview.qmd) were developed for the tools, including summary documents, installation aids and tutorials. 
 
-In addition, we compiled [simulated and empirical datasets](website_docs/data_description.qmd) of genomic data in common formats required as input for the various tools to allow reproducibility for end-users running the tutorials and for future uses.
+In addition, we compiled [simulated and empirical datasets](data_description.qmd) of genomic data in common formats required as input for the various tools to allow reproducibility for end-users running the tutorials and for future uses.
 
 Alongside the coding tasks, there were several small break-out sessions where participants defined malaria genomic surveillance data
 analysis use cases and sketched workflows for each of them, including functionality requirements and mapping these functionalities to available tools. 
