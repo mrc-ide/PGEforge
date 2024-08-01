@@ -29,7 +29,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y pandoc
-        R -e 'install.packages(c("quarto", "dplyr", "janitor", "DT", "kableExtra"), repos="http://cran.rstudio.com/")'
+        R -e 'install.packages(c("quarto", "dplyr", "janitor", "DT", "kableExtra", "ggplot2"), repos="http://cran.rstudio.com/")'
 
     - name: Render quarto website
       run: |
