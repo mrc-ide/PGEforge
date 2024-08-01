@@ -37,7 +37,7 @@ jobs:
 
     - name: Upload check results
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4s
       with:
         name: quarto-render-output
         path: _site
