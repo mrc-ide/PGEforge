@@ -28,7 +28,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-gt install -y pandoc
+        sudo apt-get install -y pandoc
         R -e 'install.packages("quarto", repos="http://cran.rstudio.com/")'
 
     - name: Render quarto website
