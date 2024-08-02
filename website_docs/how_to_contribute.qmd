@@ -6,7 +6,10 @@ format: html
 ## How to contribute to PGEforge
 Welcome to the PGEforge community! We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for *Plasmodium* genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our [community rules](#community-rules).
 
-## Add your tool to the List
+## Add tool to landscaping and softward standards matrices
+
+
+## Develop resources for a tool
 
 If you have developed a new *Plasmodium* genomic data analysis tool or identified a tool that is missing tutorial resources, you can develop them and contribute them to PGEforge! Follow these steps to contribute: 
 
