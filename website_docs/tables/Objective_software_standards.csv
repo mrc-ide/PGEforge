@@ -1,28 +1,9 @@
-Field,type,notes
-Version controlled,binary,
+criteria,type,notes
 Installation instructions exist,binary,
 Usage instructions exist,binary,
-Tutorials exist,binary,"Must have explanation of inputs, outputs, and test data set"
-Interactive tutorials exist,"binary, conditional on tutorials exist",e.g. jupytr learnR
+Tutorials exist,binary,"Must have explanation of inputs, outputs, and test data set in a worked example"
 Test data sets and results available,binary,
-Has unit tests,binary,
-Code coverage reported,"binary, conditional on has unit tests",
-% code covered,"percent, conditional on code coverage reported",
-Software actively maintained,binary,Structured assessment via decision tree
-Run settings/parameters output,y/n/NA,
-Runs on windows,binary,
-Runs on Mac Intel,binary,
-Runs on Mac ARM,binary,
-Runs on Linux,binary,
-Open source,y/n/unknown,
-Installation via build from source,binary,
-"Installation via pre-built from repo (e.g. PIP, Conda, CRAN)",binary,
-Installation via container,binary,
-Installation via direct download,binary,
-GitHub branch rules exist,y/n/NA,unclear whether we can assess
-Master branch protected,y/n/NA,unclear whether we can assess
-Auto tests required for branch merging,y/n/NA,unclear whether we can assess
-Run via GUI,binary,
-Run via command line,binary,
-"Implementation language (e.g. C++, R, Python)","categorical, maybe vector",
-Command line language,categorical ,
+Open source,binary,
+Has software tests,binary,"Eg, unit tests"
+More than 90% code coverage reported,binary,
+Clear channels for software maintenance and issues,binary,"Eg, GitHub issues, author contact information"
