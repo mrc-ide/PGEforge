@@ -4,10 +4,12 @@ format: html
 ---
 
 ## How to contribute to PGEforge
-Welcome to the PGEforge community! We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for *Plasmodium* genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our [community rules](#community-rules).
+Welcome to the PGEforge community! We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for *Plasmodium* genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our [community rules](#community-rules). 
+
+Below are some ways to get involved with current workstreams, but we also have some ideas and plans in the works for the [future](future_work.qmd) beyond what is currently available in PGEforge!
 
 ## Add tool to landscaping and softward standards matrices
-
+Coming soon!
 
 ## Develop resources for a tool
 
@@ -33,7 +35,6 @@ You can find the templates for all of these documents in our [Github repository]
 
 **Please make sure to follow our [GitHub contribution guidelines](#contributing-guidelines-for-github).**
 
-
 ## Add yourself as a contributor
 Everyone who contributes to PGEforge is listed as a [contributor](contributors.qmd). 
 
@@ -56,9 +57,6 @@ To ensure a smooth and efficient collaboration process, please follow these guid
 
 - **Create a New Branch:** Start by creating a new branch from the `develop` branch. This keeps your changes separate until they are ready to be reviewed and merged.
 - **Pull Request (PR) for Review:** Once you have made your changes, create a PR into the `develop` branch. Our team will review your PR and provide feedback or approve it for merging. Never make any changes to the `main` branch, and please always PR into `develop`.
-
-### Future areas to be developed?
-- Focuses on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. We did not consider applications to mosquito genetics, despite some tools and techniques being applicable to both organisms. 
 
 ## Thank you! 
 Thank you for your interest in contributing to PGEforge. Your efforts help us build a stronger, more inclusive research community making *Plasmodium* genomic analysis accessible to all!
