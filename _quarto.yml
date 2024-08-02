@@ -98,6 +98,14 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
+          - section: "hierfstat"
+            contents:
+            - text: "Summary"
+              file: tutorials/hierfstat/background.Rmd
+            - text: "Installation"
+              file: tutorials/hierfstat/installation.Rmd
+            - text: "Analyze data with `hierfstat`"
+              file: tutorials/hierfstat/analysis.Rmd
           - section: "hmmIBD"
             contents:
             - text: "Summary"
@@ -108,10 +116,6 @@ website:
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
               file: tutorials/hmmIBD/hmmIBD_analysis.md
-          - section: "hmmibdr"
-            contents:
-            - text: "Summary"
-              file: tutorials/hmmibdr/hmmibdr_background.Rmd
           - section: "moire"
             contents:
             - text: "Summary"
@@ -136,6 +140,14 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
+          # - section: "rehh"
+          #   contents:
+          #   - text: "Summary"
+          #     file: tutorials/rehh/Template_background.Rmd
+          #   - text: "Installation"
+          #     file: tutorials/rehh/Template_installation.Rmd
+            # - text: "Analyze data with `rehh`"
+            #   file: tutorials/rehh/Template_analysis.Rmd
           - section: "THEREALMcCOIL"
             contents:
             - text: "Summary"
