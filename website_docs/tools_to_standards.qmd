@@ -6,6 +6,7 @@ format: html
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+library(stringr)
 library(janitor)
 library(DT)
 ```
@@ -15,13 +16,61 @@ library(DT)
 tool_std_df <- read.csv("tables/Tools_to_standards.csv")
 ```
 
-```{r echo=F}
-tool_std_df <- tool_std_df %>% 
-  clean_names(case = "title",
-              abbreviations = c("ARM", "e.g.", "PIP", "CRAN", "Github", "GUI")) %>% 
-  rename("Implementation Language E.g. C, R, Python" = "Implementation Language E.g.c r Python")
+```{r fxns, include=F, echo=F}
+calculate_scores <- function(data){
+  # max score for user and dev criteria
+  max_score_user <- data %>% select(starts_with("usercriteria_")) %>% ncol() * 2
+  max_score_dev <- data %>% select(starts_with("devcriteria_")) %>% ncol() * 2
+  
+  # calculate end-user score
+  scores <- data %>% 
+    rowwise() %>% 
+    mutate(total_user_score = sum(c_across(starts_with("userscore_"))),
+           total_dev_score = sum(c_across(starts_with("devscore_"))),
+           total_score = total_user_score + total_dev_score,
+           total_user_percentage = (total_user_score/max_score_user)*100,
+           total_dev_percentage = (total_dev_score/max_score_dev)*100) %>% 
+    ungroup() %>%
+    select(tool, total_user_score, total_user_percentage, total_dev_score, total_dev_percentage)
+  
+  return(scores)
+}
+```
 
-datatable(tool_std_df,
+
+```{r calc_scores, echo=F}
+scores <- calculate_scores(tool_std_df)
+
+tool_std_summary <- tool_std_df %>% 
+  left_join(scores, by = "tool") %>% 
+  rename_with(~ str_replace_all(., c(
+      "^usercriteria_" = "",
+      "^devcriteria_" = "",
+      "^userscore_" = "score_",
+      "^devscore_" = "score_"
+    ))) %>%
+  relocate(c(total_user_score), .before = open_source) %>% 
+  relocate(c(total_dev_score), .after = score_channels) %>% 
+  relocate(c(total_user_percentage, total_dev_percentage), .after = tool) %>% 
+  clean_names(case = "title") %>% 
+  rename("Total end-user score" = "Total User Score",
+         "Total development score" = "Total Dev Score",
+         "User score (%)" = "Total User Percentage",
+         "Developer score (%)" = "Total Dev Percentage")
+```
+
+----------
+
+The following *Plasmodium* genomic analysis tools were identified during [tool landscaping](tool_landscaping.qmd) and were evaluating using the [software standards criteria](software_standards.qmd) to determine an end-user and development score for each tool. 
+
+In line with the scope of PGEforge, we focus our efforts on evaluating available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. In other words tools with the primary goal of extracting signal from pre-processed data, not those focused on upstream bioinformatic data processing.
+
+If you would like to contribute to this effort, please take a look at our [contributor guidelines](how_to_contribute.qmd)!
+
+
+*Note: tools in grey have not been evaluated* 
+```{r table_summary, echo=F}
+datatable(tool_std_summary,
           extensions = c('FixedColumns', 'FixedHeader'),
           options = list(
             pageLength = nrow(tool_std_df),
@@ -33,7 +82,60 @@ datatable(tool_std_df,
             autoWidth = T
           ),
           caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
-                                            "Last updated: 15 Dec 2023"),
+                                            "Last updated: 2 August 2024"),
           class = 'white-space: nowrap'
-          )
+          ) %>% 
+  formatStyle(
+    "User score (%)",
+    backgroundColor = styleInterval(
+      c(25, 50),
+      c('#FFCCCC', '#FFF0CC', '#CCFFCC')
+    ),
+    color = styleInterval(
+      c(25, 50),
+      c('#CC3333', '#FFB84D', '#339933')
+    ),
+    fontWeight = "bold"
+  ) %>%
+  formatStyle(
+    "User score (%)",
+    target = "cell",
+    backgroundColor = styleEqual(c(NA), c("#D3D3D3"))
+  ) %>% 
+  formatStyle(
+    "Developer score (%)",
+    backgroundColor = styleInterval(
+      c(25, 50),
+      c('#FFCCCC', '#FFF0CC', '#CCFFCC')
+    ),
+    color = styleInterval(
+      c(25, 50),
+      c('#CC3333', '#FFB84D', '#339933')
+    ),
+    fontWeight = "bold"
+  ) %>%
+  formatStyle(
+    "Developer score (%)",
+    target = "cell",
+    backgroundColor = styleEqual(c(NA), c("#D3D3D3"))
+  ) %>% 
+  formatStyle(
+    c("Tool", "Total end-user score", "Total development score"),
+    target = "cell",
+    fontWeight = "bold"
+  ) %>%
+  htmlwidgets::onRender("
+    function(el, x) {
+      $(el).find('tbody td').css({
+        'border-left': '0.1px solid #ddd',
+        'border-right': '0.1px solid #ddd'
+      });
+      $(el).find('tbody td:first-child').css({
+        'border-left': 'none'
+      });
+      $(el).find('tbody tr:odd td:not(:nth-child(3)):not(:nth-child(4))').css({
+        'background-color': '#f9f9f9'
+      });
+    }
+  ")
 ```
