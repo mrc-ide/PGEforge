@@ -98,14 +98,6 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
-          - section: "Hierfstat"
-            contents:
-            - text: "Summary"
-              file: tutorials/hierfstat/background.Rmd
-            - text: "Installation"
-              file: tutorials/hierfstat/installation.Rmd
-            - text: "Analyze data with `hierfstat`"
-              file: tutorials/hierfstat/analysis.Rmd
           - section: "hmmIBD"
             contents:
             - text: "Summary"
@@ -120,26 +112,6 @@ website:
             contents:
             - text: "Summary"
               file: tutorials/hmmibdr/hmmibdr_background.Rmd
-          - section: "malaria.em"
-            contents:
-            - text: "Summary"
-              file: tutorials/malariaem/malariaem_background.qmd
-          - section: "MalHaploFreq"
-            contents:
-            - text: "Summary"
-              file: tutorials/MalHaploFreq/MalHaploFreq_background.qmd
-          - section: "MLMOI"
-            contents:
-            - text: "Summary"
-              file: tutorials/MLMOI/Template_background.Rmd
-          # - section: "moimix"
-          #   contents:
-          #   - text: "Summary"
-          #     file: tutorials/moimix/moimix_background.Rmd
-          #   - text: "Installation"
-          #     file: tutorials/moimix/moimix_installation.Rmd
-          #   - text: "Analyze data with `moimix`"
-          #     file: tutorials/moimix/moimix_analysis.Rmd
           - section: "moire"
             contents:
             - text: "Summary"
@@ -164,14 +136,6 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
-          - section: "rehh"
-            contents:
-            - text: "Summary"
-              file: tutorials/rehh/Template_background.Rmd
-            - text: "Installation"
-              file: tutorials/rehh/Template_installation.Rmd
-            # - text: "Analyze data with `rehh`"
-            #   file: tutorials/rehh/Template_analysis.Rmd
           - section: "THEREALMcCOIL"
             contents:
             - text: "Summary"
