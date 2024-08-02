@@ -19,14 +19,14 @@ stds <- read.csv("tables/Objective_software_standards.csv")
 
 PGEforge aims to foster an ecosystem of high-quality, user-friendly tools that can be seamlessly integrated into genomic analysis workflows. One of the biggest challenges is the variability and lack of systematic assessment of existing tools, which often do not adhere to best practices in software development, including [FAIR standards](https://doi.org/10.1038/sdata.2016.18), maintenance, and usability.
 
-Working towards this goal, a robust software standards evaluation framework was formulated to guide the development and assessment of tools used in *Plasmodium* genomic data analysis. This framework is crucial in addressing the variability and challenges associated with existing software tools but also to guide development of new tools, ensuring that they meet high standards of usability, accessibility, and reliability. This framework not only helps in maintaining consistency and reliability across different tools but also promotes best practices in software development, contributing to the overall advancement of tools for malaria genomic research.
+Working towards this goal, a robust software standards evaluation framework was formulated to guide the development and assessment of tools used in *Plasmodium* genomic data analysis from both the end-user and developer perspective. This framework is crucial in addressing the variability and challenges associated with existing software tools but also to guide development of new tools, ensuring that they meet high standards of usability, accessibility, and reliability. 
 
 ### 'Ideal' software practices
 One of the primary objectives of this framework is to define ‘ideal’ software practices that are not tool-specific but applicable across a range of genomic analysis tools. These practices encompass:
 
 - Comprehensive documentation
 - Ease of installation
-- Compatibility across different operating systems
+- Reliable and maintainable software
 
 Additionally, during the [2023 RADISH23 hackathon](radish23.qmd), focused discussions highlighted the following software practices that are not necessarily essential, but are "nice-to-have's": 
 
@@ -41,28 +41,46 @@ Additionally, during the [2023 RADISH23 hackathon](radish23.qmd), focused discus
 These practices can guide development of new tools and/or improvement of existing tools. 
 
 ### Evaluation criteria 
-To implement these standards, PGEforge has developed a set of measurable criteria that can be applied to evaluate the performance and usability of various tools.
+To implement these standards and facilitate tool evaluation and development, PGEforge has developed a set of measurable criteria that can be applied to evaluate the performance and usability of various tools. There are two categories:
+
+- **User-facing:** criteria to evaluate the tool from an end-user perspective, for example whether installation instructions are available and easy-to-follow
+- **Developer-facing:** criteria to evaluate the tool from a developer perspective, for example whether unit tests are implemented
+
+::: {.column-margin}
+The evaluation criteria encompass the following key themes, in line with the 'ideal' software practices for both end-users and developers:
+
+- Quality and comprehensiveness of documentation
+- Simplicity of installation processes
+- Quality assurance and maintenance
+:::
+
+```{r echo=F}
+stds %>%
+  clean_names(case = "sentence") %>% 
+  kable() %>% 
+  pack_rows("User-facing", start_row = 1, end_row = 4) %>%
+  pack_rows("Developer-facing", start_row = 5, end_row = 8) %>%
+  kable_styling(full_width = T, position = "left")
+```
 
 ::: {.column-margin}
 <br>
 <br>
-The evaluation criteria encompass the following key themes, in line with the 'ideal' software practices:
+Every criteria is scored on the following scale: 
 
-- Quality and comprehensiveness of documentation
-- Simplicity of installation processes
-- Compatibility across operating systems
-- Active tool maintenance 
+- 0: Criteria not fulfilled
+- 1: Criteria fulfilled but not entirely
+- 2: Criteria fulfilled 
+
+<br>
+This is then translated to an **end-user score** and **development score** for the tool. 
 :::
 
-```{r echo=F}
-stds %>% 
-  clean_names(case = "sentence") %>% 
-  kable()
-```
-
-
 ### Tool evaluation
-During the [2023 RADISH23 hackathon](radish23.qmd), we evaluated *Plasmodium* genomic data analysis tools against the objective software standards. The resulting evaluation matrix can be found [here](tools_to_standards.qmd). Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
+Every *Plasmodium* genomic analysis tool can be evaluated against these objective software standards to provide these scores. The resulting evaluation matrix 
 
-### Future work: tool benchmarking
-Future work will focus on formal benchmarking, including the use of [canonical simulated and empirical datasets](data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We will host these types of benchmarking in PGEforge in the near future.
+::: {.column-margin}
+![A 'traffic light' system can help us improve PGEforge tools🚦!](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcndoZ2Q2bW5hMnMxdGMwbWNyNW42d2NxODd2azhiN285ZHE0NXZpaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7Z4tNIWOQWTlfGN2/giphy.gif){ width=250 height=200 }
+:::
+
+During the [2023 RADISH23 hackathon](radish23.qmd), we evaluated *Plasmodium* genomic data analysis tools against the objective software standards. The resulting evaluation matrix can be found [here](tools_to_standards.qmd). Tools that meet these criteria are prioritized for comprehensive resource development (see the [Tutorial section](tutorials_overview.qmd)), ensuring they are well-documented and easy to install and use.
