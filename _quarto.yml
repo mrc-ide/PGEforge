@@ -161,6 +161,8 @@ website:
               file: website_docs/radish23.qmd
           - href: website_docs/contributors.qmd
             text: "Contributors"
+          - href: website_docs/future_work.qmd
+            text: "Future work"
 
 format:
   html:
