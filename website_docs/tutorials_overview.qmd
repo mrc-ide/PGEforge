@@ -5,7 +5,7 @@ format: html
 ---
 
 ## Overview
-The aim of the PGEforge tutorials is to make the process of installing and using tools for *Plasmodium* genomic analyses as **straightforward** and **accessible** as possible. 
+The aim of the PGEforge tutorials is to provide worked examples that show *how* to use a tool by *working through* code. This involves code showing you how to install the tool, what input data formats you need to use, how to wrangle the data (if applicable), and how to use the tool functionalities to analyse data. Summary documents detailing the purpose of each tool can also help you decide which tool you may want to use for a certain application.
 
 The following resources are available for each tool:
 
