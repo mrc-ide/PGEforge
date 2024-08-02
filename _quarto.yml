@@ -150,8 +150,7 @@ website:
             file: website_docs/tools_to_standards.qmd
       - section: website_docs/workflows.qmd
         contents:
-          - text: "Example 1"
-          - text: "Example 2"
+          - text: "Coming soon!"
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
