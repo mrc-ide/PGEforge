@@ -1,0 +1,38 @@
+---
+title: "What's in store for the future?"
+format: html
+---
+
+**This page is under development!**
+
+## The PGEforge vision
+
+PGEforge is a **community-driven** platform designed to simplify *Plasmodium* genomic data analysis and encourage XXXX. 
+
+![](img/pgeforge_ecosystem.png){ width=450 height=450 }
+
+
+## Tool benchmarking
+Part of evaluating tools involves considering their fulfillment of objective [software standards](tools_to_standards.qmd) from both the end-user and developer perspective. This is a great way to determine how well we are doing at making our tools accessible and usable by anyone. But we also need to evaluate how *well* tools do what they say they do and how they compare to other tools intended for the same purpose. 
+
+Formal benchmarking of tools is ongoing and planned, including the use of [canonical simulated and empirical datasets](data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We plan to host these types of benchmarking resources and results in PGEforge in the near future.
+
+Some ideas in this space: 
+
+- 
+- 
+
+## Adding more tools
+Our tool landscaping and evaluation process . Rather than tackling all possible tools, we attempted to concentrate our efforts on....
+
+However, PGEforge has the potential to be a community resource for many types of *Plasmodium* genomic data and tools and their applications.
+
+- Focuses on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. We did not consider applications to mosquito genetics, despite some tools and techniques being applicable to both organisms. 
+
+## Tool development
+????
+
+Tools to functions -- we still can't phase! 
+
+## Thank you! 
+Thank you for your interest in contributing to PGEforge. Your efforts help us build a stronger, more inclusive research community making *Plasmodium* genomic analysis accessible to all!
