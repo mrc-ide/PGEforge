@@ -15,7 +15,7 @@ The **R**eproducibility, **A**ccessibility, **D**ocumentation and **I**nter-oper
 :::
 
 ![](img/radish23_group_photo.jpg)
-*For more details on RADISH23 attendees and contributors to PGEforge, see the [Contributors page](website_docs/contributors.qmd) *
+*For more details on RADISH23 attendees and contributors to PGEforge, see the [Contributors page](contributors.qmd) *
 
 ## Main aims
 
