@@ -1,13 +1,8 @@
 on:
   push:
     branches:
-      - develop
-      - main
-      - feature/website
   pull_request:
     branches:
-      - develop
-      - main
 
 name: check-quarto-render
 
