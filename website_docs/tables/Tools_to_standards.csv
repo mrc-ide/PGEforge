@@ -1,41 +1,41 @@
-Tool,Version controlled,Installation instructions exist,Usage instructions exist,Tutorials exist,Interactive tutorials exist,Test data sets and results available,Has unit tests,Code coverage reported,% code covered,Software actively maintained,Run settings/parameters output,Runs on windows,Runs on Mac Intel,Runs on Mac ARM,Runs on Linux,Open source,Installation via build from source,"Installation via pre-built from repo (e.g. PIP, Conda, CRAN)",Installation via container,Installation via direct download,GitHub branch rules exist,Master branch protected,Auto tests required for branch merging,Run via GUI,Run via command line,"Implementation language (e.g. C++, R, Python)",Command line language
-MLMOI,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-MalHaploFreq,superseded ,,,,,,,,,,,,,,,,,,,,,,,,,,
-malaria.em,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-FreqEstimationModel,yes,yes,not really ,yes ,no,test data - vignette generates results,no,no,NA,yes,,,,,,yes,no,yes,no,no,,,,no,yes,R,R
-MultiLociBiallelicModel,no,yes,yes,no,no,yes,no,NA,NA,yes,yes,yes,yes,yes,yes,yes,no,no,no,yes,no,no,no,no,yes,R,R
-pfmix,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-THEREALMcCOIL,yes,yes,yes,no,no,test data; not results,no,no,no,no,yes,yes,yes,yes,yes,yes,yes,no,no,no,no,no,no,no,no,R,C++
-McCOILR,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-coiaf,yes,yes,yes,yes - not comprehensive,no,no,yes,no,NA,yes,no,yes,yes,yes,yes,yes,yes,no,no,no,?,?,?,no,yes,R,R
-DEploid,superseded,,,,,,,,,,,,,,,,,,,,,,,,,,
-Deploid-r,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-DEploidIBD,yes,yes,yes,no,no,yes - there is input and example output figures. But no files for output you could compare directly ,yes,no,NA,contact author  sha.joe.zhu@gmail.com joe.zhu@roche.com,no,yes,yes,yes,yes,yes,,,yes,,,,,no,yes,C++,bash
-isoRelate,yes,yes,yes,yes,no,"no output, but could compare to figures in tutorial",no,no,NA,contact author - lyndal_henden@hotmail.com,no,no,no,no,yes? wasm ,yes,no,yes,no,no,,,,no,yes,C++ and R,R
-hmmIBD,yes,yes,yes,yes,no,yes,no,no,NA,yes,y (to stdout),?,yes,yes,yes,yes,yes,no,no,no,no,no,no,no,yes,C + Python,C + Python
-paneljudge,yes,yes,yes,yes,no,,(not in standard R package test format but exist),no,NA,yes (has been 10 months since last commit),yes,yes,yes,yes,yes,yes,no,yes,no,no,,,,no,yes,"R, C++",R
-dcifer,yes,yes,yes,yes,no,,,,,,,,,,,,,,,,,,,,,,
-moire,yes,yes,yes,yes,no,yes,yes,no,NA,yes,no,yes,yes,yes,yes,yes,no,yes,no,no,no,no,no,no,yes,C++,R
-MALECOT,yes,yes,yes,yes,no,no - tutorial uses simulated data ,yes,no,NA,contact author :) ,,yes,yes,yes,yes,yes,no,yes,no,no,,,,no,yes,C++ and R,R
-SIMPLEGEN,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-magenta,simulator ,,,,,,,,,,,,,,,,,,,,,,,,,,
-DRpower,yes,yes,yes,yes,no,,yes,no ,NA,yes,,yes,yes,yes,,yes,no,yes,no,no,,,,no,yes,C++ and R ,R
-pixelate,no,yes,yes,yes,no,,no,no,NA,contact author ,,yes,yes,yes,yes,yes,no,yes,no,no,,,,no,yes,R,R
-estMOI,yes,no,yes,no,no,no,no,no,NA,no,yes,?,yes,yes,yes,yes,yes,no,no,yes,?,?,?,no,yes,Perl,Perl
-forward-dream,simulator,,,,,,,,,,,,,,,,,,,,,,,,,,
-moimix,superseded,,,,,,,,,,,,,,,,,,,,,,,,,,
-hrp2malaRia,simulator,,,,,,,,,,,,,,,,,,,,,,,,,,
-hmmibdr,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-MIPanalyzer,yes,yes,no?,yes,no,yes,yes,no,NA,yes,,yes,yes,yes,yes,yes,no,yes,no,no,,,,no,yes,C++ and R,R
-PlasmoSim,simulator,,,,,,,,,,,,,,,,,,,,,,,,,,
-polySimIBD,simulator,,,,,,,,,,,,,,,,,,,,,,,,,,
-discent,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-SNP-slice,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-BRO,relegated,,,,,,,,,,,,,,,,,,,,,,,,,,
-Pv3Rs,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-"""CDC Bayesian algorithm""",in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-AmpSeq,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-AmpSim,in development ,,,,,,,,,,,,,,,,,,,,,,,,,,
-rehh,yes,yes,no?,yes,no,yes,yes,no,NA,contact author ,,,,,,yes,no,yes,no,no,,,,no,yes,C and R ,R 
-Hierfstat,yes,yes,yes,yes,no,yes,no,no,NA,yes,no,yes,yes,yes,yes,yes,yes,yes,no,no,?,?,?,no,yes,R,R
-MicroHaploHet,in development,,,,,,,,,,,,,,,,,,,,,,,,,,
+tool,usercriteria_installation_instructions_exist,notes_installation,userscore_installation,usercriteria_usage_instructions_exist,notes_usage,userscore_usage,usercriteria_tutorials_exist,notes_tutorials,userscore_tutorials,usercriteria_test_datasets_and_results_available,notes_test_data,userscore_test_data,devcriteria_open_source,notes_open_source,devscore_open_source,devcriteria_has_software_tests,notes_software_tests,devscore_software_tests,devcriteria_more_than_90%_code_coverage_reported,notes_code_coverage_reported,devscore_code_coverage,devcriteria_clear_channels_for_software_maintenance_and_issues,notes_channels,devscore_channels
+MLMOI,,,,,,,,,,,,,,,,,,,,,,,,
+MalHaploFreq,,,,,,,,,,,,,,,,,,,,,,,,
+malaria.em,,,,,,,,,,,,,,,,,,,,,,,,
+FreqEstimationModel,yes,,2,yes,Not comprehensive,1,yes ,,2,yes,test data - vignette generates results,1,yes,,2,no,,0,no,,0,yes,,2
+MultiLociBiallelicModel,yes,,2,yes,,2,no,,0,yes,,2,yes,,2,no,,0,no,,0,yes,,2
+pfmix,,,,,,,,,,,,,,,,,,,,,,,,
+THEREALMcCOIL,yes,,2,yes,,2,no,,0,yes,test data; not results,1,yes,,2,no,,0,no,,0,no,,0
+McCOILR,,,,,,,,,,,,,,,,,,,,,,,,
+coiaf,yes,,2,yes,,2,yes,Not comprehensive,1,no,,0,yes,,2,yes,,2,no,,0,yes,,2
+DEploid,,,,,,,,,,,,,,,,,,,,,,,,
+Deploid-r,,,,,,,,,,,,,,,,,,,,,,,,
+DEploidIBD,yes,,2,yes,,2,no,,0,yes,There is input and example output figures. But no files for output you could compare directly ,1,yes,,2,yes,,2,no,,0,yes,contact author  sha.joe.zhu@gmail.com joe.zhu@roche.com,2
+isoRelate,yes,,2,yes,,2,yes,,2,no,"no output, but could compare to figures in tutorial",0,yes,,2,no,,0,no,,0,yes,contact author - lyndal_henden@hotmail.com,2
+hmmIBD,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,no,,0,yes,,2
+paneljudge,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,yes,Not in standard R package test format but exist,1,no,,0,yes,contact author,2
+dcifer,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,no,,0,yes,,2
+moire,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,yes,,2
+MALECOT,yes,,2,yes,,2,yes,,2,no,tutorial uses simulated data ,0,yes,,2,yes,,2,no,,0,yes,contact author,2
+SIMPLEGEN,,,,,,,,,,,,,,,,,,,,,,,,
+magenta,,,,,,,,,,,,,,,,,,,,,,,,
+DRpower,yes,,2,yes,,2,yes,,2,no,,0,yes,,2,yes,,2,no ,,0,yes,,2
+pixelate,yes,,2,yes,,2,yes,,2,yes,test data - vignette generates results,1,yes,,2,no,,0,no,,0,yes,contact author ,2
+estMOI,no,,0,yes,,2,no,,0,no,,0,yes,,2,no,,0,no,,0,no,,0
+forward-dream,,,,,,,,,,,,,,,,,,,,,,,,
+moimix,,,,,,,,,,,,,,,,,,,,,,,,
+hrp2malaRia,,,,,,,,,,,,,,,,,,,,,,,,
+hmmibdr,,,,,,,,,,,,,,,,,,,,,,,,
+MIPanalyzer,yes,,2,no,unable to find,0,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,yes,,2
+PlasmoSim,,,,,,,,,,,,,,,,,,,,,,,,
+polySimIBD,,,,,,,,,,,,,,,,,,,,,,,,
+discent,,,,,,,,,,,,,,,,,,,,,,,,
+SNP-slice,,,,,,,,,,,,,,,,,,,,,,,,
+BRO,,,,,,,,,,,,,,,,,,,,,,,,
+Pv3Rs,,,,,,,,,,,,,,,,,,,,,,,,
+Anti-malarial MCMC Bayesian Algorithm,,,,,,,,,,,,,,,,,,,,,,,,
+AmpSeq,,,,,,,,,,,,,,,,,,,,,,,,
+AmpSim,,,,,,,,,,,,,,,,,,,,,,,,
+rehh,yes,,2,no,unable to find,0,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,yes,contact author ,2
+Hierfstat,yes,,2,yes,,2,yes,,2,yes,,2,yes,,2,no,,0,no,,0,yes,,2
+MicroHaploHet,,,,,,,,,,,,,,,,,,,,,,,,
