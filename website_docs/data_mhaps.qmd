@@ -1,0 +1,36 @@
+---
+title: "Microhaplotype data"
+format: html
+bibliography: ../references/references.bib
+---
+
+## Microhaplotype data
+
+### Mozambique Field Samples 
+
+Targeted amplicon data from analysis for the following paper "Sensitive, Highly Multiplexed Sequencing of Microhaplotypes From the Plasmodium falciparum Heterozygome"[@Tessema2022-ba]
+
+This contains 82 field samples gathered from northern and southern Mozambique and had 100 targets (91 diversity targets and 9 targeted drug targets). 
+
+The results file can be found within directory [`amplicon/moz2018_heome1_results_fieldSamples.tsv.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_fieldSamples.tsv.gz) along with metadata [`amplicon/moz2018_fieldSamples_meta.tsv`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_fieldSamples_meta.tsv). Results are in a 4 column format. 
+
+*  **sample** - The name of the sample  
+*  **target** - The name of the amplicon target  
+*  **target_popUID** - A population identifier for the haplotype for this target for this sample  
+*  **readCnt** - The read count for this haplotype for this sample for this target  
+
+### Lab Control mixtures 
+
+Targeted amplicon data from the same 100 target panel as [above](#mozambique-field-samples). Mixtures are made of various combinations of 7 lab strains of P. falciparum and with some mixtures done in replicate at different 4 different parasite densities (10, 100, 1k, 10K. 
+
+![Parasite Densities](img/moz2018_fieldSamples_parasiteDensities.png)
+
+![Parasite Mixtures](img/moz2018_fieldSamples_parasiteMixtures.png)
+
+Results are organized in a similar 4 column table as above. The results file can be found within directory [`amplicon/moz2018_heome1_results_controlSamples.tsv.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_controlSamples.tsv.gz) along with metadata [`amplicon/moz2018_controlSamples_meta.tsv`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_controlSamples_meta.tsv), [`amplicon/samplesToMixFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/samplesToMixFnp.tab.txt), [`amplicon/mixSetUpFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mixSetUpFnp.tab.txt). 
+
+### Simulated data  
+
+Targeted amplicon data was also simulated *in silico* to create 100 samples sampled from Mozambique and for a newer diversity panel called MAD^4HatTeR with 50 targets selected for thier diversity. 
+
+Results are organized in a similar 4 column table as above. The results file can be found within directory [`amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz)

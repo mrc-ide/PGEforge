@@ -1,0 +1,16 @@
+{
+  "hash": "e25debd0d9041725cd8b9059b05ffbc4",
+  "result": {
+    "markdown": "---\ntitle: \"Tools to functions\"\nformat: html\n---\n\n\n\n\n\n::: {.cell}\n\n:::\n\n::: {.cell}\n\n:::\n",
+    "supporting": [
+      "tools_to_functions_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

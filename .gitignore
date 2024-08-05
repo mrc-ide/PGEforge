@@ -7,5 +7,5 @@
 ignore/
 .DS_Store
 /_site/
-_freeze/
 *.html
+README_files

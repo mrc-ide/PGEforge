@@ -1,0 +1,9 @@
+criteria,type,notes
+Installation instructions exist,binary,
+Usage instructions exist,binary,
+Tutorials exist,binary,"Must have explanation of inputs, outputs, and test data set in a worked example"
+Test data sets and results available,binary,
+Open source,binary,
+Has software tests,binary,"Eg, unit tests"
+More than 90% code coverage reported,binary,
+Clear channels for software maintenance and issues,binary,"Eg, GitHub issues, author contact information"

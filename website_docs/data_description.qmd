@@ -1,90 +1,87 @@
 ---
-title: "Data description"
+title: "Data"
 format: html
-bibliography: ../references/references.bib
 ---
-# Overview
-PGEforge hosts simulated and empirical datasets of:
 
-- [Whole genome sequencing (WGS)](whole-genome-sequencing-wgs-data-for-p.-falciparum)
-- [Microhaplotype data](#microhaplotype-data) 
-- [SNP barcoding data](#snp-barcoding-data)
-- [*pfhrp2/3* deletion count data](#pfhrp23-gene-deletion-count-data)
+## Overview of data formats in *Plasmodium* genomics
 
-They can be located at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder. 
+Understanding the different types of genomic data formats is essential for anyone involved in *Plasmodium* genomic analysis, especially beginners or end-users of various analysis tools. Here we briefly cover the primary data formats used in malaria research and common input file formats such as `.vcf`, `.fasta`, and others.
 
-## Whole genome sequencing (WGS) data for *P. falciparum*
+#### Genomic data generation
+Before we jump into the different data formats, it is important to understand how malaria genomic data are generated. The variety in data formats arises from different molecular marker panels and available methodologies. The figure below illustrates how different genotyping approaches capture distinct aspects of the *Plasmodium* genome and how genomic data are 'generated' using different techniques and genotyping platforms. Next-generation sequencing is now the most common approach due to significant decreases in cost and its high-throughput nature both for whole genome sequencing but also sequencing of specific molecular markers or genomic regions of interest, also known as [targeted sequencing](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing).
 
-### Pf3k
-All of the data within the subfolder `wgs/pf3k` was derived from the [Pf3k Project](https://www.malariagen.net/parasite/pf3k). Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from:
-- Democratic Republic of the Congo ($n=113$)
-- Vietnam ($n=97$)
-- *In vitro* mixtures of laboratory strains ($n=25$)
+::: {.column-margin}
+<br>
+Targeted sequencing is similar to WGS, but sample preparation workflow requires an extra step: target enrichment either by [hybridization capture](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/hybridization-capture) or [PCR amplicons](https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/amplicon-sequencing). These methods are often used for enriching longer and shorter genomic regions, respectively.
+:::
 
-Each VCF contains 247,496 high-quality (VQSLOD>6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the [Pf7 data set](https://www.malariagen.net/sites/default/files/Pf7_fws.txt), which contains the Pf3k samples. These were not calculated for the *in vitro* lab mixtures.
+![Figure sourced from [Ruybal-Pesántez et al 2024, *Molecular markers for malaria genetic epidemiology: progress and pitfalls*](https://doi.org/10.1016/j.pt.2023.11.006)](img/genetic_variation_types.png)
 
-### Simulated
-All of the data within the subfolder `wgs/simulated` was simulated. In brief, a simulated sample with a given complexity of infection (COI), $K$, is created by randomly sampling $K$ clonal haplotypes ($F_{ws} > 0.95$) from a given country within the [Pf3k Project](https://www.malariagen.net/parasite/pf3k), assigning these haplotypes to $j \leq K$ bites, simulating meiosis if $j < K$, randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from:
-- Democratic Republic of the Congo ($n=40$)
+::: {.column-margin}
+<br>
+<br>
+Raw sequencing data is processed by bioinformatic pipelines to call alleles and haplotypes. The outputs of this process, such as `VCF`, `FASTA`, or haplotype tables, serve as input formats for downstream data analysis tools.
+:::
 
-The COI of these samples ranges from one to four, and about half of them have within-host relatedness.
+#### Data processing
+Raw sequence data from next-generation sequencing platforms is processed through bioinformatic pipelines into structured formats suitable for further downstream genomic analysis. Typically this process involves a series of steps. Initially, the raw data undergoes quality control to remove low-quality reads and contaminants. The cleaned data is then aligned to a reference genome, which helps identify the position of each sequence read. From this alignment, variants can be 'called', which means variants are identified through differences between the sample and the reference genome. These variants are compiled into Variant Call Format (`.vcf`) files. Alternatively, the entire cleaned and aligned sequences can be compiled into FASTA format (`.fasta`) files, which represent the sequences in a text-based format. Additionally, haplotypes may also be called, which means combinations of alleles at multiple loci are identified. These haplotypes are often tabulated in `.csv` or text-based formats.
 
+::: {.column-margin}
+<br>
+<br>
+Bioinformatic pipelines in malaria genomics need to account for the unique characteristics of *Plasmodium* genomes, such as high AT content and extensive polymorphism.
+:::
 
-### Lab isolates sub-setted 
-There are a set of bam files with vcf calls subsetting to just CSP (PF3D7_0304600), CELTOS (PF3D7_1133400), and AMA1 (PF3D7_1216600). These can be found within the [`wgs/labisolate_subset`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset) directory. With metadata describing what is in each file [`wgs/labisolate_subset/allControlMixtures.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlMixtures.tab.txt), [`wgs/labisolate_subset/allControlSampNameToMixName.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlSampNameToMixName.tab.txt)
+#### Common input formats
 
+When working with *Plasmodium* genomic data, several input file formats are commonly used across different analysis tools:
 
-## Microhaplotype data
+::: {.column-margin style="font-size: 8px"}
+<!-- VCF File Data Line Structure -->
 
-### Mozambique Field Samples 
+<!-- | **Column** | **Description**                              | -->
+<!-- |------------|----------------------------------------------| -->
+<!-- | CHROM      | Chromosome identifier                        | -->
+<!-- | POS        | Position of the variant on the chromosome    | -->
+<!-- | ID         | Identifier for the variant (if available)    | -->
+<!-- | REF        | Reference allele                             | -->
+<!-- | ALT        | Alternate allele(s)                          | -->
+<!-- | QUAL       | Quality score for the variant call           | -->
+<!-- | FILTER     | Filter status (e.g., PASS or fail criteria)  | -->
+<!-- | INFO       | Additional information about the variant     | -->
+<!-- | FORMAT     | Format of the sample data                    | -->
+<!-- | SAMPLES    | Genotype information for each sample         | -->
+:::
 
-Targeted amplicon data from analysis for the following paper "Sensitive, Highly Multiplexed Sequencing of Microhaplotypes From the Plasmodium falciparum Heterozygome"[@Tessema2022-ba]
+- [`.vcf` (Variant Call Format)](https://en.wikipedia.org/wiki/Variant_Call_Format): Widely used for storing gene sequence variants, such as SNPs, insertions, deletions, and other types of genetic variants. The standard format includes a mandatory header starting with # or ## in the case of 'special header keywords', which provides the metadata such as file format, reference genome. This is followed by the 'body', which is tab-separated and each line represents a variant and its relevant information, such as chromosome and position, reference and alternate allele(s), and sample genotype information. 
 
-This contains 82 field samples gathered from northern and southern Mozambique and had 100 targets (91 diversity targets and 9 targeted drug targets). 
+![](img/vcf_format.png)
 
-The results file can be found within directory [`amplicon/moz2018_heome1_results_fieldSamples.tsv.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_fieldSamples.tsv.gz) along with metadata [`amplicon/moz2018_fieldSamples_meta.tsv`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_fieldSamples_meta.tsv). Results are in a 4 column format. 
+::: {.column-margin}
+<br>
+<br>
+Figure sourced and modified from [Wikipedia](https://en.wikipedia.org/wiki/Variant_Call_Format)
+:::
 
-*  **sample** - The name of the sample  
-*  **target** - The name of the amplicon target  
-*  **target_popUID** - A population identifier for the haplotype for this target for this sample  
-*  **readCnt** - The read count for this haplotype for this sample for this target  
+- [`.fasta`](https://en.wikipedia.org/wiki/FASTA_format): Widely used for representing nucleotide and protein sequences, in which nucleotides or amino acids are represented using single-letter codes. Each entry begins with a header line starting with > followed by a unique sequence ID and description line, and then the sequence data itself, with one letter per nucleic or amino acid. 
 
-### Lab Control mixtures 
+![](img/fasta_format.png)
 
-Targeted amplicon data from the same 100 target panel as [above](#mozambique-field-samples). Mixtures are made of various combinations of 7 lab strains of P. falciparum and with some mixtures done in replicate at different 4 different parasite densities (10, 100, 1k, 10K. 
+::: {.column-margin}
+<br>
+Figure sourced from [Wikipedia](https://en.wikipedia.org/wiki/FASTA_format)
+:::
 
-![Parasite Densities](img/moz2018_fieldSamples_parasiteDensities.png)
+- `.txt` or `.csv`: Simple text and comma-separated values formats that are often used to represent haplotype or count data. 
 
-![Parasite Mixtures](img/moz2018_fieldSamples_parasiteMixtures.png)
+## Available datasets in PGEforge 
+As part of the PGEforge community resource, we have compiled simulated and empirical datasets of these common data formats. These datasets are used in the [tool tutorials](tutorials_overview.qmd) to make them fully reproducible and are freely available for anyone to use.
 
-Results are organized in a similar 4 column table as above. The results file can be found within directory [`amplicon/moz2018_heome1_results_controlSamples.tsv.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_controlSamples.tsv.gz) along with metadata [`amplicon/moz2018_controlSamples_meta.tsv`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_controlSamples_meta.tsv), [`amplicon/samplesToMixFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/samplesToMixFnp.tab.txt), [`amplicon/mixSetUpFnp.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mixSetUpFnp.tab.txt). 
+More details on the datasets hosted on PGEforge can be found in the links below:
 
-### Simulated data  
+- [Whole genome sequencing (WGS)](data_wgs.qmd)
+- [Microhaplotype data](data_mhaps.qmd) 
+- [SNP barcoding data](data_snps.qmd)
+- [*pfhrp2/3* deletion count data](data_counts.qmd)
 
-Targeted amplicon data was also simulated *in silico* to create 100 samples sampled from Mozambique and for a newer diversity panel called MAD^4HatTeR with 50 targets selected for thier diversity. 
-
-Results are organized in a similar 4 column table as above. The results file can be found within directory [`amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz)
-
-
-## SNP barcoding data
-
-SNP barcode data from the sanger 100 SNP Plasmodium falciparum barcode [@Chang2019-ar]. 
-
-[sanger101_snp_barcode_withGenes.bed](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sanger101_snp_barcode_withGenes.bed)  
-
-### Field Samples  
-
-The barcode was subsetted from the [above WGS data](#pf3k) to just the sanger barcode for the Vietnam and DRC data. The results file can be found within directory [`snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz), [`snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz)
-
-### Lab Isolates  
-
-The barcode was also explicitly called with several monoclonal lab isolates and then lab created mixtures of these isolates. Data can be found [`snp_barcode/controls_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/controls_sanger100.vcf.gz) with meta data with what mixtures are what found [`snp_barcode/allControlMixtures.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlMixtures.tab.txt) and [`snp_barcode/allControlSampNameToMixName.tab.txt`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlSampNameToMixName.tab.txt)
-
-### Simulated  
-
-The barcode was also simulated for 100 samples (50 Bangladesh and 50 Ghana). Data can be found [`snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz). The simulations were created by simulating super infections by sampling the barcode from each of these countries and selecting COIs based on the COIs observed for each country. 
-To use data without indels, the data can be found [`snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz`](https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz). 
-
-
-## *Pfhrp2/3* gene deletion count data
-The *pfhrp2/3* gene deletion count data is available within the subfolder `pfhrp2-3_counts`. The data come from a study by [Feleke et al. (2021)](https://doi.org/10.1038/s41564-021-00962-4).[@Feleke2021-bo] 
+They can be accessed at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder on Github. 

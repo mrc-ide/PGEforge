@@ -3,9 +3,19 @@ title: "Tool landscaping"
 format: html
 ---
 
+## Overview
+In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. Tools are considered within this scope if they:
+
+- Focus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
+- Focus on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. 
+
+In our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. *Plasmodium* genomic epidemiology tools), please see our [contributor guidelines](how_to_contribute.qmd) and some of our planned areas of [future work](future_work.qmd).
+
+## Landscaping matrix
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
+library(dplyr)
+library(janitor)
 library(DT)
 ```
 
@@ -16,8 +26,45 @@ matrix <- read.csv("tables/MMS_software_landscaping.csv")
 
 ```{r echo=F}
 matrix_dt <- matrix %>% 
-  select(Software_name, Software_authors, Theme, Stage, Implementation, Functionalities, Landscaping_completed_by, Last_updated, Tutorial_status, Tutorial_by, Reason_relegated_or_superseded) 
+  clean_names(case = "title") %>% 
+  rename("Tutorial on PGEforge" = "Tutorial on Pg Eforge")
 
-datatable(matrix_dt)
+datatable(matrix_dt,
+          extensions = c('FixedColumns', 'FixedHeader'),
+          options = list(
+            pageLength = nrow(matrix_dt),
+            fixedHeader = T,
+            scrollY = "600px",
+            scrollX = T,
+            fixedColumns = list(leftColumns = 2),
+            dom = "ft",
+            autoWidth = T
+          ),
+          caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
+                                            "Last updated: 2 August 2024"),
+          class = 'white-space: nowrap'
+          ) %>% 
+  formatStyle(
+    "Tool",
+    target = "cell",
+    fontWeight = "bold"
+  ) %>%
+  htmlwidgets::onRender("
+    function(el, x) {
+      $(el).find('tbody td').css({
+        'border-left': '0.1px solid #ddd',
+        'border-right': '0.1px solid #ddd'
+      });
+      $(el).find('tbody td:first-child').css({
+        'border-left': 'none'
+      });
+      $(el).find('tbody tr:odd').css({
+        'background-color': '#f9f9f9'
+      });
+      $(el).find('tbody tr:odd td').css({
+        'background-color': '#f9f9f9'
+      });
+    }
+  ")
 ```
 
