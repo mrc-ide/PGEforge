@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PGEforge - Add your tool to the list</title>
+<title>Get involved – PGEforge</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../website_docs/radish23.html" rel="next">
-<link href="../website_docs/workflows.html" rel="prev">
+<link href="../website_docs/use_cases.html" rel="prev">
 <link href="../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -47,7 +47,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,28 +62,30 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
 
 
 </head>
 
-<body class="nav-sidebar docked">
+<body class="nav-sidebar docked slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">How to contribute</a></li><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">Add your tool to the list</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">How to contribute</a></li><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">Get involved</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -86,13 +94,13 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
       <img src="../website_docs/img/PGEforge_hex.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
-    <a href="https://github.com/mrc-ide/PGEforge" rel="" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/mrc-ide/PGEforge" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
 </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -110,26 +118,44 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <a href="../website_docs/data_description.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/data_description.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data description</span></a>
+  <a href="../website_docs/data_wgs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WGS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_mhaps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Microhaplotypes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_snps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SNPs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_counts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pfhrp2/3 deletion counts</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Tool landscaping</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -150,28 +176,39 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Software standards</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
+  <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview by tool</span></a>
   </div>
 </li>
-          <li class="sidebar-item sidebar-item-section">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
- <span class="menu-text">coiaf</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">coiaf</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/coiaf/coiaf_background.html" class="sidebar-item-text sidebar-link">
@@ -194,13 +231,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">DEploidIBD</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/DEploidIBD/background.html" class="sidebar-item-text sidebar-link">
@@ -229,13 +266,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
  <span class="menu-text">DRpower</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
@@ -264,13 +301,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
  <span class="menu-text">dcifer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/dcifer/dcifer_background.html" class="sidebar-item-text sidebar-link">
@@ -293,13 +330,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
  <span class="menu-text">estMOI</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/estMOI/background.html" class="sidebar-item-text sidebar-link">
@@ -322,13 +359,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
- <span class="menu-text">Hierfstat</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">hierfstat</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/hierfstat/background.html" class="sidebar-item-text sidebar-link">
@@ -351,13 +388,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
  <span class="menu-text">hmmIBD</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/hmmIBD/hmmIBD_background.html" class="sidebar-item-text sidebar-link">
@@ -386,81 +423,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
- <span class="menu-text">hmmibdr</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/hmmibdr/hmmibdr_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
- <span class="menu-text">malaria.em</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">moire</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/malariaem/malariaem_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
- <span class="menu-text">MalHaploFreq</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/MalHaploFreq/MalHaploFreq_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
- <span class="menu-text">MLMOI</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/MLMOI/Template_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
- <span class="menu-text">moire</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/moire/moire_background.html" class="sidebar-item-text sidebar-link">
@@ -483,13 +452,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
  <span class="menu-text">MultiLociBiallelicModel</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.html" class="sidebar-item-text sidebar-link">
@@ -512,13 +481,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
  <span class="menu-text">paneljudge</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/paneljudge/paneljudge_background.html" class="sidebar-item-text sidebar-link">
@@ -541,36 +510,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false">
- <span class="menu-text">rehh</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/rehh/Template_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/rehh/Template_installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
  <span class="menu-text">THEREALMcCOIL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/THEREALMcCOIL/RMCL_background.html" class="sidebar-item-text sidebar-link">
@@ -595,68 +541,48 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false">
- <span class="menu-text">Software standards</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis workflows</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Evaluation framework</span></a>
+  <a href="../website_docs/use_cases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Use cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview by tool</span></a>
-  </div>
-</li>
+ <span class="menu-text">Coming soon!</span>
+  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
- <span class="menu-text">Analysis workflows</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Analysis workflows</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true">
  <span class="menu-text">How to contribute</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/how_to_contribute.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Add your tool to the list</span></a>
+ <span class="menu-text">Get involved</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
  <span class="menu-text">Events and meetings</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/radish23.html" class="sidebar-item-text sidebar-link">
@@ -671,28 +597,42 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Contributors</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/future_work.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Future work</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#the-pgeforge-vision" id="toc-the-pgeforge-vision" class="nav-link active" data-scroll-target="#the-pgeforge-vision">The PGEforge vision</a></li>
+  <li><a href="#how-to-contribute-to-pgeforge" id="toc-how-to-contribute-to-pgeforge" class="nav-link" data-scroll-target="#how-to-contribute-to-pgeforge">How to contribute to PGEforge</a></li>
+  <li><a href="#add-tool-to-landscaping-and-software-standards-matrices" id="toc-add-tool-to-landscaping-and-software-standards-matrices" class="nav-link" data-scroll-target="#add-tool-to-landscaping-and-software-standards-matrices">Add tool to landscaping and software standards matrices</a></li>
+  <li><a href="#develop-resources-for-a-tool" id="toc-develop-resources-for-a-tool" class="nav-link" data-scroll-target="#develop-resources-for-a-tool">Develop resources for a tool</a></li>
+  <li><a href="#developing-analysis-workflows" id="toc-developing-analysis-workflows" class="nav-link" data-scroll-target="#developing-analysis-workflows">Developing analysis workflows</a></li>
+  <li><a href="#add-yourself-as-a-contributor" id="toc-add-yourself-as-a-contributor" class="nav-link" data-scroll-target="#add-yourself-as-a-contributor">Add yourself as a contributor</a></li>
+  <li><a href="#contributing-guidelines-for-github" id="toc-contributing-guidelines-for-github" class="nav-link" data-scroll-target="#contributing-guidelines-for-github">Contributing guidelines for GitHub</a></li>
+  <li><a href="#thank-you" id="toc-thank-you" class="nav-link" data-scroll-target="#thank-you">Thank you!</a></li>
+  <li><a href="#community-rules" id="toc-community-rules" class="nav-link" data-scroll-target="#community-rules">Community rules</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/how_to_contribute.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/how_to_contribute.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">How to contribute</a></li><li class="breadcrumb-item"><a href="../website_docs/how_to_contribute.html">Get involved</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Add your tool to the list</h1>
+<h1 class="title">Get involved</h1>
 </div>
 
 
@@ -705,11 +645,111 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<section id="overview" class="level1">
-<h1>Overview</h1>
-<p>PGEforge hosts simulated and empirical datasets of:</p>
+
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="img/pgeforge_ecosystem.png" width="262" height="300"></p>
+</div></div><section id="the-pgeforge-vision" class="level2">
+<h2 class="anchored" data-anchor-id="the-pgeforge-vision">The PGEforge vision</h2>
+<p>PGEforge is a <strong>community-driven</strong> platform created by and for malaria genomic epidemiology analysis tool developers and end-users. If you are interested in contributing to these efforts, please <a href="../website_docs/how_to_contribute.html">get involved</a>!</p>
+</section>
+<section id="how-to-contribute-to-pgeforge" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-contribute-to-pgeforge">How to contribute to PGEforge</h2>
+<p>We are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for <em>Plasmodium</em> genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our <a href="#community-rules">community rules</a> and will be <a href="../website_docs/contributors.html">recognized as a contributor</a>.</p>
+<p>Below are some ways to get involved with current workstreams, but we also have some ideas and plans in the works for the <a href="../website_docs/future_work.html">future</a> beyond what is currently available in PGEforge!</p>
+</section>
+<section id="add-tool-to-landscaping-and-software-standards-matrices" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="add-tool-to-landscaping-and-software-standards-matrices">Add tool to landscaping and software standards matrices</h2>
+<p>Landscaping, documenting and benchmarking available <em>Plasmodium</em> genomic data analysis tools and any tools within the realm of <em>Plasmodium</em> genomic epidemiology (PGE) will require continuous updating and curation. As new tools become available, they need to be assessed and integrated into our existing framework. While we have made significant progress in identifying, documenting and evaluating tools commonly applied to <em>Plasmodium</em> genetic data, the <a href="../website_docs/tool_landscaping.html">tool landscaping</a> and <a href="../website_docs/software_standards.html">evaluation against software standards</a> is not exhaustive. For example, our initial efforts focused on tools for downstream <em>Plasmodium</em> genetic analysis, specifically targeting tools that extract signals from already processed data and focusing only on tools applicable <em>P. falciparum</em> and <em>P. vivax</em>. In terms of tool evaluation, we focused our efforts on evaluating the tools for which resources were developed in the <a href="../website_docs/tutorials_overview.html">tutorials section</a>. <a href="../website_docs/future_work.html">Future work</a> could also involve other types of tools, however.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>So far, PGEforge hosts a landscaping matrix of 40 identified tools, full documentation and evaluation of 17 tools, and complete resources (summary documents, installation instructions, and fully-worked through tutorials) developed for 11 tools.</p>
+</div></div><p>In order to ensure this ‘live document’ remains up-to-date, we encourage contributions to the following areas:</p>
+<ul>
+<li>Updating the documentation and filling in the gaps for remaining tools in the <a href="../website_docs/tool_landscaping.html">landscaping matrix</a></li>
+<li>Evaluating remaining tools based on software standards (these tools are highlighted in grey in the <a href="../website_docs/tools_to_standards.html">overview by tools based on software standards</a>)</li>
+<li>Updating <a href="../website_docs/tools_to_standards.html">tool scores against software standards</a> if developers release tool updates</li>
+<li>Add a <strong>new</strong> tool to landscaping and software standard matrices</li>
+</ul>
+<p>To contribute to any of these areas, there are two ways to do this depending on your comfort level with using GitHub and R.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Don’t forget to also <a href="#add-yourself-as-a-contributor">add yourself as a contributor</a>!</p>
+</div></div><ol type="1">
+<li>Download the relevant <code>.csv</code> files and edit them locally. Then open an <a href="https://github.com/mrc-ide/PGEforge/issues/new">issue on Github</a> and attach your updated <code>.csv</code> files. The location of the files are described below:</li>
+</ol>
+<ul>
+<li><a href="https://github.com/mrc-ide/PGEforge/tree/main/website_docs/tables/MMS_software_landscaping.csv"><code>MMS_software_landscaping.csv</code></a>: this is the <a href="../website_docs/tool_landscaping.html">tool landscaping matrix</a>.</li>
+<li><a href="https://github.com/mrc-ide/PGEforge/tree/main/website_docs/tables/Tools_to_standards.csv"><code>Tools_to_standards.csv</code></a>: this is the evaluation of each tool with respect to the <a href="../website_docs/software_standards.html">objective software standards</a>. Please make sure you follow the <a href="https://mrc-ide.github.io/PGEforge/software_standards.qmd#evaluation-criteria">evaluation criteria rubric</a> when you score each of the criteria.</li>
+</ul>
+<p><strong>Please ensure you only modify the relevant cells or add new rows as needed</strong></p>
+<ol start="2" type="1">
+<li>Follow the <a href="#contributing-guidelines-for-github">Github contributor guidelines</a> to create your own branch and PR your changes directly. Make sure you:</li>
+</ol>
+<ul>
+<li>Add your headshot photo to the <a href="https://github.com/mrc-ide/PGEforge/tree/main/website_docs/img/people"><code>website_docs/img/people</code></a> folder</li>
+<li>Add your name in alphabetical order to the <a href="https://github.com/mrc-ide/PGEforge/blob/main/website_docs/contributors.qmd">website_docs/contributors.qmd</a> and reference your photo by using the following code <code>![](img/people/yourname.jpeg){fig-align="left" width="100px"}</code>.</li>
+</ul>
+</section>
+<section id="develop-resources-for-a-tool" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="develop-resources-for-a-tool">Develop resources for a tool</h2>
+<p>If you have developed a new <em>Plasmodium</em> genomic data analysis tool or identified a tool that is missing tutorial resources, you can develop them and contribute them to PGEforge! Follow these steps to contribute:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Don’t forget to also <a href="#add-yourself-as-a-contributor">add yourself as a contributor</a>!</p>
+</div></div><p><strong>Step 1:</strong> In PGEforge we focus on <em>Plasmodium</em> genomic <strong>data analysis</strong> tools. The tool should be within the scope of <em>Plasmodium</em> genomic epidemiology data analysis.</p>
+<p><strong>Step 2:</strong> Take a look at the <a href="../website_docs/tool_landscaping.html">tool landscaping</a> in case we have already evaluated that specific tool. In some instances, we opted to not develop tutorial resources for tools where there was difficulty installing and running the software, run-time errors, or if the tool was clearly superseded by more recent tools. You will find more details in the <a href="../website_docs/tool_landscaping.html">tool landscaping</a>. If you identify a tool that is not in the landscaping matrix, please <a href="#add-tool-to-landscaping-and-software-standards-matrices">add it</a>.</p>
+<p><strong>Step 3:</strong> If you have reached this point and have found a tool that is missing from PGEforge, great! After <a href="#add-tool-to-landscaping-and-software-standards-matrices">adding it to the landscaping and software standards matrices</a> you can develop the tool resources. We provide all the templates that you need to get started. For every tool, we develop the following resources:</p>
+<ul>
+<li><em>Summary Document:</em> Provide an overview of the tool, including its main purpose, use cases, license, code repository, relevant publications, and citation details. Fill in these details in the template .csv file and then “Render” the accompanying .qmd file to display the information in a nicely formatted table.</li>
+<li><em>Installation Instructions:</em> Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and <em>not</em> already in the <a href="../website_docs/R_universe.html">PlasmoGenEpi R-universe</a>, please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.</li>
+<li><em>Fully Worked Tutorials:</em> Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated <a href="../website_docs/data_description.html">canonical datasets</a> for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible.</li>
+</ul>
+<p>You can find the templates for all of these documents in our <a href="https://github.com/mrc-ide/PGEforge/tree/main/tutorials/Template">Github repository</a> and example tutorials in the <a href="../website_docs/tutorials_overview.html">Tutorials section</a>.</p>
+<p><strong>Please make sure to follow our <a href="#contributing-guidelines-for-github">GitHub contribution guidelines</a>.</strong></p>
+</section>
+<section id="developing-analysis-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="developing-analysis-workflows">Developing analysis workflows</h2>
+<p>Coming soon!</p>
+</section>
+<section id="add-yourself-as-a-contributor" class="level2">
+<h2 class="anchored" data-anchor-id="add-yourself-as-a-contributor">Add yourself as a contributor</h2>
+<p>Everyone who contributes to PGEforge is listed as a <a href="../website_docs/contributors.html">contributor</a>.</p>
+<p>There are two ways to do this:</p>
+<ol type="1">
+<li>Open an <a href="https://github.com/mrc-ide/PGEforge/issues/new">issue on Github</a> and make sure you include the following information so we can add you to the contributors list:</li>
+</ol>
+<ul>
+<li>Full name</li>
+<li>Affiliations</li>
+<li>Headshot photo</li>
+</ul>
+<ol start="2" type="1">
+<li>Follow the <a href="#contributing-guidelines-for-github">Github contributor guidelines</a> to create your own branch and PR your changes directly. Make sure you:</li>
+</ol>
+<ul>
+<li>Add your headshot photo to the <a href="https://github.com/mrc-ide/PGEforge/tree/main/website_docs/img/people"><code>website_docs/img/people</code></a> folder</li>
+<li>Add your name in alphabetical order to the <a href="https://github.com/mrc-ide/PGEforge/blob/main/website_docs/contributors.qmd">website_docs/contributors.qmd</a> and reference your photo by using the following code <code>![](img/people/yourname.jpeg){fig-align="left" width="100px"}</code>.</li>
+</ul>
+</section>
+<section id="contributing-guidelines-for-github" class="level2">
+<h2 class="anchored" data-anchor-id="contributing-guidelines-for-github">Contributing guidelines for GitHub</h2>
+<p>To ensure a smooth and efficient collaboration process, please follow these guidelines when contributing to our GitHub repository:</p>
+<ul>
+<li><strong>Create a New Branch:</strong> Start by creating a new branch from the <code>develop</code> branch. This keeps your changes separate until they are ready to be reviewed and merged.</li>
+<li><strong>Pull Request (PR) for Review:</strong> Once you have made your changes, create a PR into the <code>develop</code> branch. Our team will review your PR and provide feedback or approve it for merging. Never make any changes to the <code>main</code> branch, and please always PR into <code>develop</code>.</li>
+</ul>
+</section>
+<section id="thank-you" class="level2">
+<h2 class="anchored" data-anchor-id="thank-you">Thank you!</h2>
+<p>Thank you for your interest in contributing to PGEforge. Your efforts help us build a stronger, more inclusive research community making <em>Plasmodium</em> genomic analysis accessible to all!</p>
+</section>
+<section id="community-rules" class="level2">
+<h2 class="anchored" data-anchor-id="community-rules">Community rules</h2>
+<p>PGEforge is dedicated to creating an inclusive, respectful, and engaging community. We believe in open collaboration and active participation, empowering each other to share and gain knowledge, resources, and opportunities as a community. We believe in the benefits of a wide range of perspectives, experiences and ideas. We welcome contributions from everyone who shares our goals and wants to contribute, regardless of age, gender identity, sexual orientation, disability, ethnicity, nationality, race, religion, education, level of experience, career stage, or socioeconomic status. PGEforge aims to foster a harassment-free experience for everyone and expects all contributors to demonstrate empathy, kindness, and respect, and to engage constructively with differing viewpoints. Unacceptable behaviors, including harassment, discriminatory language, and personal attacks, will not be tolerated. By fostering a positive and inclusive community, we aim to empower everyone to contribute and collaborate effectively to a vibrant and growing PGEforge community.</p>
 
 
 </section>
@@ -750,18 +790,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -793,11 +822,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/mrc-ide\.github\.io\/PGEforge\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -807,8 +875,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -820,7 +897,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -864,6 +1064,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -889,6 +1090,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -950,12 +1177,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../website_docs/workflows.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Analysis workflows</span>
+      <a href="../website_docs/use_cases.html" class="pagination-link" aria-label="Use cases">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Use cases</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../website_docs/radish23.html" class="pagination-link">
+      <a href="../website_docs/radish23.html" class="pagination-link" aria-label="RADISH23 Hackathon">
         <span class="nav-page-text">RADISH23 Hackathon</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -966,12 +1193,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>. © 2024</div>
+    <div class="nav-footer-center">
+<p>This website is built with 💖️, <i class="fab fa-r-project" style="color: #cf366c;"></i> and <a href="https://quarto.org/">quarto</a>. © 2024</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/how_to_contribute.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+
 
 
 

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PGEforge - Data description</title>
+<title>Data – PGEforge</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +20,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -48,7 +29,7 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../website_docs/tool_landscaping.html" rel="next">
+<link href="../website_docs/data_wgs.html" rel="next">
 <link href="../index.html" rel="prev">
 <link href="../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -66,7 +47,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -75,30 +62,30 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
-<body class="nav-sidebar docked">
+<body class="nav-sidebar docked slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/data_description.html">Data</a></li><li class="breadcrumb-item"><a href="../website_docs/data_description.html">Data description</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../website_docs/data_description.html">Data</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -107,13 +94,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../index.html" class="sidebar-logo-link">
       <img src="../website_docs/img/PGEforge_hex.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
-    <a href="https://github.com/mrc-ide/PGEforge" rel="" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/mrc-ide/PGEforge" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
 </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -131,26 +118,44 @@ div.csl-indent {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../website_docs/data_description.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Data</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/data_description.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Data description</span></a>
+  <a href="../website_docs/data_wgs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">WGS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_mhaps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Microhaplotypes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_snps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SNPs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/data_counts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pfhrp2/3 deletion counts</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">Tool landscaping</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -171,28 +176,39 @@ div.csl-indent {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Software standards</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><strong>Overview of all tutorials</strong></span></a>
+  <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview by tool</span></a>
   </div>
 </li>
-          <li class="sidebar-item sidebar-item-section">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
- <span class="menu-text">coiaf</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/tutorials_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">coiaf</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/coiaf/coiaf_background.html" class="sidebar-item-text sidebar-link">
@@ -215,13 +231,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">DEploidIBD</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/DEploidIBD/background.html" class="sidebar-item-text sidebar-link">
@@ -250,13 +266,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
  <span class="menu-text">DRpower</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/DRpower/DRpower_background.html" class="sidebar-item-text sidebar-link">
@@ -285,13 +301,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
  <span class="menu-text">dcifer</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/dcifer/dcifer_background.html" class="sidebar-item-text sidebar-link">
@@ -314,13 +330,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
  <span class="menu-text">estMOI</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/estMOI/background.html" class="sidebar-item-text sidebar-link">
@@ -343,13 +359,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
- <span class="menu-text">Hierfstat</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">hierfstat</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/hierfstat/background.html" class="sidebar-item-text sidebar-link">
@@ -372,13 +388,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
  <span class="menu-text">hmmIBD</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/hmmIBD/hmmIBD_background.html" class="sidebar-item-text sidebar-link">
@@ -407,81 +423,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
- <span class="menu-text">hmmibdr</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/hmmibdr/hmmibdr_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
- <span class="menu-text">malaria.em</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">moire</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/malariaem/malariaem_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
- <span class="menu-text">MalHaploFreq</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/MalHaploFreq/MalHaploFreq_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
- <span class="menu-text">MLMOI</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/MLMOI/Template_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
- <span class="menu-text">moire</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/moire/moire_background.html" class="sidebar-item-text sidebar-link">
@@ -504,13 +452,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
  <span class="menu-text">MultiLociBiallelicModel</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.html" class="sidebar-item-text sidebar-link">
@@ -533,13 +481,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
  <span class="menu-text">paneljudge</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/paneljudge/paneljudge_background.html" class="sidebar-item-text sidebar-link">
@@ -562,36 +510,13 @@ div.csl-indent {
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false">
- <span class="menu-text">rehh</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/rehh/Template_background.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Summary</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/rehh/Template_installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
  <span class="menu-text">THEREALMcCOIL</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../tutorials/THEREALMcCOIL/RMCL_background.html" class="sidebar-item-text sidebar-link">
@@ -616,68 +541,48 @@ div.csl-indent {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false">
- <span class="menu-text">Software standards</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" aria-expanded="false" aria-label="Toggle section">
+            <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Analysis workflows</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../website_docs/software_standards.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Evaluation framework</span></a>
+  <a href="../website_docs/use_cases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Use cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../website_docs/tools_to_standards.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Overview by tool</span></a>
-  </div>
-</li>
+ <span class="menu-text">Coming soon!</span>
+  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false">
- <span class="menu-text">Analysis workflows</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" aria-expanded="false" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../website_docs/workflows.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Analysis workflows</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
  <span class="menu-text">How to contribute</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-22" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-22" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/how_to_contribute.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Add your tool to the list</span></a>
+ <span class="menu-text">Get involved</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
  <span class="menu-text">Events and meetings</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-23" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-23" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../website_docs/radish23.html" class="sidebar-item-text sidebar-link">
@@ -692,49 +597,35 @@ div.csl-indent {
  <span class="menu-text">Contributors</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../website_docs/future_work.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Future work</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
-  <ul class="collapse">
-  <li><a href="#whole-genome-sequencing-wgs-data-for-p.-falciparum" id="toc-whole-genome-sequencing-wgs-data-for-p.-falciparum" class="nav-link" data-scroll-target="#whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS) data for <em>P. falciparum</em></a>
-  <ul class="collapse">
-  <li><a href="#pf3k" id="toc-pf3k" class="nav-link" data-scroll-target="#pf3k">Pf3k</a></li>
-  <li><a href="#simulated" id="toc-simulated" class="nav-link" data-scroll-target="#simulated">Simulated</a></li>
-  <li><a href="#lab-isolates-sub-setted" id="toc-lab-isolates-sub-setted" class="nav-link" data-scroll-target="#lab-isolates-sub-setted">Lab isolates sub-setted</a></li>
-  </ul></li>
-  <li><a href="#microhaplotype-data" id="toc-microhaplotype-data" class="nav-link" data-scroll-target="#microhaplotype-data">Microhaplotype data</a>
-  <ul class="collapse">
-  <li><a href="#mozambique-field-samples" id="toc-mozambique-field-samples" class="nav-link" data-scroll-target="#mozambique-field-samples">Mozambique Field Samples</a></li>
-  <li><a href="#lab-control-mixtures" id="toc-lab-control-mixtures" class="nav-link" data-scroll-target="#lab-control-mixtures">Lab Control mixtures</a></li>
-  <li><a href="#simulated-data" id="toc-simulated-data" class="nav-link" data-scroll-target="#simulated-data">Simulated data</a></li>
-  </ul></li>
-  <li><a href="#snp-barcoding-data" id="toc-snp-barcoding-data" class="nav-link" data-scroll-target="#snp-barcoding-data">SNP barcoding data</a>
-  <ul class="collapse">
-  <li><a href="#field-samples" id="toc-field-samples" class="nav-link" data-scroll-target="#field-samples">Field Samples</a></li>
-  <li><a href="#lab-isolates" id="toc-lab-isolates" class="nav-link" data-scroll-target="#lab-isolates">Lab Isolates</a></li>
-  <li><a href="#simulated-1" id="toc-simulated-1" class="nav-link" data-scroll-target="#simulated-1">Simulated</a></li>
-  </ul></li>
-  <li><a href="#pfhrp23-gene-deletion-count-data" id="toc-pfhrp23-gene-deletion-count-data" class="nav-link" data-scroll-target="#pfhrp23-gene-deletion-count-data"><em>Pfhrp2/3</em> gene deletion count data</a></li>
-  </ul></li>
+  <li><a href="#overview-of-data-formats-in-plasmodium-genomics" id="toc-overview-of-data-formats-in-plasmodium-genomics" class="nav-link active" data-scroll-target="#overview-of-data-formats-in-plasmodium-genomics">Overview of data formats in <em>Plasmodium</em> genomics</a></li>
+  <li><a href="#available-datasets-in-pgeforge" id="toc-available-datasets-in-pgeforge" class="nav-link" data-scroll-target="#available-datasets-in-pgeforge">Available datasets in PGEforge</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/data_description.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/data_description.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data description</h1>
+<h1 class="title">Data</h1>
 </div>
 
 
@@ -747,112 +638,89 @@ div.csl-indent {
   </div>
   
 
+
 </header>
 
-<section id="overview" class="level1">
-<h1>Overview</h1>
-<p>PGEforge hosts simulated and empirical datasets of:</p>
-<ul>
-<li><a href="whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS)</a></li>
-<li><a href="#microhaplotype-data">Microhaplotype data</a></li>
-<li><a href="#snp-barcoding-data">SNP barcoding data</a></li>
-<li><a href="#pfhrp23-gene-deletion-count-data"><em>pfhrp2/3</em> deletion count data</a></li>
-</ul>
-<p>They can be located at the <a href="https://github.com/mrc-ide/PGEforge/tree/main/data">PGEforge/data</a> folder.</p>
-<section id="whole-genome-sequencing-wgs-data-for-p.-falciparum" class="level2">
-<h2 class="anchored" data-anchor-id="whole-genome-sequencing-wgs-data-for-p.-falciparum">Whole genome sequencing (WGS) data for <em>P. falciparum</em></h2>
-<section id="pf3k" class="level3">
-<h3 class="anchored" data-anchor-id="pf3k">Pf3k</h3>
-<p>All of the data within the subfolder <code>wgs/pf3k</code> was derived from the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>. Currently, there are three VCF files, with corresponding CSVs containing metadata, for samples from: - Democratic Republic of the Congo (<span class="math inline">\(n=113\)</span>) - Vietnam (<span class="math inline">\(n=97\)</span>) - <em>In vitro</em> mixtures of laboratory strains (<span class="math inline">\(n=25\)</span>)</p>
-<p>Each VCF contains 247,496 high-quality (VQSLOD&gt;6) biallelic SNPs across all fourteen somatic chromosomes. The VCFs are sorted and an index file is provided. The Fws statistics provided in the metadata CSVs were collected from the <a href="https://www.malariagen.net/sites/default/files/Pf7_fws.txt">Pf7 data set</a>, which contains the Pf3k samples. These were not calculated for the <em>in vitro</em> lab mixtures.</p>
-</section>
-<section id="simulated" class="level3">
-<h3 class="anchored" data-anchor-id="simulated">Simulated</h3>
-<p>All of the data within the subfolder <code>wgs/simulated</code> was simulated. In brief, a simulated sample with a given complexity of infection (COI), <span class="math inline">\(K\)</span>, is created by randomly sampling <span class="math inline">\(K\)</span> clonal haplotypes (<span class="math inline">\(F_{ws} &gt; 0.95\)</span>) from a given country within the <a href="https://www.malariagen.net/parasite/pf3k">Pf3k Project</a>, assigning these haplotypes to <span class="math inline">\(j \leq K\)</span> bites, simulating meiosis if <span class="math inline">\(j &lt; K\)</span>, randomly sampling proportions for each haplotype, and then simulating read count data given the proportions and final genotypes. Sequencing error is simulated at a fixed rate and present in the read counts. No variant calling error is simulated; the genotypes are perfect. At present, there is only one VCF file with a corresponding CSV and BED file containing metadata, with samples simulated from: - Democratic Republic of the Congo (<span class="math inline">\(n=40\)</span>)</p>
-<p>The COI of these samples ranges from one to four, and about half of them have within-host relatedness.</p>
-</section>
-<section id="lab-isolates-sub-setted" class="level3">
-<h3 class="anchored" data-anchor-id="lab-isolates-sub-setted">Lab isolates sub-setted</h3>
-<p>There are a set of bam files with vcf calls subsetting to just CSP (PF3D7_0304600), CELTOS (PF3D7_1133400), and AMA1 (PF3D7_1216600). These can be found within the <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset"><code>wgs/labisolate_subset</code></a> directory. With metadata describing what is in each file <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlMixtures.tab.txt"><code>wgs/labisolate_subset/allControlMixtures.tab.txt</code></a>, <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/wgs/labisolate_subset/allControlSampNameToMixName.tab.txt"><code>wgs/labisolate_subset/allControlSampNameToMixName.tab.txt</code></a></p>
-</section>
-</section>
-<section id="microhaplotype-data" class="level2">
-<h2 class="anchored" data-anchor-id="microhaplotype-data">Microhaplotype data</h2>
-<section id="mozambique-field-samples" class="level3">
-<h3 class="anchored" data-anchor-id="mozambique-field-samples">Mozambique Field Samples</h3>
-<p>Targeted amplicon data from analysis for the following paper “Sensitive, Highly Multiplexed Sequencing of Microhaplotypes From the Plasmodium falciparum Heterozygome”<span class="citation" data-cites="Tessema2022-ba">(<a href="#ref-Tessema2022-ba" role="doc-biblioref">Tessema et al. 2022</a>)</span></p>
-<p>This contains 82 field samples gathered from northern and southern Mozambique and had 100 targets (91 diversity targets and 9 targeted drug targets).</p>
-<p>The results file can be found within directory <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_fieldSamples.tsv.gz"><code>amplicon/moz2018_heome1_results_fieldSamples.tsv.gz</code></a> along with metadata <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_fieldSamples_meta.tsv"><code>amplicon/moz2018_fieldSamples_meta.tsv</code></a>. Results are in a 4 column format.</p>
-<ul>
-<li><strong>sample</strong> - The name of the sample<br>
-</li>
-<li><strong>target</strong> - The name of the amplicon target<br>
-</li>
-<li><strong>target_popUID</strong> - A population identifier for the haplotype for this target for this sample<br>
-</li>
-<li><strong>readCnt</strong> - The read count for this haplotype for this sample for this target</li>
-</ul>
-</section>
-<section id="lab-control-mixtures" class="level3">
-<h3 class="anchored" data-anchor-id="lab-control-mixtures">Lab Control mixtures</h3>
-<p>Targeted amplicon data from the same 100 target panel as <a href="#mozambique-field-samples">above</a>. Mixtures are made of various combinations of 7 lab strains of P. falciparum and with some mixtures done in replicate at different 4 different parasite densities (10, 100, 1k, 10K.</p>
-<div class="quarto-figure quarto-figure-center">
+
+<section id="overview-of-data-formats-in-plasmodium-genomics" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="overview-of-data-formats-in-plasmodium-genomics">Overview of data formats in <em>Plasmodium</em> genomics</h2>
+<p>Understanding the different types of genomic data formats is essential for anyone involved in <em>Plasmodium</em> genomic analysis, especially beginners or end-users of various analysis tools. Here we briefly cover the primary data formats used in malaria research and common input file formats such as <code>.vcf</code>, <code>.fasta</code>, and others.</p>
+<section id="genomic-data-generation" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="genomic-data-generation">Genomic data generation</h4>
+<p>Before we jump into the different data formats, it is important to understand how malaria genomic data are generated. The variety in data formats arises from different molecular marker panels and available methodologies. The figure below illustrates how different genotyping approaches capture distinct aspects of the <em>Plasmodium</em> genome and how genomic data are ‘generated’ using different techniques and genotyping platforms. Next-generation sequencing is now the most common approach due to significant decreases in cost and its high-throughput nature both for whole genome sequencing but also sequencing of specific molecular markers or genomic regions of interest, also known as <a href="https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing">targeted sequencing</a>.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br> Targeted sequencing is similar to WGS, but sample preparation workflow requires an extra step: target enrichment either by <a href="https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/hybridization-capture">hybridization capture</a> or <a href="https://eu.idtdna.com/pages/technology/next-generation-sequencing/dna-sequencing/targeted-sequencing/amplicon-sequencing">PCR amplicons</a>. These methods are often used for enriching longer and shorter genomic regions, respectively.</p>
+</div></div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/moz2018_fieldSamples_parasiteDensities.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Parasite Densities</figcaption>
+<p><img src="img/genetic_variation_types.png" class="img-fluid figure-img"></p>
+<figcaption>Figure sourced from <a href="https://doi.org/10.1016/j.pt.2023.11.006">Ruybal-Pesántez et al 2024, <em>Molecular markers for malaria genetic epidemiology: progress and pitfalls</em></a></figcaption>
 </figure>
 </div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="img/moz2018_fieldSamples_parasiteMixtures.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Parasite Mixtures</figcaption>
-</figure>
-</div>
-<p>Results are organized in a similar 4 column table as above. The results file can be found within directory <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_heome1_results_controlSamples.tsv.gz"><code>amplicon/moz2018_heome1_results_controlSamples.tsv.gz</code></a> along with metadata <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/moz2018_controlSamples_meta.tsv"><code>amplicon/moz2018_controlSamples_meta.tsv</code></a>, <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/samplesToMixFnp.tab.txt"><code>amplicon/samplesToMixFnp.tab.txt</code></a>, <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mixSetUpFnp.tab.txt"><code>amplicon/mixSetUpFnp.tab.txt</code></a>.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br> <br> Raw sequencing data is processed by bioinformatic pipelines to call alleles and haplotypes. The outputs of this process, such as <code>VCF</code>, <code>FASTA</code>, or haplotype tables, serve as input formats for downstream data analysis tools.</p>
+</div></div></section>
+<section id="data-processing" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="data-processing">Data processing</h4>
+<p>Raw sequence data from next-generation sequencing platforms is processed through bioinformatic pipelines into structured formats suitable for further downstream genomic analysis. Typically this process involves a series of steps. Initially, the raw data undergoes quality control to remove low-quality reads and contaminants. The cleaned data is then aligned to a reference genome, which helps identify the position of each sequence read. From this alignment, variants can be ‘called’, which means variants are identified through differences between the sample and the reference genome. These variants are compiled into Variant Call Format (<code>.vcf</code>) files. Alternatively, the entire cleaned and aligned sequences can be compiled into FASTA format (<code>.fasta</code>) files, which represent the sequences in a text-based format. Additionally, haplotypes may also be called, which means combinations of alleles at multiple loci are identified. These haplotypes are often tabulated in <code>.csv</code> or text-based formats.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br> <br> Bioinformatic pipelines in malaria genomics need to account for the unique characteristics of <em>Plasmodium</em> genomes, such as high AT content and extensive polymorphism.</p>
+</div></div></section>
+<section id="common-input-formats" class="level4 page-columns page-full">
+<h4 class="anchored" data-anchor-id="common-input-formats">Common input formats</h4>
+<p>When working with <em>Plasmodium</em> genomic data, several input file formats are commonly used across different analysis tools:</p>
+
+<div class="no-row-height column-margin column-container"><div class="" style="font-size: 8px">
+<!-- VCF File Data Line Structure -->
+<!-- | **Column** | **Description**                              | -->
+<!-- |------------|----------------------------------------------| -->
+<!-- | CHROM      | Chromosome identifier                        | -->
+<!-- | POS        | Position of the variant on the chromosome    | -->
+<!-- | ID         | Identifier for the variant (if available)    | -->
+<!-- | REF        | Reference allele                             | -->
+<!-- | ALT        | Alternate allele(s)                          | -->
+<!-- | QUAL       | Quality score for the variant call           | -->
+<!-- | FILTER     | Filter status (e.g., PASS or fail criteria)  | -->
+<!-- | INFO       | Additional information about the variant     | -->
+<!-- | FORMAT     | Format of the sample data                    | -->
+<!-- | SAMPLES    | Genotype information for each sample         | -->
+</div></div><ul>
+<li><a href="https://en.wikipedia.org/wiki/Variant_Call_Format"><code>.vcf</code> (Variant Call Format)</a>: Widely used for storing gene sequence variants, such as SNPs, insertions, deletions, and other types of genetic variants. The standard format includes a mandatory header starting with # or ## in the case of ‘special header keywords’, which provides the metadata such as file format, reference genome. This is followed by the ‘body’, which is tab-separated and each line represents a variant and its relevant information, such as chromosome and position, reference and alternate allele(s), and sample genotype information.</li>
+</ul>
+<p><img src="img/vcf_format.png" class="img-fluid"></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br> <br> Figure sourced and modified from <a href="https://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a></p>
+</div></div><ul>
+<li><a href="https://en.wikipedia.org/wiki/FASTA_format"><code>.fasta</code></a>: Widely used for representing nucleotide and protein sequences, in which nucleotides or amino acids are represented using single-letter codes. Each entry begins with a header line starting with &gt; followed by a unique sequence ID and description line, and then the sequence data itself, with one letter per nucleic or amino acid.</li>
+</ul>
+<p><img src="img/fasta_format.png" class="img-fluid"></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br> Figure sourced from <a href="https://en.wikipedia.org/wiki/FASTA_format">Wikipedia</a></p>
+</div></div><ul>
+<li><code>.txt</code> or <code>.csv</code>: Simple text and comma-separated values formats that are often used to represent haplotype or count data.</li>
+</ul>
 </section>
-<section id="simulated-data" class="level3">
-<h3 class="anchored" data-anchor-id="simulated-data">Simulated data</h3>
-<p>Targeted amplicon data was also simulated <em>in silico</em> to create 100 samples sampled from Mozambique and for a newer diversity panel called MAD^4HatTeR with 50 targets selected for thier diversity.</p>
-<p>Results are organized in a similar 4 column table as above. The results file can be found within directory <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz"><code>amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz</code></a></p>
 </section>
-</section>
-<section id="snp-barcoding-data" class="level2">
-<h2 class="anchored" data-anchor-id="snp-barcoding-data">SNP barcoding data</h2>
-<p>SNP barcode data from the sanger 100 SNP Plasmodium falciparum barcode <span class="citation" data-cites="Chang2019-ar">(<a href="#ref-Chang2019-ar" role="doc-biblioref">Chang et al. 2019</a>)</span>.</p>
-<p><a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sanger101_snp_barcode_withGenes.bed">sanger101_snp_barcode_withGenes.bed</a></p>
-<section id="field-samples" class="level3">
-<h3 class="anchored" data-anchor-id="field-samples">Field Samples</h3>
-<p>The barcode was subsetted from the <a href="#pf3k">above WGS data</a> to just the sanger barcode for the Vietnam and DRC data. The results file can be found within directory <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz"><code>snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz</code></a>, <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz"><code>snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.DRCongo.vcf.gz</code></a></p>
-</section>
-<section id="lab-isolates" class="level3">
-<h3 class="anchored" data-anchor-id="lab-isolates">Lab Isolates</h3>
-<p>The barcode was also explicitly called with several monoclonal lab isolates and then lab created mixtures of these isolates. Data can be found <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/controls_sanger100.vcf.gz"><code>snp_barcode/controls_sanger100.vcf.gz</code></a> with meta data with what mixtures are what found <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlMixtures.tab.txt"><code>snp_barcode/allControlMixtures.tab.txt</code></a> and <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/allControlSampNameToMixName.tab.txt"><code>snp_barcode/allControlSampNameToMixName.tab.txt</code></a></p>
-</section>
-<section id="simulated-1" class="level3">
-<h3 class="anchored" data-anchor-id="simulated-1">Simulated</h3>
-<p>The barcode was also simulated for 100 samples (50 Bangladesh and 50 Ghana). Data can be found <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz"><code>snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz</code></a>. The simulations were created by simulating super infections by sampling the barcode from each of these countries and selecting COIs based on the COIs observed for each country. To use data without indels, the data can be found <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz"><code>snp_barcode/SpotMalariapfPanel_simData_snponly_sanger100.vcf.gz</code></a>.</p>
-</section>
-</section>
-<section id="pfhrp23-gene-deletion-count-data" class="level2">
-<h2 class="anchored" data-anchor-id="pfhrp23-gene-deletion-count-data"><em>Pfhrp2/3</em> gene deletion count data</h2>
-<p>The <em>pfhrp2/3</em> gene deletion count data is available within the subfolder <code>pfhrp2-3_counts</code>. The data come from a study by <a href="https://doi.org/10.1038/s41564-021-00962-4">Feleke et al.&nbsp;(2021)</a>.<span class="citation" data-cites="Feleke2021-bo">(<a href="#ref-Feleke2021-bo" role="doc-biblioref">Feleke et al. 2021</a>)</span></p>
+<section id="available-datasets-in-pgeforge" class="level2">
+<h2 class="anchored" data-anchor-id="available-datasets-in-pgeforge">Available datasets in PGEforge</h2>
+<p>As part of the PGEforge community resource, we have compiled simulated and empirical datasets of these common data formats. These datasets are used in the <a href="../website_docs/tutorials_overview.html">tool tutorials</a> to make them fully reproducible and are freely available for anyone to use.</p>
+<p>More details on the datasets hosted on PGEforge can be found in the links below:</p>
+<ul>
+<li><a href="../website_docs/data_wgs.html">Whole genome sequencing (WGS)</a></li>
+<li><a href="../website_docs/data_mhaps.html">Microhaplotype data</a></li>
+<li><a href="../website_docs/data_snps.html">SNP barcoding data</a></li>
+<li><a href="../website_docs/data_counts.html"><em>pfhrp2/3</em> deletion count data</a></li>
+</ul>
+<p>They can be accessed at the <a href="https://github.com/mrc-ide/PGEforge/tree/main/data">PGEforge/data</a> folder on Github.</p>
 
 
-
-</section>
 </section>
 
-<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-Chang2019-ar" class="csl-entry" role="listitem">
-Chang, Hsiao-Han, Amy Wesolowski, Ipsita Sinha, Christopher G Jacob, Ayesha Mahmud, Didar Uddin, Sazid Ibna Zaman, et al. 2019. <span>“Mapping Imported Malaria in Bangladesh Using Parasite Genetic and Human Mobility Data.”</span> <em>Elife</em> 8 (April).
-</div>
-<div id="ref-Feleke2021-bo" class="csl-entry" role="listitem">
-Feleke, Sindew M, Emily N Reichert, Hussein Mohammed, Bokretsion G Brhane, Kalkidan Mekete, Hassen Mamo, Beyene Petros, et al. 2021. <span>“Plasmodium Falciparum Is Evolving to Escape Malaria Rapid Diagnostic Tests in Ethiopia.”</span> <em>Nature Microbiology</em> 6 (10): 1289–99.
-</div>
-<div id="ref-Tessema2022-ba" class="csl-entry" role="listitem">
-Tessema, Sofonias K, Nicholas J Hathaway, Noam B Teyssier, Maxwell Murphy, Anna Chen, Ozkan Aydemir, Elias M Duarte, et al. 2022. <span>“Sensitive, Highly Multiplexed Sequencing of Microhaplotypes from the Plasmodium Falciparum Heterozygome.”</span> <em>J. Infect. Dis.</em> 225 (7): 1227–37.
-</div>
-</div></section></div></main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -888,18 +756,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -931,11 +788,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/mrc-ide\.github\.io\/PGEforge\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -945,8 +841,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -958,7 +863,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1002,6 +1030,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1027,6 +1056,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1088,13 +1143,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../index.html" class="pagination-link">
+      <a href="../index.html" class="pagination-link" aria-label="Welcome">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Welcome</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../website_docs/tool_landscaping.html" class="pagination-link">
-        <span class="nav-page-text">The landscaping matrix</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../website_docs/data_wgs.html" class="pagination-link" aria-label="WGS">
+        <span class="nav-page-text">WGS</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1104,12 +1159,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">This website is built with ❤️ and <a href="https://quarto.org/">Quarto</a>. © 2024</div>
+    <div class="nav-footer-center">
+<p>This website is built with 💖️, <i class="fab fa-r-project" style="color: #cf366c;"></i> and <a href="https://quarto.org/">quarto</a>. © 2024</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/mrc-ide/PGEforge/edit/main/website_docs/data_description.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+
 
 
 

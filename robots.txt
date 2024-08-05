@@ -1,1 +1,1 @@
-Sitemap: https://github.com/mrc-ide/PGEforge/sitemap.xml
+Sitemap: https://mrc-ide.github.io/PGEforge/sitemap.xml
