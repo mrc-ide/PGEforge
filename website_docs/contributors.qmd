@@ -5,104 +5,48 @@ format: html
 
 ## Main contributors
 
-PGEforge was supported by the following people, listed alphabetically. 
+PGEforge was supported by the following people, listed alphabetically.
 
-#### Jorge Amaya-Romero
-
-![](img/people/jorge.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** Immunology and Infectious Disease, Harvard T.H. Chan School of Public Health
-
-#### Sophie Bérubéi
-
-![](img/people/SophieB.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health
-
-#### Nick Brazeau
-
-![](img/people/Brazeau_NF.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** PGY-1, Internal Medicine, Duke University Medical Center
-
-#### Bryan Greenhouse
-
-![](img/people/UCSF_20170322_B_Greenhouse_426.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** EPPIcenter, University of California San Francisco
-
-#### Nicholas Hathaway
-
-![](img/people/hathaway_nicholas_headshot.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** Department of Medicine, University of Massachusetts Chan Medical School
-
-#### Jason Hendry
-
-![](img/people/jason.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** Max Planck Institute for Infection Biology
-
-#### Kirsty McCann
-
-![](img/people/KirstyMcCann.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** Centre for Innovation in Infectious Disease and Immunology Research (CIIDIR)
-The Institute for Mental and Physical Health and Clinical Translation (IMPACT), School of Medicine, Deakin University
-
-#### Kathryn Murie
-
-![](img/people/kathryn.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** EPPIcenter, University of California San Francisco
-
-#### Max Murphy
-
-![](img/people/max.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** EPPIcenter, University of California San Francisco
-
-#### Karamoko Niare
-
-![](img/people/Karamoko_Photo.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** Brown University
-
-#### Jody Phelan
-
-![](img/people/jody.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** London School of Hygiene and Tropical Medicine
-
-#### Shazia Ruybal-Pesántez
-
-![](img/people/shazia.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London; Instituto de Microbiología, Universidad San Francisco de Quito
-
-#### Stephen F. Schaffner
-
-![](img/people/steve_schaffner.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** Broad Institute of Harvard and MIT; Department of Organismic and Evolutionary Biology, Harvard University; Department of Immunology and Infectious Diseases, Harvard T.H. Chan School of Public Health, Harvard University
-
-#### Alfred Simkin
-
-![](img/people/alfred.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** Pathology and Laboratory Medicine, Brown University
-
-#### Bob Verity
-
-![](img/people/bob.jpeg){fig-align="left" width="100px"}
-
-**Affiliations:** MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London
-
-#### Amy Wesolowski
-
-![](img/people/Wesolowski.jpg){fig-align="left" width="100px"}
-
-**Affiliations:** Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Name                        |                                                                                     | Affiliations                                                                                                                                                                                                               |
++=============================+=====================================================================================+============================================================================================================================================================================================================================+
+| #### Jorge Amaya-Romero     | ![](img/people/jorge.jpeg){fig-align="left" width="100px"}                          | Immunology and Infectious Disease, Harvard T.H. Chan School of Public Health                                                                                                                                               |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Sophie Bérubé          | ![](img/people/SophieB.jpeg){fig-align="left" width="100px"}                        | Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health                                                                                                                                                |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Nick Brazeau           | ![](img/people/Brazeau_NF.jpg){fig-align="left" width="100px"}                      | PGY-1, Internal Medicine, Duke University Medical Center                                                                                                                                                                   |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Mouhamadou Fadel Diop  | ![](img/people/fadel.jpeg){fig-align="left" width="126"}                            | Medical Research Council Unit The Gambia at the London School of Hygiene and Tropical Medicine                                                                                                                             |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Bryan Greenhouse       | ![](img/people/UCSF_20170322_B_Greenhouse_426.jpeg){fig-align="left" width="100px"} | EPPIcenter, University of California San Francisco                                                                                                                                                                         |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Nicholas Hathaway      | ![](img/people/hathaway_nicholas_headshot.jpg){fig-align="left" width="100px"}      | Department of Medicine, University of Massachusetts Chan Medical School                                                                                                                                                    |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Jason Hendry           | ![](img/people/jason.jpeg){fig-align="left" width="100px"}                          | Max Planck Institute for Infection Biology                                                                                                                                                                                 |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Kirsty McCann          | ![](img/people/KirstyMcCann.jpg){fig-align="left" width="100px"}                    | Centre for Innovation in Infectious Disease and Immunology Research (CIIDIR) The Institute for Mental and Physical Health and Clinical Translation (IMPACT), School of Medicine, Deakin University                         |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Kathryn Murie          | ![](img/people/kathryn.jpeg){fig-align="left" width="100px"}                        | EPPIcenter, University of California San Francisco                                                                                                                                                                         |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Max Murphy             | ![](img/people/max.jpeg){fig-align="left" width="100px"}                            | EPPIcenter, University of California San Francisco                                                                                                                                                                         |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Karamoko Niare         | ![](img/people/Karamoko_Photo.jpeg){fig-align="left" width="100px"}                 | Brown University                                                                                                                                                                                                           |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Jody Phelan            | ![](img/people/jody.jpeg){fig-align="left" width="100px"}                           | London School of Hygiene and Tropical Medicine                                                                                                                                                                             |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Shazia Ruybal-Pesántez | ![](img/people/shazia.jpg){fig-align="left" width="100px"}                          | MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London; Instituto de Microbiología, Universidad San Francisco de Quito                                  |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Stephen F. Schaffner   | ![](img/people/steve_schaffner.jpg){fig-align="left" width="100px"}                 | Broad Institute of Harvard and MIT; Department of Organismic and Evolutionary Biology, Harvard University; Department of Immunology and Infectious Diseases, Harvard T.H. Chan School of Public Health, Harvard University |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Alfred Simkin          | ![](img/people/alfred.jpeg){fig-align="left" width="100px"}                         | Pathology and Laboratory Medicine, Brown University                                                                                                                                                                        |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Aimee Taylor           | ![](img/people/Taylor-A.jpg){fig-align="left" width="108"}                          | Institut Pasteur                                                                                                                                                                                                           |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Bob Verity             | ![](img/people/bob.jpeg){fig-align="left" width="100px"}                            | MRC Centre for Global Infectious Disease Analysis, Department of Infectious Disease Epidemiology, Imperial College London                                                                                                  |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| #### Amy Wesolowski         | ![](img/people/Wesolowski.jpg){fig-align="left" width="100px"}                      | Department of Epidemiology, Johns Hopkins Bloomberg School of Public Health                                                                                                                                                |
++-----------------------------+-------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## Community rules
+
 All contributors to PGEforge adhere to our [community rules](how_to_contribute.qmd#community-rules).
