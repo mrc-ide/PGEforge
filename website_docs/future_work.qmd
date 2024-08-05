@@ -3,34 +3,34 @@ title: "What's in store for the future?"
 format: html
 ---
 
-**This page is under development!**
+:::{.column-margin}
+![](img/pgeforge_ecosystem.png){ width=262 height=300 }
+:::
 
 ## The PGEforge vision
-
-PGEforge is a **community-driven** platform designed to simplify *Plasmodium* genomic data analysis and encourage XXXX. 
-
-![](img/pgeforge_ecosystem.png){ width=450 height=450 }
-
+PGEforge is a **community-driven** platform created by and for malaria genomic epidemiology analysis tool developers and end-users. If you are interested in contributing to these efforts, please [get involved](how_to_contribute.qmd)!
 
 ## Tool benchmarking
-Part of evaluating tools involves considering their fulfillment of objective [software standards](tools_to_standards.qmd) from both the end-user and developer perspective. This is a great way to determine how well we are doing at making our tools accessible and usable by anyone. But we also need to evaluate how *well* tools do what they say they do and how they compare to other tools intended for the same purpose. 
+The process of evaluating tools involves assessing their adherence to objective [software standards](tools_to_standards.qmd) from both the end-user and developer perspectives. This is a great way to determine how well we are doing at making our tools accessible and usable by anyone. However, it is equally important to evaluate how *well* tools perform their intended functions and how they compare to other tools designed for the same purpose. 
 
-Formal benchmarking of tools is ongoing and planned, including the use of [canonical simulated and empirical datasets](data_description.qmd) to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet theoretical standards but also perform reliably in practical applications. We plan to host these types of benchmarking resources and results in PGEforge in the near future.
+This type of evaluation could be achieved through **formal benchmarking** of different tools and their analysis functionalities. We can use [canonical simulated datasets](data_description.qmd) with known ground truth to evaluate the accuracy, sensitivity, and specificity of the tools in producing desired outcomes. What do we mean by ground truth? For example, we can simulate data to have specific data features that we are interested in benchmarking, including complexity of infection (COI), missingness, sequencing errors and parasitemia. We can then evaluate how well the tools estimate these features. With empirical "real-world" datasets, a ground truth may not be known, but we can use these datasets to compare consistency of each tool obtaining the same outcomes. 
 
-Some ideas in this space: 
+By systematically benchmarking tools against known datasets, we can ensure that the tools not only meet software standards but also perform reliably in practical applications, such as [key use cases for *Plasmodium* genomic epidemiology](use_cases.qmd). We plan to host these types of benchmarking resources and results in PGEforge in the near future.
 
-- 
-- 
+:::{.column-margin}
+Ongoing work in this space includes **benchmarking COI estimation tools.**
+:::
 
-## Adding more tools
-Our tool landscaping and evaluation process . Rather than tackling all possible tools, we attempted to concentrate our efforts on....
 
-However, PGEforge has the potential to be a community resource for many types of *Plasmodium* genomic data and tools and their applications.
+## Adding and evaluating more tools
+Our initial efforts to [landscape available tools](tool_landscaping.qmd) were focused on tools for downstream *Plasmodium* genetic analysis and included 40 available tools. However, future work could include the following areas (not an exhaustive list!):
 
-- Focuses on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. We did not consider applications to mosquito genetics, despite some tools and techniques being applicable to both organisms. 
+- Tools with applications to mosquito genetics, as long as they are generally within the scope of PGEforge (i.e. *Plasmodium* genomic epidemiology tools)
+- Bioinformatic pre-processing tools/pipelines, such as variant calling and quality filters
+- Tools that are not specifically engineered for *Plasmodium* but can be applied to *Plasmodium*genetic data, such as more generic population genetics tools that estimate metrics such as F-statistics, extended haplotype homozygosity, etc
 
 ## Tool development
-????
+**Do we want to include some of the results from the tools to functionality evaluation? We could say here that tools that can phase are needed for all use cases!**
 
 Tools to functions -- we still can't phase! 
 
