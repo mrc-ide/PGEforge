@@ -1,0 +1,14 @@
+{
+  "hash": "374d068796f5f044e1abee39dfeb5cff",
+  "result": {
+    "markdown": "---\ntitle: \"Installing hierfstat\"\noutput: html_document\n---\n\n\n\n\nWe can easily install `hierfstat` from the [plasmogenepi](https://plasmogenepi.r-universe.dev) repository\n\n\n::: {.cell}\n\n```{.r .cell-code}\nif(!require(\"hierfstat\"))  install.packages('hierfstat', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n:::\n\n\nWe will also need `vcfR` to load some data. Install this with:\n\n::: {.cell}\n\n```{.r .cell-code}\nif(!require(\"vcfR\"))  install.packages(\"vcfR\")\n```\n:::\n\nOnce this finishes, check that the library loads ok\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(hierfstat)\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

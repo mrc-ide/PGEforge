@@ -1,0 +1,14 @@
+{
+  "hash": "83572eeaa7b7d9472bdf43e2f57200f4",
+  "result": {
+    "markdown": "---\ntitle: \"Installing isoRelate\"\noutput: html_document\n---\n\n\n\n\n## Step 1: Use plasmogenepi.r-universe installaion\n\nplasmogenepi.r-universe [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds),  greatly simplifies package installation. \n\nTo install isoRelate, use the following:\n\n::: {.cell}\n\n```{.r .cell-code}\n# Install isoRelate in R:\ninstall.packages('isoRelate', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n:::\n\n\nAssuming all has been installed correctly with no errors, now load the package in RStudio:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(isoRelate)\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

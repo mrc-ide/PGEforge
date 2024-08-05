@@ -1,0 +1,14 @@
+{
+  "hash": "fb22d84461eec5e2a13bbf1da5cc5347",
+  "result": {
+    "markdown": "---\ntitle: \"Analysis tutorial\"\noutput: html_document\n---\n\n\n\n\nFirst we will load the libraries we will need:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(hierfstat)\nlibrary(vcfR)\n```\n:::\n\n\nWe're going to be using WGS data from Vietnam which was generated for the \n[Pf3k Project](https://www.malariagen.net/parasite/pf3k). First load in the metadata containing \nthe sample names and information on where the samples were collected.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nmeta<-read.csv(\"../../data/wgs/pf3k/Vietnam/pf3k.metadata.Vietnam.csv\")\n```\n:::\n\n\nThen we can load in the genetic data from VCF format.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nvcf<-read.vcfR(\"../../data/wgs/pf3k/Vietnam/SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz\")\n```\n:::\n\n\nNext we extract the genotypes and convert them into a dosage format.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nvcf_gts<-extract.gt(vcf)\n\nrecode_gt<-function(x){\n  x<-gsub(\"[|]\",\"/\",x)\n  x<-gsub(\"0/0\",0,x)\n  x<-gsub(\"0/1\",1,x)\n  x<-gsub(\"1/1\",2,x)\n  as.numeric(x)\n}\n\nraw_gts<-apply(vcf_gts,MARGIN = 2,function(x){recode_gt(x)})\n```\n:::\n\n\n\nNow we can remove loci which are monomorphic.\n\n::: {.cell}\n\n```{.r .cell-code}\ncalculate_af<-function(x){\n  sum(x,na.rm = T)/length(x)*2\n}\naf <- apply(raw_gts,MARGIN = 1,calculate_af)\ntransposed_gts<-as.data.frame(t(raw_gts[which(af>0 & af<1),]))\n```\n:::\n\n\nWe now have a matrix where the samples are rows and the columns are loci. Hierfstat requires you to also\nprovide population assignments for each sample by adding it to the data as the first column.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ndat<-cbind(meta$site,transposed_gts)\n```\n:::\n\n\nNow we are ready to calculate some statistics!\n\n\n::: {.cell}\n\n```{.r .cell-code}\nresults<-basic.stats(dat)\nresults$overall\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n     Ho      Hs      Ht     Dst     Htp    Dstp     Fst    Fstp     Fis    Dest \n 0.0674  0.0635  0.0639  0.0003  0.0640  0.0005  0.0052  0.0078 -0.0601  0.0005 \n```\n:::\n:::\n\n\nThe `results$overall` table contains basic statistics averaged over loci. The \nstatistics presented are defined in eq.7.38– 7.43 pp.164–5 of Nei (1987).\n\n\n## Summary\n\nWe loaded in data from VCF format, converted this to dosage and finally calculated basic statistics.",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

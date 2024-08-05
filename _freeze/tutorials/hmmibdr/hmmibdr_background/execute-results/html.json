@@ -1,0 +1,18 @@
+{
+  "hash": "2c8d089f6ddcd0a20f880f78ce8cac12",
+  "result": {
+    "markdown": "---\ntitle: \"hmmibdr\"\noutput: html_document\nauthor: \"Sophie Berube\"\ndate: \"13-12-2023\"\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> Rcpp wrapper for hmmIBD </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> OJ Watson </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\"> 0.2.0 </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\"> OJ Watson 2019 </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> NA </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> https://github.com/OJWatson/hmmibdr/tree/main </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> NA </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\"> Sophie Berube </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\"> 13-12-2023 </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\nThis package is an Rcpp wrapper for the hmmibd software. Currently, there are several c and python scripts (within the hmmibd software) required to convert files from VCF format to a text format that can then be used by either hmmibd or hmmibdr to perform further analysis. However, these scripts require the user to run c and python code; these are the same requirements as those for performing analysis using only the hmmibd software . Therefore, we recommend the use of the hmmibd software directly for the entire analysis. \n\nPlease refer to the hmmibd tutorial for a complete demonstration of the tool. \n\n## Existing resources\n\n- A short tutorial for hmmibdr is located on the [Github Page](https://github.com/OJWatson/hmmibdr/tree/main)\n- See the hmmibd for further information.\n\n## Citation\n\n```\n@Manual{,\n    title = {hmmibdr: HMM Identity by Descent},\n    author = {OJ Watson},\n    year = {2023},\n    note = {R package version 0.2.0},\n  }\n\n```",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
