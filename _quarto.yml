@@ -52,6 +52,10 @@ website:
             file: website_docs/tool_landscaping.qmd
           - text: "Installing via the plasmogenepi.r-universe"
             file: website_docs/R_universe.qmd
+      - section: website_docs/software_standards.qmd
+        contents:
+          - text: "Overview by tool"
+            file: website_docs/tools_to_standards.qmd
       - section: website_docs/tutorials_overview.qmd
         contents:
           - section: "coiaf"
@@ -156,12 +160,9 @@ website:
               file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
             - text: "Analyze data with `THEREALMcCOIL`"
               file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
-      - section: website_docs/software_standards.qmd
-        contents:
-          - text: "Overview by tool"
-            file: website_docs/tools_to_standards.qmd
       - section: website_docs/workflows.qmd
         contents:
+          - text: "Use cases"
           - text: "Coming soon!"
       - section: "How to contribute"
         contents:

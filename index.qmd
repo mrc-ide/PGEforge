@@ -28,9 +28,9 @@ The site is organized to help you efficiently access and utilize our resources. 
 
 -	[Data](website_docs/data_description.qmd): Access a curated selection of datasets commonly used in genomic analysis. These datasets help you familiarize yourself with standard data formats and are used consistently across our tutorials, ensuring easy comparison of tools.
 -	[Tool Landscaping](website_docs/tool_landscaping.qmd): Discover a wide range of analysis tools, complete with basic information on their functions, where to find them, and whether we offer tutorials for them. We also introduce the “PlasmoGenEpi R-universe,” a website that simplifies tool installation.
--	[Tutorials](website_docs/tutorials_overview.qmd): Explore comprehensive guides covering the entire process of installing software, formatting data, running basic functions, and interpreting outputs. These tutorials are designed to make complex tasks straightforward and accessible.
 -	[Software Standards](website_docs/tools_to_standards.qmd): Learn about our objective software standards aimed at guiding developers towards best practices and creating user-friendly tools.
--	[Analysis Workflows](website_docs/workflows.qmd): Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines typical workflows and maps tools to various analytical steps.
+-	[Tutorials](website_docs/tutorials_overview.qmd): Explore comprehensive guides covering the entire process of installing software, formatting data, running basic functions, and interpreting outputs. These tutorials are designed to make complex tasks straightforward and accessible.
+-	[Analysis Workflows](website_docs/workflows.qmd): Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines eight defined use cases, typical analysis workflows and maps tools to various analytical steps.
 -	[How to Contribute](website_docs/how_to_contribute.qmd): Find out how you can contribute to this community-driven resource. We welcome input from all areas of the research community to continuously improve and expand our platform.
 
 
