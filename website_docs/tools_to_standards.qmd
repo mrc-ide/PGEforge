@@ -68,7 +68,7 @@ In line with the scope of PGEforge, we focus our efforts on evaluating available
 If you would like to contribute to this effort, please take a look at our [contributor guidelines](how_to_contribute.qmd)!
 
 
-*Note: tools in grey have not been evaluated* 
+*Note: tools in grey have not yet been evaluated* 
 ```{r table_summary, echo=F}
 datatable(tool_std_summary,
           extensions = c('FixedColumns', 'FixedHeader'),
