@@ -79,6 +79,3 @@ This is then translated to an **end-user score** and **development score** for t
 ### Tool evaluation
 Every *Plasmodium* genomic analysis tool can be evaluated against these objective software standards to provide these scores. The resulting evaluation matrix and overview of each tool can be found [here](tools_to_standards.qmd).
 
-::: {.column-margin}
-![A 'traffic light' system can help us improve PGEforge tools🚦!](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcndoZ2Q2bW5hMnMxdGMwbWNyNW42d2NxODd2azhiN285ZHE0NXZpaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7Z4tNIWOQWTlfGN2/giphy.gif){ width=250 height=200 }
-:::
