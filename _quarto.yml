@@ -163,6 +163,7 @@ website:
       - section: website_docs/workflows.qmd
         contents:
           - text: "Use cases"
+            file: website_docs/use_cases.qmd
           - text: "Coming soon!"
       - section: "How to contribute"
         contents:
