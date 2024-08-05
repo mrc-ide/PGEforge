@@ -26,7 +26,8 @@ matrix <- read.csv("tables/MMS_software_landscaping.csv")
 
 ```{r echo=F}
 matrix_dt <- matrix %>% 
-  clean_names(case = "title") 
+  clean_names(case = "title") %>% 
+  rename("Tutorial on PGEforge" = "Tutorial on Pg Eforge")
 
 datatable(matrix_dt,
           extensions = c('FixedColumns', 'FixedHeader'),
