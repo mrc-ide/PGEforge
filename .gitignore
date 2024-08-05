@@ -8,3 +8,4 @@ ignore/
 .DS_Store
 /_site/
 *.html
+README_files
