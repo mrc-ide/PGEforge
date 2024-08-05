@@ -1,0 +1,14 @@
+{
+  "hash": "7df195f0977590bf6c1444db0b0a5945",
+  "result": {
+    "markdown": "---\ntitle: \"Installing moire\"\noutput: html_document\n---\n\n\n\n\n# Install moire in R:\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages('moire', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nPackage which is only available in source form, and may need\n  compilation of C/C++/Fortran: 'moire'\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\ninstalling the source package 'moire'\n```\n:::\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

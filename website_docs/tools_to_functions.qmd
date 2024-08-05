@@ -5,8 +5,10 @@ format: html
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-library(googlesheets4)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+# library(googlesheets4)
 library(DT)
 ```
 
@@ -15,11 +17,11 @@ library(DT)
 tool_fxn_df <- read.csv("tables/Tools_to_functions.csv")
 ```
 
-```{r echo=F}
+```{r echo=F, eval=F}
 datatable(tool_fxn_df)
 ```
 
-```{r echo=F}
+```{r echo=F, eval=F}
 tool_fxn_df %>% 
   pivot_longer(cols = -Tool, names_to = "Functionality", values_to = "presence") %>% 
   ggplot(aes(x = Tool, y = Functionality, fill = presence)) +

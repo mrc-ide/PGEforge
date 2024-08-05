@@ -1,0 +1,16 @@
+{
+  "hash": "956c7fa36d556886a4be4028fbd319db",
+  "result": {
+    "markdown": "---\ntitle: \"Tutorials\"\nsubtitle: \"Comprehensive guides covering the entire process of using *Plasmodium* genomic analysis tools\"\nformat: html\n---\n\n\n## Overview\nThe aim of the PGEforge tutorials is to provide worked examples that show *how* to use a tool by *working through* code. This involves code showing you how to install the tool, what input data formats you need to use, how to wrangle the data (if applicable), and how to use the tool functionalities to analyse data. Summary documents detailing the purpose of each tool can also help you decide which tool you may want to use for a certain application.\n\n:::{.column-margin}\nHere is a simplified example!\n\n::: {.cell}\n\n```{.r .cell-code}\n# my favorite tool\ninstall(\"myfavoritetool\")\n\nthe_best_data <- read.csv(\"simulated_data_from_PGEforge.csv\")\n\nthe_best_analysis <- myfavoritetool::analysis_function(the_best_data)\nplot(the_best_analysis)\n```\n:::\n\n\nAnd of course, your output will be: `the_best_results!` :) \n:::\n\nThe following resources are available for each tool:\n\n- A summary document detailing the main purpose and use cases, license, code repository, relevant publication(s), citation information and links to any additional resources\n- Complete installation instructions\n- A fully reproducible and worked-through tutorial showing example usage of the tool and its functionalities. This often uses the [canonical simulated or empirical datasets](data_description.qmd) as input data\n\n## How to contribute\n\nThis is a live resource and we plan to continue adding to this as new tools become available! We hope this will grow into a common resource for analysis of malaria genetic data. \n\nIf you are interested in contributing, there are [templates available](https://mrc-ide.github.io/PGEforge/tutorials/Template/Template_background.html) and [instructions](how_to_contribute.qmd) on how to get started. ",
+    "supporting": [
+      "tutorials_overview_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

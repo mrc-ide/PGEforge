@@ -6,19 +6,34 @@ format:
     image: "website_docs/img/radish.png"
 ---
 
-## Welcome
+## Background
+
+The **R**eproducibility, **A**ccessibility, **D**ocumentation and **I**nter-operability **S**tandards **H**ackathon (**RADISH23**), organised by Bob Verity, Shazia Ruybal-Pesántez, Bryan Greenhouse and Amy Wesolowski took place at Johns Hopkins Bloomberg School of Public Health in Baltimore, USA from 11-14th December 2023, with 16 participants from 11 institutions. 
 
 ::: {.column-margin}
-![A cute radish](img/radish.png)
+![A cute radish](img/radish.png){ width=200 height=200 }
 :::
 
-The **R**eproducibility, **A**ccessibility, **D**ocumentation and **I**nter-operability **S**tandards **H**ackathon (**RADISH23**), organised by Bob Verity, Shazia Ruybal-Pesántez, Bryan Greenhouse and Amy Wesolowski took place on Mon 11th Dec to Thurs 14th Dec 2023 in Baltimore, USA.
-
 ![](img/radish23_group_photo.jpg)
-*For more details on RADISH23 attendees and contributors to PGEforge, see the [Contributors page](website_docs/contributors.qmd) *
+*For more details on RADISH23 attendees and contributors to PGEforge, see the [Contributors page](contributors.qmd) *
 
 ## Main aims
 
-Our aim was to take the wide range of software tools in malaria genomic epidemiology and make it so that more people can use them more reliably. This is a first step in working towards more ambitious goals like designing workflows, benchmarking, or coming up with guidelines for best practices.
+Our aim was to take the wide range of software tools in malaria genomic epidemiology and create community resources so that more people can use them more reliably. Over the course of 4 days, we began creating a systematic framework for analysis by curating existing software tools, identifying the gaps in commonly used tools, in addition to having broader discussions about standardizing software practices. 
 
-To view the tutorials developed during RADISH23, see the [Tutorials](website_docs/tutorials_overview.qmd).
+One of our main aims to create community resources that allowed anyone with basic computer skills to be able to run common *Plasmodium* genetic analyses locally. By framing this work within the wider context of use-cases, we made progress towards harmonizing which tools need to be chained together to answer specific questions relevant to malaria control as part of well-defined and flexible workflows.
+
+## Outputs
+The event was primarily coding-based and hands-on with the aim that the materials developed for each tool will allow an end-user to go from installation of the tool on their local machine to analysis using the standardized datasets we compiled.
+
+
+::: {.column-margin}
+![](img/PXL_20231213_195311094.jpg){ width=400 height=300}
+:::
+
+Prior to the hackathon, we carried out a [scoping/landscaping exercise](tool_landscaping.qmd) to identify all available analysis tools and evaluated them against a set of [software standards](software_standards.qmd), identifying those that are superseded or relegated and those we would prioritize during the hackathon. With those priority tools in mind, [comprehensive guides](tutorials_overview.qmd) were developed for the tools, including summary documents, installation aids and tutorials. 
+
+In addition, we compiled [simulated and empirical datasets](data_description.qmd) of genomic data in common formats required as input for the various tools to allow reproducibility for end-users running the tutorials and for future uses.
+
+Alongside the coding tasks, there were several small break-out sessions where participants defined malaria genomic surveillance data
+analysis use cases and sketched workflows for each of them, including functionality requirements and mapping these functionalities to available tools. 

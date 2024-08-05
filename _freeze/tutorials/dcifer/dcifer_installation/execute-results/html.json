@@ -1,0 +1,14 @@
+{
+  "hash": "9aed6c0b1c779798fda52cc19e596124",
+  "result": {
+    "markdown": "---\ntitle: \"Installing dcifer\"\noutput: html_document\n---\n\n\n\n\nThe `dcifer` R package is both on CRAN and part of the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/dcifer). \n\nYou can install it by running the following code: \n\n::: {.cell}\n\n```{.r .cell-code}\n# Install dcifer in R:\ninstall.packages('dcifer', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -20,7 +20,7 @@ website:
   page-footer:
     background: "#f9eaf1"
     foreground: "#c82f61"
-    center: "This website is built with ❤️ and [Quarto](https://quarto.org/). &copy; 2024"
+    center: "This website is built with 💖️, <i class='fab fa-r-project' style='color: #cf366c;'></i> and [quarto](https://quarto.org/). &copy; 2024"
     
   sidebar:
     background: "#f9eaf1"
@@ -36,20 +36,28 @@ website:
     contents:
       - href: index.qmd
         text: Welcome
-      - section: "Data"
+      - section: website_docs/data_description.qmd
         contents:
-          - website_docs/data_description.qmd
-          #- text: "The data-DAG (TODO)"
+          - text: "WGS"
+            file: website_docs/data_wgs.qmd
+          - text: "Microhaplotypes"
+            file: website_docs/data_mhaps.qmd
+          - text: "SNPs"
+            file: website_docs/data_snps.qmd
+          - text: "pfhrp2/3 deletion counts"
+            file: website_docs/data_counts.qmd
       - section: "Tool landscaping"
         contents:
           - text: "The landscaping matrix"
             file: website_docs/tool_landscaping.qmd
           - text: "Installing via the plasmogenepi.r-universe"
             file: website_docs/R_universe.qmd
-      - section: "Tutorials"
+      - section: website_docs/software_standards.qmd
         contents:
-          - text: "**Overview of all tutorials**"
-            file: website_docs/tutorials_overview.qmd
+          - text: "Overview by tool"
+            file: website_docs/tools_to_standards.qmd
+      - section: website_docs/tutorials_overview.qmd
+        contents:
           - section: "coiaf"
             contents:
             - text: "Summary"
@@ -94,7 +102,7 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
-          - section: "Hierfstat"
+          - section: "hierfstat"
             contents:
             - text: "Summary"
               file: tutorials/hierfstat/background.Rmd
@@ -112,30 +120,6 @@ website:
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
               file: tutorials/hmmIBD/hmmIBD_analysis.md
-          - section: "hmmibdr"
-            contents:
-            - text: "Summary"
-              file: tutorials/hmmibdr/hmmibdr_background.Rmd
-          - section: "malaria.em"
-            contents:
-            - text: "Summary"
-              file: tutorials/malariaem/malariaem_background.qmd
-          - section: "MalHaploFreq"
-            contents:
-            - text: "Summary"
-              file: tutorials/MalHaploFreq/MalHaploFreq_background.qmd
-          - section: "MLMOI"
-            contents:
-            - text: "Summary"
-              file: tutorials/MLMOI/Template_background.Rmd
-          # - section: "moimix"
-          #   contents:
-          #   - text: "Summary"
-          #     file: tutorials/moimix/moimix_background.Rmd
-          #   - text: "Installation"
-          #     file: tutorials/moimix/moimix_installation.Rmd
-          #   - text: "Analyze data with `moimix`"
-          #     file: tutorials/moimix/moimix_analysis.Rmd
           - section: "moire"
             contents:
             - text: "Summary"
@@ -160,12 +144,12 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
-          - section: "rehh"
-            contents:
-            - text: "Summary"
-              file: tutorials/rehh/Template_background.Rmd
-            - text: "Installation"
-              file: tutorials/rehh/Template_installation.Rmd
+          # - section: "rehh"
+          #   contents:
+          #   - text: "Summary"
+          #     file: tutorials/rehh/Template_background.Rmd
+          #   - text: "Installation"
+          #     file: tutorials/rehh/Template_installation.Rmd
             # - text: "Analyze data with `rehh`"
             #   file: tutorials/rehh/Template_analysis.Rmd
           - section: "THEREALMcCOIL"
@@ -176,14 +160,11 @@ website:
               file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
             - text: "Analyze data with `THEREALMcCOIL`"
               file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
-      - section: "Software standards"
+      - section: website_docs/workflows.qmd
         contents:
-          - website_docs/software_standards.qmd
-          - text: "Overview by tool"
-            file: website_docs/tools_to_standards.qmd
-      - section: "Analysis workflows"
-        contents:
-          - website_docs/workflows.qmd
+          - text: "Use cases"
+            file: website_docs/use_cases.qmd
+          - text: "Coming soon!"
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
@@ -193,6 +174,8 @@ website:
               file: website_docs/radish23.qmd
           - href: website_docs/contributors.qmd
             text: "Contributors"
+          - href: website_docs/future_work.qmd
+            text: "Future work"
 
 format:
   html:
@@ -200,6 +183,8 @@ format:
     toc: true
     # fontcolor: "#c82f61"
     linkcolor: "#c82f61" 
+    header-includes: |
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet"/>
 
 execute:
   freeze: auto

@@ -3,13 +3,23 @@ title: "PGEforge"
 subtitle: "Resources for enhancing **P**lasmodium **G**enomic **E**pidemiology analysis"
 ---
 
-<div class="custom-title">
-Your resource hub for <br> *Plasmodium* genomic analysis
-</div>
+<!-- <div class="custom-title"> -->
+<!-- Your resource hub for <br> *Plasmodium* genomic analysis -->
+
+<!-- ![](website_docs/img/pgeforge_ecosystem.png){class="title-image" width="300px"} -->
+<!-- </div> -->
+
+![](website_docs/img/pgeforge_header.png)
 
 ## Welcome
 
 PGEforge is a community-driven platform designed to simplify *Plasmodium* genomic data analysis. The process of analyzing genomic data often involves various software tools with different formats, user interfaces, and levels of accessibility. These differences can create barriers, especially for those without strong computational skills.
+
+Although there are numerous existing software tools available to analyze data for malaria genomic surveillance, there is little guidance outlining how to choose, use, or assemble these tools to translate genetic data into interpretable and actionable results. For example, estimating the extent of antimalarial resistance from sequence data requires several different steps depending on the number and type of relevant polymorphisms and outcomes of interest. To improve the accessibility, accuracy, and reproducibility of genomic surveillance, a roadmap is needed to guide the specific analysis functionalities needed for any given end result, as well as knowledge of which tools are available to perform those functionalities.
+
+An adjacent but extremely important challenge is the large variation in software standards of currently available tools for analyzing *Plasmodium* genomic data, often limiting the accessibility and utility of these tools. Many tools are challenging to use due to inadequate documentation, difficulty in installation due to operating system incompatibility or poorly documented dependencies, and requirements for data to be input in specific, nonstandard formats.
+
+## Our motivation
 
 PGEforge aims to overcome these challenges by providing clear tutorials, streamlined workflows, and comprehensive resources to help researchers at all levels understand and analyze genomic data. By prioritizing the end-user, we strive to encourage better software development and foster an inclusive research community. Our goal is to make advanced genomic analysis accessible to everyone, promoting collaboration and accelerating progress in malaria research.
 
@@ -18,9 +28,9 @@ The site is organized to help you efficiently access and utilize our resources. 
 
 -	[Data](website_docs/data_description.qmd): Access a curated selection of datasets commonly used in genomic analysis. These datasets help you familiarize yourself with standard data formats and are used consistently across our tutorials, ensuring easy comparison of tools.
 -	[Tool Landscaping](website_docs/tool_landscaping.qmd): Discover a wide range of analysis tools, complete with basic information on their functions, where to find them, and whether we offer tutorials for them. We also introduce the “PlasmoGenEpi R-universe,” a website that simplifies tool installation.
--	[Tutorials](website_docs/tutorials_overview.qmd): Explore comprehensive guides covering the entire process of installing software, formatting data, running basic functions, and interpreting outputs. These tutorials are designed to make complex tasks straightforward and accessible.
 -	[Software Standards](website_docs/tools_to_standards.qmd): Learn about our objective software standards aimed at guiding developers towards best practices and creating user-friendly tools.
--	[Analysis Workflows](website_docs/workflows.qmd): Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines typical workflows and maps tools to various analytical steps.
+-	[Tutorials](website_docs/tutorials_overview.qmd): Explore comprehensive guides covering the entire process of installing software, formatting data, running basic functions, and interpreting outputs. These tutorials are designed to make complex tasks straightforward and accessible.
+-	[Analysis Workflows](website_docs/workflows.qmd): Understand how different tools can be integrated to address common questions in malaria genomic epidemiology. This section outlines eight defined use cases, typical analysis workflows and maps tools to various analytical steps.
 -	[How to Contribute](website_docs/how_to_contribute.qmd): Find out how you can contribute to this community-driven resource. We welcome input from all areas of the research community to continuously improve and expand our platform.
 
 

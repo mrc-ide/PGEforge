@@ -1,0 +1,14 @@
+{
+  "hash": "89605557f17bc7c6bac578b2e39d8830",
+  "result": {
+    "markdown": "---\ntitle: \"Installing MIPanalyzer\"\noutput: html_document\n---\n\n\n\n\n## Installing from R-Universe\nYou can directly install `MIPanalyzer` from  [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation.  \n\n\n## Installing From Github \n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(\"remotes\")\nremotes::install_github(\"mrc-ide/MIPanalyzer\")\n```\n:::\n\n\n### Dependencies\n`MIPanalyzer` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: \n\n* Windows\n    - Download and install the appropriate version of [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R. On installation, ensure you check the box to arrange your system PATH as recommended by Rtools\n* Mac OS X\n    - Download and install [XCode](http://itunes.apple.com/us/app/xcode/id497799835?mt=12)\n    - Within XCode go to Preferences : Downloads and install the Command Line Tools\n* Linux (Debian/Ubuntu)\n    - Install the core software development utilities required for R package development as well as LaTeX by executing\n    ```\n    sudo apt-get install r-base-dev texlive-full\n    ```\n\nAssuming everything installed correctly, you can now load the package:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(MIPanalyzer)\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

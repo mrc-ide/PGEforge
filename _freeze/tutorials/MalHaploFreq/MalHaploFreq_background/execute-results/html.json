@@ -1,0 +1,18 @@
+{
+  "hash": "8d76875f24d9d2c0b3d758c2e23aac47",
+  "result": {
+    "markdown": "---\ntitle: \"MalHaploFreq About\"\noutput: html_document\nauthor: \"Nicholas Hathaway\"\ndate: \"2023-12-15\"\nbibliography: reference.bib\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> prevalence </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> Ian Hastings </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\"> NA </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> <a href=\"http://pcwww.liv.ac.uk/hastings/MalHaploFreq/\" target=\"_blank\"> http://pcwww.liv.ac.uk/hastings/MalHaploFreq/</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> <a href=\"https://doi.org/10.1186/1475-2875-7-130\" target=\"_blank\"> https://doi.org/10.1186/1475-2875-7-130</a> </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\n\nThis tool was created to estimate prevalence of haplotypes (linking up to 3 SNPs together) from SNP loci. This tool requires input determined MOI and does 3 loci. Since the creation of this tool other tools have been created that do similar analysis with additional features, for example [MultiLociBiallelicModel](../MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd) also estimates prevalence but does not require MOI, can do more loci and estimates the MOI from the input data. \n\n## Citation\n\n[@Hastings2008-mb]\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
