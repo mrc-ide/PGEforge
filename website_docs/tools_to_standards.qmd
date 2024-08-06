@@ -1,12 +1,14 @@
 ---
 title: "Overview of tools based on software standards"
-format: html
+format: 
+  html:
+    toc: false
+    page-layout: full
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(stringr)
+library(tidyverse)
 library(janitor)
 library(DT)
 ```

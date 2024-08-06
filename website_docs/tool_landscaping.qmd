@@ -1,10 +1,13 @@
 ---
 title: "Tool landscaping"
-format: html
+format: 
+  html:
+    toc: false
+    page-layout: full
 ---
 
 ## Overview
-In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. Tools are considered within this scope if they:
+In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. Tools were initially considered within this scope if they:
 
 - Focus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
 - Focus on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. 
@@ -14,7 +17,7 @@ In our initial landscaping, we did not consider applications to mosquito genetic
 ## Landscaping matrix
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
+library(tidyverse)
 library(janitor)
 library(DT)
 ```
