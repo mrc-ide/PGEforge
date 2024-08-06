@@ -1,10 +1,13 @@
 ---
 title: "Tool landscaping"
-format: html
+format: 
+  html:
+    toc: false
+    page-layout: full
 ---
 
 ## Overview
-In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. Tools are considered within this scope if they:
+In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to *Plasmodium* genetic data and that focus on downstream analysis. Tools were initially considered within this scope if they:
 
 - Focus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
 - Focus on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. 
@@ -14,7 +17,7 @@ In our initial landscaping, we did not consider applications to mosquito genetic
 ## Landscaping matrix
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
+library(tidyverse)
 library(janitor)
 library(DT)
 ```
@@ -27,21 +30,24 @@ matrix <- read.csv("tables/MMS_software_landscaping.csv")
 ```{r echo=F}
 matrix_dt <- matrix %>% 
   clean_names(case = "title") %>% 
-  rename("Tutorial on PGEforge" = "Tutorial on Pg Eforge")
+  rename("Tutorial on PGEforge" = "Tutorial on Pg Eforge")%>% 
+  rownames_to_column("Entry")
 
 datatable(matrix_dt,
-          extensions = c('FixedColumns', 'FixedHeader'),
+          rownames = F,
+          extensions = c('FixedColumns', 'FixedHeader', 'Buttons'),
           options = list(
             pageLength = nrow(matrix_dt),
             fixedHeader = T,
             scrollY = "600px",
             scrollX = T,
             fixedColumns = list(leftColumns = 2),
-            dom = "ft",
+            dom = "ftB",
+            buttons = c('csv', 'excel'),
             autoWidth = T
           ),
           caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
-                                            "Last updated: 2 August 2024"),
+                                            htmltools::HTML("Last updated: 2 August 2024 <br><br> <span style = 'font-weight: bold; font-style: normal'>Download table:</span>")),
           class = 'white-space: nowrap'
           ) %>% 
   formatStyle(
@@ -51,6 +57,13 @@ datatable(matrix_dt,
   ) %>%
   htmlwidgets::onRender("
     function(el, x) {
+    // decrease font size and make table auto-width
+      $(el).css('font-size', '14px');
+       $(el).find('table').css({
+         'table-layout': 'auto'
+       });
+    
+    // custom styling to alternate row coloring (similar to kable)
       $(el).find('tbody td').css({
         'border-left': '0.1px solid #ddd',
         'border-right': '0.1px solid #ddd'
@@ -67,4 +80,3 @@ datatable(matrix_dt,
     }
   ")
 ```
-

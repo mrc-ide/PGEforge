@@ -21,18 +21,12 @@ By systematically benchmarking tools against known datasets, we can ensure that 
 Ongoing work in this space includes **benchmarking COI estimation tools.**
 :::
 
-
 ## Adding and evaluating more tools
 Our initial efforts to [landscape available tools](tool_landscaping.qmd) were focused on tools for downstream *Plasmodium* genetic analysis and included 40 available tools. However, future work could include the following areas (not an exhaustive list!):
 
 - Tools with applications to mosquito genetics, as long as they are generally within the scope of PGEforge (i.e. *Plasmodium* genomic epidemiology tools)
 - Bioinformatic pre-processing tools/pipelines, such as variant calling and quality filters
 - Tools that are not specifically engineered for *Plasmodium* but can be applied to *Plasmodium*genetic data, such as more generic population genetics tools that estimate metrics such as F-statistics, extended haplotype homozygosity, etc
-
-## Tool development
-**Do we want to include some of the results from the tools to functionality evaluation? We could say here that tools that can phase are needed for all use cases!**
-
-Tools to functions -- we still can't phase! 
 
 ## Thank you! 
 Thank you for your interest in contributing to PGEforge. Your efforts help us build a stronger, more inclusive research community making *Plasmodium* genomic analysis accessible to all!

@@ -1,12 +1,14 @@
 ---
 title: "Overview of tools based on software standards"
-format: html
+format: 
+  html:
+    toc: false
+    page-layout: full
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(dplyr)
-library(stringr)
+library(tidyverse)
 library(janitor)
 library(DT)
 ```
@@ -56,7 +58,8 @@ tool_std_summary <- tool_std_df %>%
   rename("Total end-user score" = "Total User Score",
          "Total development score" = "Total Dev Score",
          "User score (%)" = "Total User Percentage",
-         "Developer score (%)" = "Total Dev Percentage")
+         "Developer score (%)" = "Total Dev Percentage") %>% 
+  rownames_to_column("Entry")
 ```
 
 ----------
@@ -70,19 +73,21 @@ If you would like to contribute to this effort, please take a look at our [contr
 
 *Note: tools in grey have not yet been evaluated* 
 ```{r table_summary, echo=F}
-datatable(tool_std_summary,
-          extensions = c('FixedColumns', 'FixedHeader'),
+datatable(tool_std_summary, 
+          rownames = F,
+          extensions = c('FixedColumns', 'FixedHeader', 'Buttons'),
           options = list(
             pageLength = nrow(tool_std_df),
             fixedHeader = T,
             scrollY = "600px",
             scrollX = T,
             fixedColumns = list(leftColumns = 2),
-            dom = "ft",
+            dom = "ftB",
+            buttons = c('csv', 'excel'),
             autoWidth = T
           ),
           caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
-                                            "Last updated: 2 August 2024"),
+                                            htmltools::HTML("Last updated: 2 August 2024 <br><br> <span style = 'font-weight: bold; font-style: normal'>Download table:</span>")),
           class = 'white-space: nowrap'
           ) %>% 
   formatStyle(
@@ -126,6 +131,13 @@ datatable(tool_std_summary,
   ) %>%
   htmlwidgets::onRender("
     function(el, x) {
+    // decrease font size and make table auto-width
+      $(el).css('font-size', '14px');
+       $(el).find('table').css({
+         'table-layout': 'auto'
+       });
+    
+    // custom styling to make scores bold and alternate row coloring (similar to kable)
       $(el).find('tbody td').css({
         'border-left': '0.1px solid #ddd',
         'border-right': '0.1px solid #ddd'
