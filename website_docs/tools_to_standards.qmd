@@ -58,7 +58,8 @@ tool_std_summary <- tool_std_df %>%
   rename("Total end-user score" = "Total User Score",
          "Total development score" = "Total Dev Score",
          "User score (%)" = "Total User Percentage",
-         "Developer score (%)" = "Total Dev Percentage")
+         "Developer score (%)" = "Total Dev Percentage") %>% 
+  rownames_to_column("Entry")
 ```
 
 ----------
