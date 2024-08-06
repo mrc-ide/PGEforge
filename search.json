@@ -129,7 +129,7 @@
     "href": "website_docs/how_to_contribute.html#how-to-contribute-to-pgeforge",
     "title": "Get involved",
     "section": "How to contribute to PGEforge",
-    "text": "How to contribute to PGEforge\nWe are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for Plasmodium genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our community rules and will be recognized as a contributor.\nBelow are some ways to get involved with current workstreams, but we also have some ideas and plans in the works for the future beyond what is currently available in PGEforge!",
+    "text": "How to contribute to PGEforge\nWe are excited to have you join us and we welcome input from all areas of the research community to continuously improve and expand our platform. PGEforge aims to contribute to an inclusive and sustainable ecosystem of existing and new tools for Plasmodium genomic data analysis. From less to more involvement, there are several ways to get involved and join us in contributing to these aims. All contributors must adhere to our community rules and will be recognized as a contributor.\nBelow are some ways to get involved with current workstreams, but we also have some ideas and plans in the works for the future beyond what is currently available in PGEforge! If you want to contribute in another way that is not currently listed, please reach out to us directly.",
     "crumbs": [
       "How to contribute",
       "Get involved"
@@ -152,17 +152,6 @@
     "title": "Get involved",
     "section": "Develop resources for a tool",
     "text": "Develop resources for a tool\nIf you have developed a new Plasmodium genomic data analysis tool or identified a tool that is missing tutorial resources, you can develop them and contribute them to PGEforge! Follow these steps to contribute:\n\n\nDon’t forget to also add yourself as a contributor!\nStep 1: In PGEforge we focus on Plasmodium genomic data analysis tools. The tool should be within the scope of Plasmodium genomic epidemiology data analysis.\nStep 2: Take a look at the tool landscaping in case we have already evaluated that specific tool. In some instances, we opted to not develop tutorial resources for tools where there was difficulty installing and running the software, run-time errors, or if the tool was clearly superseded by more recent tools. You will find more details in the tool landscaping. If you identify a tool that is not in the landscaping matrix, please add it.\nStep 3: If you have reached this point and have found a tool that is missing from PGEforge, great! After adding it to the landscaping and software standards matrices you can develop the tool resources. We provide all the templates that you need to get started. For every tool, we develop the following resources:\n\nSummary Document: Provide an overview of the tool, including its main purpose, use cases, license, code repository, relevant publications, and citation details. Fill in these details in the template .csv file and then “Render” the accompanying .qmd file to display the information in a nicely formatted table.\nInstallation Instructions: Write clear, step-by-step instructions for installing the tool, ensuring it is accessible to users with varying technical skills. If the tool is an R package and not already in the PlasmoGenEpi R-universe, please let us know! Otherwise, we strongly suggest you instruct users to install from R-universe.\nFully Worked Tutorials: Develop comprehensive tutorials that guide users through the entire process of using the tool to perform a specific analysis, from data import to interpretation of results. PGEforge hosts both empirical and simulated canonical datasets for the commonly used data input formats. We strongly encourage you to use these when you develop these tutorials as this ensures that they are fully reproducible.\n\nYou can find the templates for all of these documents in our Github repository and example tutorials in the Tutorials section.\nPlease make sure to follow our GitHub contribution guidelines.",
-    "crumbs": [
-      "How to contribute",
-      "Get involved"
-    ]
-  },
-  {
-    "objectID": "website_docs/how_to_contribute.html#developing-analysis-workflows",
-    "href": "website_docs/how_to_contribute.html#developing-analysis-workflows",
-    "title": "Get involved",
-    "section": "Developing analysis workflows",
-    "text": "Developing analysis workflows\nComing soon!",
     "crumbs": [
       "How to contribute",
       "Get involved"
@@ -291,7 +280,7 @@
     "href": "website_docs/tool_landscaping.html",
     "title": "Tool landscaping",
     "section": "",
-    "text": "In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to Plasmodium genetic data and that focus on downstream analysis. Tools are considered within this scope if they:\n\nFocus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.\nFocus on Plasmodium genetics, including both P. falciparum and P. vivax.\n\nIn our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. Plasmodium genomic epidemiology tools), please see our contributor guidelines and some of our planned areas of future work.",
+    "text": "In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to Plasmodium genetic data and that focus on downstream analysis. Tools were initially considered within this scope if they:\n\nFocus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.\nFocus on Plasmodium genetics, including both P. falciparum and P. vivax.\n\nIn our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. Plasmodium genomic epidemiology tools), please see our contributor guidelines and some of our planned areas of future work.",
     "crumbs": [
       "Tool landscaping",
       "The landscaping matrix"
@@ -302,7 +291,7 @@
     "href": "website_docs/tool_landscaping.html#overview",
     "title": "Tool landscaping",
     "section": "",
-    "text": "In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to Plasmodium genetic data and that focus on downstream analysis. Tools are considered within this scope if they:\n\nFocus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.\nFocus on Plasmodium genetics, including both P. falciparum and P. vivax.\n\nIn our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. Plasmodium genomic epidemiology tools), please see our contributor guidelines and some of our planned areas of future work.",
+    "text": "In line with the scope of PGEforge, we focus our efforts on landscaping available tools that are commonly applied to Plasmodium genetic data and that focus on downstream analysis. Tools were initially considered within this scope if they:\n\nFocus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.\nFocus on Plasmodium genetics, including both P. falciparum and P. vivax.\n\nIn our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. Plasmodium genomic epidemiology tools), please see our contributor guidelines and some of our planned areas of future work.",
     "crumbs": [
       "Tool landscaping",
       "The landscaping matrix"
@@ -2654,17 +2643,6 @@
     "title": "What’s in store for the future?",
     "section": "Adding and evaluating more tools",
     "text": "Adding and evaluating more tools\nOur initial efforts to landscape available tools were focused on tools for downstream Plasmodium genetic analysis and included 40 available tools. However, future work could include the following areas (not an exhaustive list!):\n\nTools with applications to mosquito genetics, as long as they are generally within the scope of PGEforge (i.e. Plasmodium genomic epidemiology tools)\nBioinformatic pre-processing tools/pipelines, such as variant calling and quality filters\nTools that are not specifically engineered for Plasmodium but can be applied to Plasmodiumgenetic data, such as more generic population genetics tools that estimate metrics such as F-statistics, extended haplotype homozygosity, etc",
-    "crumbs": [
-      "How to contribute",
-      "Future work"
-    ]
-  },
-  {
-    "objectID": "website_docs/future_work.html#tool-development",
-    "href": "website_docs/future_work.html#tool-development",
-    "title": "What’s in store for the future?",
-    "section": "Tool development",
-    "text": "Tool development\nDo we want to include some of the results from the tools to functionality evaluation? We could say here that tools that can phase are needed for all use cases!\nTools to functions – we still can’t phase!",
     "crumbs": [
       "How to contribute",
       "Future work"
