@@ -72,9 +72,6 @@ You can find the templates for all of these documents in our [Github repository]
 
 **Please make sure to follow our [GitHub contribution guidelines](#contributing-guidelines-for-github).**
 
-## Developing analysis workflows
-Coming soon!
-
 ## Add yourself as a contributor
 Everyone who contributes to PGEforge is listed as a [contributor](contributors.qmd). 
 
