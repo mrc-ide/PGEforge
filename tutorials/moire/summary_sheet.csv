@@ -1,9 +1,9 @@
 ﻿Main use-cases,"Estimating multiplicity of infection (MOI), population allele frequencies, and within-host relatedness from polyallelic genomics data."
 Authors,"Maxwell Murphy, Bryan Greenhouse"
-Latest version,v3.1.0
+Latest version,v3.5.0
 License,GNU General Public License v3.0
-Website,https://eppicenter.github.io/moire/
-Code repository,https://github.com/EPPIcenter/moire
-Publication,https://doi.org/10.1101/2023.10.03.560769
-Tutorial authors,Kathryn Murie
-Tutorial date,11-Dec-23
+Website,"<a href=""https://eppicenter.github.io/moire/"" target=""_blank""> https://eppicenter.github.io/moire</a>"
+Code repository,"<a href=""https://github.com/eppicenter/moire"" target=""_blank""> https://github.com/eppicenter/moire</a>"
+Publication,"<a href=""https://doi.org/10.1093/bioinformatics/btad245"" target=""_blank""> https://doi.org/10.1093/bioinformatics/btad245</a>"
+Tutorial authors,"Kathryn Murie, Maxwell Murphy"
+Tutorial date,7-Jan-25
