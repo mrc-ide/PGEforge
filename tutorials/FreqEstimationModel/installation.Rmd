@@ -1,0 +1,22 @@
+---
+title: "Installing FEM"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1/1: what to do
+These instructions are taken from the github ReadMe, which contains useful information https://github.com/aimeertaylor/FreqEstimationModel
+```{r installation}
+install.packages("devtools")
+devtools::install_github("aimeertaylor/FreqEstimationModel", build_vignettes = TRUE, dependencies = TRUE)
+library(FreqEstimationModel)
+help(package = "FreqEstimationModel")
+browseVignettes("FreqEstimationModel")
+# A quick example of results that can be generated using a simulated data set: 
+vignette("Quick_example", "FreqEstimationModel") 
+# Loads an pdf example of the long-form results that can be generated following the quick example:
+vignette("Long_results", "FreqEstimationModel") 
+```

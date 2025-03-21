@@ -1,0 +1,46 @@
+---
+title: "Freq Estimation Model"
+output: html_document
+author: "Insert name"
+date: "Insert todays date"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+
+## Existing resources
+
+- Any existing online tutorials?
+- Any important papers?
+
+## Citation
+```
+@Manual{,
+  title = {FreqEstimationModel},
+  author = {Aimee Taylor)}},
+  year = {2015},
+  note = {R package version 0.1, commit 8c010f47579d947e0ff1d90a7f96893555435462},
+  url = {https://github.com/aimeertaylor/FreqEstimationModel},
+}
+```
