@@ -5,23 +5,42 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 library(kableExtra)
 ```
 
-## The data
-
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
-
-Remember to load any packages, including the tool that you are working on:
+# The data
+We are going to use data from here [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html).
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+library(tibble)
+library(dplyr)
+library(FreqEstimationModel)
+library(foreach)
+library(doMC)
+library(iterators)
+library(parallel)
+library(rngtools)
+library(validate)
+library(magrittr)
+library(stringr)
+library(optparse)
+library(readr)
+library(purrr)
+library(variantstring)
 ```
 
+## Transferring data into the PlasmoGenEpi format
+For now, I'm reading in a sample amino_acid_calls table. Working on creating this from the vcf file!
+```{r formatting_1}
+setwd("~/Life/Collaboration with Dr. Wesolowski/for_alfred/test_PGE/PGEcore/scripts/FreqEstimationModel_wrapper/")
+input_data <- read.csv("example_amino_acid_calls.tsv", sep="\t")
+```
 
-## Formatting the data 
-We need to transform the data from PlasmoGenEpi format to FEM format, which is a matrix indicating "heterozygous" calls
-```{r formatting 2}
+## Formatting the data from PGE to FEM
+We need to transform the data from PlasmoGenEpi format to FEM format, which is a matrix indicating whether targets in a given sample are heterozygous, match the reference sequence, or are exclusively mutated.
+
+The sample matrix is of the form n x m where n = the samples in the dataset and m = targets. Each position will indicate if there is alignment at the given target.
+```{r formatting_2}
 input_data$unique_targets <- paste(input_data$gene_id, input_data$aa_position, sep=":")
 unique_targets <- unique(input_data$unique_targets)
 unique_sample_ids <- unique(input_data$specimen_id)
@@ -30,13 +49,16 @@ sample_matrix <- matrix(99,  nrow=length(unique_sample_ids), ncol=length(unique_
 #99 is the "no data" identifier
 colnames(sample_matrix) <- unique_targets
 rownames(sample_matrix) <- unique_sample_ids
+```
 
-# populate the input matrix with 0 (only reference), 0.5 (het cal), or 1 (only non-reference)
+
+For this tutorial, I'm iterating through the dataset first by sample and then by target. We filter the PGE data to only look at *unique* reads at a given target, and then count how many unique calls there are. Currently, FEM does not support >2 alleles at a given target.
+```{r sample_matrix population}
+# populate the input matrix with 0 (only reference), 0.5 ("het" cal), or 1 (only non-reference)
 for(sample in input_data$specimen_id){
   cut_df <- input_data[input_data$specimen_id==sample,]
   for(unique_target in unique_targets){
     cut_cut_df <- cut_df[cut_df$unique_targets==unique_target,]
-    nvals <- 99
     nvals <- length(unique(cut_cut_df$aa)) 
     if (nvals > 2){
       print("too many alleles for FEM")
@@ -54,26 +76,29 @@ for(sample in input_data$specimen_id){
   
   }
 }
+
+print(sample_matrix)
 ```
 
 ##Running FEM
+
 I took this directly from Aimee. I need to understand it.
 ```{r Running FEM}
-sample_matrix_list <- create_FEM_input(input_data_path, groups, group)
-sample_matrix <- sample_matrix_list[[1]]
-alt_alleles <- sample_matrix_list[[2]]
-num_group <- sample_matrix_list[[3]]
+#alt_alleles <- sample_matrix_list[[2]]
+COI <- 3
+seed <- 1
+
 data_summary <- list()
-#data_summary$Data <- read.delim(tmp_file_path, row.names = 1) # Specify row.names = 1 to use the first column as row names
-#data_summary$Data <- as.matrix(data_summary$Data)
 data_summary$Data <- sample_matrix
+#data_summary <- data.frame(data_summary)
 runtime <- system.time({
+    print('point -1')
     thinning_interval <- 1 # Number of iterations per chain that are not saved
     no_traces_preburnin <- 10000 # For more traces but manageable pdf plots, don't exceed 10k and increase thinning interval instead
     no_mcmc_chains <- 3 # Number of MCMC chains to run
     parallel <- FALSE # Set to true if running code in parallel (this option isn't active yet)
-    NGS <- FALSE # Set to true if data are in NGS format (this option isn't active yet)
     log_like_zero <- FALSE # QC check: sets log(p(yi|ai)) to zero (only impacts NGS)
+    NGS <- FALSE
     mcmc_variable_list <- list(
         no_mcmc_chains = no_mcmc_chains,
         no_traces_preburnin = no_traces_preburnin,
@@ -92,6 +117,8 @@ runtime <- system.time({
         moi_prior <- "Poisson" # Choose between 'Uniform', 'Poisson', 'Geometric' or 'nBinomial'
     }
     moi_max <- 8 # Maximum MOI regarded as possible by the model (I haven't tested beyond 20)
+    print('point 0')
+    
     moi_hyperparameter <- COI 
     moi_size_hyperparameter <- 0.5 # Only applies if moi_prior == 'nBinomial' (hyperparameter for the prior on the MOI if the prior is the negative Binomial)
     moi_prior_min2 <- NULL # Specify the lower bound for the MOI per individual
@@ -112,8 +139,9 @@ runtime <- system.time({
         moi_prior_min2
     )
     
+    print("pointA")
     test_process <- preprocess_data(data_summary, FALSE, FALSE, TRUE, FALSE)
-    
+    print("pointB")
     frequency_hyperparameter <- rep(1, processed_data_list$no_haplotypes) # The Parameter vector for the Dirichlet prior on the frequency vector
     frequency_initial <- NULL # If null, external_frequency_initial set internally, otherwise set to input external_frequency_initial
     frequency_list <- list(
@@ -121,7 +149,7 @@ runtime <- system.time({
         frequency_initial = frequency_initial
     )
     
-    set.seed(arg$seed)
+    set.seed(1)
 
     # Run MCMC - works up to here
     results <- mcmc_sampling_parallel(processed_data_list,
@@ -130,7 +158,7 @@ runtime <- system.time({
         mcmc_variable_list,
         cores_max = 3
     )
-
+    print('point 1')
     # Generate numerical approximations of posteriors by removing burnin
     burnin <- 1:(0.5 * mcmc_variable_list$no_traces_preburnin) # remove first half
     if (mcmc_variable_list$no_mcmc_chains > 1) {
@@ -138,7 +166,7 @@ runtime <- system.time({
     } else {
         alply_genotype_freq_store_chains_burnin <- results$genotype_freq_store_chains[-burnin, , ]
     }
-
+    print('point 2')
     # Use mcmc.list to represent frequency chains across parallel runs (see ?coda::mcmc.list)
     mcmc_frequency_chains <- coda::mcmc.list(lapply(alply_genotype_freq_store_chains_burnin, # 3 for splitting by third dimension (nothing to do with no. of chains)
         coda::mcmc,
@@ -146,7 +174,7 @@ runtime <- system.time({
         end = mcmc_variable_list$no_traces_preburnin * mcmc_variable_list$thinning_interval,
         thin = mcmc_variable_list$thinning_interval
     ))
-
+    print('point 3')
     mcmc_As <- abind::abind(plyr::alply(results$genotype_count_store_chains[-burnin, , , ], 4), along = 1) # Haplotype counts for all chains excluding burnin
     mcmc_mois <- apply(mcmc_As, c(1, 2), sum)
 
@@ -157,6 +185,7 @@ runtime <- system.time({
         "CI_2.5" = summary(mcmc_frequency_chains)$quantiles[, 1],
         "CI_97.5" = CI_upper <- summary(mcmc_frequency_chains)$quantiles[, 5]
     )
+    print("point 4")
     pop_prev <- 1-(1-pop_freq)^median(mcmc_mois)
     inf_prev <- t(apply(mcmc_As, 2, function(x) colMeans(x > 0)))
     prev <- colMeans(inf_prev)
@@ -166,7 +195,6 @@ runtime <- system.time({
 sequence_column <- data.frame(sequence = rownames(pop_freq), stringsAsFactors = FALSE)
 pop_freq <- cbind(sequence_column, pop_freq)
 rownames(pop_freq) <- NULL
-    
 ```
 
 
