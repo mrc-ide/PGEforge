@@ -121,7 +121,10 @@ data_summary$Data <- sample_matrix
 #data_summary <- data.frame(data_summary)
 ```
 
+Most of this code can be kept as-is: these are Aimee's defaults. A few things to note
 
+* If convergence is an issue, you can increase the no_traces_preburnin (though see her note on pdf plots, if those are going to be used)
+* If using NGS sequencing, change that parameter (ASK ALFRED)
 ```{r running FEM}
 runtime <- system.time({
     thinning_interval <- 1 # Number of iterations per chain that are not saved
@@ -147,8 +150,6 @@ runtime <- system.time({
         moi_prior <- "Poisson" # Choose between 'Uniform', 'Poisson', 'Geometric' or 'nBinomial'
     }
     moi_max <- 8 # Maximum MOI regarded as possible by the model (I haven't tested beyond 20)
-    print('point 0')
-    
     moi_hyperparameter <- COI 
     moi_size_hyperparameter <- 0.5 # Only applies if moi_prior == 'nBinomial' (hyperparameter for the prior on the MOI if the prior is the negative Binomial)
     moi_prior_min2 <- NULL # Specify the lower bound for the MOI per individual
@@ -168,10 +169,6 @@ runtime <- system.time({
         augment_missing_data,
         moi_prior_min2
     )
-    
-    print("pointA")
-    test_process <- preprocess_data(data_summary, FALSE, FALSE, TRUE, FALSE)
-    print("pointB")
     frequency_hyperparameter <- rep(1, processed_data_list$no_haplotypes) # The Parameter vector for the Dirichlet prior on the frequency vector
     frequency_initial <- NULL # If null, external_frequency_initial set internally, otherwise set to input external_frequency_initial
     frequency_list <- list(
@@ -179,7 +176,7 @@ runtime <- system.time({
         frequency_initial = frequency_initial
     )
     
-    set.seed(1)
+    set.seed(seed)
 
     # Run MCMC - works up to here
     results <- mcmc_sampling_parallel(processed_data_list,
@@ -188,7 +185,6 @@ runtime <- system.time({
         mcmc_variable_list,
         cores_max = 3
     )
-    print('point 1')
     # Generate numerical approximations of posteriors by removing burnin
     burnin <- 1:(0.5 * mcmc_variable_list$no_traces_preburnin) # remove first half
     if (mcmc_variable_list$no_mcmc_chains > 1) {
@@ -196,7 +192,6 @@ runtime <- system.time({
     } else {
         alply_genotype_freq_store_chains_burnin <- results$genotype_freq_store_chains[-burnin, , ]
     }
-    print('point 2')
     # Use mcmc.list to represent frequency chains across parallel runs (see ?coda::mcmc.list)
     mcmc_frequency_chains <- coda::mcmc.list(lapply(alply_genotype_freq_store_chains_burnin, # 3 for splitting by third dimension (nothing to do with no. of chains)
         coda::mcmc,
@@ -204,7 +199,6 @@ runtime <- system.time({
         end = mcmc_variable_list$no_traces_preburnin * mcmc_variable_list$thinning_interval,
         thin = mcmc_variable_list$thinning_interval
     ))
-    print('point 3')
     mcmc_As <- abind::abind(plyr::alply(results$genotype_count_store_chains[-burnin, , , ], 4), along = 1) # Haplotype counts for all chains excluding burnin
     mcmc_mois <- apply(mcmc_As, c(1, 2), sum)
 
@@ -215,7 +209,6 @@ runtime <- system.time({
         "CI_2.5" = summary(mcmc_frequency_chains)$quantiles[, 1],
         "CI_97.5" = CI_upper <- summary(mcmc_frequency_chains)$quantiles[, 5]
     )
-    print("point 4")
     pop_prev <- 1-(1-pop_freq)^median(mcmc_mois)
     inf_prev <- t(apply(mcmc_As, 2, function(x) colMeans(x > 0)))
     prev <- colMeans(inf_prev)
@@ -228,9 +221,76 @@ rownames(pop_freq) <- NULL
 ```
 
 
-##Interpreting the Output
+## Interpreting the Output
+The output from this code is stored in "pop_freq". As you can see, the "sequence" column is a binary number: each position represents the possible targets from the colnames of the sample matrix generated above. As we set above, "0" matches the reference allele while "1" indicates a SNP.
 ```{r dataframe output}
+print(colnames(sample_matrix))
 print(pop_freq)
+```
+There are 32 (2^5) sequence outputs. For example, the first sequence is "01101" which refers to a SNP at PF3D7_0417200:59, PF3D7_0417200:108, and PF3D7_0810800:540.
+
+This is not the most readable output for further analyses, so if you would like to use the STAVE format, below is the code to transform the binary output into STAVE.
+```{r stave format}
+bin2STAVE <- function(chars, names, alt_alleles){
+  char_ix <- 1
+  chars_split <- strsplit(chars, "")[[1]]
+  gene_list <- c()
+  long_form <- tibble(
+    gene = character(),
+    pos = numeric(),
+    n_aa = numeric(),
+    het = logical(),
+    phased = logical(),
+    aa = character(),
+    read_count = numeric()
+  )
+  
+  for(char in chars_split){
+    if(char==1){call <- "aa"}
+    else {call <- "ref_aa"}
+    alt_current <- alt_alleles[alt_alleles$unique_targets == names[char_ix],]
+    gene_current <- str_split(names[char_ix], ":")[[1]][1] ###split appropriately
+    pos_current <- str_split(names[char_ix], ":")[[1]][2] ###split appropriately
+    gene_list <- append(gene_list, gene_current)
+    alt_current <- alt_current[1, call]
+    alt_current <- as.character(alt_current)
+    char_ix <- char_ix + 1
+    long_form <- long_form %>% 
+      add_row(gene = gene_current,
+              pos = as.numeric(pos_current),
+              n_aa = NA,
+              het = NA,
+              phased = TRUE,
+              aa = alt_current,
+              read_count = NA,)
+  }
+  #single_locus_STAVE, into multi-locus stave
+  #adding if calls are het or not in the given locus
+  long_form <- long_form %>% 
+    group_by(gene, pos) %>%
+    mutate(n_aa = n())
+    
+  long_form <- long_form %>%
+    mutate(het = if_else(n_aa>1, TRUE, FALSE))
+  string_output <- long_to_variant(list(long_form))
+  return(string_output)
+}
+
+
+format_single_group_output <- function(pop_freq_list){
+  input_list <- pop_freq_list[[1]]
+  names <- pop_freq_list[[3]]
+  alt_alleles <- pop_freq_list[[4]]
+  num_group <- pop_freq_list[[5]]
+  
+  input_list <- input_list %>% 
+    mutate(variant=map_chr(sequence, bin2STAVE, names, alt_alleles),
+                        sample_total=num_group) %>% 
+    as_tibble()
+  return(input_list)
+}
+
+
 ```
 
 Make as many sections as you need. Try to break long documents out over multiple pages.
