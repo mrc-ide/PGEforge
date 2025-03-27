@@ -35,6 +35,31 @@ For now, I'm reading in a sample amino_acid_calls table. Working on creating thi
 setwd("~/Life/Collaboration with Dr. Wesolowski/for_alfred/test_PGE/PGEcore/scripts/FreqEstimationModel_wrapper/")
 input_data <- read.csv("example_amino_acid_calls.tsv", sep="\t")
 ```
+## The PGE format
+For the PGE pipeline, each unique target/read 
+The version of the PGE data that we use has 10 columns:
+
+* Specimen ID:
+* Target ID:
+* Seq:
+* Read Count:
+* Gene ID:
+* AA Position:
+* Ref Codon:
+* Ref AA:
+* Codon:
+* AA:
+
+```{r PGE printing}
+print(colnames(input_data))
+
+#this code is just a prettyprint for input_data. We don't use the sequence column!
+input_data %>%
+  mutate(seq=paste(substring(seq, 1, 10), "...", sep="")) %>%
+  kbl() %>%
+  kable_styling(full_width=FALSE)
+
+```
 
 ## Formatting the data from PGE to FEM
 We need to transform the data from PlasmoGenEpi format to FEM format, which is a matrix indicating whether targets in a given sample are heterozygous, match the reference sequence, or are exclusively mutated.
@@ -85,8 +110,7 @@ print(sample_matrix)
 ```
 
 ## Running FEM
-
-I took this directly from Aimee. I need to understand it.
+Now that we have the sample matrix, we save it to a list object called "data_summary." It's important to save the data to "Data" as that's hardcoded into the FEM package. We also rely on the COI: this can be calculated for your sample set using INSERT TOOL. Keep a seed for reproducability. 
 ```{r Running FEM}
 #alt_alleles <- sample_matrix_list[[2]]
 COI <- 3
@@ -95,12 +119,14 @@ seed <- 1
 data_summary <- list()
 data_summary$Data <- sample_matrix
 #data_summary <- data.frame(data_summary)
+```
+
+
+```{r running FEM}
 runtime <- system.time({
-    print('point -1')
     thinning_interval <- 1 # Number of iterations per chain that are not saved
     no_traces_preburnin <- 10000 # For more traces but manageable pdf plots, don't exceed 10k and increase thinning interval instead
     no_mcmc_chains <- 3 # Number of MCMC chains to run
-    parallel <- FALSE # Set to true if running code in parallel (this option isn't active yet)
     log_like_zero <- FALSE # QC check: sets log(p(yi|ai)) to zero (only impacts NGS)
     NGS <- FALSE
     mcmc_variable_list <- list(
@@ -203,7 +229,9 @@ rownames(pop_freq) <- NULL
 
 
 ##Interpreting the Output
-
+```{r dataframe output}
+print(pop_freq)
+```
 
 Make as many sections as you need. Try to break long documents out over multiple pages.
 
