@@ -5,5 +5,5 @@ Tutorials exist,binary,"Must have explanation of inputs, outputs, and test data 
 Test data sets and results available,binary,
 Open source,binary,
 Has software tests,binary,"Eg, unit tests"
-More than 90% code coverage reported,binary,
+More than 90% code coverage reported,binary,"Eg, how much of the source code is tested by automated tests"
 Clear channels for software maintenance and issues,binary,"Eg, GitHub issues, author contact information"
