@@ -1,0 +1,9 @@
+Use case,Estimate COI,Phase,Estimate allele prevalence,Estimate allele frequency,Estimate multi-locus genotype prevalence,Estimate multi-locus genotype frequency,"Estimate between-host relatedness/ genetic distance (e.g. IBD, IBS)",Identify signs of selection,"Estimate within-host relatedness/ genetic distance (e.g. IBD, IBS)",Infer transmission networks,Infer geographic assignment,Calculate simple genetic metrics,Infer structure/ clustering,Estimate copy number variation/ deletions
+Identifying the molecular mechanism/origin of drug and diagnostic resistance,X,X,X,,X,,,X,X,,,,,
+Monitoring the prevalence/frequency of drug or diagnostic resistance markers,X,X,X,X,X,X,,,,,,,,X
+Measuring human immune selection on the parasite population,X,X,X,X,,,,X,,,,,,
+"Classifying outcomes in therapeutic efficacy studies (TESs) as reinfection, recrudescence or, in the case of P. vivax, relapse",X,X,,X,,,X,,X,,,,,
+Estimating transmission intensity,X,X,,X,X,,X,,X,,,X,,
+Estimating the connectivity and movement of parasites between geographically distinct populations,X,X,,X,,,,,X,,X,X,X,
+Classifying malaria cases as locally acquired or imported from another population,X,X,,X,,,,,X,X,X,,X,
+Reconstructing granular patterns of transmission,X,X,,X,,,,,X,X,,,,

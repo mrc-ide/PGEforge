@@ -1,0 +1,111 @@
+---
+title: "Mapping [use cases](use_cases.qmd) to core analysis functionalities"
+format: html
+---
+
+```{r, include=F}
+library(tidyverse)
+library(DT)
+
+table <- read.csv("tables/Use_cases_to_functionalities.csv")
+```
+
+```{=html}
+<style>
+.small-font {
+  font-size: 14px; 
+}
+
+/* Wrap text in table cells and headers */
+.wrap-text {
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+
+</style>
+```
+
+----
+
+For the eight use cases, we identified distinct analysis functionalities that are required or useful to obtain the desired results from *Plasmodium* genetic data (as well as contextual data, eg epidemiological variables, travel history). Some of them are required for several use cases, for example, estimating complexity of infection (COI) is required or useful for *all*, which makes intuitive sense since analysis of genetic data from monoclonal infections will often need to be treated differently than that from polyclonal infections. 
+
+The table below shows analysis functionalities required for each use case (denoted with X's). 
+```{r, echo=F}
+sketch <- htmltools::withTags(
+    table(
+      class = 'display',
+      thead(
+        tr(
+          th(rowspan = 2, style = "color: #c82f61;", "Use case"),
+          # th(rowspan = 2, "Use case"),
+          th(colspan = 14, "Analysis functionality required")
+        ),
+        tr(
+          lapply(c(
+          "Estimate COI", "Phase", "Estimate allele prevalence", "Estimate allele frequency",
+          "Estimate multi-locus genotype prevalence", "Estimate multi-locus genotype frequency",
+          "Estimate between-host relatedness/ genetic distance (eg IBD, IBS)",
+          "Identify signs of selection",
+          "Estimate within-host relatedness/ genetic distance (eg IBD, IBS)",
+          "Infer transmission networks", "Infer geographic assignment",
+          "Calculate simple genetic metrics", "Infer structure/ clustering",
+          "Estimate copy number variation/ deletions"
+        ), th)
+        )
+      )
+    )
+  )
+
+datatable(
+  table,
+  class = 'cell-border stripe compact small-font',
+  extensions = c('FixedHeader', 'FixedColumns', 'Scroller'),
+  options = list(
+    autoWidth = TRUE, 
+    fixedColumns = list(leftColumns = 1),
+    dom = 't',
+    ordering = F,
+    columnDefs = list(
+      list(
+        targets = 0,
+        className = 'wrap-text dt-left'
+      ),
+      list(
+        targets = 1:14,
+        className = 'wrap-text dt-center'
+      )
+    )
+  ),
+  rownames = FALSE, 
+  colnames = c("Use case", "Estimate COI", "Phase","Estimate allele prevalence", "Estimate allele frequency", "Estimate multi-locus genotype prevalence", "Estimate multi-locus genotype frequency", "Estimate between-host relatedness/ genetic distance (eg IBD, IBS)", "Identify signs of selection", "Estimate within-host relatedness/ genetic distance (eg IBD, IBS)", "Infer transmission networks", "Infer geographic assignment", "Calculate simple genetic metrics", "Infer structure/ clustering", "Estimate copy number variation/ deletions"),
+  container = sketch,
+  caption = htmltools::tags$caption(style = "caption-side: bottom; text-align: left; font-style: italic",
+                                    htmltools::HTML("Abbreviations: COI: complexity of infection; IBD: identity-by-descent; IBS: identity-by-state"))
+  ) %>%
+  formatStyle(
+    columns = 1,
+    #fontWeight = "bold",
+    backgroundColor = "#f9eaf1",
+    color = "#c82f61"
+  ) %>% 
+  formatStyle(
+    columns = 2:ncol(table),
+    color = styleEqual(c("X", ""), c("#c82f61", "black")), 
+    fontWeight = "bold"
+  ) %>%
+  htmlwidgets::onRender("
+    function(el) {
+      $(el).find('tbody tr').hover(
+        function() { $(this).css('background-color', '#f9eaf1'); },
+        function() { $(this).css('background-color', ''); }
+      );
+    }
+    
+    function(el, x) {
+    setTimeout(function() {
+      // Force browser layout recalculation
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+  }
+  ")
+```

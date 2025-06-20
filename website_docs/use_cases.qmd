@@ -1,5 +1,51 @@
 ---
-title: "COMING SOON!"
+title: "Main use cases for *Plasmodium* genetic data informing malaria control and elimination"
 format: html
+bibliography: ../references/references.bib
 ---
 
+```{=html}
+<style>
+h4 {
+  border: 2px solid #c82f61;
+  color: #c82f61;             
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+</style>
+```
+These use cases have been described in [@ruybal-pesántez2025]. Each use case will require a different set of analysis functionalities to obtain the desired results from *Plasmodium* genetic data (see [next page](use_cases_functionalities.qmd)). 
+
+#### Identifying the molecular mechanism/origin of drug and diagnostic resistance
+
+Studies are initially needed to link parasite genetic variation to phenotypes of drug and diagnostic resistance, for example by sequencing parasites with corresponding data on in vitro response to antimalarials or with evidence of clinical failure of drugs or diagnostic tests. Related studies can identify potential polymorphisms of interest via signals of selection and identify how they are evolving and spreading at various temporal and spatial scales.
+
+#### Monitoring the prevalence/frequency of drug or diagnostic resistance markers
+
+Once genetic polymorphisms have been associated with resistance phenotypes, they can be used as markers of resistance. Marker prevalence (fraction of infections that contain parasites with the resistance marker) and/or frequency (relative abundance of the resistance marker in the parasite population) can be monitored for surveillance of resistance. Various statistical methods may be needed to estimate prevalence/frequency because polyclonal infections complicate otherwise simple analyses.
+
+#### Measuring human immune selection on the parasite population
+
+Identifying areas of the Plasmodium genome under immune selection can help identify potential targets for vaccines and related immunologic interventions such as monoclonal antibodies. Related to this, monitoring sequences of such targets can be useful in the context of large-scale implementation to evaluate for selection and monitor for potential escape mutations.
+
+#### Classifying outcomes in therapeutic efficacy studies (TESs) as reinfection, recrudescence or, in the case of *P. vivax*, relapse
+
+A TES performed by prospective evaluation of patients’ responses to treatment for uncomplicated malaria is the gold standard for assessing the efficacy of antimalarial drugs. Genotyping of participants with infections during follow up is needed to distinguish whether they failed therapy (recrudescence), were infected again (reinfection), or had a relapse of a dormant parasite.
+
+#### Estimating transmission intensity
+
+Population level measures derived from parasite genetic data, like other indicators such as parasite prevalence, may be used to estimate malaria transmission intensity for surveillance purposes such as stratification of interventions or to evaluate the effect of interventions.
+
+#### Estimating the connectivity and movement of parasites between geographically distinct populations
+
+Identifying whether and to what extent parasites from one geographic area are moving to another can help predict the spread of malaria, as well as the spread of parasites with specific concerning phenotypes such as drug resistance. This in turn can inform planning of the scale and timing of interventions. For example, it may be easier to reduce the burden of malaria in an isolated area compared to one that is more connected to areas of higher transmission. This information may be identifiable by comparing genetic measures between populations.
+
+#### Classifying malaria cases as locally acquired or imported from another population
+
+In elimination or pre-elimination settings, understanding if cases are imported is relevant to 1) assessing the feasibility of elimination (i.e. elimination is less feasible in areas with a high number of imported infections that may lead to local transmission) and 2) determining if local elimination has been achieved despite reported cases.
+
+#### Reconstructing granular patterns of transmission
+
+In areas of very low transmission, characterizing granular details of transmission events — such as chains of transmission between individuals/households, demographic groups at high risk of being infected with or transmitting malaria, hidden reservoirs of residual transmission, contribution of imported cases to local transmission, and the length of sustained transmission chains may help guide and evaluate targeted elimination strategies. This information may be identifiable through studies that sample infected people comprehensively and utilize high resolution genetic data to evaluate relationships between infections.
