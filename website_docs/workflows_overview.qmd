@@ -1,0 +1,13 @@
+---
+title: "Analysis workflows"
+format: html
+bibliography: ../references/references.bib
+---
+
+## Overview
+
+Prior efforts in the community have defined use cases for genetic epidemiology informing malaria elimination efforts [@dalmat2019a]. When it comes down to putting these into practice, it is not always clear what analysis functionalities are required to obtain the desired results nor which tools are capable of performing them. For example, to estimate the prevalence of polymorphisms associated with drug resistance there may be a series of steps that we need to perform to estimate various parameters and obtain the desired results from *Plasmodium* genetic data.
+
+Developing such analysis workflows is non-trivial as it requires mapping this out and detailing how functionalities (and available tools) can be chained together in a cohesive and flexible workflow for each use case.
+
+We aimed to synthesize the main use cases based on *analysis requirements*, including what functionalities are required or useful in order to perform the necessary analyses. Based on expert discussion during the [2023 RADISH23 hackathon](radish23.qmd), we defined [eight main use cases](use_cases.qmd) for *Plasmodium* genetic data informing malaria control and elimination [@ruybal-pesántez2025]. For each use case, we identified [specific functionalities needed for analysis](use_cases_functionalities.qmd). For a subset of use cases, we then outlined how these functionalities could be assembled into analysis workflows to obtain required results from the initial genetic or genomic data.

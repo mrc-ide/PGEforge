@@ -24,7 +24,7 @@ website:
     
   sidebar:
     background: "#f9eaf1"
-    logo: "website_docs/img/PGEforge_hex.png"
+    logo: "website_docs/img/PGEforge_hex_pink.png"
     pinned: true
     align: center
     tools:
@@ -160,11 +160,14 @@ website:
               file: tutorials/THEREALMcCOIL/RMCL_installation.Rmd
             - text: "Analyze data with `THEREALMcCOIL`"
               file: tutorials/THEREALMcCOIL/RMCL_analysis.Rmd
-      - section: website_docs/workflows.qmd
+      - section: website_docs/workflows_overview.qmd
         contents:
           - text: "Use cases"
             file: website_docs/use_cases.qmd
-          - text: "Coming soon!"
+          - text: "Analysis functionalities"
+            file: website_docs/use_cases_functionalities.qmd
+          - text: "Workflows"
+            file: website_docs/workflows.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
