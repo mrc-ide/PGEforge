@@ -168,6 +168,8 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
+          - text: "Benchmarking"
+            file: website_docs/benchmarking.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
