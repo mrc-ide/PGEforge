@@ -46,18 +46,15 @@ website:
             file: website_docs/data_snps.qmd
           - text: "pfhrp2/3 deletion counts"
             file: website_docs/data_counts.qmd
-      - section: "Tool landscaping"
-        contents:
-          - text: "The landscaping matrix"
-            file: website_docs/tool_landscaping.qmd
-          - text: "Installing via the plasmogenepi.r-universe"
-            file: website_docs/R_universe.qmd
+      - href: website_docs/tool_landscaping.qmd
       - section: website_docs/software_standards.qmd
         contents:
           - text: "Overview by tool"
             file: website_docs/tools_to_standards.qmd
       - section: website_docs/tutorials_overview.qmd
         contents:
+          - text: "Installing via the plasmogenepi.r-universe"
+            file: website_docs/R_universe.qmd
           - section: "coiaf"
             contents:
             - text: "Summary"
