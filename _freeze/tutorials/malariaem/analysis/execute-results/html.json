@@ -1,0 +1,14 @@
+{
+  "hash": "0fadca5b5e90e2bca72e02d71480265d",
+  "result": {
+    "markdown": "---\ntitle: \"Analyze data with `malaria.em`\"\noutput: html_document\n---\n\n\n\n\n## *In development*",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
