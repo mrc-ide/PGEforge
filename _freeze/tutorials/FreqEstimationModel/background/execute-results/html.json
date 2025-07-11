@@ -1,0 +1,18 @@
+{
+  "hash": "d5f8beb4d97d0e624bbf83e916ccc46a",
+  "result": {
+    "markdown": "---\ntitle: \"FreqEstimationModel\"\noutput: html_document\nauthor: \"Shazia Ruybal-Pesántez\"\ndate: \"2025-07-11\"\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> Frequency/prevalence estimation of phased genotypes </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> Aimee Taylor </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\"> MIT </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> NA </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/aimeertaylor/FreqEstimationModel\" target=\"_blank\"> https://github.com/aimeertaylor/FreqEstimationModel</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\"> <a href=\"https://doi.org/10.1186/1475-2875-13-102\" target=\"_blank\"> https://doi.org/10.1186/1475-2875-13-102</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\"> TODO </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\"> TODO </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\n\nThe `FreqEstimationModel` R package estimates population-level frequencies of genetic markers of antimalarial resistance where\n\n- genetic markers of antimalarial resistance are either alleles at single biallelic SNPs or sequences of alleles (haplotypes) over a small number of biallelic SNPs (at most seven) in the malaria parasite genome;\n- population-level parasite frequencies (vs within-infection parasite frequencies) are estimated by jointly modelling parasite genetic data on many infections, including those that contain genetically distinct parasites (i.e., those that are polyclonal);\n- parasite genetic data are prevalence data (i.e., they describe the presence of alleles). A non-default version of the model does exploit information on read-depths (see note on chapter 6 below), but it has not been peer-reviewed.\n\n## Existing resources\n\nThe [`FreqEstimationModel` GitHub repository](https://github.com/aimeertaylor/FreqEstimationModel) includes scripts for implementing FreqEstimationModel as well as vignettes demonstrating usage. \n\n## Citation\n\nThe publications associated with the `FreqEstimationModel` can be found at: \n\n- [Taylor et al 2014 Malaria Journal](https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-13-102)\n- [Taylor et al 2016 Open Forum Infectious Diseases](https://doi.org/10.1093/ofid/ofw229)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -99,6 +99,14 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
+          - section: "FreqEstimationModel"
+            contents:
+            - text: "Summary"
+              file: tutorials/FreqEstimationModel/background.Rmd
+            - text: "Installation"
+              file: tutorials/FreqEstimationModel/installation.Rmd
+            - text: "Analyze data with `FreqEstimationModel`"
+              file: tutorials/FreqEstimationModel/analysis.Rmd
           - section: "hierfstat"
             contents:
             - text: "Summary"
