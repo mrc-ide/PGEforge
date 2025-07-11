@@ -149,6 +149,14 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
+          - section: "SNP-slice"
+            contents:
+            - text: "Summary"
+              file: tutorials/SNP-slice/background.Rmd
+            - text: "Installation"
+              file: tutorials/SNP-slice/installation.Rmd
+            - text: "Analyze data with `SNP-slice`"
+              file: tutorials/SNP-slice/analysis.Rmd
           # - section: "rehh"
           #   contents:
           #   - text: "Summary"
