@@ -125,6 +125,14 @@ website:
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
               file: tutorials/hmmIBD/hmmIBD_analysis.md
+          - section: "Incomplete data model (IDM)"
+            contents:
+            - text: "Summary"
+              file: tutorials/IDM/background.Rmd
+            - text: "Installation"
+              file: tutorials/IDM/installation.Rmd
+            - text: "Analyze data with `SNP-slice`"
+              file: tutorials/IDM/analysis.Rmd
           - section: "malaria.em"
             contents:
             - text: "Summary"
