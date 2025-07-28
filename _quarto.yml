@@ -165,6 +165,32 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
+          - section: tutorials/PGEcore/background.Rmd
+            contents:
+              - section: "Naive COI"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_COI/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_COI/benchmarking.Rmd
+              - section: "Naive single-locus allele freq"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_single_AF/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_single_AF/benchmarking.Rmd
+              - section: "Naive single-locus allele prev"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_single_AP/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_single_AP/benchmarking.Rmd
+              - section: "Naive multi-locus genotype freq/prev"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_MLG_AF_AP/benchmarking.Rmd
           - section: "SNP-slice"
             contents:
             - text: "Summary"

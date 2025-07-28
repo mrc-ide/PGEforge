@@ -1,0 +1,14 @@
+{
+  "hash": "3f63af7bd217fea2f9fc652c158e174b",
+  "result": {
+    "markdown": "---\ntitle: \"Estimate naive allele frequency\"\noutput: html_document\nauthor: \"Alfred Hubbard\"\ndate: \"\"\n---\n\n\n\n\n\n## Tool Information\n\nThis tool provides a naive implementation of estimating allele frequency from amino acid calls. \n\nAllele frequency is estimated in two ways:\n- Allele frequency by read count: within sample allele proportions are calculated using read counts and then the allele frequency is calculated as the average within sample allele frequency\n- Allele frequency by presence/absence: allele frequency is calculated as the count of a particular allele divided by the total number of alleles observed at a given position\n\n## Script Usage \n\n::: {.cell}\n\n```{.r .cell-code}\nRscript scripts/estimate_allele_frequency_naive/estimate_allele_frequency_naive.R \\\n  --aa_calls data/example_amino_acid_calls.tsv \\\n  --method read_count_prop \\\n  --output allele_freqs.tsv\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

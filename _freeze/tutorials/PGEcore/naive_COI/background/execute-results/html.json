@@ -1,0 +1,14 @@
+{
+  "hash": "6854d6f09d00cefdad692a950a77d6ae",
+  "result": {
+    "markdown": "---\ntitle: \"Estimate naive COI\"\noutput: html_document\nauthor: \"Alfred Hubbard\"\ndate: \"\"\n---\n\n\n\n\n\n## Tool Information\n\nThere are several simple ways to estimate COI from raw data without relying on\nmodels. For example, if a sample contains any loci with 4 alleles then you could\nargue that COI is 4 (at least). However, sequencing errors can also create this\nfalse signal. Slightly more nuanced methods that make use of thresholds can be\nused to provide results that are robust to errors.\n\nThese module implements several basic COI estimation methods. It uses the\nfollowing steps:\n\n1. Reads in allele call data, for example produced from a PMO object.\n2. For each sample, counts the number of alleles at each locus and sorts these\ninto decreasing order. Either takes the $n^{th}$ value as the COI estimate (the\n\"integer method\"), or takes the value at a stated quantile (the \"quantile\nmethod\").\n3. Returns a data.frame of COI estimate for each sample.\n4. Writes this output data.frame to file.\n\n\n## Script Usage\n\nThe `estimate_coi_naive.R` script contains all the requisite functions to read\nin the data, estimate COI, and write results to file.\n\nFor example:\n\n\n::: {.cell}\n\n```{.r .cell-code}\nRscript estimate_coi_naive.R --input_path data/example2_allele_table.tsv \\\n    --output_path coi_table.tsv --method integer_method --integer_threshold 5\nRscript estimate_coi_naive.R --input_path data/example2_allele_table.tsv \\\n    --output_path coi_table.tsv --method quantile_method --quantile_threshold \\\n    0.05\n```\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
