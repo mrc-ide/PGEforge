@@ -1,0 +1,14 @@
+{
+  "hash": "53a7e33d3f20d44bacc6ec2595c5008a",
+  "result": {
+    "markdown": "---\ntitle: \"Installing `malaria.em`\"\noutput: html_document\n---\n\n\n\n\nThe `malaria.em` R package is now part of the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds).\n\nYou can install it by running the following code:\n\n::: {.cell}\n\n```{.r .cell-code}\n# Install malaria.em in R:\ninstall.packages('malaria.em', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))\n```\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

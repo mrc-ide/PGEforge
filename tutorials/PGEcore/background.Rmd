@@ -1,0 +1,46 @@
+---
+title: "PGEcore"
+output: html_document
+author: "Shazia Ruybal-Pesántez"
+date: "2025-07-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The `PGEcore` bespoke scripts perform functionalities not currently fulfilled by any available tool. 
+
+## Existing resources
+
+The [`PGEcore` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes more details on each bespoke script, including usage. 
+
+See:
+
+- [Estimate naive COI](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_coi_naive/)
+- [Estimate naive single-locus allele frequency](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_allele_frequency_naive/)
+- [Estimate naive single-locus allele prevalence](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_allele_prevalence_naive/)
+- [Estimate naive multi-locus genotype frequency and prevalence](https://github.com/PlasmoGenEpi/PGEcore/scripts/multilocus_prevfreq_naive)
+
+(*note to self: these links will be broken until PGEcore merged to main, but should be ready to go once PGEcore is live*)
+
+## Citation
+
