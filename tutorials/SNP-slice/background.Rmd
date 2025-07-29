@@ -1,0 +1,38 @@
+---
+title: "SNP-slice"
+output: html_document
+author: "Shazia Ruybal-Pesántez"
+date: "2025-07-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The `SNP-slice` algorithm enables reconstruction of SNP haplotypes from bi-allelic data, allowing for inference of haplotype/strain frequencies.
+
+## Existing resources
+
+The [`SNP-slice` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes scripts for implementing the SNP-slice algorithm, as well as scripts for analyzing output and generating figures. 
+
+## Citation
+
+The publication associated with the `SNP-slice` algorithm and analysis scripts can be found [here (Ju et al 2024 Bioinformatics)](https://doi.org/10.1093/bioinformatics/btae344).

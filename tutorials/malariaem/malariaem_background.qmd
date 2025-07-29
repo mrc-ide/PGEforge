@@ -1,8 +1,8 @@
 ---
 title: "malaria.em"
 output: html_document
-author: "Nicholas Hathaway"
-date: "2023-12-15"
+author: "Nicholas Hathaway/Shazia Ruybal-Pesántez"
+date: "Updated on 2025-07-11"
 bibliography: reference.bib
 ---
 
@@ -16,7 +16,7 @@ library(kableExtra)
 
 ## Summary sheet
 
-```{r, echo=FALSE, warning=FALSE}
+```{r summary table, echo=FALSE, warning=FALSE}
 # read in summary sheet from file
 df_summary <- read.csv("summary_sheet.csv", header = FALSE)
 
@@ -29,7 +29,7 @@ df_summary |>
 ## Purpose
 Program designed to discern the combinations of mutations at the population level to estimate frequencies of these clonal sequences. This program utilizes an expectation maximization (EM) approach to maximum likelihood estimation of haplotype frequencies from the SNP loci per sample information. 
 
-The code for this program was removed from CRAN in 2014 and does not appear to be activiely maintained. A program that does something similar is [MultiLociBiallelicModel](../MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd). 
+The code for this program was removed from CRAN in 2014 and does not appear to be actively maintained ([CRAN archive]( https://cran.r-project.org/src/contrib/Archive/malaria.em/)). However, we have fixed some bugs in a newer version, and it is now available through the [PlasmoGenEpi GitHub repository](https://github.com/PlasmoGenEpi/malaria.em). 
 
 ## Citation
 

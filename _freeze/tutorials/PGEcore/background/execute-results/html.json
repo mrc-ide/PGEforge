@@ -1,0 +1,18 @@
+{
+  "hash": "570cd1122cc00ca2ddaf5697fd52480a",
+  "result": {
+    "markdown": "---\ntitle: \"PGEcore\"\noutput: html_document\nauthor: \"Shazia Ruybal-Pesántez\"\ndate: \"2025-07-11\"\n---\n\n\n\n\n<br/>\n<br/>\n\n## Summary sheet\n\n\n::: {.cell}\n::: {.cell-output-display}\n`````{=html}\n<table style=\"width:50%; \" class=\"table table-striped table-hover table-condensed\">\n<tbody>\n  <tr>\n   <td style=\"text-align:left;\"> Main use-cases </td>\n   <td style=\"text-align:left;\"> Bespoke code to perform analysis functionalities not currently implemented in available analysis tools </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Authors </td>\n   <td style=\"text-align:left;\"> PlasmoGenEpi </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Latest version </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> License </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Website </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/PlasmoGenEpi/PGEcore/\" target=\"_blank\"> https://github.com/PlasmoGenEpi/PGEcore/</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Code repository </td>\n   <td style=\"text-align:left;\"> <a href=\"https://github.com/PlasmoGenEpi/PGEcore/\" target=\"_blank\"> https://github.com/PlasmoGenEpi/PGEcore</a> </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Publication </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial authors </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n  <tr>\n   <td style=\"text-align:left;\"> Tutorial date </td>\n   <td style=\"text-align:left;\">  </td>\n  </tr>\n</tbody>\n</table>\n\n`````\n:::\n:::\n\n\n## Purpose\n\nThe `PGEcore` bespoke scripts perform functionalities not currently fulfilled by any available tool. \n\n## Existing resources\n\nThe [`PGEcore` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes more details on each bespoke script, including usage. \n\nSee:\n\n- [Estimate naive COI](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_coi_naive/)\n- [Estimate naive single-locus allele frequency](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_allele_frequency_naive/)\n- [Estimate naive single-locus allele prevalence](https://github.com/PlasmoGenEpi/PGEcore/scripts/estimate_allele_prevalence_naive/)\n- [Estimate naive multi-locus genotype frequency and prevalence](https://github.com/PlasmoGenEpi/PGEcore/scripts/multilocus_prevfreq_naive)\n\n(*note to self: these links will be broken until PGEcore merged to main, but should be ready to go once PGEcore is live*)\n\n## Citation\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<script src=\"../../site_libs/kePrint-0.0.1/kePrint.js\"></script>\n<link href=\"../../site_libs/lightable-0.0.1/lightable.css\" rel=\"stylesheet\" />\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

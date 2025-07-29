@@ -1,0 +1,14 @@
+{
+  "hash": "ae3db0a9b864204ca2efa9de0d448feb",
+  "result": {
+    "markdown": "---\ntitle: \"Estimate naive allele prevalence\"\noutput: html_document\nauthor: \"Kathryn Murie\"\ndate: \"\"\n---\n\n\n\n\n\n## Tool Information\n\nThis tool provides a naive implementation of estimating allele prevalence from amino acid calls. Prevalence is estimated by calculating the proportion of samples (with at least one call) that have a given variant at a given position. \n\n## Script Usage \n\n::: {.cell}\n\n```{.r .cell-code}\nRscript estimate_allele_prevalence_naive.R \\\n  --aa_calls data/example_amino_acid_calls.tsv \\\n  --output prevalence.tsv\n```\n:::",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

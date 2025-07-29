@@ -1,0 +1,14 @@
+{
+  "hash": "7acb4542d5d23549aaa0c0c76b4175e6",
+  "result": {
+    "markdown": "---\ntitle: \"Benchmarking `insert bespoke functionality`\"\noutput: html_document\nauthor: \"TODO\"\ndate: \"TODO\"\n---\n\n\n\n\n\n## Analysis and viz\n\nTo be filled out :)",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

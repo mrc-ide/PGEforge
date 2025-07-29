@@ -1,0 +1,48 @@
+---
+title: "Incomplete data model (IDM)"
+output: html_document
+author: "Shazia Ruybal-Pesántez"
+date: "2025-07-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The `IDM` algorithm provides a statistical model to estimate MOI and lineage frequencies/prevalences from single-locus molecular data characterized by incomplete information.
+
+A note from the [original paper](https://doi.org/10.1371/journal.pone.0287161): *"the new method is recommendable only for data sets in which the molecular assays produced poor-quality results. This will be particularly true if the model is extended to accommodate information from multiple molecular markers at the same time, and incomplete information at one or more markers leads to a strong depletion of sample size."*
+
+## Existing resources
+
+- The existing tutorial is in PDF format as mentioned above
+(https://doi.org/10.1371/journal.pone.0287161.s003) and is from in the [original
+paper](https://doi.org/10.1371/journal.pone.0287161). If you find another one,
+please contribute by filing an issue or submitting a pull request.
+
+- Related paper:  
+  Hashemi M, Schneider KA. Bias-corrected maximum-likelihood estimation of
+multiplicity of infection and lineage frequencies. PLOS ONE. 2022; 16(12):1–28.
+(This paper describes the original model (OM))
+
+## Citation
+
+The publications associated with the `IDM` method can be found at [Hashemi et al 2022 PLOS One](https://doi.org/10.1371/journal.pone.0287161). 

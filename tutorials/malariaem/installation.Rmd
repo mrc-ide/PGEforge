@@ -1,0 +1,16 @@
+---
+title: "Installing `malaria.em`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `malaria.em` R package is now part of the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds).
+
+You can install it by running the following code:
+```{r install, warning=FALSE, message=FALSE, error=FALSE, eval=F}
+# Install malaria.em in R:
+install.packages('malaria.em', repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org'))
+```

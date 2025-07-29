@@ -46,18 +46,15 @@ website:
             file: website_docs/data_snps.qmd
           - text: "pfhrp2/3 deletion counts"
             file: website_docs/data_counts.qmd
-      - section: "Tool landscaping"
-        contents:
-          - text: "The landscaping matrix"
-            file: website_docs/tool_landscaping.qmd
-          - text: "Installing via the plasmogenepi.r-universe"
-            file: website_docs/R_universe.qmd
+      - href: website_docs/tool_landscaping.qmd
       - section: website_docs/software_standards.qmd
         contents:
           - text: "Overview by tool"
             file: website_docs/tools_to_standards.qmd
       - section: website_docs/tutorials_overview.qmd
         contents:
+          - text: "Installing via the plasmogenepi.r-universe"
+            file: website_docs/R_universe.qmd
           - section: "coiaf"
             contents:
             - text: "Summary"
@@ -66,6 +63,14 @@ website:
               file: tutorials/coiaf/coiaf_installation.Rmd
             - text: "Estimating COI from SNP data"
               file: tutorials/coiaf/coiaf_analysis.Rmd
+          - section: "dcifer"
+            contents:
+            - text: "Summary"
+              file: tutorials/dcifer/dcifer_background.Rmd
+            - text: "Installation"
+              file: tutorials/dcifer/dcifer_installation.Rmd
+            - text: "Tutorial"
+              file: tutorials/dcifer/dcifer_analysis.Rmd
           - section: "DEploidIBD"
             contents:
             - text: "Summary"
@@ -86,14 +91,6 @@ website:
               file: tutorials/DRpower/DRpower_design.Rmd
             - text: "Analysis of *pfhrp2/3* data"
               file: tutorials/DRpower/DRpower_analysis_pfhrp2.Rmd
-          - section: "dcifer"
-            contents:
-            - text: "Summary"
-              file: tutorials/dcifer/dcifer_background.Rmd
-            - text: "Installation"
-              file: tutorials/dcifer/dcifer_installation.Rmd
-            - text: "Tutorial"
-              file: tutorials/dcifer/dcifer_analysis.Rmd
           - section: "estMOI"
             contents:
             - text: "Summary"
@@ -102,6 +99,14 @@ website:
               file: tutorials/estMOI/installation.Rmd
             - text: "Analyze data with `estMOI`"
               file: tutorials/estMOI/analysis.Rmd
+          - section: "FreqEstimationModel"
+            contents:
+            - text: "Summary"
+              file: tutorials/FreqEstimationModel/background.Rmd
+            - text: "Installation"
+              file: tutorials/FreqEstimationModel/installation.Rmd
+            - text: "Analyze data with `FreqEstimationModel`"
+              file: tutorials/FreqEstimationModel/analysis.Rmd
           - section: "hierfstat"
             contents:
             - text: "Summary"
@@ -120,6 +125,22 @@ website:
               file: tutorials/hmmIBD/hmmIBD_installation.md
             - text: "Basic IBD analysis with `hmmIBD`"
               file: tutorials/hmmIBD/hmmIBD_analysis.md
+          - section: "Incomplete data model (IDM)"
+            contents:
+            - text: "Summary"
+              file: tutorials/IDM/background.Rmd
+            - text: "Installation"
+              file: tutorials/IDM/installation.Rmd
+            - text: "Analyze data with `SNP-slice`"
+              file: tutorials/IDM/analysis.Rmd
+          - section: "malaria.em"
+            contents:
+            - text: "Summary"
+              file: tutorials/malariaem/malariaem_background.qmd
+            - text: "Installation"
+              file: tutorials/malariaem/installation.Rmd
+            - text: "Analyze data with `malaria.em`"
+              file: tutorials/malariaem/analysis.Rmd
           - section: "moire"
             contents:
             - text: "Summary"
@@ -144,6 +165,40 @@ website:
               file: tutorials/paneljudge/paneljudge_installation.Rmd
             - text: "Tutorial for Running `paneljudge`"
               file: tutorials/paneljudge/paneljudge_analysis.Rmd
+          - section: tutorials/PGEcore/background.Rmd
+            contents:
+              - section: "Naive COI"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_COI/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_COI/benchmarking.Rmd
+              - section: "Naive single-locus allele freq"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_single_AF/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_single_AF/benchmarking.Rmd
+              - section: "Naive single-locus allele prev"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_single_AP/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_single_AP/benchmarking.Rmd
+              - section: "Naive multi-locus genotype freq/prev"
+                contents:
+                - text: "Summary"
+                  file: tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd
+                - text: "Benchmarking"
+                  file: tutorials/PGEcore/naive_MLG_AF_AP/benchmarking.Rmd
+          - section: "SNP-slice"
+            contents:
+            - text: "Summary"
+              file: tutorials/SNP-slice/background.Rmd
+            - text: "Installation"
+              file: tutorials/SNP-slice/installation.Rmd
+            - text: "Analyze data with `SNP-slice`"
+              file: tutorials/SNP-slice/analysis.Rmd
           # - section: "rehh"
           #   contents:
           #   - text: "Summary"
@@ -168,6 +223,8 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
+          - text: "Benchmarking"
+            file: website_docs/benchmarking.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
@@ -175,6 +232,8 @@ website:
             contents:
             - text: "RADISH23 Hackathon"
               file: website_docs/radish23.qmd
+            - text: "WASABI25 Hackathon"
+              file: website_docs/wasabi25.qmd
           - href: website_docs/contributors.qmd
             text: "Contributors"
           - href: website_docs/future_work.qmd

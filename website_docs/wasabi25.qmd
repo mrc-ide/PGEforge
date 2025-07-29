@@ -1,0 +1,44 @@
+---
+title: "WASABI25"
+subtitle: "**W**orkflows for **A**mplicon **S**equencing **A**nalytics and **BI**oInformatics Hackathon 2025"
+format: 
+  html:
+    image: "website_docs/img/radish.png"
+---
+
+## Background
+
+**W**orkflows for **A**mplicon **S**equencing **A**nalytics and **BI**oInformatics Hackathon (**WASABI**), organised by Kathryn Murie, Alfred Hubbard, Bryan Greenhouse and Amy Wesolowski took place at Johns Hopkins Bloomberg School of Public Health in Baltimore, USA from 17-21st January 2025, with 12 participants from 6 institutions. 
+
+::: {.column-margin}
+![A cool wasabi](img/wasabi.png){ width=150 height=200 }
+:::
+
+![](img/wasabi25_group_photo.png) 
+
+## Main aims
+
+Our main aim was to focus on generating a core set of scripts and wrapper functions to perform common downstream analysis functionalities for *Plasmodium* genomic analysis workflows. The aim is for these scripts to serve as foundational components for building robust and reusable bioinformatic and analysis workflows. We focused on writing wrapper scripts for existing tools that estimate complexity of infection (COI) and tools that perform other functionalities (eg estimating relatedness, estimating multi-locus genotype frequencies). We also wrote bespoke code to perform functionalities not currently fulfilled by any available tool. During the hackathon, we prioritised tools for targeted sequencing data. 
+
+Script development was centered around building necessary components for the following analysis workflows: 
+
+1) Drug resistance 
+2) Transmission intensity
+
+:::aside
+For a general schematic of the workflows, see [analysis worfklows](workflows.qmd), however the workflows developed during WASABI25 are more detailed to outline specific functionalites necessary for the full end-to-end workflow. 
+:::
+
+The hackathon was divided into two parts:
+
+- **Part 1:** script development
+- **Part 2:** integration of scripts into Nextflow and WDL pipelines
+
+## Outputs
+The main output of WASABI25 was [PGEcore](https://github.com/PlasmoGenEpi/PGEcore), a central repository for scripts that integrate and wrap commonly used genomic data analysis tools and bespoke code for common functionalities. This includes wrappers of existing tools and bespoke code to perform common tasks.
+
+We now have the necessary components and fully functioning worfklows for 1) drug resistance and 2) transmission intensity. Most of the components also now exist for a third workflow: geographic connectivity.
+
+:::aside
+Check out the `PGEcore` GitHub repository at [github.com/PlasmoGenEpi/PGEcore](https://github.com/PlasmoGenEpi/PGEcore)!
+:::

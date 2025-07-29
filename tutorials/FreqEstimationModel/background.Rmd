@@ -1,0 +1,45 @@
+---
+title: "FreqEstimationModel"
+output: html_document
+author: "Shazia Ruybal-Pesántez"
+date: "2025-07-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kableExtra)
+```
+
+<br/>
+<br/>
+
+## Summary sheet
+
+```{r, echo=FALSE, warning=FALSE}
+# read in summary sheet from file
+df_summary <- read.csv("summary_sheet.csv", header = FALSE)
+
+# produce formatted table
+df_summary |>
+  kbl(format = "html", col.names = NULL, table.attr = "style='width:50%;'", escape = FALSE) |>
+  kable_styling(position = "left", bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Purpose
+
+The `FreqEstimationModel` R package estimates population-level frequencies of genetic markers of antimalarial resistance where
+
+- genetic markers of antimalarial resistance are either alleles at single biallelic SNPs or sequences of alleles (haplotypes) over a small number of biallelic SNPs (at most seven) in the malaria parasite genome;
+- population-level parasite frequencies (vs within-infection parasite frequencies) are estimated by jointly modelling parasite genetic data on many infections, including those that contain genetically distinct parasites (i.e., those that are polyclonal);
+- parasite genetic data are prevalence data (i.e., they describe the presence of alleles). A non-default version of the model does exploit information on read-depths (see note on chapter 6 below), but it has not been peer-reviewed.
+
+## Existing resources
+
+The [`FreqEstimationModel` GitHub repository](https://github.com/aimeertaylor/FreqEstimationModel) includes scripts for implementing FreqEstimationModel as well as vignettes demonstrating usage. 
+
+## Citation
+
+The publications associated with the `FreqEstimationModel` can be found at: 
+
+- [Taylor et al 2014 Malaria Journal](https://malariajournal.biomedcentral.com/articles/10.1186/1475-2875-13-102)
+- [Taylor et al 2016 Open Forum Infectious Diseases](https://doi.org/10.1093/ofid/ofw229)
