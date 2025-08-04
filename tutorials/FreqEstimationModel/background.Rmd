@@ -1,8 +1,6 @@
 ---
 title: "Freq Estimation Model"
 output: html_document
-author: "Insert name"
-date: "Insert todays date"
 ---
 
 ```{r setup, include=FALSE}
@@ -27,12 +25,18 @@ df_summary |>
 
 ## Purpose
 
-A quick one paragraph description of what the tool does. For an example, see the [DRpower page](https://mrc-ide.github.io/PGEforge/tutorials/DRpower/DRpower_background.html).
+Here is the purpose of FEM as taken from the github repository: 
+"An R package developed to estimate population-level frequencies of genetic markers of antimalarial resistance where
+
+* genetic markers of antimalarial resistance are either alleles at single biallelic SNPs or sequences of alleles (haplotypes) over a small number of biallelic SNPs (at most seven) in the malaria parasite genome;
+* population-level parasite frequencies (vs within-infection parasite frequencies) are estimated by jointly modelling parasite genetic data on many infections, including those that contain genetically distinct parasites (i.e., those that are polyclonal);
+* parasite genetic data are prevalence data (i.e., they describe the presence of alleles)." 
+
+FEM allows for the calculation of multi-locus allele frequencies for biallelic SNPs.
 
 ## Existing resources
 
-- Any existing online tutorials?
-- Any important papers?
+- All information is [here](https://github.com/aimeertaylor/FreqEstimationModel)
 
 ## Citation
 ```
