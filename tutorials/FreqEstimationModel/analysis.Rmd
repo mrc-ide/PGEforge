@@ -10,7 +10,9 @@ library(kableExtra)
 ```
 
 # The data
+
 We are going to use data from here [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html).
+
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 library(tibble)
 library(dplyr)
@@ -30,13 +32,16 @@ library(variantstring)
 ```
 
 ## Transferring data into the PlasmoGenEpi format
+
 For now, I'm reading in a sample amino_acid_calls table. Working on creating this from the vcf file!
+
 ```{r formatting_1}
 setwd("~/Life/Collaboration with Dr. Wesolowski/for_alfred/test_PGE/PGEcore/scripts/FreqEstimationModel_wrapper/")
 input_data <- read.csv("example_amino_acid_calls.tsv", sep="\t")
 ```
 ## The PGE format
-For the PGE pipeline, each unique target/read 
+
+For the PGE pipeline, each unique target/read is an individual observation.
 The version of the PGE data that we use has 10 columns:
 
 * Specimen ID:
@@ -62,9 +67,11 @@ input_data %>%
 ```
 
 ## Formatting the data from PGE to FEM
+
 We need to transform the data from PlasmoGenEpi format to FEM format, which is a matrix indicating whether targets in a given sample are heterozygous, match the reference sequence, or are exclusively mutated.
 
 The sample matrix is of the form n x m where n = the samples in the dataset and m = targets. Each position will indicate if there is alignment at the given target.
+
 ```{r formatting_2}
 input_data$unique_targets <- paste(input_data$gene_id, input_data$aa_position, sep=":")
 unique_targets <- unique(input_data$unique_targets)
@@ -80,6 +87,7 @@ rownames(sample_matrix) <- unique_sample_ids
 For this tutorial, I'm iterating through the dataset first by sample and then by target. We filter the PGE data to only look at *unique* reads at a given target, and then count how many unique calls there are. Currently, FEM does not support >2 alleles at a given target.
 
 The final sample matrix will be populated with the values: 0, 0.5, 1, and 99. 99 is the "no data" placeholder for targets not represented in a given sample. 0 indicates a match with the reference allele, while 1 indicates a discordance. 0.5 is used for heterozygous calls. 
+
 ```{r sample_matrix population}
 # populate the input matrix with 0 (only reference), 0.5 ("het" cal), or 1 (only non-reference)
 for(sample in input_data$specimen_id){
@@ -110,7 +118,9 @@ print(sample_matrix)
 ```
 
 ## Running FEM
+
 Now that we have the sample matrix, we save it to a list object called "data_summary." It's important to save the data to "Data" as that's hardcoded into the FEM package. We also rely on the COI: this can be calculated for your sample set using INSERT TOOL. Keep a seed for reproducability. 
+
 ```{r Running FEM}
 #alt_alleles <- sample_matrix_list[[2]]
 COI <- 3
@@ -125,6 +135,7 @@ Most of this code can be kept as-is: these are Aimee's defaults. A few things to
 
 * If convergence is an issue, you can increase the no_traces_preburnin (though see her note on pdf plots, if those are going to be used)
 * If using NGS sequencing, change that parameter (ASK ALFRED)
+
 ```{r running FEM}
 runtime <- system.time({
     thinning_interval <- 1 # Number of iterations per chain that are not saved
@@ -222,16 +233,21 @@ rownames(pop_freq) <- NULL
 
 
 ## Interpreting the Output
+
 The output from this code is stored in "pop_freq". As you can see, the "sequence" column is a binary number: each position represents the possible targets from the colnames of the sample matrix generated above. As we set above, "0" matches the reference allele while "1" indicates a SNP.
+
 ```{r dataframe output}
 print(colnames(sample_matrix))
 print(pop_freq)
 ```
-There are 32 (2^5) sequence outputs. For example, the first sequence is "01101" which refers to a SNP at PF3D7_0417200:59, PF3D7_0417200:108, and PF3D7_0810800:540.
+There are 32 (2^5) possible sequence outputs. For example, the first sequence is "01101" which refers to a SNP at PF3D7_0417200:59, PF3D7_0417200:108, and PF3D7_0810800:540.
 
 This is not the most readable output for further analyses, so if you would like to use the STAVE format, below is the code to transform the binary output into STAVE.
+
+We also add back in the monoallelic calls that we removed initially.
+
 ```{r stave format}
-bin2STAVE <- function(chars, names, alt_alleles){
+bin2STAVE <- function(chars, names, alt_alleles, monos){
   char_ix <- 1
   chars_split <- strsplit(chars, "")[[1]]
   gene_list <- c()
@@ -277,26 +293,27 @@ bin2STAVE <- function(chars, names, alt_alleles){
 }
 
 
-format_single_group_output <- function(pop_freq_list){
-  input_list <- pop_freq_list[[1]]
-  names <- pop_freq_list[[3]]
-  alt_alleles <- pop_freq_list[[4]]
-  num_group <- pop_freq_list[[5]]
-  
-  input_list <- input_list %>% 
-    mutate(variant=map_chr(sequence, bin2STAVE, names, alt_alleles),
-                        sample_total=num_group) %>% 
-    as_tibble()
-  return(input_list)
-}
+names <- colnames(sample_matrix)
 
+alt_alleles <- input_data[input_data$aa != input_data$ref_aa,]
+pop_freq <- pop_freq %>% 
+  mutate(variant=map_chr(sequence, bin2STAVE, names, alt_alleles)) %>% 
+  as_tibble()
+
+
+#printing the final data
+pop_freq %>% kbl() %>%
+  kable_styling(full_width=FALSE)
 
 ```
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
-
 ## Summary
 
-It's a good idea to round off with a summary of what we did.
+To recap, we:
 
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
+1. Converted .vcf data into a PGE format
+2. Then converted that PGE data into the sample matrix of homo/heterozygous calls for FEM
+3. Ran FEM!
+4. Converted that output into a more human-readable version using STAVE notation
+
+Now you have multi-locus allele frequencies for biallelic loci.
