@@ -10,6 +10,7 @@ library(rio)
 library(here)
 library(malaria.em)
 library(tictoc)
+library(tidyverse)
 
 set.seed(555)
 ```
