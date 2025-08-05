@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -845,7 +880,19 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#in-development" id="toc-in-development" class="nav-link active" data-scroll-target="#in-development"><em>In development</em></a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a>
+  <ul class="collapse">
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The data</a></li>
+  <li><a href="#getting-input-ready-for-malaria.em" id="toc-getting-input-ready-for-malaria.em" class="nav-link" data-scroll-target="#getting-input-ready-for-malaria.em">Getting input ready for <code>malaria.em</code></a></li>
+  </ul></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a>
+  <ul class="collapse">
+  <li><a href="#running-malaria.em" id="toc-running-malaria.em" class="nav-link" data-scroll-target="#running-malaria.em">Running <code>malaria.em</code></a></li>
+  <li><a href="#taking-a-look-at-malaria.em-output" id="toc-taking-a-look-at-malaria.em-output" class="nav-link" data-scroll-target="#taking-a-look-at-malaria.em-output">Taking a look at <code>malaria.em</code> output</a></li>
+  <li><a href="#summarizing-population-level-genotype-frequencies" id="toc-summarizing-population-level-genotype-frequencies" class="nav-link" data-scroll-target="#summarizing-population-level-genotype-frequencies">Summarizing population-level genotype frequencies</a></li>
+  <li><a href="#summarizing-sample-level-phased-genotypes" id="toc-summarizing-sample-level-phased-genotypes" class="nav-link" data-scroll-target="#summarizing-sample-level-phased-genotypes">Summarizing sample-level phased genotypes</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/mrc-ide/PGEforge/edit/main/tutorials/malariaem/analysis.Rmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mrc-ide/PGEforge/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -871,8 +918,321 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="in-development" class="level2">
-<h2 class="anchored" data-anchor-id="in-development"><em>In development</em></h2>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>For this tutorial, we will be using the <code>malaria.em</code> package to phase and estimate the population-level frequency of multi-locus genotypes using simulated microhaplotype data from Mozambique (more info on the data here data can be found <a href="https://mrc-ide.github.io/PGEforge/website_docs/data_mhaps.html#simulated-data">here</a>). See the <a href="https://mrc-ide.github.io/PGEforge/tutorials/malariaem/installation.html">installation instructions</a> if you haven’t installed <code>malaria.em</code> before.</p>
+<section id="the-data" class="level3">
+<h3 class="anchored" data-anchor-id="the-data">The data</h3>
+<p>Load data from <a href="https://github.com/mrc-ide/PGEforge/tree/main/data/amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz">amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz</a>)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>mhap <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">'data/amplicon/mozSim_MAD4HATTERDiversitySubPanel.tab.txt.gz'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The simulated dataset includes 100 samples sampled from Mozambique and for a newer diversity panel called MAD^4HatTeR with 50 targets selected for their diversity. The data.frame contains four columns: <code>sample</code>, <code>target</code>, <code>target_popUID</code>, and <code>readCnt</code>. We will not exploit read count so we will remove this variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mhap <span class="ot">&lt;-</span> mhap <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>readCnt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We have a total of 50 diversity targets (<code>target</code>) and a total of 574 unique alleles (<code>target_popUID</code>) across all targets.</p>
+<p>For this tutorial, we will focus on only 5 targets for illustrative purposes, but also because <code>malaria.em</code> can be computationally intensive if there are many targets (i.e.&nbsp;haplotype combinations) and COI is high. We subset 5 targets at random below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># targets_to_subset &lt;- mhap |&gt; distinct(target) |&gt; slice_sample(n=5) |&gt; pull(target)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>targets_to_subset <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Pf05-0213059-0213219"</span>, <span class="st">"Pf05-0350840-0351019"</span>, <span class="st">"Pf08-0102308-0102500"</span>, <span class="st">"Pf11-1295135-1295311"</span>, <span class="st">"Pf13-1465925-1466124"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>targets_to_subset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Pf05-0213059-0213219" "Pf05-0350840-0351019" "Pf08-0102308-0102500"
+[4] "Pf11-1295135-1295311" "Pf13-1465925-1466124"</code></pre>
+</div>
+</div>
+<p>For the subset of 5 targets, there are a total of 55 unique alleles (<code>target_popUID</code>) across all targets.</p>
+</section>
+<section id="getting-input-ready-for-malaria.em" class="level3">
+<h3 class="anchored" data-anchor-id="getting-input-ready-for-malaria.em">Getting input ready for <code>malaria.em</code></h3>
+<p><code>malaria.em</code> expects a matrix with samples as rows and columns as the target loci. The observed alleles in each locus must be separated by a space, and the order of columns corresponds to the order of loci on a chromosome.</p>
+<p>Therefore, we need to convert our data to wide format, filter to only the 5 targets and then save as a matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mhap_matrix <span class="ot">&lt;-</span> mhap <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sample, target) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> target,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> target_popUID,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_fn =</span> <span class="sc">~</span> <span class="fu">paste</span>(<span class="fu">unique</span>(.), <span class="at">collapse =</span> <span class="st">" "</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"sample"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">any_of</span>(targets_to_subset)) <span class="sc">|&gt;</span> <span class="co"># this is optional, but we are doing this so that malaria.em runs relatively quickly.</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="analysis" class="level2">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<section id="running-malaria.em" class="level3">
+<h3 class="anchored" data-anchor-id="running-malaria.em">Running <code>malaria.em</code></h3>
+<p>We are now ready to run the <code>malaria.em::malaria_em()</code> function. The function requires the following arguments:</p>
+<ul>
+<li><code>geno</code> or input matrix: each column represents the alleles observed in each of the target loci.</li>
+<li><code>sizes</code> or coi: an integer or vector of possible COI in the observed data. If only using a fixed integer, this should include the maximum COI observed in the data, otherwise if the COI is a vector of length &gt; 1, the estimation will assume a zero-truncated Poisson distribution on COI.</li>
+<li><code>locus.label</code> or allele names: a vector of allele names</li>
+</ul>
+<p>We check the COI of our observed data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mhap <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(target <span class="sc">%in%</span> targets_to_subset) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sample, target, <span class="at">name =</span> <span class="st">"n_alleles"</span>) <span class="sc">|&gt;</span>       </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_alleles_per_sample =</span> <span class="fu">max</span>(n_alleles), <span class="at">.by =</span> sample) <span class="sc">|&gt;</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">min_coi =</span> <span class="fu">min</span>(max_alleles_per_sample),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_coi =</span> <span class="fu">max</span>(max_alleles_per_sample)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  min_coi max_coi
+1       1       3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>coi_range <span class="ot">&lt;-</span> mhap <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(target <span class="sc">%in%</span> targets_to_subset) <span class="sc">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sample, target, <span class="at">name =</span> <span class="st">"n_alleles"</span>) <span class="sc">|&gt;</span>       </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_alleles_per_sample =</span> <span class="fu">max</span>(n_alleles), <span class="at">.by =</span> sample) <span class="sc">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">min_coi =</span> <span class="fu">min</span>(max_alleles_per_sample),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">max_coi =</span> <span class="fu">max</span>(max_alleles_per_sample)) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">seq</span>(min_coi, max_coi))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><em>Note that we have chosen a combination of 5 targets that have a max observed COI of 3 in the samples. This will take some trial and error for your own datasets given the haplotype combinatorics - but we found that when COI&gt;3 for this simulated dataset was where <code>malaria.em</code> began to struggle.</em></p>
+<p>Now let’s run <code>malaria.em()</code>:</p>
+<div class="cell" data-hash="analysis_cache/html/unnamed-chunk-6_1ff4f366bcb189fd9138c34b6fb20635">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic.clear</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tic.clearlog</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># recording how long this takes to run</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>(<span class="st">"running malaria.em()"</span>)               </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> malaria.em<span class="sc">::</span><span class="fu">malaria.em</span>(<span class="at">geno =</span> mhap_matrix,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">sizes =</span> coi_range,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">locus.label =</span> <span class="fu">colnames</span>(mhap_matrix))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The program is slow, please be patient......
+finding possible haplotype combinations... 
+haploset size =  1 
+haploset size =  2 
+haploset size =  3 
+Starting em......
+Done......</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>(<span class="at">log =</span> <span class="cn">TRUE</span>)     </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>running malaria.em(): 1499.852 sec elapsed</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract elapsed seconds</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>log_entry <span class="ot">&lt;-</span> <span class="fu">tic.log</span>(<span class="at">format =</span> <span class="cn">FALSE</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>elapsed_secs <span class="ot">&lt;-</span> log_entry<span class="sc">$</span>toc <span class="sc">-</span> log_entry<span class="sc">$</span>tic</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="fu">sprintf</span>(<span class="st">"malaria.em took %.3f seconds"</span>, elapsed_secs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>malaria.em took 1499.852 seconds</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>malariaem_run_time <span class="ot">&lt;-</span> elapsed_secs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This took 25 minutes to run.</p>
+</section>
+<section id="taking-a-look-at-malaria.em-output" class="level3">
+<h3 class="anchored" data-anchor-id="taking-a-look-at-malaria.em-output">Taking a look at <code>malaria.em</code> output</h3>
+<p>The output object is a list of 10 objects. The documentation indicates they are as follows:</p>
+<ul>
+<li><p><code>haplo.prob.tab</code> matrix of unique haplotypes, MLEs of estimated haplotype probabilities, and their standard errors.</p></li>
+<li><p><code>haplotype</code> matrix of unique haplotypes. Each row represents a unique haplotype, and the number of columns is the number of loci.</p></li>
+<li><p><code>haplo.prob</code> vector of MLEs of haplotype probabilities. The ith element of hap.prob corresponds to the ith row of haplotype.</p></li>
+<li><p><code>haplo.prob.std</code> standard error of the estimated haplotype frequencies.</p></li>
+<li><p><code>lambda</code> estimated Poisson parameter.</p></li>
+<li><p><code>NumofInfection</code> estimated number of infections.</p></li>
+<li><p><code>haplo.sets</code> List of all possible haplotype combinations and their posterior probability per subject. The first column named ids is a vector for row index of subjects after expanding to all possible haplotype combinations for each subject. If ids=i, then i is the ith row of geno. If the ith subject has n possible haplotype combinations that correspond to their marker genotype, then i is repeated n times. The value in the second column is the row numbers of the unique haplotypes in the returned haplotype matrix.</p></li>
+<li><p><code>n.haplo.set</code> vector of maximum number of haplotype combinations per subject that are consistent with their marker data in the matrix geno. The length of n.haplo.set = nrow(geno).</p></li>
+<li><p><code>pred.haplo.set</code> Predicted haplotype combination that is consistent with their marker data for each subject. The values in pred.haplo.set are the row numbers of the unique haplotypes in the returned haplotype matrix.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>output <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 10
+ $ haplo.prob.tab: chr [1:1320, 1:7] "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:1320] "1" "2" "3" "4" ...
+  .. ..$ : chr [1:7] "Pf05-0213059-0213219" "Pf05-0350840-0351019" "Pf08-0102308-0102500" "Pf11-1295135-1295311" ...
+ $ haplotype     : chr [1:1320, 1:5] "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" "Pf05-0213059-0213219.00" ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:5] "Pf05-0213059-0213219" "Pf05-0350840-0351019" "Pf08-0102308-0102500" "Pf11-1295135-1295311" ...
+ $ haplo.prob    : num [1:1320] 7.72e-08 9.64e-03 1.08e-04 4.80e-07 8.76e-03 ...
+ $ haplo.prob.std: num [1:1320] 0.00166 0.00959 0.002 0.00115 0.00349 ...
+ $ lambda        : num 1.04
+ $ lambda.std    : num 0.00163
+ $ NumofInfection: num 1.61
+ $ haplo.sets    :'data.frame': 22934 obs. of  3 variables:
+  ..$ ids      : int [1:22934] 1 1 1 2 2 2 3 3 3 3 ...
+  ..$ haplo.set: chr [1:22934] "1135" "1135 1135" "1135 1135 1135" "1301" ...
+  ..$ post.p   : num [1:22934] 9.94e-01 6.42e-03 2.77e-05 9.97e-01 3.23e-03 ...
+ $ n.haplo.set   : int [1:100] 3 3 1328 3 10 3 3 44 3 232 ...
+ $ pred.haplo.set: chr [1:100] "1135" "1301" "697 690" "475" ...
+ - attr(*, "class")= chr "malaria.em"</code></pre>
+</div>
+</div>
+</section>
+<section id="summarizing-population-level-genotype-frequencies" class="level3">
+<h3 class="anchored" data-anchor-id="summarizing-population-level-genotype-frequencies">Summarizing population-level genotype frequencies</h3>
+<p>We can now take a look at the estimated population-level multi-locus genotype (MLG) frequencies. We will reshape the <code>output$haplo.prob.tab</code> to create an object in long-format for plotting.</p>
+<p>Every unique multi-locus genotype is composed of a set of alleles at <em>K</em> target loci. In this tutorial each MLG has <code>length(targets_to_subset)</code> target loci. The outputs from <code>malaria.em</code> keep track of MLG ID indices (row index, <code>gt_id</code>) that we now need to link back to our original target and target_popUIDs labels before pivotting to long-format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Population-level multilocus genotype frequency estimate + standard error </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>gt_freq_summary <span class="ot">&lt;-</span> output<span class="sc">$</span>haplo.prob.tab <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get our gt_id from our row index</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowid_to_column</span>(<span class="st">"gt_id"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="st">"gt_id"</span>, <span class="st">"hap.prob"</span>, <span class="st">"hap.prob.std"</span>), </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"target"</span>, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"target_popUID"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span> (gt_id, </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>          target,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>          target_popUID,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">freq =</span> hap.prob, </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">freq_se =</span> hap.prob.std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our new <code>gt_freq_summary</code> data frame looks like this, where we now have our <code>gt_id</code> linked to the <code>target</code> loci names and alleles <code>target_popUID</code> that comprise each <code>gt_id</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>gt_freq_summary <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  gt_id target               target_popUID           freq                freq_se
+  &lt;int&gt; &lt;chr&gt;                &lt;chr&gt;                   &lt;chr&gt;               &lt;chr&gt;  
+1     1 Pf05-0213059-0213219 Pf05-0213059-0213219.00 7.72392295022328e-… 0.0016…
+2     1 Pf05-0350840-0351019 Pf05-0350840-0351019.00 7.72392295022328e-… 0.0016…
+3     1 Pf08-0102308-0102500 Pf08-0102308-0102500.0  7.72392295022328e-… 0.0016…
+4     1 Pf11-1295135-1295311 Pf11-1295135-1295311.00 7.72392295022328e-… 0.0016…
+5     1 Pf13-1465925-1466124 Pf13-1465925-1466124.00 7.72392295022328e-… 0.0016…
+6     2 Pf05-0213059-0213219 Pf05-0213059-0213219.00 0.00963620874391006 0.0095…</code></pre>
+</div>
+</div>
+<p>Because there are many MLGs with low frequencies, we will filter for any with a frequency &gt; 0.001.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>gt_freq_summary <span class="sc">%&gt;%</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gt_id =</span> <span class="fu">factor</span>(gt_id),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">freq =</span> <span class="fu">as.numeric</span>(freq),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">freq_se =</span> <span class="fu">as.numeric</span>(freq_se),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">gt_id =</span> <span class="fu">fct_reorder</span>(gt_id, freq)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Arbitrary filtering for easier viz</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(freq <span class="sc">&gt;</span> <span class="fl">0.001</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> gt_id, <span class="at">y =</span> freq)) <span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> freq <span class="sc">-</span> freq_se,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">ymax =</span> freq <span class="sc">+</span> freq_se)) <span class="sc">+</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Multi-locus genotype ID"</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Population-level frequency estimate + SE"</span>) <span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="summarizing-sample-level-phased-genotypes" class="level3">
+<h3 class="anchored" data-anchor-id="summarizing-sample-level-phased-genotypes">Summarizing sample-level phased genotypes</h3>
+<p>A major advantage of <code>malaria.em</code> is that we can obtain phased multi-locus genotypes with corresponding posterior probability estimates. In this tutorial we do not explore the full posterior probabilities of each multi-locus genotype, but rather we focus on the ‘predicted’ multi-locus genotype and corresponding posterior probability estimate in the <code>output$pred.haplo.set</code>. Note that a <code>haplo.set</code> as referred to by <code>malaria.em</code> can be either one multi-locus genotype (a set of alleles observed at <em>K</em> loci) if COI is 1 or a set of multi-locus genotypes if COI &gt; 1 (set with &gt;1 multi-locus genotypes). So we have multiple layers embedded within our outputs that need to be linked together.</p>
+<p>The outputs from <code>malaria.em</code> keep track of subject or sample ID indices (row index, <code>ids</code>) and MLG IDs (<code>gt_id</code>) that we now need to link back to our actual sample names, as well as our original target and target_popUIDs labels (remember each <code>gt_id</code> is actually composed of <em>K</em> targets).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the most probable MLG per sample</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>haplo_pred <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(output<span class="sc">$</span>pred.haplo.set) <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">haplo.set =</span> <span class="st">`</span><span class="at">output$pred.haplo.set</span><span class="st">`</span>) <span class="sc">|&gt;</span> <span class="fu">rowid_to_column</span>(<span class="st">"ids"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># get the posterior probabilites for all MLGs</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>haplo_pred_prob <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(output<span class="sc">$</span>haplo.sets) </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># get the sample names corresponding to row indices in matrix (this is what malaria.em uses in the output objects)</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>sample_name <span class="ot">&lt;-</span> mhap_matrix <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> <span class="fu">rownames_to_column</span>(<span class="st">"sample"</span>) <span class="sc">|&gt;</span> <span class="fu">distinct</span>(sample) <span class="sc">|&gt;</span> <span class="fu">rowid_to_column</span>(<span class="st">"ids"</span>) </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># create gt_phase_summary object, start from haplo_pred</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>gt_phase_summary <span class="ot">&lt;-</span> haplo_pred <span class="sc">|&gt;</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get the posterior probability for each MLG set (haplo.set)</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(haplo_pred_prob, </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">join_by</span>(ids, haplo.set)) <span class="sc">|&gt;</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get sample name</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sample_name, <span class="fu">join_by</span>(ids)) <span class="sc">|&gt;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># rearrange and rename </span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample,</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>         haplo.set,</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">posterior_est =</span> post.p) <span class="sc">|&gt;</span> </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># separate into one row per MLG</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_rows</span>(haplo.set, <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">gt_id =</span> haplo.set) <span class="sc">|&gt;</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gt_id =</span> <span class="fu">as.integer</span>(gt_id)) <span class="sc">|&gt;</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># now get gt info, including the target and target_popUID that make up a gt_id</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gt_freq_summary, <span class="fu">join_by</span>(gt_id), <span class="at">relationship =</span> <span class="st">"many-to-many"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample, target, target_popUID, gt_id, posterior_est) <span class="sc">|&gt;</span> </span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a variable to identify unique phased mlgs within a sample</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">phase_id =</span> <span class="fu">dense_rank</span>(gt_id), <span class="at">.by =</span> sample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our new <code>gt_phase_summary</code> data frame looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>gt_phase_summary <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  sample  target               target_popUID        gt_id posterior_est phase_id
+  &lt;chr&gt;   &lt;chr&gt;                &lt;chr&gt;                &lt;int&gt;         &lt;dbl&gt;    &lt;int&gt;
+1 Moz-001 Pf05-0213059-0213219 Pf05-0213059-021321…  1135         0.994        1
+2 Moz-001 Pf05-0350840-0351019 Pf05-0350840-035101…  1135         0.994        1
+3 Moz-001 Pf08-0102308-0102500 Pf08-0102308-010250…  1135         0.994        1
+4 Moz-001 Pf11-1295135-1295311 Pf11-1295135-129531…  1135         0.994        1
+5 Moz-001 Pf13-1465925-1466124 Pf13-1465925-146612…  1135         0.994        1
+6 Moz-002 Pf05-0213059-0213219 Pf05-0213059-021321…  1301         0.997        1</code></pre>
+</div>
+</div>
+<p>For plotting we create a <code>custom_palette()</code> function that can generate unique colors for each combination of target/target_popUID. We save our <code>pal</code> object for plotting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>custom_palette <span class="ot">&lt;-</span> <span class="cf">function</span>(gt_phase_summary){</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  gt_phase_summary <span class="sc">|&gt;</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(target, target_popUID) <span class="sc">|&gt;</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(target) <span class="sc">|&gt;</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate unique color for each target/target_popUIS combo, ggsci is a good option as it has a lot of colors (&gt;30 I think)</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">color =</span> paletteer<span class="sc">::</span><span class="fu">paletteer_d</span>(<span class="st">"ggsci::default_igv"</span>)[<span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()]) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># generate unique key for target_id/target_popUIS combo</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">key =</span> <span class="fu">paste</span>(target, target_popUID, <span class="at">sep =</span> <span class="st">"::"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get palette vector</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">with</span>(<span class="fu">set_names</span>(color, key))</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>pal <span class="ot">&lt;-</span> <span class="fu">custom_palette</span>(gt_phase_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also use the fill to show the posterior probability estimate of the phased multi-locus haplotype, with lighter/more transparent indicating low probability/confidence.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>gt_phase_summary <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create key variable</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">key =</span> <span class="fu">paste</span>(target, target_popUID, <span class="at">sep =</span> <span class="st">"::"</span>),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>         <span class="co"># this is an arbitrary labeling for now for easier viz</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">target_id_short =</span> <span class="fu">dense_rank</span>(target)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>         ) <span class="sc">|&gt;</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> target_id_short, <span class="at">y =</span> <span class="fu">factor</span>(gt_id), <span class="at">fill =</span> key)) <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">alpha =</span> posterior_est), <span class="at">color =</span> <span class="st">"grey10"</span>) <span class="sc">+</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal) <span class="sc">+</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>sample, <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Target ID"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Phased genotype ID"</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">alpha =</span> <span class="st">"Posterior </span><span class="sc">\n</span><span class="st">probability </span><span class="sc">\n</span><span class="st">estimate"</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">caption =</span> <span class="st">"Target IDs:</span><span class="sc">\n</span><span class="st"> 1 = Pf05-0213059-0213219 </span><span class="sc">\n</span><span class="st"> 2 = Pf05-0350840-0351019 </span><span class="sc">\n</span><span class="st"> 3 = Pf08-0102308-0102500 </span><span class="sc">\n</span><span class="st"> 4 = Pf11-1295135-1295311 </span><span class="sc">\n</span><span class="st"> 5 = Pf13-1465925-1466124"</span>) <span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> F) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="1248"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>In this tutorial, we have shown how to run <code>malaria.em</code> on simulated microhaplotype data to estimate multi-locus genotype frequencies and compute the maximum likelihood estimation for phased multi-locus genotypes within samples. The <code>malaria.em</code> algorithm is very powerful and provides one of the few available tools for phasing multi-locus data and estimating multi-locus genotype frequencies. However, there are several limitations to consider:</p>
+<ul>
+<li>The program can be very slow and is not computationally efficient when the haplotype combinatorics are too complex (eg high COIs, many loci, many samples). Depending on the complexity of your data, the program may not be suitable.</li>
+<li>The ‘predicted’ multi-locus haplotypes are probabilistic phased estimates, so communciating the probability estimates is very important for downstream interpretation!</li>
+</ul>
 
 
 </section>
