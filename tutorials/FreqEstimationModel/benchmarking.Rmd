@@ -1,0 +1,339 @@
+---
+title: FreqEstimationModel Benchmarking Results
+author: Kathryn Murie, Alfred Hubbard
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load in the Benchmarking Outputs
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+
+inp <- list(
+  sim_info_dir = "~/data/pge-tools-benchmark/simulations/SpotMalaria", 
+  tool_res_dir = "~/data/pge-tools-benchmark/tool_results/FEM", 
+  tool_params = "~/data/pge-tools-benchmark/tool_results/FEM/tool_params.json"
+)
+```
+
+First, all of the tool results, tool parameters, expected simulated values, and
+simulation parameters are read into a tibble.
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        variant = col_character(), 
+        freq = col_double(), 
+        prev = col_double(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  select(
+    -pop, 
+    -country, 
+    -aas_in_variant, 
+    -allele_count, 
+    -total_samples, 
+    -total_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        sequence = col_character(), 
+        variant = col_character(), 
+        sample_total = col_integer(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq, 
+    obs_prev = prev, 
+    obs_n_samp = sample_total
+  ) %>%
+  select(-sequence, -median_freq, -`CI_2.5`, -`CI_97.5`)
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble() %>%
+  mutate(mean_coi_tool_param = paramset$coi) %>%
+  select(-loci_groups, -paramset)
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant", "group_id"))
+```
+
+## Performance with Good COI Specification
+
+Next, performance is assessed when the specified COI is close to the true COI.
+This is done by finding the set of tool results for each simulation where the
+COI parameter was set the closest to the true COI.
+
+```{r}
+# Filter so that FEM COI parameter was close to the true mean COI -----
+tool_results_wtruth_goodcoi <- tool_results_wtruth %>%
+  mutate(coi_misspec = mean_coi_tool_param - true_mean_coi) %>%
+  group_by(sim_id, paramset_id, variant, group_id) %>%
+  filter(coi_misspec == min(abs(coi_misspec))) %>%
+  ungroup()
+```
+
+### Allele Frequency
+
+```{r}
+# Compute RMSE of frequency and prevalence -----------------------------
+goodcoi_rmse <- tool_results_wtruth_goodcoi %>%
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
+    prev_rmse = sqrt(mean((obs_prev - exp_prev)^2)), 
+    .groups = "drop"
+  )
+
+# Show all RMSEs as a boxplot ------------------------------------------
+goodcoi_rmse <- goodcoi_rmse %>%
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )
+goodcoi_rmse %>%
+  ggplot(mapping = aes(x = group_id, y = freq_rmse)) +
+  geom_boxplot() +
+  scale_x_discrete(
+  ) +
+  labs(x = "Loci Set", y = "RMSE of Allele Frequency Estimate") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+These box plots shows the RMSE of allele frequency estimates based on all
+simulations (combining different parameter sets and replicates). Different boxes
+correspond to different loci sets. The median accuracy is comparable and fairly
+good regardless of the number of loci tested, but there are some high outliers
+for the medium diversity group of six loci.
+
+```{r out.width = "100%", fig.width = 9, fig.height = 7}
+# Create box plots of RMSE, separated by simulation parameters ---------
+goodcoi_rmse <- goodcoi_rmse %>%
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+goodcoi_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = freq_rmse, color = group_id)) +
+  geom_boxplot() +
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Frequency Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")
+```
+
+These box plots also show allele frequency RMSE, but separated out in terms of
+the simulation parameters, which affected the between-sample relatedness, the
+COI, and the rate of recombination.
+
+These results show that accuracy improves as between-sample relatedness
+declines. Also, accuracy tends to be higher in the medium COI condition. The
+relationship between accuracy and group size is not straightforward: the two
+loci group tends to have the best accuracy, but the six loci, medium diversity
+group sometimes has the worst accuracy and sometimes the best.
+
+### Sample Prevalence
+
+```{r}
+# Show all RMSEs as a boxplot ------------------------------------------
+goodcoi_rmse %>%
+  ggplot(mapping = aes(x = group_id, y = prev_rmse)) +
+  geom_boxplot() +
+  scale_x_discrete(
+  ) +
+  labs(x = "Loci Set", y = "RMSE of Sample Prevalence Estimate") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+This box plot shows the RMSE of sample prevalence estimates based on all
+simulations (combining different parameter sets and replicates). Different boxes
+correspond to different loci sets. The accuracy of these estimates is generally
+pretty good, except for the six loci, medium diversity group.
+
+```{r out.width = "100%", fig.width = 9, fig.height = 7}
+# Create box plots of RMSE, separated by simulation parameters ---------
+goodcoi_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = prev_rmse, color = group_id)) +
+  geom_boxplot() +
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Sample Prevalence Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")
+```
+
+These box plots also show sample prevalence RMSE, but separated out in terms of
+the simulation parameters, which affected the between-sample relatedness, the
+COI, and the rate of recombination.
+
+The accuracy of the prevalence estimates tends to be very good in the low COI
+simulations, except in the six loci, medium diversity group noted above.
+Accuracy is still pretty good in the medium COI condition, and very good for the
+two loci group. The level of recombination doesn't seem to have a big effect.
+
+## Summary and Next Steps
+
+These results show that FEM does fairly well at estimating allele frequencies,
+and quite well at estimating sample prevalence. Accuracy is notably worse in the
+six loci, medium diversity group. Testing larger and more diverse loci groups
+would be a valuable next step. Also, the relationships observed between allele
+frequency RMSE and simulation parameters did not always make sense. Further
+investigation would be a good idea. Finally, calculating RMSE for all alleles in
+each loci group may mask poor performance estimating the frequencies of
+individual alleles, particularly low frequency alleles. Additional investigation
+into the accuracy of low frequency allele estimates, to begin to establish
+thresholds of detection, is advised.

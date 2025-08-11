@@ -107,6 +107,8 @@ website:
               file: tutorials/FreqEstimationModel/installation.Rmd
             - text: "Analyze data with `FreqEstimationModel`"
               file: tutorials/FreqEstimationModel/analysis.Rmd
+            - text: "Benchmarking"
+              file: tutorials/FreqEstimationModel/benchmarking.Rmd
           - section: "hierfstat"
             contents:
             - text: "Summary"
