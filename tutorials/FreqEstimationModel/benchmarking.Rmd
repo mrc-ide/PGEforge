@@ -20,11 +20,12 @@ library(readr)
 library(stringr)
 library(tibble)
 library(tidyr)
+library(here)
 
 inp <- list(
-  sim_info_dir = "~/data/pge-tools-benchmark/simulations/SpotMalaria", 
-  tool_res_dir = "~/data/pge-tools-benchmark/tool_results/FEM", 
-  tool_params = "~/data/pge-tools-benchmark/tool_results/FEM/tool_params.json"
+  sim_info_dir = here("data", "pge-tools-benchmark", "simulations", "SpotMalaria"), 
+  tool_res_dir = here("data", "pge-tools-benchmark", "tool_results", "FEM"), 
+  tool_params = here("data", "pge-tools-benchmark", "tool_results", "FEM", "tool_params.json")
 )
 ```
 
