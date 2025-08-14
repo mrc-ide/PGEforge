@@ -1,0 +1,425 @@
+---
+title: Naive Multilocus Frequency and Prevalence Benchmarking Results
+author: Kathryn Murie, Alfred Hubbard
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load in the Benchmarking Outputs
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+library(flextable)
+
+inp <- list(
+  sim_info_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/SpotMalaria", 
+  tool_res_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp/", 
+  tool_params = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp.json"
+)
+```
+
+First, all of the tool results, tool parameters, expected simulated values, and
+simulation parameters are read into a tibble.
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        variant = col_character(), 
+        freq = col_double(), 
+        prev = col_double(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  select(
+    -pop, 
+    -country, 
+    -aas_in_variant, 
+    -allele_count, 
+    -total_samples, 
+    -total_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        variant = col_character(), 
+        group_id = col_character(), 
+        sample_total= col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq, 
+    obs_prev = prev,
+    obs_n_samp = sample_total
+  )
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble()
+  #mutate(mean_coi_tool_param = paramset$coi) %>%
+  #select(-loci_groups, -paramset)
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant", "group_id"))
+
+sim_truth<- sim_truth|>
+  mutate(exp_n_denom= exp_n_samp/exp_prev)
+
+tool_results<- tool_results|>
+  rename(obs_n_denom= obs_n_samp)
+
+tool_results_wtruth|>
+  mutate(exp_n_denom = exp_n_samp/exp_prev, 
+         freq_test_stat= (obs_freq- exp_freq)/ sqrt(obs_freq*(1-obs_freq) + exp_freq*(1-exp_freq)), 
+         )|>
+  rename(obs_n_denom= obs_n_samp)->tool_results_wtruth 
+
+tool_results_wtruth$obs_n_denom<- as.numeric(tool_results_wtruth$obs_n_denom)
+
+```
+
+# General Data Structures
+
+An important feature of the naive multilocus tool is that it will report population level information about the maximum and minimum number of loci that can be inferred for any group of loci. 
+
+For instance, in a group of two loci of interest, other tools may report only numbers based on samples that have usable sequencing data at both loci. However, the naive multilocus tool may report both this and information about a single locus that has complete information. 
+
+Working through an example, we can use the example of a group of 100 simulated samples from Cambodia. We are interested in a two locus group of variants which are the the PF3D7_0710100.1 gene at position 362 and the PF3D7_1148700.1 gene at position 132. In the simulated dataset, there are 2 possible variants at this combination of loci, they are either: a T at position 362 of the first gene, and an R at position 132 of the second gene; or an A at position 362 of the first gene, and an R at position 132 of the second gene. 
+
+In the data generated by the naive multilocus tool there are four possible variants which include the same two present in the simulated data as well as two variants which encode information only in the PF3D7_0710100.1 gene at position 362 (the A or T variant), and omit the second locus (PF3D7_1148700.1) altogether. This is likely because of poor sequence data at the second locus in one of the 100 samples. However in representing the data the multilocus tool will count any sample that has usable unambiguous in one gene. This includes samples that have useable information at both genes. 
+
+
+```{r}
+
+example_ambiguous_truth<- sim_truth|>
+  filter(sim_id=="simulated_Cambodia_pop_001", 
+         group_id=="two_group1")|>
+  select(variant, exp_prev, exp_n_denom)|>
+  mutate(N_withVariant= exp_prev*exp_n_denom)|>
+  rename(Prevalence= exp_prev, Denominator= exp_n_denom)|>
+  select(variant, N_withVariant, Denominator, Prevalence)
+
+#data.frame(example_ambiguous_truth)
+
+flextable(example_ambiguous_truth)
+
+tool_results$obs_prev<- as.numeric(tool_results$obs_prev)
+tool_results$obs_n_denom<- as.numeric(tool_results$obs_n_denom)
+example_ambiguous_tool<- tool_results|>
+  filter(sim_id=="simulated_Cambodia_pop_001", 
+         group_id=="two_group1")|>
+  select(variant, obs_prev, obs_n_denom)|>
+  mutate(N_withVariant= obs_prev*obs_n_denom)|>
+  rename(Prevalence= obs_prev, Denominator= obs_n_denom)|>
+  select(variant, N_withVariant, Denominator, Prevalence)
+
+flextable(example_ambiguous_tool)
+
+
+
+```
+
+Going forward we will only use data from the tool that has information from the maximum number of loci in a particular group of variants. 
+
+
+
+#Replicate original tests
+
+RMSE of frequency and prevalence
+
+```{r}
+
+
+
+# Compute RMSE of frequency and prevalence -----------------------------
+tool_results_with_rmse <- tool_results_wtruth %>%
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
+    prev_rmse = sqrt(mean((obs_prev - exp_prev)^2)),
+    dif_denom= mean(exp_n_denom-obs_n_denom),
+    freq_obsExp= mean(obs_freq - exp_freq), 
+    prev_obsExp= mean(obs_prev - exp_prev),
+    mean_relToExp= mean((obs_freq-exp_freq)/sqrt(exp_freq*(1-exp_freq)))
+    .groups = "drop"
+  )
+
+# Show all RMSEs as a boxplot ------------------------------------------
+tool_results_with_rmse <- tool_results_with_rmse %>%
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = group_id, y = freq_rmse)) +
+  geom_boxplot() +theme_bw()+
+  labs(x = "Loci Set", y = "RMSE of Allele Frequency Estimate") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))->RMSE_frequency_plot
+
+print(RMSE_frequency_plot)
+
+
+```
+
+
+```{r out.width = "100%", fig.width = 9, fig.height = 7}
+# Create box plots of RMSE, separated by simulation parameters ---------
+tool_results_with_rmse <- tool_results_with_rmse %>%
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = freq_rmse, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Frequency Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> RMSE_byScenario_freq
+print(RMSE_byScenario_freq)
+
+```
+
+
+```{r}
+# Show all RMSEs as a boxplot ------------------------------------------
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = group_id, y = prev_rmse)) +
+  geom_boxplot() +theme_bw()+
+  labs(x = "Loci Set", y = "RMSE of Allele Prevalence Estimate") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))->RMSE_prev_plot
+
+print(RMSE_prev_plot)
+```
+
+```{r}
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = prev_rmse, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Prevalence Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> RMSE_byScenario_prev
+
+print(RMSE_byScenario_prev)
+```
+
+Investigate number of un-called (ambiguous) samples samples in "true" data set vs number of un-called (ambiguous) samples in naive call dataset. 
+
+```{r}
+
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = group_id, y = dif_denom)) +
+  geom_boxplot() +theme_bw()+
+  labs(x = "Loci Set", y = "Mean Number of False Negatives") +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))->Dif_denom_plot
+
+print(Dif_denom_plot)
+```
+
+
+```{r}
+
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = dif_denom, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Group ", 
+    y = "Mean number of False Negatives", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> difDenom_byScenario
+
+
+print(difDenom_byScenario)
+```
+
+
+```{r}
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = dif_denom, y = freq_obsExp, color = group_id)) +
+  geom_point() +theme_bw()+
+  facet_grid(rows = vars(pop_alpha), cols = vars(coi_r)) +
+  labs(
+    x = "Number of False Negatives", 
+    y = "Mean Difference in Observed vs. Expected Frequencies", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> difDenom_dotplot_byScenario
+
+
+print(difDenom_dotplot_byScenario)
+
+```
+
+
+```{r}
+
+tool_results_with_rmse|>
+  mutate(Regular_prop_test_stat= )
+
+```
+
+
+
+
+
+
+
+
