@@ -1,5 +1,5 @@
 ---
-title: "Give this whatever name you want"
+title: "SNP-slice analysis using snp.slicer"
 output: html_document
 ---
 
@@ -8,23 +8,86 @@ knitr::opts_chunk$set(echo = TRUE)
 library(kableExtra)
 ```
 
+## Introduction
+
+For this tutorial, we will be using the `snp.slicer` package to estimate the complexity of infection (COI) and infer latent haplotypes from SNP data. Instructions to install this package may be found [here](installation.html)
+
 ## The data
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+`snp.slicer` expects a `data.frame` of SNPs with columns `specimen_id`, `target_id`, `target_value`, and `target_count` representing the specimen identifier, target identifier, target value, and target read count, respectively. We will demonstrate using this package with the simulated SNP barcode data described [here](../../website_docs/data_description.html#simulated-1). We will load the data using the `vcfR` package.
 
-Remember to load any packages, including the tool that you are working on:
-```{r, warning=FALSE, message=FALSE, error=FALSE}
+```{r, waning=FALSE, message=FALSE, error=FALSE}
 library(tidyverse)
 library(here)
+library(vcfR)
+library(snp.slicer)
+
+vcf_data <- read.vcfR(
+  here::here("data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz")
+)
+
+counts_raw <- t(vcfR::extract.gt(vcf_data, element = "AD"))
+
+read0 <- vcfR::masplit(
+  counts_raw, record = 1, sort = FALSE, decreasing = FALSE
+) |>
+  as.data.frame() |>
+  rownames_to_column(var = "specimen_id") |>
+  tidyr::pivot_longer(
+    cols = -specimen_id,
+    names_to = "target_id",
+    values_to = "target_count"
+  ) |>
+  # fill in target value with ref allele
+  mutate(target_value = "0")
+
+read1 <- vcfR::masplit(
+  counts_raw, record = 2, sort = FALSE, decreasing = FALSE
+) |>
+  as.data.frame() |>
+  rownames_to_column(var = "specimen_id") |>
+  tidyr::pivot_longer(
+    cols = -specimen_id,
+    names_to = "target_id",
+    values_to = "target_count"
+  ) |>
+  # fill in target value with alt allele
+  mutate(target_value = "1")
+
+snpslice_data <- rbind(read0, read1) |>
+  arrange(specimen_id, target_id)
+
+# run snp.slicer
+run <- snp.slicer::snp_slice(
+  snpslice_data,
+  model = "negative_binomial",
+  # set n_mcmc to 100 for quick demo
+  n_mcmc = 100,
+  store_mcmc = TRUE,
+  verbose = FALSE
+)
+
+summary(run)
 ```
 
+`snp.slicer` exposes functionality to calculate multi locus allele frequencies using the posterior distribution of phased strain assignments. Here we will calculate the distribution for the collection `c("Pf3D7_01_v3_145515", "Pf3D7_01_v3_179347", "Pf3D7_01_v3_180554")`
 
-## First analysis section
+```{r}
+af <- snp.slicer::calculate_allele_frequencies(
+  run, c("Pf3D7_01_v3_145515", "Pf3D7_01_v3_179347", "Pf3D7_01_v3_180554")
+)
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
+af
+```
 
-## Summary
+We can also summarize the distribution of MOI using the strain allocation matrix
+```{r}
+moi_dist <- data.frame(
+  specimen_id = run$model_info$processed_data$specimen_ids,
+  moi = run$allocation_matrix |> rowSums()
+)
 
-It's a good idea to round off with a summary of what we did.
+ggplot(moi_dist) +
+  geom_histogram(aes(x = moi))
+```
 
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.

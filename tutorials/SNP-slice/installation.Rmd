@@ -1,13 +1,14 @@
 ---
-title: "Installing (tool name)"
+title: "Installing snp.slicer"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+To install the `snp.slicer` package, you can use the following command:
 
-## Step N: what to do
-
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
-
+install.packages(
+    'snp.slicer', 
+    repos = c('https://plasmogenepi.r-universe.dev', 'https://cloud.r-project.org')
+)
