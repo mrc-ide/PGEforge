@@ -15,11 +15,14 @@ options(readr.show_col_types = FALSE)
 ```
 
 
-## Load in the Benchmarking Outputs
+## Set up 
+
+Libraries used in the analysis below 
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
 library(ggplot2)
+library(plotly)
 library(jsonlite)
 library(magrittr)
 library(purrr)
@@ -29,19 +32,12 @@ library(tibble)
 library(tidyr)
 library(DT)
 library(GGally)
-
-inp <- list(
-  sim_info_dir = "~/Downloads/hackathon_2025_07_data/simulations/SpotMalaria", 
-  tool_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/MOIRE/", 
-  madhatter_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/madhatter/",
-  tool_params = "~/Downloads/hackathon_2025_07_data/tool_results/moire.json"
-)
 ```
 
-Some helpful R utils 
+Some helpful R utilities 
+
 ```{r}
 #| code-fold: true
-
 
 # commonly used functions  
 `%!in%` <- Negate(`%in%`)
@@ -57,7 +53,7 @@ transparentBackground = theme(
   legend.background = element_rect(color = NA, fill='transparent'), #transparent legend bg
   legend.box.background = element_rect(color = NA, fill='transparent') #transparent legend panel
 )
-sofonias_theme_noTransparentBackground = theme_bw() +
+custom_theme_noTransparentBackground = theme_bw() +
   theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
   theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
           element_line(color="black", linewidth = 0.3))+
@@ -67,11 +63,11 @@ sofonias_theme_noTransparentBackground = theme_bw() +
   theme(legend.position = "bottom") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-sofonias_theme = sofonias_theme_noTransparentBackground +
+custom_theme = custom_theme_noTransparentBackground +
   transparentBackground
-sofonias_theme_backgroundTransparent = sofonias_theme
+custom_theme_backgroundTransparent = custom_theme
 
-sofonias_theme_xRotate_noBackgroundTransparent = theme_bw() +
+custom_theme_xRotate_noBackgroundTransparent = theme_bw() +
   theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
   theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
           element_line(color="black", linewidth = 0.3))+
@@ -82,10 +78,10 @@ sofonias_theme_xRotate_noBackgroundTransparent = theme_bw() +
   theme(plot.title = element_text(hjust = 0.5)) + 
   theme(axis.text.x = element_text(size=12, angle = -90, vjust = 0.5, hjust = 0)) 
 
-sofonias_theme_xRotate = sofonias_theme_xRotate_noBackgroundTransparent + 
+custom_theme_xRotate = custom_theme_xRotate_noBackgroundTransparent + 
   transparentBackground
 
-sofonias_theme_xRotate_backgroundTransparent = sofonias_theme_xRotate
+custom_theme_xRotate_backgroundTransparent = custom_theme_xRotate
 
 
 create_dt <- function(x){
@@ -143,10 +139,21 @@ create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
 ```
 
 
+## Load in the Benchmarking Outputs
+
+```{r}
+inp <- list(
+  sim_info_dir = "~/Downloads/hackathon_2025_07_data/simulations/SpotMalaria", 
+  tool_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/MOIRE/", 
+  madhatter_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/madhatter/",
+  tool_params = "~/Downloads/hackathon_2025_07_data/tool_results/moire.json"
+)
+```
+
+
 First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
 
 ### Reading in expected truths 
-
 
 Read per in expected allele frequencies per sample tables to get true COIs
 
@@ -289,7 +296,6 @@ madhatter_allele_data <- tibble(
 
 moire outputs information on complexity of infection (COI) and on population allele frequencies and several different outputs need to be read in. 
 
-
 Getting the allele frequencies data in the `allele_freq_summary.tsv.gz` files 
 
 ```{r}
@@ -431,7 +437,7 @@ moire_relatedness_summary <- tibble(
 
 ```
 
-Getting what tool parameters were used. For moire benchmarking we set the priors on the assumed amount of relatedness with moire_paramset1 assuming uniform relatedness and then each moire_paramset increasing the amount of relatedness. 
+Getting what tool parameters were used. For moire benchmarking we set the priors on the assumed amount of relatedness with moire_paramset1 assuming uniform relatedness and then each moire_paramset 2 and 3 increasing the amount of assumed relatedness. moire_paramsets3-6 are the same prior relatedness as 1-3 but have more parallel burin to explore more pace for convergence.   
 
 ```{r}
 # Read in tool parameters
@@ -450,7 +456,7 @@ create_dt(tool_params)
 
 ### COI  
 
-Can compare several COIs reported: 
+moire reports several COIs: 
 
 *  naive_coi - The max alleles called for any locus for a sample 
 *  offset_naive_coi - The 2nd max alleles called for any locus for a sample 
@@ -462,11 +468,13 @@ ecoi cut off accumulation to see what is the ideal ecoi cut off for monoclonal
 
 
 ```{r}
+# combine the COI summaries and ecoi summaries and combine with the expected outputs for COI
 moire_all_coi_summary = moire_coi_summary %>% 
   left_join(moire_effective_coi_summary) %>% 
   left_join(expected_simulated_frequencies_per_sample_COIs %>% 
               mutate(library_sample_name = as.character(library_sample_name)))
 
+# calculate the means and differences for Bland-Altman plots 
 moire_all_coi_summary = moire_all_coi_summary %>% 
   rowwise() %>% 
   mutate(naive_coi_diff = naive_coi - expected_COI, 
@@ -482,243 +490,290 @@ moire_all_coi_summary = moire_all_coi_summary %>%
          offset_naive_coi_test_stat = offset_naive_coi_diff^2/expected_COI, 
          coi_diff_test_stat = coi_diff^2/expected_COI, 
          ecoi_test_stat = ecoi_diff^2/expected_COI)
+```
 
 
-
-ggplot(moire_all_coi_summary) + 
-  geom_point(
-    aes(x = naive_coi_mean, y = naive_coi_diff)
-  ) + 
-  sofonias_theme + 
-  facet_grid(~paramset_id)
-
-ggplot(moire_all_coi_summary) + 
-  geom_point(
-    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff)
-  ) + 
-  sofonias_theme + 
-  facet_grid(~paramset_id)
-
-ggplot(moire_all_coi_summary) + 
-  geom_point(
-    aes(x = ecoi_mean, y = ecoi_diff)
-  ) + 
-  sofonias_theme + 
-  facet_grid(~paramset_id)
-
-
-ggplot(moire_all_coi_summary) + 
+```{r}
+moire_all_coi_summary_ecoi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
   geom_hex(
-    aes(x = ecoi_mean, y = ecoi_diff, fill = log10(..count..))) +
+    aes(x = ecoi_mean, y = ecoi_diff, fill = log10(after_stat(count)))) +
   scale_fill_viridis_c(name = "log10(count)") +
   theme_minimal() + 
   geom_smooth(aes(x = ecoi_mean, y = ecoi_diff)) + 
-  facet_grid(~paramset_id)+ 
+  facet_wrap(~paramset_id, ncol = 3)+ 
   geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
   geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  ylim(-60, 60)  + 
-  xlim(0, 60) + 
-  labs(title = "ecoi")
+  labs(title = "ecoi") + 
+  coord_equal()
 
-ggplot(moire_all_coi_summary) + 
+moire_all_coi_summary_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
   geom_hex(
-    aes(x = coi_mean, y = coi_diff, fill = log10(..count..))) +
+    aes(x = coi_mean, y = coi_diff, fill = log10(after_stat(count)))) +
   scale_fill_viridis_c(name = "log10(count)") +
   theme_minimal() + 
   geom_smooth(aes(x = coi_mean, y = coi_diff)) + 
-  facet_grid(~paramset_id)+ 
+  facet_wrap(~paramset_id, ncol = 3)+ 
   geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
   geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  ylim(-60, 60)  + 
-  xlim(0, 60) + 
-  labs(title = "coi")
+  labs(title = "coi") + 
+  coord_equal()
 
-ggplot(moire_all_coi_summary) + 
+moire_all_coi_summary_offset_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
   geom_hex(
-    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff, fill = log10(..count..))) +
+    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff, fill = log10(after_stat(count)))) +
   scale_fill_viridis_c(name = "log10(count)") +
   theme_minimal() + 
   coord_equal() + 
   geom_smooth(aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff)) + 
   geom_hline(aes(yintercept = 2 * sd(offset_naive_coi_diff)))  + 
   geom_hline(aes(yintercept = -2 * sd(offset_naive_coi_diff))) + 
-  facet_grid(~paramset_id) + 
-  ylim(-60, 60) + 
-  xlim(0, 60) + 
+  facet_wrap(~paramset_id, ncol = 3) + 
   labs(title = "offset_naive_coi")
 
+moire_all_coi_summary_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
+  geom_hex(
+    aes(x = naive_coi_mean, y = naive_coi_diff, fill = log10(after_stat(count)))) +
+  scale_fill_viridis_c(name = "log10(count)") +
+  theme_minimal() + 
+  coord_equal() + 
+  geom_smooth(aes(x = naive_coi_mean, y = naive_coi_diff)) + 
+  geom_hline(aes(yintercept = 2 * sd(naive_coi_diff)))  + 
+  geom_hline(aes(yintercept = -2 * sd(naive_coi_diff))) + 
+  facet_wrap(~paramset_id, ncol = 3) + 
+  labs(title = "naive_coi")
 
 ```
 
+#### Bland-Altman COI plots 
 
 ```{r}
-
-moire_all_coi_summary_rmse = moire_all_coi_summary %>% 
-  group_by(population_name, paramset_id) %>% 
-  summarise(
-    coi_rmse = sqrt(sum(coi_diff^2)/length(coi_diff)), 
-    ecoi_rmse = sqrt(sum(ecoi_diff^2)/length(ecoi_diff)), 
-    naive_coi_rmse = sqrt(sum(naive_coi_diff^2)/length(naive_coi_diff)), 
-    offset_naive_coi_rmse = sqrt(sum(offset_naive_coi_diff^2)/length(offset_naive_coi_diff))
-  )
-
-moire_all_coi_summary_rmse_gat = moire_all_coi_summary_rmse %>% 
-  gather(coi_estimate, rmse, 3:ncol(.)) %>% 
-  mutate(coi_estimate = gsub("_rmse", "", coi_estimate))
-
-
-moire_all_coi_summary_rmse_monoclonal = moire_all_coi_summary %>% 
-  filter(expected_COI == 1) %>% 
-  group_by(population_name, paramset_id) %>% 
-  summarise(
-    coi_rmse = sqrt(sum(coi_diff^2)/length(coi_diff)), 
-    ecoi_rmse = sqrt(sum(ecoi_diff^2)/length(ecoi_diff)), 
-    naive_coi_rmse = sqrt(sum(naive_coi_diff^2)/length(naive_coi_diff)), 
-    offset_naive_coi_rmse = sqrt(sum(offset_naive_coi_diff^2)/length(offset_naive_coi_diff))
-  )
-
-moire_all_coi_summary_rmse_monoclonal_gat = moire_all_coi_summary_rmse_monoclonal %>% 
-  gather(coi_estimate, rmse, 3:ncol(.)) %>% 
-  mutate(coi_estimate = gsub("_rmse", "", coi_estimate))
-
-moire_all_coi_summary_rmse_plot_fill_coi_estimate = ggplot(moire_all_coi_summary_rmse_gat) + 
-  geom_boxplot(
-    aes(x = paramset_id, y = rmse, fill = coi_estimate)
-  ) + 
-  theme_minimal()
-
-```
-
-RMSE over all comparing parameter sets for each estimate 
-
-```{r}
-moire_all_coi_summary_rmse_plot_fill_paramset_id = ggplot(moire_all_coi_summary_rmse_gat) + 
-  geom_boxplot(
-    aes(fill = paramset_id, y = rmse, x = coi_estimate)
-  ) + 
-  theme_minimal()
-print(moire_all_coi_summary_rmse_plot_fill_paramset_id)
-```
-
-```{r}
-moire_all_coi_summary_rmse_plot_fill_paramset_id_facet_coi_estimate = ggplot(moire_all_coi_summary_rmse_gat) + 
-  geom_boxplot(
-    aes(fill = paramset_id, y = rmse, x = coi_estimate)
-  ) + 
-  facet_wrap(~coi_estimate, scale = "free", nrow = 1) + 
-  theme_minimal()
-
-```
-
-```{r}
-moire_all_coi_summary_rmse_plot_fill_paramset_id_coi_estimate_monoclonal = ggplot(moire_all_coi_summary_rmse_monoclonal_gat) + 
-  geom_boxplot(
-    aes(x = paramset_id, y = rmse, fill = coi_estimate)
-  ) +   
-  sofonias_theme_xRotate
-
-moire_all_coi_summary_rmse_plot_fill_paramset_id_facet_coi_estimate_monoclonal = ggplot(moire_all_coi_summary_rmse_monoclonal_gat) + 
-  geom_boxplot(
-    aes(x = paramset_id, y = rmse, fill = coi_estimate)
-  ) +   
-  facet_wrap(~coi_estimate, scale = "free", nrow = 1) + 
-  sofonias_theme_xRotate
-
-```
-
-Monoclonal RMSE  
-
-```{r}
-#| echo: false
 #| results: asis
+#| echo: false
 
-cat(create_tabsetOfGgplotObjects(list(
-  "non-adjusted-y-axis" = moire_all_coi_summary_rmse_plot_fill_paramset_id_coi_estimate_monoclonal, 
-  "adjusted-y-axis" = moire_all_coi_summary_rmse_plot_fill_paramset_id_facet_coi_estimate_monoclonal
-)))
+cat(create_tabsetOfGgplotObjects(
+  list(
+    "naive COI" = moire_all_coi_summary_naive_coi_bland_altman_plot, 
+    "offset naive COI" = moire_all_coi_summary_offset_naive_coi_bland_altman_plot, 
+    "COI" = moire_all_coi_summary_coi_bland_altman_plot, 
+    "eCOI" = moire_all_coi_summary_ecoi_bland_altman_plot
+       )
+))
+```
+
+Write to pdfs 
+```{r}
+#| results: hide
+cairo_pdf("moire_all_coi_summary_ecoi_bland_altman_plot.pdf", width = 10, height = 10)
+print(moire_all_coi_summary_ecoi_bland_altman_plot)
+dev.off()
+
+cairo_pdf("moire_all_coi_summary_coi_bland_altman_plot.pdf", width = 10, height = 10)
+print(moire_all_coi_summary_coi_bland_altman_plot)
+dev.off()
+
+cairo_pdf("moire_all_coi_summary_offset_naive_coi_bland_altman_plot.pdf", width = 10, height = 10)
+print(moire_all_coi_summary_offset_naive_coi_bland_altman_plot)
+dev.off()
+
+cairo_pdf("moire_all_coi_summary_naive_coi_bland_altman_plot.pdf", width = 10, height = 10)
+print(moire_all_coi_summary_naive_coi_bland_altman_plot)
+dev.off()
+
+```
+
+
+```{r}
+
+moire_all_coi_summary_rmse = moire_all_coi_summary %>%
+  group_by(population_name, paramset_id) %>%
+  summarise(
+    coi_rmse = sqrt(sum(coi_diff^2)/length(coi_diff)),
+    ecoi_rmse = sqrt(sum(ecoi_diff^2)/length(ecoi_diff)),
+    naive_coi_rmse = sqrt(sum(naive_coi_diff^2)/length(naive_coi_diff)),
+    offset_naive_coi_rmse = sqrt(sum(offset_naive_coi_diff^2)/length(offset_naive_coi_diff))
+  )
+
+moire_all_coi_summary_rmse_gat = moire_all_coi_summary_rmse %>%
+  gather(coi_estimate, rmse, 3:ncol(.)) %>%
+  mutate(coi_estimate = gsub("_rmse", "", coi_estimate))
+
+
+moire_all_coi_summary_rmse_monoclonal = moire_all_coi_summary %>%
+  filter(expected_COI == 1) %>%
+  group_by(population_name, paramset_id) %>%
+  summarise(
+    coi_rmse = sqrt(sum(coi_diff^2)/length(coi_diff)),
+    ecoi_rmse = sqrt(sum(ecoi_diff^2)/length(ecoi_diff)),
+    naive_coi_rmse = sqrt(sum(naive_coi_diff^2)/length(naive_coi_diff)),
+    offset_naive_coi_rmse = sqrt(sum(offset_naive_coi_diff^2)/length(offset_naive_coi_diff))
+  )
+
+moire_all_coi_summary_rmse_monoclonal_gat = moire_all_coi_summary_rmse_monoclonal %>%
+  gather(coi_estimate, rmse, 3:ncol(.)) %>%
+  mutate(coi_estimate = gsub("_rmse", "", coi_estimate))
+
+
+```
+
+RMSE across all parameter sets for all 4 estimators 
+```{r}
+moire_all_coi_summary_rmse_plot_just_estimators = ggplot(moire_all_coi_summary_rmse_gat %>%
+                                                            mutate(paramset_id =
+                                                                     factor(paramset_id,
+                                                                            level = c("moire_paramset1","moire_paramset4",
+                                                                                      "moire_paramset2","moire_paramset5",
+                                                                                      "moire_paramset3","moire_paramset6"
+                                                                                      )))) +
+  geom_boxplot(
+    aes(y = rmse, x = coi_estimate, fill = coi_estimate)
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = colorPalette_08)
+
+ggplotly(moire_all_coi_summary_rmse_plot_just_estimators)
+```
+
+
+RMSE over all comparing parameter sets for each estimate
+
+```{r}
+moire_all_coi_summary_rmse_plot_fill_paramset_id = ggplot(moire_all_coi_summary_rmse_gat %>%
+                                                            mutate(paramset_id =
+                                                                     factor(paramset_id,
+                                                                            level = c("moire_paramset1","moire_paramset4",
+                                                                                      "moire_paramset2","moire_paramset5",
+                                                                                      "moire_paramset3","moire_paramset6"
+                                                                                      )))) +
+  geom_boxplot(
+    aes(fill = paramset_id, y = rmse, x = coi_estimate)
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = colorPalette_08)
+
+moire_all_coi_summary_rmse_plot_fill_coi_estimate = ggplot(moire_all_coi_summary_rmse_gat %>%
+                                                            mutate(paramset_id =
+                                                                     factor(paramset_id,
+                                                                            level = c("moire_paramset1","moire_paramset4",
+                                                                                      "moire_paramset2","moire_paramset5",
+                                                                                      "moire_paramset3","moire_paramset6"
+                                                                                      )))) +
+  geom_boxplot(
+    aes(fill = coi_estimate, y = rmse, x = paramset_id), position = "dodge"
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = colorPalette_08)
+
+```
+
+```{r}
+#| results: asis
+#| echo: false
+
+cat(create_tabsetOfHtmlWidgets(
+  list(
+  "By Parameter Set" = ggplotly(moire_all_coi_summary_rmse_plot_fill_paramset_id) %>% layout(boxmode = "group"), 
+  "By COI Estimator" = ggplotly(moire_all_coi_summary_rmse_plot_fill_coi_estimate) %>% layout(boxmode = "group")
+  )
+))
+
+```
+
+Monoclonal RMSE
+
+```{r}
+moire_all_coi_summary_rmse_plot_fill_paramset_id_coi_estimate_monoclonal = ggplot(moire_all_coi_summary_rmse_monoclonal_gat) +
+  geom_boxplot(
+    aes(x = paramset_id, y = rmse, fill = coi_estimate, group = coi_estimate)
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = colorPalette_08)
+```
+
+```{r}
+ggplotly(moire_all_coi_summary_rmse_plot_fill_paramset_id_coi_estimate_monoclonal) %>% layout(boxmode = "group")
 ```
 
 ```{r}
 
-moire_all_coi_summary_rmse_gat = moire_all_coi_summary_rmse_gat %>% 
+moire_all_coi_summary_rmse_gat = moire_all_coi_summary_rmse_gat %>%
   left_join(sim_params)
 
-moire_all_coi_summary_rmse_gat_large_plot_by_country = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_by_country = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = pop_cat, 
-        y = rmse, 
+    aes(x = pop_cat,
+        y = rmse,
         fill = country)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
 cairo_pdf("moire_coi_summary_rmse_large_plot.pdf", width = 15, height = 10)
 print(moire_all_coi_summary_rmse_gat_large_plot_by_country)
 dev.off()
 
-moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = between_sample_related_cat, 
-        y = rmse, 
+    aes(x = between_sample_related_cat,
+        y = rmse,
         fill = country)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
-moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = nonrecombinant_cat, 
-        y = rmse, 
+    aes(x = nonrecombinant_cat,
+        y = rmse,
         fill = country)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
-moire_all_coi_summary_rmse_gat_large_plot_coi_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_coi_cat_by_country = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = coi_cat, 
-        y = rmse, 
+    aes(x = coi_cat,
+        y = rmse,
         fill = country)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
 
-moire_all_coi_summary_rmse_gat_large_plot = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = pop_cat, 
+    aes(x = pop_cat,
         y = rmse)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
-moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = between_sample_related_cat, 
+    aes(x = between_sample_related_cat,
         y = rmse)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
-moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = nonrecombinant_cat, 
+    aes(x = nonrecombinant_cat,
         y = rmse)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 
-moire_all_coi_summary_rmse_gat_large_plot_coi_cat = ggplot(moire_all_coi_summary_rmse_gat) + 
+moire_all_coi_summary_rmse_gat_large_plot_coi_cat = ggplot(moire_all_coi_summary_rmse_gat) +
   geom_boxplot(
-    aes(x = coi_cat, 
+    aes(x = coi_cat,
         y = rmse)
-  ) + 
-  facet_grid(paramset_id~coi_estimate) + 
-  sofonias_theme_xRotate
+  ) +
+  facet_grid(paramset_id~coi_estimate) +
+  custom_theme_xRotate
 ```
 
 
-RMSE breakdown over different simulation parameters 
+### RMSE breakdown over different simulation parameters
 
 ```{r}
 #| echo: false
@@ -726,45 +781,83 @@ RMSE breakdown over different simulation parameters
 
 
 cat(create_tabsetOfGgplotObjects(list(
-  "all_intersection" = moire_all_coi_summary_rmse_gat_large_plot, 
-  "est_between_sample_related" = moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat, 
-  "coi" = moire_all_coi_summary_rmse_gat_large_plot_coi_cat, 
+  "all_intersection" = moire_all_coi_summary_rmse_gat_large_plot,
+  "est_between_sample_related" = moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat,
+  "coi" = moire_all_coi_summary_rmse_gat_large_plot_coi_cat,
   "nonrecombinant" = moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat,
-  "all_intersection_by_country" = moire_all_coi_summary_rmse_gat_large_plot_by_country, 
-  "est_between_sample_related_by_country" = moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat_by_country, 
-  "coi_by_country" = moire_all_coi_summary_rmse_gat_large_plot_coi_cat_by_country, 
+  "all_intersection_by_country" = moire_all_coi_summary_rmse_gat_large_plot_by_country,
+  "est_between_sample_related_by_country" = moire_all_coi_summary_rmse_gat_large_plot_between_sample_related_cat_by_country,
+  "coi_by_country" = moire_all_coi_summary_rmse_gat_large_plot_coi_cat_by_country,
   "nonrecombinant_by_country" = moire_all_coi_summary_rmse_gat_large_plot_nonrecombinant_cat_by_country
 )))
 ```
 
+#### COI 
 
 ```{r}
 library(finalfit)
 explanatory = c("coi_cat", "nonrecombinant_cat", "between_sample_related_cat", "country", "paramset_id")
 dependent = 'coi_rmse'
 moire_all_coi_summary_rmse %>%
-  left_join(sim_params) %>% 
-  mutate(coi_cat = factor(coi_cat), 
-         nonrecombinant_cat = factor(nonrecombinant_cat), 
-         between_sample_related_cat = factor(between_sample_related_cat), 
-         country = factor(country), 
-         paramset_id = factor(paramset_id)) %>% 
+  left_join(sim_params) %>%
+  mutate(coi_cat = factor(coi_cat),
+         nonrecombinant_cat = factor(nonrecombinant_cat),
+         between_sample_related_cat = factor(between_sample_related_cat),
+         country = factor(country),
+         paramset_id = factor(paramset_id)) %>%
   finalfit("coi_rmse", explanatory, metrics=TRUE) -> t2
 knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r"))
 knitr::kable(t2[[2]], row.names=FALSE, col.names="")
 
 ```
 
-```{r, echo = F, eval=FALSE}
+```{r, echo = T, eval=T}
+#| fig-width: 15
 moire_all_coi_summary_rmse %>%
-  left_join(sim_params) %>% 
-  mutate(coi_cat = factor(coi_cat), 
-         nonrecombinant_cat = factor(nonrecombinant_cat), 
-         between_sample_related_cat = factor(between_sample_related_cat), 
-         country = factor(country), 
+  left_join(sim_params) %>%
+  mutate(coi_cat = factor(coi_cat),
+         nonrecombinant_cat = factor(nonrecombinant_cat),
+         between_sample_related_cat = factor(between_sample_related_cat),
+         country = factor(country),
          paramset_id = factor(paramset_id))  %>%
-  # filter(ecoi_rmse < 1) %>% 
-  coefficient_plot("ecoi_rmse", 
+  # filter(coi_rmse < 1) %>%
+  coefficient_plot("coi_rmse",
+          # "country"
+          explanatory
+          )
+
+```
+
+
+#### eCOI 
+```{r}
+library(finalfit)
+explanatory = c("coi_cat", "nonrecombinant_cat", "between_sample_related_cat", "country", "paramset_id")
+dependent = 'ecoi_rmse'
+moire_all_coi_summary_rmse %>%
+  left_join(sim_params) %>%
+  mutate(coi_cat = factor(coi_cat),
+         nonrecombinant_cat = factor(nonrecombinant_cat),
+         between_sample_related_cat = factor(between_sample_related_cat),
+         country = factor(country),
+         paramset_id = factor(paramset_id)) %>%
+  finalfit("ecoi_rmse", explanatory, metrics=TRUE) -> t2
+knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r"))
+knitr::kable(t2[[2]], row.names=FALSE, col.names="")
+
+```
+
+```{r, echo = T, eval=T}
+#| fig-width: 15
+moire_all_coi_summary_rmse %>%
+  left_join(sim_params) %>%
+  mutate(coi_cat = factor(coi_cat),
+         nonrecombinant_cat = factor(nonrecombinant_cat),
+         between_sample_related_cat = factor(between_sample_related_cat),
+         country = factor(country),
+         paramset_id = factor(paramset_id))  %>%
+  # filter(ecoi_rmse < 1) %>%
+  coefficient_plot("ecoi_rmse",
           # "country"
           explanatory
           )
@@ -773,64 +866,105 @@ moire_all_coi_summary_rmse %>%
 
 
 ```{r}
-moire_all_coi_summary_coi_measures_plot_moire_paramset1 = ggpairs(moire_all_coi_summary %>% 
-                                                    filter(paramset_id == "moire_paramset1"),
-                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"), 
-                                                  diag = list(continuous = "barDiag"), 
-                                                  title = "moire_paramset1") 
+# custom hex plot function for GGally
+my_hex <- function(data, mapping, ...) {
+  ggplot(data, mapping) +
+    geom_hex(aes(fill = after_stat(count)), ...) +  # map fill here
+    scale_fill_viridis_c(
+      trans = "log10",
+      name = "count"
+      ) +  # log scale
+    theme_minimal() +
+    geom_smooth() + 
+    geom_abline(intercept = 0,
+                slope = 1,
+                color = "red")
+}
 
-moire_all_coi_summary_coi_measures_plot_moire_paramset2 = ggpairs(moire_all_coi_summary %>% 
+
+moire_all_coi_summary_coi_measures_plot_moire_paramset1 = ggpairs(moire_all_coi_summary %>%
+                                                    filter(paramset_id == "moire_paramset1"),
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
+                                                  title = "moire_paramset1")
+
+moire_all_coi_summary_coi_measures_plot_moire_paramset2 = ggpairs(moire_all_coi_summary %>%
                                                     filter(paramset_id == "moire_paramset2"),
-                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"), 
-                                                  diag = list(continuous = "barDiag"), 
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
                                                   title = "moire_paramset2")
 
-moire_all_coi_summary_coi_measures_plot_moire_paramset3 = ggpairs(moire_all_coi_summary %>% 
+moire_all_coi_summary_coi_measures_plot_moire_paramset3 = ggpairs(moire_all_coi_summary %>%
                                                     filter(paramset_id == "moire_paramset3"),
-                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"), 
-                                                  diag = list(continuous = "barDiag"), 
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
                                                   title = "moire_paramset3")
 
-cairo_pdf("moire_coi_pairwise_comparison.pdf", width = 10, height = 10)
-print(moire_all_coi_summary_coi_measures_plot_moire_paramset1)
-print(moire_all_coi_summary_coi_measures_plot_moire_paramset2)
-print(moire_all_coi_summary_coi_measures_plot_moire_paramset3)
-dev.off()
+moire_all_coi_summary_coi_measures_plot_moire_paramset4 = ggpairs(moire_all_coi_summary %>%
+                                                    filter(paramset_id == "moire_paramset4"),
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
+                                                  title = "moire_paramset4")
 
+moire_all_coi_summary_coi_measures_plot_moire_paramset5 = ggpairs(moire_all_coi_summary %>%
+                                                    filter(paramset_id == "moire_paramset5"),
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
+                                                  title = "moire_paramset5")
 
-
-ggplot(moire_all_coi_summary %>% filter(paramset_id == "moire_paramset2"))  +
-  geom_hex(aes(x = expected_COI, y = ecoi, fill = log10(..count..))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_abline(intercept = 0, slope = 1, color = "red")
-
-ggplot(moire_all_coi_summary %>% filter(paramset_id == "moire_paramset2"))  +
-  geom_hex(aes(x = expected_COI, y = ecoi, fill = log10(..count..))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_abline(intercept = 0, slope = 1, color = "red")
-
+moire_all_coi_summary_coi_measures_plot_moire_paramset6 = ggpairs(moire_all_coi_summary %>%
+                                                    filter(paramset_id == "moire_paramset6"),
+                                                  columns = c("expected_COI", "naive_coi", "offset_naive_coi", "coi", "ecoi"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag = list(continuous = "barDiag"),
+                                                  title = "moire_paramset6")
 
 ```
 
+```{r}
+#| results: hide
+cairo_pdf("moire_coi_pairwise_comparison.pdf", width = 10, height = 10)
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset1)
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset4)
 
-Plotting correlation between the different COI estimates compared to expected COI over each parameter set 
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset2)
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset5)
+
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset3)
+print(moire_all_coi_summary_coi_measures_plot_moire_paramset6)
+dev.off()
+```
+
+
+Plotting correlation between the different COI estimates compared to expected COI over each parameter set
 
 ```{r}
 #| results: asis
 #| echo: false
 #| fig-column: screen-inset
 
-cat(create_tabsetOfGgplotObjects(list("paramset1" = moire_all_coi_summary_coi_measures_plot_moire_paramset1, 
-                                      "paramset2" = moire_all_coi_summary_coi_measures_plot_moire_paramset2, 
-                                      "paramset3" = moire_all_coi_summary_coi_measures_plot_moire_paramset3)))
+cat(create_tabsetOfGgplotObjects(list("paramset1" = moire_all_coi_summary_coi_measures_plot_moire_paramset1,
+                                      "paramset4" = moire_all_coi_summary_coi_measures_plot_moire_paramset4,
+                                      "paramset2" = moire_all_coi_summary_coi_measures_plot_moire_paramset2,
+                                      "paramset5" = moire_all_coi_summary_coi_measures_plot_moire_paramset5,
+                                      "paramset3" = moire_all_coi_summary_coi_measures_plot_moire_paramset3, 
+                                      "paramset6" = moire_all_coi_summary_coi_measures_plot_moire_paramset6 
+                                      )))
 ```
 
 
+### Monoclonal Contignency tables for e-coi cut off 
+
+With e-coi being a continuous variable rather than an integer, will test how rounding would affect measurement
+
 ```{r}
 moire_all_coi_summary_ecoi_cut_off_metrics = tibble()
-for (ecoi_cut_off in seq(1, 3, by = 0.05)) {
+for (ecoi_cut_off in seq(1, 2, by = 0.05)) {
   moire_all_coi_summary_mod = moire_all_coi_summary %>%
     mutate(ecoi_below_cut_off  = ecoi <= ecoi_cut_off,
            monoclonal = expected_COI == 1)
@@ -868,262 +1002,262 @@ for (ecoi_cut_off in seq(1, 3, by = 0.05)) {
       fpr         = if_else(FP + TN > 0, FP / (FP + TN), NA_real_),
       f1_score    = if_else((2 * TP + FP + FN) > 0, (2 * TP) / (2 * TP + FP + FN), NA_real_),
       balanced_accuracy = (sensitivity + specificity) / 2
-    ) %>% 
+    ) %>%
     mutate(ecoi_cut_off = ecoi_cut_off)
   moire_all_coi_summary_ecoi_cut_off_metrics = bind_rows(moire_all_coi_summary_ecoi_cut_off_metrics, metrics)
 }
 
-moire_all_coi_summary_ecoi_cut_off_metrics = moire_all_coi_summary_ecoi_cut_off_metrics %>% 
+moire_all_coi_summary_ecoi_cut_off_metrics = moire_all_coi_summary_ecoi_cut_off_metrics %>%
   left_join(sim_params)
 
-ggplot(moire_all_coi_summary_ecoi_cut_off_metrics) + 
-  geom_boxplot(aes(x = paramset_id, y = sensitivity, fill = factor(ecoi_cut_off))) + 
+ggplot(moire_all_coi_summary_ecoi_cut_off_metrics) +
+  geom_boxplot(aes(x = paramset_id, y = sensitivity, fill = factor(ecoi_cut_off))) +
   facet_grid(coi_cat~.)
 
-ggplot(moire_all_coi_summary_ecoi_cut_off_metrics) + 
-  geom_boxplot(aes(x = paramset_id, y = f1_score, fill = factor(ecoi_cut_off))) + 
+ggplot(moire_all_coi_summary_ecoi_cut_off_metrics) +
+  geom_boxplot(aes(x = paramset_id, y = f1_score, fill = factor(ecoi_cut_off))) +
   facet_grid(coi_cat~.)
 
 ```
 
 
 
-### Allele frequencies 
+<!-- ### Allele frequencies  -->
 
-moire_allele_freq_summary
-moire_he_summary
+<!-- moire_allele_freq_summary -->
+<!-- moire_he_summary -->
 
-```{r}
-madhatter_allele_data_naive_allele_freq_totals = madhatter_allele_data %>% 
-  group_by(population_name, target_id) %>% 
-  summarise(allele_total = n(), 
-            sample_total = n_distinct(library_sample_name))
+<!-- ```{r} -->
+<!-- madhatter_allele_data_naive_allele_freq_totals = madhatter_allele_data %>%  -->
+<!--   group_by(population_name, target_id) %>%  -->
+<!--   summarise(allele_total = n(),  -->
+<!--             sample_total = n_distinct(library_sample_name)) -->
 
-madhatter_allele_data_naive_allele_freq_prev = madhatter_allele_data %>% 
-  group_by(population_name, target_id, seq) %>% 
-  summarise(
-    allele_count = n(), 
-    sample_count = n_distinct(library_sample_name)
-  ) %>% 
-  left_join(madhatter_allele_data_naive_allele_freq_totals) %>% 
-  mutate(allele_freq  = allele_count/allele_total, 
-         sample_prev = sample_count/sample_total) %>% 
-  mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq))
-
-
-population_trimmed_mhap_freqs_prevs_sel = population_trimmed_mhap_freqs_prevs %>% 
-  dplyr::rename(target_id = target) %>% 
-  mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq))
-colnames(population_trimmed_mhap_freqs_prevs_sel)[6:12] = paste0("expected_", colnames(population_trimmed_mhap_freqs_prevs_sel)[6:12])
+<!-- madhatter_allele_data_naive_allele_freq_prev = madhatter_allele_data %>%  -->
+<!--   group_by(population_name, target_id, seq) %>%  -->
+<!--   summarise( -->
+<!--     allele_count = n(),  -->
+<!--     sample_count = n_distinct(library_sample_name) -->
+<!--   ) %>%  -->
+<!--   left_join(madhatter_allele_data_naive_allele_freq_totals) %>%  -->
+<!--   mutate(allele_freq  = allele_count/allele_total,  -->
+<!--          sample_prev = sample_count/sample_total) %>%  -->
+<!--   mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) -->
 
 
-population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes = population_trimmed_mhap_freqs_prevs_sel %>% 
-  filter(population_name_target_id_seq %in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq)
-
-population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_he = population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>% 
-  group_by(population_name, country, pop, target_id) %>% 
-  summarise(he = 1 - sum(expected_freq^2))
-
-population_trimmed_mhap_freqs_prevs_sel_notInMadhatterRes = population_trimmed_mhap_freqs_prevs_sel %>% 
-  filter(population_name_target_id_seq %!in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq)
-
-moire_allele_freq_summary_mod = moire_allele_freq_summary %>% 
-  full_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>% 
-              select(-pop, -country)) %>% 
-  mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) %>% 
-  mutate(freq = ifelse(is.na(freq), 0, freq), 
-         expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
-
-population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_notInMoire = population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>% 
-  filter(population_name_target_id_seq %!in% moire_allele_freq_summary_mod$population_name_target_id_seq)
-
-moire_allele_freq_summary_mod_notInMadhatterRes = moire_allele_freq_summary_mod %>%
-  filter(!is.na(freq)) %>%
-  filter(population_name_target_id_seq %!in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq)
-
-madhatter_allele_data_naive_allele_freq_prev_notInMoireRes = madhatter_allele_data_naive_allele_freq_prev %>%
-  filter(population_name_target_id_seq %!in% moire_allele_freq_summary_mod$population_name_target_id_seq )
-
-```
-
-```{r}
-#| fig-width: 10
-#| fig-height: 10
-#| 
-moire_allele_freq_summary_mod_diff = moire_allele_freq_summary_mod %>% 
-  mutate(freq_diff = freq - expected_freq) %>% 
-  mutate(abs_freq_diff = abs(freq_diff)) %>% 
-  left_join(sim_params)
-
-ggplot(moire_allele_freq_summary_mod_diff) + 
-  geom_boxplot(aes(x = pop_cat, y = abs(freq_diff), fill = paramset_id)) + 
-  sofonias_theme_xRotate
+<!-- population_trimmed_mhap_freqs_prevs_sel = population_trimmed_mhap_freqs_prevs %>%  -->
+<!--   dplyr::rename(target_id = target) %>%  -->
+<!--   mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) -->
+<!-- colnames(population_trimmed_mhap_freqs_prevs_sel)[6:12] = paste0("expected_", colnames(population_trimmed_mhap_freqs_prevs_sel)[6:12]) -->
 
 
-library(finalfit)
-explanatory = c("coi_cat", "nonrecombinant_cat", "between_sample_related_cat", "country", "paramset_id")
-dependent = 'abs_freq_diff'
-moire_allele_freq_summary_mod_diff %>%
-  mutate(coi_cat = factor(coi_cat), 
-         nonrecombinant_cat = factor(nonrecombinant_cat), 
-         between_sample_related_cat = factor(between_sample_related_cat), 
-         country = factor(country), 
-         paramset_id = factor(paramset_id)) %>% 
-  finalfit(dependent, explanatory, metrics=TRUE) -> t2
-knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r"))
-knitr::kable(t2[[2]], row.names=FALSE, col.names="")
+<!-- population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes = population_trimmed_mhap_freqs_prevs_sel %>%  -->
+<!--   filter(population_name_target_id_seq %in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq) -->
 
-moire_allele_freq_summary_mod_diff_rmse = moire_allele_freq_summary_mod_diff %>% 
-  ungroup() %>% 
-  group_by(population_name, paramset_id) %>% 
-  reframe(rmse = sqrt(sum(freq_diff^2)/length(freq_diff))) %>% 
-  left_join(sim_params)
+<!-- population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_he = population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>%  -->
+<!--   group_by(population_name, country, pop, target_id) %>%  -->
+<!--   summarise(he = 1 - sum(expected_freq^2)) -->
 
-moire_allele_freq_summary_mod_diff_rmse %>%
-  mutate(coi_cat = factor(coi_cat), 
-         nonrecombinant_cat = factor(nonrecombinant_cat), 
-         between_sample_related_cat = factor(between_sample_related_cat), 
-         country = factor(country), 
-         paramset_id = factor(paramset_id)) %>% 
-  finalfit("rmse", explanatory, metrics=TRUE) -> t2
-knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r"))
-knitr::kable(t2[[2]], row.names=FALSE, col.names="")
+<!-- population_trimmed_mhap_freqs_prevs_sel_notInMadhatterRes = population_trimmed_mhap_freqs_prevs_sel %>%  -->
+<!--   filter(population_name_target_id_seq %!in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq) -->
 
+<!-- moire_allele_freq_summary_mod = moire_allele_freq_summary %>%  -->
+<!--   full_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>%  -->
+<!--               select(-pop, -country)) %>%  -->
+<!--   mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) %>%  -->
+<!--   mutate(freq = ifelse(is.na(freq), 0, freq),  -->
+<!--          expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) -->
 
-moire_allele_freq_summary_mod_diff_rmse_plot_all = ggplot(moire_allele_freq_summary_mod_diff_rmse) + 
-  geom_boxplot(
-    aes(x = paramset_id, 
-        y = rmse)
-  ) + 
-  sofonias_theme_xRotate
+<!-- population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_notInMoire = population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>%  -->
+<!--   filter(population_name_target_id_seq %!in% moire_allele_freq_summary_mod$population_name_target_id_seq) -->
 
-print(moire_allele_freq_summary_mod_diff_rmse_plot_all)
+<!-- moire_allele_freq_summary_mod_notInMadhatterRes = moire_allele_freq_summary_mod %>% -->
+<!--   filter(!is.na(freq)) %>% -->
+<!--   filter(population_name_target_id_seq %!in% madhatter_allele_data_naive_allele_freq_prev$population_name_target_id_seq) -->
 
-moire_allele_freq_summary_mod_diff_rmse_plot = ggplot(moire_allele_freq_summary_mod_diff_rmse) + 
-  geom_boxplot(
-    aes(x = pop_cat, 
-        y = rmse, 
-        fill = country)
-  ) + 
-  facet_grid(paramset_id~.) + 
-  sofonias_theme_xRotate
+<!-- madhatter_allele_data_naive_allele_freq_prev_notInMoireRes = madhatter_allele_data_naive_allele_freq_prev %>% -->
+<!--   filter(population_name_target_id_seq %!in% moire_allele_freq_summary_mod$population_name_target_id_seq ) -->
 
-print(moire_allele_freq_summary_mod_diff_rmse_plot)
+<!-- ``` -->
 
-moire_allele_freq_summary_mod_diff_rmse_plot_between_sample_related_cat = ggplot(moire_allele_freq_summary_mod_diff_rmse %>% 
-                                                                                   filter(rmse < 0.2)) + 
-  geom_boxplot(
-    aes(x = between_sample_related_cat, 
-        y = rmse, 
-        fill = country)
-  ) + 
-  facet_grid(paramset_id~.) + 
-  sofonias_theme_xRotate
+<!-- ```{r} -->
+<!-- #| fig-width: 10 -->
+<!-- #| fig-height: 10 -->
+<!-- #|  -->
+<!-- moire_allele_freq_summary_mod_diff = moire_allele_freq_summary_mod %>%  -->
+<!--   mutate(freq_diff = freq - expected_freq) %>%  -->
+<!--   mutate(abs_freq_diff = abs(freq_diff)) %>%  -->
+<!--   left_join(sim_params) -->
 
-print(moire_allele_freq_summary_mod_diff_rmse_plot_between_sample_related_cat)
-```
-
-```{r}
-
-madhatter_allele_data_naive_allele_freq_prev_mod = madhatter_allele_data_naive_allele_freq_prev
-colnames(madhatter_allele_data_naive_allele_freq_prev_mod)[4:9] = paste0("naive_", colnames(madhatter_allele_data_naive_allele_freq_prev)[4:9])
-
-moire_allele_freq_summary_mod_diff_with_naive = moire_allele_freq_summary_mod_diff %>% 
-  left_join(madhatter_allele_data_naive_allele_freq_prev_mod)
+<!-- ggplot(moire_allele_freq_summary_mod_diff) +  -->
+<!--   geom_boxplot(aes(x = pop_cat, y = abs(freq_diff), fill = paramset_id)) +  -->
+<!--   custom_theme_xRotate -->
 
 
+<!-- library(finalfit) -->
+<!-- explanatory = c("coi_cat", "nonrecombinant_cat", "between_sample_related_cat", "country", "paramset_id") -->
+<!-- dependent = 'abs_freq_diff' -->
+<!-- moire_allele_freq_summary_mod_diff %>% -->
+<!--   mutate(coi_cat = factor(coi_cat),  -->
+<!--          nonrecombinant_cat = factor(nonrecombinant_cat),  -->
+<!--          between_sample_related_cat = factor(between_sample_related_cat),  -->
+<!--          country = factor(country),  -->
+<!--          paramset_id = factor(paramset_id)) %>%  -->
+<!--   finalfit(dependent, explanatory, metrics=TRUE) -> t2 -->
+<!-- knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r")) -->
+<!-- knitr::kable(t2[[2]], row.names=FALSE, col.names="") -->
 
-```
+<!-- moire_allele_freq_summary_mod_diff_rmse = moire_allele_freq_summary_mod_diff %>%  -->
+<!--   ungroup() %>%  -->
+<!--   group_by(population_name, paramset_id) %>%  -->
+<!--   reframe(rmse = sqrt(sum(freq_diff^2)/length(freq_diff))) %>%  -->
+<!--   left_join(sim_params) -->
+
+<!-- moire_allele_freq_summary_mod_diff_rmse %>% -->
+<!--   mutate(coi_cat = factor(coi_cat),  -->
+<!--          nonrecombinant_cat = factor(nonrecombinant_cat),  -->
+<!--          between_sample_related_cat = factor(between_sample_related_cat),  -->
+<!--          country = factor(country),  -->
+<!--          paramset_id = factor(paramset_id)) %>%  -->
+<!--   finalfit("rmse", explanatory, metrics=TRUE) -> t2 -->
+<!-- knitr::kable(t2[[1]], row.names=FALSE, align=c("l", "l", "r", "r", "r", "r")) -->
+<!-- knitr::kable(t2[[2]], row.names=FALSE, col.names="") -->
+
+
+<!-- moire_allele_freq_summary_mod_diff_rmse_plot_all = ggplot(moire_allele_freq_summary_mod_diff_rmse) +  -->
+<!--   geom_boxplot( -->
+<!--     aes(x = paramset_id,  -->
+<!--         y = rmse) -->
+<!--   ) +  -->
+<!--   custom_theme_xRotate -->
+
+<!-- print(moire_allele_freq_summary_mod_diff_rmse_plot_all) -->
+
+<!-- moire_allele_freq_summary_mod_diff_rmse_plot = ggplot(moire_allele_freq_summary_mod_diff_rmse) +  -->
+<!--   geom_boxplot( -->
+<!--     aes(x = pop_cat,  -->
+<!--         y = rmse,  -->
+<!--         fill = country) -->
+<!--   ) +  -->
+<!--   facet_grid(paramset_id~.) +  -->
+<!--   custom_theme_xRotate -->
+
+<!-- print(moire_allele_freq_summary_mod_diff_rmse_plot) -->
+
+<!-- moire_allele_freq_summary_mod_diff_rmse_plot_between_sample_related_cat = ggplot(moire_allele_freq_summary_mod_diff_rmse %>%  -->
+<!--                                                                                    filter(rmse < 0.2)) +  -->
+<!--   geom_boxplot( -->
+<!--     aes(x = between_sample_related_cat,  -->
+<!--         y = rmse,  -->
+<!--         fill = country) -->
+<!--   ) +  -->
+<!--   facet_grid(paramset_id~.) +  -->
+<!--   custom_theme_xRotate -->
+
+<!-- print(moire_allele_freq_summary_mod_diff_rmse_plot_between_sample_related_cat) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+
+<!-- madhatter_allele_data_naive_allele_freq_prev_mod = madhatter_allele_data_naive_allele_freq_prev -->
+<!-- colnames(madhatter_allele_data_naive_allele_freq_prev_mod)[4:9] = paste0("naive_", colnames(madhatter_allele_data_naive_allele_freq_prev)[4:9]) -->
+
+<!-- moire_allele_freq_summary_mod_diff_with_naive = moire_allele_freq_summary_mod_diff %>%  -->
+<!--   left_join(madhatter_allele_data_naive_allele_freq_prev_mod) -->
 
 
 
-```{r}
-moire_allele_freq_summary_mod_with_naive_paramset1 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>% 
-                                                    filter(paramset_id == "moire_paramset1"),
-                                                  columns = c("freq", "naive_allele_freq", "expected_freq"), 
-                                                  diag = list(continuous = "barDiag"),
-                                                  title = "moire_paramset1") 
-
-moire_allele_freq_summary_mod_with_naive_paramset2 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>% 
-                                                    filter(paramset_id == "moire_paramset2"),
-                                                  columns = c("freq", "naive_allele_freq", "expected_freq"), 
-                                                  diag = list(continuous = "barDiag"), 
-                                                  title = "moire_paramset2")
-
-moire_allele_freq_summary_mod_with_naive_paramset3 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>% 
-                                                    filter(paramset_id == "moire_paramset3"),
-                                                  columns = c("freq", "naive_allele_freq", "expected_freq"), 
-                                                  diag = list(continuous = "barDiag"), 
-                                                  title = "moire_paramset3")
+<!-- ``` -->
 
 
-```
+
+<!-- ```{r} -->
+<!-- moire_allele_freq_summary_mod_with_naive_paramset1 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>%  -->
+<!--                                                     filter(paramset_id == "moire_paramset1"), -->
+<!--                                                   columns = c("freq", "naive_allele_freq", "expected_freq"),  -->
+<!--                                                   diag = list(continuous = "barDiag"), -->
+<!--                                                   title = "moire_paramset1")  -->
+
+<!-- moire_allele_freq_summary_mod_with_naive_paramset2 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>%  -->
+<!--                                                     filter(paramset_id == "moire_paramset2"), -->
+<!--                                                   columns = c("freq", "naive_allele_freq", "expected_freq"),  -->
+<!--                                                   diag = list(continuous = "barDiag"),  -->
+<!--                                                   title = "moire_paramset2") -->
+
+<!-- moire_allele_freq_summary_mod_with_naive_paramset3 = ggpairs(moire_allele_freq_summary_mod_diff_with_naive %>%  -->
+<!--                                                     filter(paramset_id == "moire_paramset3"), -->
+<!--                                                   columns = c("freq", "naive_allele_freq", "expected_freq"),  -->
+<!--                                                   diag = list(continuous = "barDiag"),  -->
+<!--                                                   title = "moire_paramset3") -->
 
 
-Plotting correlation between the different COI estimates compared to expected COI over each parameter set 
-
-```{r}
-#| results: asis
-#| echo: false
-#| fig-column: screen-inset
-
-cat(create_tabsetOfGgplotObjects(list("paramset1" = moire_allele_freq_summary_mod_with_naive_paramset1, 
-                                      "paramset2" = moire_allele_freq_summary_mod_with_naive_paramset2, 
-                                      "paramset3" = moire_allele_freq_summary_mod_with_naive_paramset3)))
-```
+<!-- ``` -->
 
 
-```{r}
-moire_allele_freq_summary_mod_full = moire_allele_freq_summary %>% 
-  full_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>% 
-              select(-pop, -country)) %>% 
-  mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) %>% 
-  group_by(population_name, target_id) %>% 
-  mutate(n_obs = sum(!is.na(freq)), 
-         n_exp = sum(!is.na(expected_freq))) %>% 
-  mutate(freq_mod = ifelse(is.na(freq), 0, freq)) %>% 
-  
-  mutate(freq_diff = freq_mod - expected_freq)
+<!-- Plotting correlation between the different COI estimates compared to expected COI over each parameter set  -->
 
-moire_allele_freq_summary_mod_full_summary = moire_allele_freq_summary_mod_full %>% 
-  mutate(
-    acc_shared = (freq_diff)/sqrt(expected_freq * (1 - expected_freq))
-    sophie_metric = (freq_diff) / sqrt(
-      (freq_mod * (1 - freq_mod))
-    )
-  )
-  
+<!-- ```{r} -->
+<!-- #| results: asis -->
+<!-- #| echo: false -->
+<!-- #| fig-column: screen-inset -->
 
-```
-
-#### he 
-
-```{r}
-#| fig-width: 10
-#| fig-height: 10
-moire_he_summary_mod = moire_he_summary %>% 
-  left_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_he %>% 
-              dplyr::rename(expected_he = he)) %>% 
-  mutate(he_diff = he - expected_he)
-
-moire_he_summary_mod_rmse = moire_he_summary_mod %>% 
-  group_by(population_name, paramset_id) %>% 
-  summarise(
-    rmse = sqrt(sum(he_diff^2)/length(he_diff))) %>% 
-  left_join(sim_params)
+<!-- cat(create_tabsetOfGgplotObjects(list("paramset1" = moire_allele_freq_summary_mod_with_naive_paramset1,  -->
+<!--                                       "paramset2" = moire_allele_freq_summary_mod_with_naive_paramset2,  -->
+<!--                                       "paramset3" = moire_allele_freq_summary_mod_with_naive_paramset3))) -->
+<!-- ``` -->
 
 
-moire_he_summary_mod_rmse_plot = ggplot(moire_he_summary_mod_rmse) + 
-  geom_boxplot(
-    aes(x = pop_cat, 
-        y = rmse, 
-        fill = country)
-  ) + 
-  facet_grid(paramset_id~.) + 
-  sofonias_theme_xRotate
+<!-- ```{r} -->
+<!-- moire_allele_freq_summary_mod_full = moire_allele_freq_summary %>%  -->
+<!--   full_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes %>%  -->
+<!--               select(-pop, -country)) %>%  -->
+<!--   mutate(population_name_target_id_seq = paste0(population_name, "-", target_id, "-", seq)) %>%  -->
+<!--   group_by(population_name, target_id) %>%  -->
+<!--   mutate(n_obs = sum(!is.na(freq)),  -->
+<!--          n_exp = sum(!is.na(expected_freq))) %>%  -->
+<!--   mutate(freq_mod = ifelse(is.na(freq), 0, freq)) %>%  -->
 
-print(moire_he_summary_mod_rmse_plot)
-```
+<!--   mutate(freq_diff = freq_mod - expected_freq) -->
+
+<!-- moire_allele_freq_summary_mod_full_summary = moire_allele_freq_summary_mod_full %>%  -->
+<!--   mutate( -->
+<!--     acc_shared = (freq_diff)/sqrt(expected_freq * (1 - expected_freq)) -->
+<!--     sophie_metric = (freq_diff) / sqrt( -->
+<!--       (freq_mod * (1 - freq_mod)) -->
+<!--     ) -->
+<!--   ) -->
+
+
+<!-- ``` -->
+
+<!-- #### he  -->
+
+<!-- ```{r} -->
+<!-- #| fig-width: 10 -->
+<!-- #| fig-height: 10 -->
+<!-- moire_he_summary_mod = moire_he_summary %>%  -->
+<!--   left_join(population_trimmed_mhap_freqs_prevs_sel_inMadhatterRes_he %>%  -->
+<!--               dplyr::rename(expected_he = he)) %>%  -->
+<!--   mutate(he_diff = he - expected_he) -->
+
+<!-- moire_he_summary_mod_rmse = moire_he_summary_mod %>%  -->
+<!--   group_by(population_name, paramset_id) %>%  -->
+<!--   summarise( -->
+<!--     rmse = sqrt(sum(he_diff^2)/length(he_diff))) %>%  -->
+<!--   left_join(sim_params) -->
+
+
+<!-- moire_he_summary_mod_rmse_plot = ggplot(moire_he_summary_mod_rmse) +  -->
+<!--   geom_boxplot( -->
+<!--     aes(x = pop_cat,  -->
+<!--         y = rmse,  -->
+<!--         fill = country) -->
+<!--   ) +  -->
+<!--   facet_grid(paramset_id~.) +  -->
+<!--   custom_theme_xRotate -->
+
+<!-- print(moire_he_summary_mod_rmse_plot) -->
+<!-- ``` -->
 
 
 
