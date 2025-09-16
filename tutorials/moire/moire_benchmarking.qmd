@@ -1,12 +1,11 @@
 ---
 title: MOIRE Benchmarking Results
 author: Nicholas Hathaway
-output: docx
+format: html
 toc-depth: 5
 code-fold: true
 fig-width: 15
 fig-height: 15
-embed-resources: true
 ---
 
 ```{r setup, include=FALSE}
@@ -3097,25 +3096,6 @@ cat(create_tabsetOfGgplotObjects(list(
   "coi_by_country" = moire_he_summary_sel_hes_ccc_by_pop_gat_large_plot_coi_cat_by_country,
   "nonrecombinant_by_country" = moire_he_summary_sel_hes_ccc_by_pop_gat_large_plot_nonrecombinant_cat_by_country
 )))
-```
-
-
-
-```{r}
-bad_pops_counts = moire_allele_freq_summary_sel %>% 
-  filter(expected_freq/moire_freq > 1000 & expected_freq > 0.50 ) %>% 
-  group_by(population_name, paramset_id) %>% count()
-
-
-simulated_Ghana_pop_054 = madhatter_allele_data %>% 
-  filter(population_name == "simulated_Ghana_pop_054")
-
-
-simulated_Ghana_pop_054 = simulated_Ghana_pop_054 %>% 
-  group_by(library_sample_name, target_id) %>% 
-  mutate(sample_target_total_reads = sum(reads)) %>% 
-  mutate(freq = reads/sample_target_total_reads)
-
 ```
 
 
