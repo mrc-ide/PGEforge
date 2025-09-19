@@ -29,6 +29,7 @@ library(tidyr)
 library(magrittr)
 library(jsonlite)
 library(purrr)
+library(rlang) # for as_name
 
 # plotting 
 library(ggplot2)
@@ -53,6 +54,7 @@ library(DescTools) # CCC, Calculates Lin's concordance correlation coefficient
 is.notna <-function(x){
   return(!is.na(x))
 }
+
 # ggplot themes 
 transparentBackground = theme(
   panel.background = element_rect(fill='transparent'), #transparent panel bg
@@ -146,6 +148,7 @@ create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
 #' @param summarize_first Whether or not to sum up the columns first, will lose any non-grouping columns though
 #'
 #' @returns the input table plus various performance metrics 
+#' @export
 add_contigency_metrics <- function(input, summarize_first = F){
   output = input
   if(summarize_first){
@@ -181,6 +184,7 @@ add_contigency_metrics <- function(input, summarize_first = F){
 #' @param input A data table with at least TP, FP, FN
 #' @param summarize_first Whether or not to sum up the columns first, will lose any non-grouping columns though
 #' @returns the input table plus various performance metrics 
+#' @export
 add_contigency_metrics_no_TN <- function(input, summarize_first = F){
   output = input
   if(summarize_first){
@@ -219,7 +223,7 @@ add_contigency_metrics_no_TN <- function(input, summarize_first = F){
 #' @param ring_breaks where to put the breaks in the rignt 
 #'
 #' @returns a ggplot object of the plot which can be further modified 
-#'
+#' @export
 radar_by_metrics <- function(df,
                              color_col = NULL,          
                              facet_col = NULL,          
@@ -401,7 +405,6 @@ radar_by_metrics <- function(df,
 
 ```
 
-
 ```{r}
 # custom hex plot function for GGally
 my_hex <- function(data, mapping, ...) {
@@ -458,6 +461,320 @@ my_corr_ccc <- function(data, mapping,
 
 ```
 
+```{r}
+#' Add columns of mean of observed and expected and the observed minus the expected 
+#'
+#' @param df the dataframe to add to, needs an observation column and an expected column 
+#' @param expected_col character string of the expected column
+#' @param observed_col character string of the observed column
+#'
+#' @returns the input with the difference from expected and mean of expected and observed
+#' @export
+add_diff_mean <- function(df, expected_col, observed_col) {
+  expected_col <- enquo(expected_col)
+  observed_col <- enquo(observed_col)
+
+  obs_name <- as_name(observed_col)
+
+  df %>%
+    rowwise() %>%
+    mutate(
+      !!paste0(obs_name, "_diff_from_exp") := !!observed_col - !!expected_col,
+      !!paste0(obs_name, "_mean_with_exp") := mean(c(!!observed_col, !!expected_col))
+    ) %>%
+    ungroup()
+}
+```
+
+```{r}
+#' Create a Bland–Altman style plot from observed vs expected COI measures
+#'
+#' This function generates a hex-binned Bland–Altman plot for a given COI measure
+#' compared against an expected COI. It automatically looks up the mean and diff
+#' columns based on a provided label (e.g., `"ecoi"`, `"coi"`, `"naive_coi"`, 
+#' `"offset_naive_coi"`).
+#'
+#' @param df A data frame containing the mean and diff columns.
+#' @param label A character string specifying the observed measure name. 
+#'   The function will look for columns named `paste0(label, mean_suffix)` 
+#'   and `paste0(label, diff_suffix)`.
+#' @param mean_suffix A character string appended to the label to form the
+#'   mean column name. Default is `"_mean_with_exp"`.
+#' @param diff_suffix A character string appended to the label to form the
+#'   diff column name. Default is `"_diff_from_exp"`.
+#' @param expected_label A character string used in axis labels to describe
+#'   the expected measure. Default is `"Expected COI"`.
+#' @param bins Integer, number of bins for the hex plot. Default is `30`.
+#'
+#' @returns A `ggplot` object representing the Bland–Altman style plot.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Example with ecoi
+#' p_ecoi <- make_bland_altman_plot_by_label(moire_all_coi_summary, "ecoi")
+#' 
+#' # Example with naive_coi
+#' p_naive <- make_bland_altman_plot_by_label(moire_all_coi_summary, "naive_coi")
+#' 
+#' # Example with custom suffixes (if column names differ)
+#' p_custom <- make_bland_altman_plot_by_label(
+#'   df = moire_all_coi_summary,
+#'   label = "ecoi",
+#'   mean_suffix = "_mean",
+#'   diff_suffix = "_diff"
+#' )
+#' }
+make_bland_altman_plot_by_label <- function(
+  df,
+  label,
+  mean_suffix = "_mean_with_exp",
+  diff_suffix = "_diff_from_exp",
+  expected_label = "Expected",
+  bins = 30 
+) {
+  stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
+
+  mean_col <- paste0(label, mean_suffix)
+  diff_col <- paste0(label, diff_suffix)
+
+  if (!(mean_col %in% names(df))) {
+    stop(sprintf("Column '%s' not found in df.", mean_col))
+  }
+  if (!(diff_col %in% names(df))) {
+    stop(sprintf("Column '%s' not found in df.", diff_col))
+  }
+
+  # limits of agreement (±2 SD) computed once
+  sd_val <- stats::sd(df[[diff_col]], na.rm = TRUE)
+
+  ggplot(df) +
+    geom_hex(aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
+             bins = bins) +
+    scale_fill_viridis_c(name = "log10(count)") +
+    theme_minimal() +
+    geom_smooth(aes(x = .data[[mean_col]], y = .data[[diff_col]]),
+                method = "gam", se = FALSE) +
+    geom_hline(yintercept =  2 * sd_val) +
+    geom_hline(yintercept = -2 * sd_val) +
+    labs(
+      title = label,
+      y = paste0(label, " - ", expected_label),
+      x = paste0("mean (", label, ", ", expected_label, ")")
+    ) +
+    coord_equal()
+}
+
+
+```
+
+```{r}
+#' @title Concordance / Error Metrics (single or multiple observed columns)
+#' @keywords CCC RMSE MAE COI
+#'
+#' @description
+#' Compute metrics between an expected column and one or more observed columns.
+#' Each function accepts an optional set of grouping columns. If omitted, an
+#' overall (single-row) summary is returned.
+#'
+#' @param df A data frame.
+#' @param expected_col Unquoted column name of expected values.
+#' @param observed_cols One symbol or \code{c(sym1, sym2, ...)} of observed columns.
+#' @param group_cols Optional grouping columns supplied like
+#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
+#'   computes overall metrics (no grouping).
+#'
+#' @return A tibble with group columns (if any) and metric columns per observed variable.
+#'
+#' @importFrom dplyr group_by summarise distinct left_join bind_cols
+#' @importFrom rlang enquo enexpr is_call call_args as_quosure caller_env as_name
+#' @importFrom purrr map map_dbl
+#' @name vectorized_metrics
+
+
+# ---- CCC (DescTools::CCC) ----------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+
+  # capture observed columns (symbol or c(...))
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+
+  # capture grouping columns (NULL/omitted => no groups)
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      obs_name <- rlang::as_name(q)
+      one <- df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
+        dplyr::mutate(
+          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
+          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
+          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
+        ) %>%
+        dplyr::select(-.ccc)
+      out <- dplyr::left_join(out, one, by = join_by_cols)
+    }
+  } else {
+    pieces <- purrr::map(obs_quos, function(q) {
+      obs_name <- rlang::as_name(q)
+      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
+      tibble::tibble(
+        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
+        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
+        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
+      )
+    })
+    out <- dplyr::bind_cols(pieces)
+  }
+
+  out
+}
+
+# ---- RMSE --------------------------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_rmse <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+
+  metric_fun <- function(q) {
+    obs_name <- rlang::as_name(q)
+    if (length(grp_quos) > 0) {
+      df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          !!paste0(obs_name, "_rmse") := {
+            x <- !!q; y <- !!expected_col
+            ok <- !is.na(x) & !is.na(y)
+            n  <- sum(ok)
+            if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+          },
+          .groups = "drop"
+        )
+    } else {
+      dplyr::summarise(df,
+        !!paste0(obs_name, "_rmse") := {
+          x <- !!q; y <- !!expected_col
+          ok <- !is.na(x) & !is.na(y)
+          n  <- sum(ok)
+          if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+        }
+      )
+    }
+  }
+
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
+    }
+  } else {
+    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
+  }
+
+  out
+}
+
+# ---- MAE ---------------------------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_mae <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+
+  metric_fun <- function(q) {
+    obs_name <- rlang::as_name(q)
+    if (length(grp_quos) > 0) {
+      df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          !!paste0(obs_name, "_mean_abs_error") := {
+            x <- !!q; y <- !!expected_col
+            ok <- !is.na(x) & !is.na(y)
+            if (!any(ok)) NA_real_ else mean(abs(x[ok] - y[ok]))
+          },
+          .groups = "drop"
+        )
+    } else {
+      dplyr::summarise(df,
+        !!paste0(obs_name, "_mean_abs_error") := {
+          x <- !!q; y <- !!expected_col
+          ok <- !is.na(x) & !is.na(y)
+          if (!any(ok)) NA_real_ else mean(abs(x[ok] - y[ok]))
+        }
+      )
+    }
+  }
+
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
+    }
+  } else {
+    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
+  }
+
+  out
+}
+
+```
 
 
 ## Load in the Benchmarking Outputs
@@ -807,71 +1124,30 @@ moire_all_coi_summary = moire_coi_summary %>%
               mutate(library_sample_name = as.character(library_sample_name))) %>% 
                                                         left_join(sim_params)
 
-# calculate the means and differences for Bland-Altman plots 
+# calculate the means and differences for Bland-Altman plots
+
 moire_all_coi_summary = moire_all_coi_summary %>% 
-  rowwise() %>% 
-  mutate(naive_coi_diff = naive_coi - expected_COI, 
-         offset_naive_coi_diff = offset_naive_coi - expected_COI, 
-         coi_diff = coi - expected_COI, 
-         ecoi_diff = ecoi - expected_COI, 
-         
-         naive_coi_mean = mean(naive_coi + expected_COI), 
-         offset_naive_coi_mean = mean(offset_naive_coi + expected_COI), 
-         coi_mean = mean(coi + expected_COI), 
-         ecoi_mean = mean(ecoi + expected_COI)) %>% 
-  ungroup() 
+  add_diff_mean(expected_COI, naive_coi) %>% 
+  add_diff_mean(expected_COI, offset_naive_coi)%>% 
+  add_diff_mean(expected_COI, coi)%>% 
+  add_diff_mean(expected_COI, ecoi)
+
 ```
 
 ##### Bland-Altman COI plots 
 
 Overall 
 
+
+
 ```{r}
-moire_all_coi_summary_overall_ecoi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = ecoi_mean, y = ecoi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = ecoi_mean, y = ecoi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  labs(title = "ecoi") + 
-  coord_equal()
-
-moire_all_coi_summary_overall_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = coi_mean, y = coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = coi_mean, y = coi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(coi_diff))) + 
-  labs(title = "coi") + 
-  coord_equal()
-
-moire_all_coi_summary_overall_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = naive_coi_mean, y = naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = naive_coi_mean, y = naive_coi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_coi_diff))) + 
-  labs(title = "naive_coi") + 
-  coord_equal()
-
-moire_all_coi_summary_overall_offset_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(offset_naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(offset_naive_coi_diff))) + 
-  labs(title = "offset_naive_coi") + 
-  coord_equal()
+moire_all_coi_summary_overall_ecoi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "ecoi", expected_label = "Expected COI")
+moire_all_coi_summary_overall_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "coi", expected_label = "Expected COI")
+moire_all_coi_summary_overall_naive_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "naive_coi", expected_label = "Expected COI")
+moire_all_coi_summary_overall_offset_naive_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "offset_naive_coi", expected_label = "Expected COI")
 
 ```
+
 
 ```{r}
 #| results: asis
@@ -891,53 +1167,14 @@ cat(create_tabsetOfGgplotObjects(
 Showing the different parameter sets 
 
 ```{r}
-moire_all_coi_summary_ecoi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = ecoi_mean, y = ecoi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = ecoi_mean, y = ecoi_diff), method = "gam", se = F) + 
-  facet_wrap(~paramset_id, ncol = 3)+ 
-  geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  labs(title = "ecoi") + 
-  coord_equal()
-
-moire_all_coi_summary_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = coi_mean, y = coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = coi_mean, y = coi_diff), method = "gam", se = F) + 
-  facet_wrap(~paramset_id, ncol = 3)+ 
-  geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  labs(title = "coi") + 
-  coord_equal()
-
-moire_all_coi_summary_offset_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  coord_equal() + 
-  geom_smooth(aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(offset_naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(offset_naive_coi_diff))) + 
-  facet_wrap(~paramset_id, ncol = 3) + 
-  labs(title = "offset_naive_coi")
-
-moire_all_coi_summary_naive_coi_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = naive_coi_mean, y = naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  coord_equal() + 
-  geom_smooth(aes(x = naive_coi_mean, y = naive_coi_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_coi_diff))) + 
-  facet_wrap(~paramset_id, ncol = 3) + 
-  labs(title = "naive_coi")
+moire_all_coi_summary_ecoi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "ecoi") + 
+  facet_wrap(~paramset_id, ncol = 3)
+moire_all_coi_summary_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "coi") + 
+  facet_wrap(~paramset_id, ncol = 3)
+moire_all_coi_summary_offset_naive_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "offset_naive_coi") + 
+  facet_wrap(~paramset_id, ncol = 3) 
+moire_all_coi_summary_naive_coi_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "naive_coi") + 
+  facet_wrap(~paramset_id, ncol = 3)
 
 ```
 
@@ -969,53 +1206,17 @@ dev.off()
 Showing the different population characteristics 
 
 ```{r}
-moire_all_coi_summary_ecoi_by_pop_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = ecoi_mean, y = ecoi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = ecoi_mean, y = ecoi_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+ 
-  geom_hline(aes(yintercept = 2 * sd(ecoi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(ecoi_diff))) + 
-  labs(title = "ecoi") + 
-  coord_equal()
+moire_all_coi_summary_ecoi_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "ecoi") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 
-moire_all_coi_summary_coi_by_pop_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = coi_mean, y = coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = coi_mean, y = coi_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+  
-  geom_hline(aes(yintercept = 2 * sd(coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(coi_diff))) + 
-  labs(title = "coi") + 
-  coord_equal()
+moire_all_coi_summary_coi_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "coi") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 
-moire_all_coi_summary_naive_coi_by_pop_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = naive_coi_mean, y = naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = naive_coi_mean, y = naive_coi_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+  
-  geom_hline(aes(yintercept = 2 * sd(naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_coi_diff))) + 
-  labs(title = "naive_coi") + 
-  coord_equal()
+moire_all_coi_summary_naive_coi_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "naive_coi") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 
-moire_all_coi_summary_offset_naive_coi_by_pop_bland_altman_plot = ggplot(moire_all_coi_summary) + 
-  geom_hex(
-    aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = offset_naive_coi_mean, y = offset_naive_coi_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+  
-  geom_hline(aes(yintercept = 2 * sd(offset_naive_coi_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(offset_naive_coi_diff))) + 
-  labs(title = "offset_naive_coi") + 
-  coord_equal()
+moire_all_coi_summary_offset_naive_coi_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_all_coi_summary, "offset_naive_coi") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 ```
 
 ```{r}
@@ -1266,28 +1467,15 @@ dev.off()
 
 
 
+
 ```{r}
 # calculate Concordance Correlation Coefficient (CCC) 
-moire_all_coi_summary_ccc_by_pop = moire_all_coi_summary %>%
-  group_by(population_name, paramset_id) %>%
-  summarise(
-    coi_ccc_full =              CCC(expected_COI, coi),
-    ecoi_ccc_full =             CCC(expected_COI, ecoi),
-    naive_coi_ccc_full =        CCC(expected_COI, naive_coi),
-    offset_naive_coi_ccc_full = CCC(expected_COI, offset_naive_coi)
-  ) %>% 
-  mutate(coi_ccc = coi_ccc_full$rho.c$est,
-         coi_ccc_lower = coi_ccc_full$rho.c$lwr.ci, 
-         coi_ccc_upper = coi_ccc_full$rho.c$upr.ci) %>% 
-  mutate(ecoi_ccc = ecoi_ccc_full$rho.c$est,
-         ecoi_ccc_lower = ecoi_ccc_full$rho.c$lwr.ci, 
-         ecoi_ccc_upper = ecoi_ccc_full$rho.c$upr.ci) %>% 
-  mutate(naive_coi_ccc = naive_coi_ccc_full$rho.c$est,
-         naive_coi_ccc_lower = naive_coi_ccc_full$rho.c$lwr.ci, 
-         naive_coi_ccc_upper = naive_coi_ccc_full$rho.c$upr.ci) %>% 
-  mutate(offset_naive_coi_ccc = offset_naive_coi_ccc_full$rho.c$est,
-         offset_naive_coi_ccc_lower = offset_naive_coi_ccc_full$rho.c$lwr.ci, 
-         offset_naive_coi_ccc_upper = offset_naive_coi_ccc_full$rho.c$upr.ci)
+moire_all_coi_summary_ccc_by_pop <- moire_all_coi_summary %>%
+  compute_ccc(
+    expected_col  = expected_COI,
+    observed_cols = c(coi, ecoi, naive_coi, offset_naive_coi),
+    group_cols    = c(population_name, paramset_id)
+  )
 
 # Gather into long format, left join in the simulation parameters
 moire_all_coi_summary_ccc_by_pop_gat = moire_all_coi_summary_ccc_by_pop %>%
@@ -1295,8 +1483,10 @@ moire_all_coi_summary_ccc_by_pop_gat = moire_all_coi_summary_ccc_by_pop %>%
   gather(coi_estimate, ccc, 3:ncol(.)) %>%
   mutate(coi_estimate = gsub("_ccc", "", coi_estimate))%>%
   left_join(sim_params)
-
 ```
+
+
+
 
 ccc across all parameter sets for all 4 estimators 
 
@@ -1465,19 +1655,15 @@ cat(create_tabsetOfGgplotObjects(list(
 )))
 ```
 
-
-
 ##### RMSE   
 
 ```{r}
 # calculate RMSE 
-moire_all_coi_summary_rmse = moire_all_coi_summary %>%
-  group_by(population_name, paramset_id) %>%
-  summarise(
-    coi_rmse = sqrt(sum(coi_diff^2)/length(coi_diff)),
-    ecoi_rmse = sqrt(sum(ecoi_diff^2)/length(ecoi_diff)),
-    naive_coi_rmse = sqrt(sum(naive_coi_diff^2)/length(naive_coi_diff)),
-    offset_naive_coi_rmse = sqrt(sum(offset_naive_coi_diff^2)/length(offset_naive_coi_diff))
+moire_all_coi_summary_rmse <- moire_all_coi_summary %>%
+  compute_rmse(
+    expected_col  = expected_COI,
+    observed_cols = c(coi, ecoi, naive_coi, offset_naive_coi),
+    group_cols    = c(population_name, paramset_id)
   )
 
 # Gather into long format, left join in the simulation parameters
@@ -1865,13 +2051,11 @@ moire_allele_freq_summary_sel = moire_allele_freq_summary %>%
 
 ```{r}
 moire_allele_freq_summary_sel = moire_allele_freq_summary_sel %>% 
-  rowwise() %>% 
-  mutate(moire_freq_diff = moire_freq - expected_freq, 
-         naive_freq_diff = naive_freq - expected_freq, 
-         
-         moire_freq_mean = mean(moire_freq + expected_freq), 
-         naive_freq_mean = mean(naive_freq + expected_freq)) %>% 
-  ungroup() 
+    add_diff_mean(expected_col = expected_freq,
+                  observed_col = moire_freq)%>% 
+    add_diff_mean(expected_col = expected_freq,
+                  observed_col = naive_freq)
+
 ```
 
 
@@ -1879,28 +2063,8 @@ moire_allele_freq_summary_sel = moire_allele_freq_summary_sel %>%
 Overall 
 
 ```{r}
-moire_allele_freq_summary_sel_overall_moire_freq_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = moire_freq_mean, y = moire_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = moire_freq_mean, y = moire_freq_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(moire_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(moire_freq_diff))) + 
-  labs(title = "moire_freq") + 
-  coord_equal()
-
-
-moire_allele_freq_summary_sel_overall_naive_freq_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = naive_freq_mean, y = naive_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = naive_freq_mean, y = naive_freq_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(naive_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_freq_diff))) + 
-  labs(title = "naive_freq") + 
-  coord_equal()
+moire_allele_freq_summary_sel_overall_moire_freq_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "moire_freq")
+moire_allele_freq_summary_sel_overall_naive_freq_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "naive_freq")
 
 ```
 
@@ -1920,32 +2084,12 @@ cat(create_tabsetOfGgplotObjects(
 Showing the different parameter sets 
 
 ```{r}
-moire_allele_freq_summary_sel_moire_freq_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = moire_freq_mean, y = moire_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = moire_freq_mean, y = moire_freq_diff), method = "gam", se = F) + 
-  facet_wrap(~paramset_id, ncol = 3)+ 
-  geom_hline(aes(yintercept = 2 * sd(moire_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(moire_freq_diff))) + 
-  labs(title = "moire_freq") + 
-  coord_equal()
+moire_allele_freq_summary_sel_moire_freq_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "moire_freq") + 
+  facet_wrap(~paramset_id, ncol = 3)
 
 
-moire_allele_freq_summary_sel_naive_freq_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = naive_freq_mean, y = naive_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  coord_equal() + 
-  geom_smooth(aes(x = naive_freq_mean, y = naive_freq_diff), method = "gam", se = F) + 
-  geom_hline(aes(yintercept = 2 * sd(naive_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_freq_diff))) + 
-  facet_wrap(~paramset_id, ncol = 3) + 
-  labs(title = "naive_freq")
-
-
+moire_allele_freq_summary_sel_naive_freq_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "naive_freq") + 
+  facet_wrap(~paramset_id, ncol = 3) 
 
 ```
 
@@ -1973,29 +2117,11 @@ dev.off()
 Showing the different population characteristics 
 
 ```{r}
-moire_allele_freq_summary_sel_moire_freq_by_pop_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = moire_freq_mean, y = moire_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = moire_freq_mean, y = moire_freq_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+ 
-  geom_hline(aes(yintercept = 2 * sd(moire_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(moire_freq_diff))) + 
-  labs(title = "moire_freq") + 
-  coord_equal()
+moire_allele_freq_summary_sel_moire_freq_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "moire_freq") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 
-moire_allele_freq_summary_sel_naive_freq_by_pop_bland_altman_plot = ggplot(moire_allele_freq_summary_sel) + 
-  geom_hex(
-    aes(x = naive_freq_mean, y = naive_freq_diff, fill = log10(after_stat(count)))) +
-  scale_fill_viridis_c(name = "log10(count)") +
-  theme_minimal() + 
-  geom_smooth(aes(x = naive_freq_mean, y = naive_freq_diff), method = "gam", se = F) + 
-  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)+  
-  geom_hline(aes(yintercept = 2 * sd(naive_freq_diff)))  + 
-  geom_hline(aes(yintercept = -2 * sd(naive_freq_diff))) + 
-  labs(title = "naive_freq") + 
-  coord_equal()
+moire_allele_freq_summary_sel_naive_freq_by_pop_bland_altman_plot = make_bland_altman_plot_by_label(moire_allele_freq_summary_sel, "naive_freq") + 
+  facet_grid(interaction(coi_cat, nonrecombinant_cat, sep = "\n")~between_sample_related_cat)
 ```
 
 ```{r}
@@ -2246,18 +2372,12 @@ dev.off()
 ```{r}
 # calculate Concordance Correlation Coefficient (CCC) 
 moire_allele_freq_summary_sel_ccc_by_pop = moire_allele_freq_summary_sel %>%
-  group_by(population_name, paramset_id) %>%
-  summarise(
-    moire_freq_ccc_full =             CCC(expected_freq, moire_freq),
-    naive_freq_ccc_full = CCC(expected_freq, naive_freq)
-  ) %>% 
-  mutate(moire_freq_ccc = moire_freq_ccc_full$rho.c$est,
-         moire_freq_ccc_lower = moire_freq_ccc_full$rho.c$lwr.ci, 
-         moire_freq_ccc_upper = moire_freq_ccc_full$rho.c$upr.ci) %>% 
-  mutate(naive_freq_ccc = naive_freq_ccc_full$rho.c$est,
-         naive_freq_ccc_lower = naive_freq_ccc_full$rho.c$lwr.ci, 
-         naive_freq_ccc_upper = naive_freq_ccc_full$rho.c$upr.ci)
-
+  compute_ccc(
+    expected_col  = expected_freq,
+    observed_cols = c(moire_freq, naive_freq),
+    group_cols    = c(population_name, paramset_id)
+  )
+  
 # Gather into long format, left join in the simulation parameters
 moire_allele_freq_summary_sel_ccc_by_pop_gat = moire_allele_freq_summary_sel_ccc_by_pop %>%
   select(population_name, paramset_id, ends_with("_ccc")) %>% 
@@ -2440,10 +2560,10 @@ cat(create_tabsetOfGgplotObjects(list(
 ```{r}
 # calculate RMSE 
 moire_allele_freq_summary_sel_rmse = moire_allele_freq_summary_sel %>%
-  group_by(population_name, paramset_id) %>%
-  summarise(
-    moire_freq_rmse = sqrt(sum(moire_freq_diff^2)/length(moire_freq_diff)),
-    naive_freq_rmse = sqrt(sum(naive_freq_diff^2)/length(naive_freq_diff)),
+  compute_rmse(
+    expected_col  = expected_freq,
+    observed_cols = c(moire_freq, naive_freq),
+    group_cols    = c(population_name, paramset_id)
   )
 
 # Gather into long format, left join in the simulation parameters
@@ -2906,22 +3026,11 @@ dev.off()
 ```{r}
 # calculate Concordance Correlation Coefficient (CCC) 
 moire_he_summary_sel_hes_ccc_by_pop = moire_allele_freq_summary_sel_hes %>%
-  group_by(population_name, paramset_id) %>%
-  summarise(
-    moire_he_ccc_full = CCC(expected_he, moire_he),
-    moire_recalc_ccc_full = CCC(expected_he, moire_recalc_he), 
-    naive_he_ccc_full = CCC(expected_he, naive_he)
-  ) %>% 
-  mutate(moire_he_ccc = moire_he_ccc_full$rho.c$est,
-         moire_he_ccc_lower = moire_he_ccc_full$rho.c$lwr.ci, 
-         moire_he_ccc_upper = moire_he_ccc_full$rho.c$upr.ci) %>% 
-  mutate(moire_recalc_ccc = moire_recalc_ccc_full$rho.c$est,
-         moire_recalc_ccc_lower = moire_recalc_ccc_full$rho.c$lwr.ci, 
-         moire_recalc_ccc_upper = moire_recalc_ccc_full$rho.c$upr.ci) %>% 
-  mutate(naive_he_ccc = naive_he_ccc_full$rho.c$est,
-         naive_he_ccc_lower = naive_he_ccc_full$rho.c$lwr.ci, 
-         naive_he_ccc_upper = naive_he_ccc_full$rho.c$upr.ci)
-
+  compute_ccc(
+    expected_col = expected_he, 
+    observed_cols = c(moire_he, moire_recalc_he, naive_he), 
+    group_cols = c(population_name, paramset_id)
+  )
 # Gather into long format, left join in the simulation parameters
 moire_he_summary_sel_hes_ccc_by_pop_gat = moire_he_summary_sel_hes_ccc_by_pop %>%
   select(population_name, paramset_id, ends_with("_ccc")) %>% 
