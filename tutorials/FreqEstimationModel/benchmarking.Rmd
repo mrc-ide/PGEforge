@@ -143,7 +143,7 @@ tool_results <- tibble(
     obs_n_samp = sample_total
   ) %>%
   select(-sequence, -median_freq, -`CI_2.5`, -`CI_97.5`)
-
+print(tool_results)
 # Read in tool parameters, and join ------------------------------------
 tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
   as_tibble() %>%
@@ -157,7 +157,7 @@ tool_results_wtruth <- tool_results %>%
   # Use an inner join because FEM also estimates frequencies for 
   # subsets of the requested multilocus genotypes, and these 
   # frequencies are not benchmarked
-  inner_join(sim_truth, by = c("sim_id", "variant", "group_id"))
+  full_join(sim_truth, by = c("sim_id", "variant", "group_id"))
 ```
 
 ## Performance with Good COI Specification
