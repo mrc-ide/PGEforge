@@ -1,0 +1,969 @@
+---
+title: Sample Benchmarking for Allele Frequencies
+author: Sophie Berube
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=F, message=F)
+```
+
+```{r nickFunctions}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+library(flextable)
+library(DescTools)
+library(hexbin)
+#| code-fold: true
+
+# commonly used functions  
+`%!in%` <- Negate(`%in%`)
+is.notna <-function(x){
+  return(!is.na(x))
+}
+# ggplot themes 
+transparentBackground = theme(
+  panel.background = element_rect(fill='transparent'), #transparent panel bg
+  plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+  panel.grid.major = element_blank(), #remove major gridlines
+  panel.grid.minor = element_blank(), #remove minor gridlines
+  legend.background = element_rect(color = NA, fill='transparent'), #transparent legend bg
+  legend.box.background = element_rect(color = NA, fill='transparent') #transparent legend panel
+)
+custom_theme_noTransparentBackground = theme_bw() +
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
+  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
+          element_line(color="black", linewidth = 0.3))+
+  theme(text=element_text(size=12, family="Helvetica"))+
+  theme(axis.text.y = element_text(size=12))+
+  theme(axis.text.x = element_text(size=12)) +
+  theme(legend.position = "bottom") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+custom_theme = custom_theme_noTransparentBackground +
+  transparentBackground
+custom_theme_backgroundTransparent = custom_theme
+
+custom_theme_xRotate_noBackgroundTransparent = theme_bw() +
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
+  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
+          element_line(color="black", linewidth = 0.3))+
+  theme(text=element_text(size=12, family="Helvetica"))+
+  theme(axis.text.y = element_text(size=12))+
+  theme(axis.text.x = element_text(size=12)) +
+  theme(legend.position = "bottom") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=12, angle = -90, vjust = 0.5, hjust = 0)) 
+
+custom_theme_xRotate = custom_theme_xRotate_noBackgroundTransparent + 
+  transparentBackground
+
+custom_theme_xRotate_backgroundTransparent = custom_theme_xRotate
+
+
+create_dt <- function(x){
+  DT::datatable(x,
+                extensions = 'Buttons',
+                options = list(dom = 'Blfrtip',
+                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               lengthMenu = list(c(10,25,50,-1),
+                                                 c(10,25,50,"All"))), 
+                filter = "top")
+}
+
+colorPalette_08 = c("#2271B2","#F748A5","#359B73","#F0E442","#D55E00","#3DB7E9","#E69F00","#000000")
+colorPalette_12 = c("#E20134","#FF6E3A","#008DF9","#8400CD","#FFC33B","#9F0162","#009F81","#FF5AAF","#00FCCF","#00C2F9","#FFB2FD","#A40122")
+colorPalette_15 = c("#F60239","#003C86","#EF0096","#9400E6","#009FFA","#008169","#68023F","#00DCB5","#FFCFE2","#FF71FD","#7CFFFA","#6A0213","#008607","#00E307","#FFDC3D")
+
+
+create_tabsetOfHtmlWidgets <- function(htmlObjectsList) {
+  zz <- textConnection("foo", "w")
+  sink(zz)
+  cat("::: {.panel-tabset}\n")
+  iwalk(htmlObjectsList, ~ {
+    cat('## ', .y, '\n\n')
+    tempList = list()
+    tempList[["item"]] = .x
+    print(htmltools::tagList(tempList))
+    cat('\n\n')
+  })
+  cat(":::\n")
+  sink()
+  close(zz)
+  paste0(foo, collapse = "\n")
+}
+
+
+create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
+  # zz <- textConnection("foo", "w")
+  # sink(zz)
+  cat("\n\n::: {.panel-tabset}\n\n")
+  iwalk(ggplotObjectsList, ~ {
+    cat('## ', .y, '\n\n')
+    print(.x)
+    # tempList = list()
+    # tempList[["item"]] = .x
+    # grid::grid.draw(ggplot2::ggplotGrob(.x))
+    cat('\n\n')
+  })
+  cat(":::\n")
+  # sink()
+  # close(zz)
+  # paste0(foo, collapse = "\n")
+}
+
+
+```
+
+
+
+## Load in the Benchmarking Outputs
+
+```{r, warning=FALSE, message=FALSE}
+
+
+inp <- list(
+  sim_info_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/SpotMalaria", 
+  tool_res_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp/", 
+  tool_params = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp.json"
+)
+```
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        variant = col_character(), 
+        freq = col_double(), 
+        prev = col_double(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  dplyr::select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  dplyr::select(
+    -pop, 
+    -country, 
+    -aas_in_variant, 
+    -allele_count, 
+    -total_samples, 
+    -total_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  dplyr::select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  dplyr::select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  dplyr::select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        variant = col_character(), 
+        group_id = col_character(), 
+        sample_total= col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  dplyr::select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq, 
+    obs_prev = prev,
+    obs_n_samp = sample_total
+  )
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble()
+  #mutate(mean_coi_tool_param = paramset$coi) %>%
+  #dplyr::select(-loci_groups, -paramset)
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant", "group_id"))
+
+sim_truth<- sim_truth|>
+  mutate(exp_n_denom= exp_n_samp/exp_prev)
+
+tool_results<- tool_results|>
+  rename(obs_n_denom= obs_n_samp)
+
+tool_results_wtruth|>
+  mutate(exp_n_denom = exp_n_samp/exp_prev)|>
+  rename(obs_n_denom= obs_n_samp)->tool_results_wtruth 
+
+tool_results_wtruth$obs_n_denom<- as.numeric(tool_results_wtruth$obs_n_denom)
+
+```
+
+# Allele Frequencies 
+
+Goals for allele frequencies: 
+
+* Report RMSE (root mean squared error) across different groupings of populations, and simulation parameters. 
+
+* Report Lin's concordance correlation coefficient with 95% confidence intervals between tool and simluation COIs across different groupings of populations, and parameters. 
+
+* Compare tool allele frequences to Simulated allele frequencies using Bland-Altman plots (mean of tool and simulation vs difference of tool vs simulation) across combinations of loci, and simulation parameters. 
+  * Can choose to split this up across different groupings of populations, and simulation parameters. 
+  
+* For each allele in each locus, report number of samples that contain a false positive (allele detected in sample with tool but not truly present in simulation), and that contain false negatives (allele not detected in sample with tool but is truly present in simulation). Report these as proportions (sensitivity, specificity). 
+  
+```{r}
+
+# Compute RMSE of frequency and prevalence -----------------------------
+tool_results_with_rmse <- tool_results_wtruth %>%
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
+    .groups = "drop"
+  )
+
+# Show all RMSEs as a boxplot ------------------------------------------
+tool_results_with_rmse <- tool_results_with_rmse %>%
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )%>%
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = freq_rmse, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Frequency Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> RMSE_byScenario_freq
+
+print(RMSE_byScenario_freq)
+
+
+
+```
+
+
+```{r}
+
+#concordance 
+
+tool_results_Concordance_Freq <- tool_results_wtruth %>%
+  group_by(
+    group_id, 
+    pop_alpha, 
+    coi_r, 
+    k_s
+  )|>
+  summarize(conc_pt_est= CCC(exp_freq, obs_freq)$rho.c$est, 
+         conc_lwr_CI= CCC(exp_freq, obs_freq)$rho.c$lwr.ci, 
+         conc_upr_CI= CCC(exp_freq, obs_freq)$rho.c$upr.ci)|>
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+
+
+
+tool_results_Concordance_Freq %>%
+  ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = group_id)) +
+  geom_pointrange(position = position_jitter(width = 0.2)) +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "Concordance Correlation Coeffifient", 
+    color = "Loci Set"
+  ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
+  theme(legend.position = "bottom")-> Concordance_byScenario_prev
+
+print(Concordance_byScenario_prev)
+
+```
+
+```{r}
+
+#bland altman plots 
+
+tool_results_wtruth_BA<- tool_results_wtruth|>
+  mutate(mean_freq= (obs_freq+exp_freq)/2, 
+         dif_freq= obs_freq-exp_freq)|>
+   mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+
+LocusSets<- unique(tool_results_wtruth_BA$group_id)
+
+BA_plots<- vector(mode='list', length=length(LocusSets))
+
+for(i in 1:length(LocusSets)){
+
+tool_results_wtruth_BA %>%
+    filter(group_id==LocusSets[i])|>
+  ggplot() +
+  geom_hex(
+    aes(x = mean_freq, y = dif_freq, fill = log10(after_stat(count))))+
+  scale_fill_viridis_c(name = "log10(count)") +
+  theme_minimal() + 
+  geom_smooth(aes(x = mean_freq, y = dif_freq), method='loess', se=F) + 
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Mean of Observed and Expected Freq", 
+    y = "Difference of Observed and Expected Freq"
+  ) +ggtitle(LocusSets[i])-> BA_byScenario_prev
+  
+  BA_plots[[i]]<- BA_byScenario_prev
+
+}
+print(BA_plots[[1]])
+
+print(BA_plots[[2]])
+
+print(BA_plots[[3]])
+
+print(BA_plots[[4]])
+
+print(BA_plots[[5]])
+
+print(BA_plots[[6]])
+
+print(BA_plots[[7]])
+
+
+```
+
+```{r}
+#false pos and false neg summaries 
+
+tool_results_wtruth %>%
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    variant,
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    #this dataset only had false negatives, no false positives
+    #if you have false positives you would add them here 
+    exp_n_denom= exp_n_denom, 
+    obs_n_denom = obs_n_denom,
+    false_neg= round(exp_n_denom-obs_n_denom,5),
+    sensitivity= round(obs_n_denom/exp_n_denom, 5),
+    exp_freq= exp_freq,
+    .groups = "drop"
+  )|>
+   mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )-> False_negs_byScenario_and_freq
+
+
+
+False_negs_byScenario_and_freq %>%
+  ggplot(mapping = aes(x = pop_alpha, y = false_neg, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "Number of Samples with False Negative Alleles", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> FalseNeg_byScenario
+
+print(FalseNeg_byScenario)
+
+False_negs_byScenario_and_freq %>%
+  ggplot(mapping = aes(x = pop_alpha, y = sensitivity, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "Sensitivity, Proportion of MadHatter Samples \nwith True Postive Detection", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> Sensitivity_byScenario
+
+print(Sensitivity_byScenario)
+
+
+#replicate this plot as necessary for false positives
+
+False_negs_byScenario_and_freq %>%
+  mutate(Freq_Quart= ifelse(exp_freq<0.25, "(0,0.25)", 
+                            ifelse(exp_freq>=0.25&exp_freq<0.5, "(0.25,0.5)", ifelse(exp_freq>=0.5&exp_freq<0.75, "(0.5,0.75)", "(0.75,1)"))))|>
+  ggplot(mapping = aes(x = Freq_Quart, y = false_neg, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Expected Allele Frequencies", 
+    y = "Number of Samples with False Negative Alleles", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> FalseNeg_byFreq
+
+print(FalseNeg_byFreq)
+
+
+False_negs_byScenario_and_freq %>%
+  mutate(Freq_Quart= ifelse(exp_freq<0.25, "(0,0.25)", 
+                            ifelse(exp_freq>=0.25&exp_freq<0.5, "(0.25,0.5)", ifelse(exp_freq>=0.5&exp_freq<0.75, "(0.5,0.75)", "(0.75,1)"))))|>
+  ggplot(mapping = aes(x = Freq_Quart, y = sensitivity, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Expected Allele Frequencies", 
+    y = "Sensitivity, Proportion of MadHatter Samples \nwith True Postive Detection", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> Sensitivity_byFreq
+
+print(Sensitivity_byFreq)
+
+#replicate this plot as necessary for false positives
+
+
+```
+
+# Allele Prevalence
+
+Goals for allele prevalence: 
+
+* Report RMSE (root mean squared error) across different groupings of populations, and simulation parameters, again below is a minimum set. 
+
+* Report Lin's concordance correlation coefficient with 95% confidence intervals between tool and simluation COIs across different groupings of populations, and parameters. 
+
+* Compare tool allele prevalence to simulated allele prevalence using Bland-Altman plots (mean of tool and simulation vs difference of tool vs simulation) across combinations of loci, and simulation parameters. 
+  * Can choose to split this up across different groupings of populations, and simulation parameters. 
+  
+
+  
+```{r}
+
+# Compute RMSE of prevalence -----------------------------
+tool_results_with_rmse <- tool_results_wtruth %>%
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    prev_rmse = sqrt(mean((obs_prev - exp_prev)^2)), 
+    .groups = "drop"
+  )
+
+# Show all RMSEs as a boxplot ------------------------------------------
+tool_results_with_rmse <- tool_results_with_rmse %>%
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )%>%
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+tool_results_with_rmse %>%
+  ggplot(mapping = aes(x = pop_alpha, y = prev_rmse, color = group_id)) +
+  geom_boxplot() +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Prevalence Estimate", 
+    color = "Loci Set"
+  ) +
+  theme(legend.position = "bottom")-> RMSE_byScenario_prev
+
+print(RMSE_byScenario_prev)
+
+
+
+```
+
+
+```{r}
+
+#concordance 
+
+tool_results_Concordance_Prev <- tool_results_wtruth %>%
+  group_by(
+    group_id, 
+    pop_alpha, 
+    coi_r, 
+    k_s
+  )|>
+  summarize(conc_pt_est= CCC(exp_prev, obs_prev)$rho.c$est, 
+         conc_lwr_CI= CCC(exp_prev, obs_prev)$rho.c$lwr.ci, 
+         conc_upr_CI= CCC(exp_prev, obs_prev)$rho.c$upr.ci)|>
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+
+
+
+tool_results_Concordance_Prev %>%
+  ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = group_id)) +
+  geom_pointrange(position = position_jitter(width = 0.2)) +theme_bw()+
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "Concordance Correlation Coeffifient", 
+    color = "Loci Set"
+  ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
+  theme(legend.position = "bottom")-> Concordance_byScenario_prev
+
+print(Concordance_byScenario_prev)
+
+```
+
+```{r}
+
+#bland altman plots 
+
+tool_results_wtruth_BA<- tool_results_wtruth|>
+  mutate(mean_prev= (obs_prev+exp_prev)/2, 
+         dif_prev= obs_prev-exp_prev)|>
+   mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+
+LocusSets<- unique(tool_results_wtruth_BA$group_id)
+
+BA_plots<- vector(mode='list', length=length(LocusSets))
+
+for(i in 1:length(LocusSets)){
+
+tool_results_wtruth_BA %>%
+    filter(group_id==LocusSets[i])|>
+  ggplot() +
+  geom_hex(
+    aes(x = mean_prev, y = dif_prev, fill = log10(after_stat(count))))+
+  scale_fill_viridis_c(name = "log10(count)") +
+  theme_minimal() + 
+  geom_smooth(aes(x = mean_prev, y = dif_prev), method='loess', se=F) + 
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Mean of Observed and Expected Prev", 
+    y = "Difference of Observed and Expected Prev"
+  ) +ggtitle(LocusSets[i])-> BA_byScenario_prev
+  
+  BA_plots[[i]]<- BA_byScenario_prev
+
+}
+print(BA_plots[[1]])
+
+print(BA_plots[[2]])
+
+print(BA_plots[[3]])
+
+print(BA_plots[[4]])
+
+print(BA_plots[[5]])
+
+print(BA_plots[[6]])
+
+print(BA_plots[[7]])
+
+
+```
+
