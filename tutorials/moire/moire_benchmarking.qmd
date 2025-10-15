@@ -6,6 +6,7 @@ toc-depth: 5
 code-fold: true
 fig-width: 15
 fig-height: 15
+embed-resources: false
 ---
 
 ```{r setup, include=FALSE}
@@ -781,10 +782,10 @@ compute_mae <- function(df, expected_col, observed_cols, group_cols = NULL) {
 
 ```{r}
 inp <- list(
-  sim_info_dir = "~/Downloads/hackathon_2025_07_data/simulations/SpotMalaria", 
-  tool_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/MOIRE/", 
-  madhatter_res_dir = "~/Downloads/hackathon_2025_07_data/tool_results/madhatter/",
-  tool_params = "~/Downloads/hackathon_2025_07_data/tool_results/moire.json"
+  sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../data/benchmarking/tool_results/MOIRE/", 
+  madhatter_res_dir = "../../data/benchmarking/tool_results/madhatter/",
+  tool_params = "../../data/benchmarking/tool_results/moire.json"
 )
 ```
 
