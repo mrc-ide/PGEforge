@@ -2,11 +2,32 @@
 title: IDM Benchmarking Results
 author: Bing Guo
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+Bland-Altman, difference vs mean
+
+geom_hex
+
+# Tool information
+
+-   Main use-cases:
+    -   A maximum-likelihood based method to estimate allele frequency
+        and MOI
+        -   Work with multiallelic data for a single locus
+        -   Can account for incomplete data.
+-   Authors
+    -   Meraj Hashemi, Kristan Schneider
+-   Publication:
+    -   Hashemi M, Schneider KA (2024) Estimating multiplicity of
+        infection, allele frequencies, and prevalences accounting for
+        incomplete data. PLoS ONE 19(3): e0287161.
 
 # Load in the Benchmarking Outputs
 
@@ -28,8 +49,8 @@ input_config <- list(
 )
 ```
 
-First, all of the tool results, tool parameters, expected simulated values, and
-simulation parameters are read into a tibble.
+First, all of the tool results, tool parameters, expected simulated
+values, and simulation parameters are read into a tibble.
 
 ```{r}
 # simulation truth data frame
@@ -80,7 +101,6 @@ df_st <- tibble(
   )
 str(df_st)
 ```
-
 
 ```{r}
 # Read in all simulation parameters into one tibble --------------------
@@ -190,10 +210,6 @@ df_tp <- jsonlite::fromJSON(input_config$tool_params) %>%
 str(df_tp)
 ```
 
-
-
-
-
 ### Join tables
 
 ```{r}
@@ -201,16 +217,33 @@ df_st_tr_sp_tp <- df_st %>%
   # may contain NAs
   full_join(df_tr, by = c("sim_id", "variant")) %>%
   select(sim_id, variant, paramset_id, obs_freq, exp_freq) %>%
+  # replace NA frequencies with zeros.
+  mutate(across(c(obs_freq, exp_freq), ~ replace_na(.x, 0))) %>%
   left_join(df_sp, by = "sim_id") %>%
   left_join(df_tp, by = "paramset_id") %>%
-  mutate(freq_bin = cut(replace(exp_freq, is.na(exp_freq), 0),
+  mutate(exp_freq_bin = cut(exp_freq,
     breaks = c(-Inf, 0.2, 0.4, 0.6, 0.8, Inf),
     labels = c("<0.2", "<0.4", "<0.6", "<0.8", ">=0.8"),
-  ))
+  )) %>%
+  mutate(obs_freq_bin = cut(obs_freq,
+    breaks = c(-Inf, 0.2, 0.4, 0.6, 0.8, Inf),
+    labels = c("<0.2", "<0.4", "<0.6", "<0.8", ">=0.8"),
+  )) %>%
+  mutate(
+    norm_diff = (obs_freq - exp_freq) / sqrt(obs_freq * (1 - obs_freq) + exp_freq * (1 - exp_freq))
+  )
 str(df_st_tr_sp_tp)
 ```
 
 ## Analysis
+
+New stats but focusing on False positive and False negative cases
+```{r}
+df_st_tr_sp_tp %>%
+  filter(obs_freq > 0, obs_freq < 1, exp_freq > 0, exp_freq < 1) %>%
+  ggplot(aes(x = norm_diff, fill = country)) +
+  geom_histogram(alpha = 0.6)
+```
 
 ### Allele Frequency
 
@@ -218,7 +251,7 @@ Calculating RMSE
 
 ```{r}
 freq_rmse <- df_st_tr_sp_tp %>%
-  drop_na() %>%
+  filter(obs_freq > 0, obs_freq < 1, exp_freq > 0, exp_freq < 1) %>%
   group_by(
     # sim_id,
     paramset_id,
@@ -240,9 +273,10 @@ str(freq_rmse)
 ```
 
 Calculating RMSE by frequency bins
+
 ```{r}
 freq_rmse_by_freq <- df_st_tr_sp_tp %>%
-  replace_na(list(obs_freq = 0, true_freq = 0)) %>%
+  filter(obs_freq > 0, obs_freq < 1, exp_freq > 0, exp_freq < 1) %>%
   group_by(
     # sim_id,
     paramset_id,
@@ -254,7 +288,8 @@ freq_rmse_by_freq <- df_st_tr_sp_tp %>%
     model,
     lambda_initial,
     eps_initial,
-    freq_bin, # <---
+    exp_freq_bin, # <---
+    obs_freq_bin,
   ) %>%
   summarize(
     freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)),
@@ -283,9 +318,9 @@ freq_rmse %>%
   ) +
   theme(legend.position = "bottom")
 ```
-Different IDM tool parameters, such as `model`, `eps_intial`, and `lambda_initial`, do
-not seem to change the RMSE value significantly.
 
+Different IDM tool parameters, such as `model`, `eps_intial`, and
+`lambda_initial`, do not seem to change the RMSE value significantly.
 
 ## Explore how simulation parameters affect RMSE
 
@@ -297,9 +332,8 @@ freq_rmse %>%
   geom_boxplot()
 ```
 
-With default tools parameters, RMSE is higher in Cambodian than in Ghana.
-
-
+With default tools parameters, RMSE is higher in Cambodian than in
+Ghana.
 
 ```{r}
 freq_rmse %>%
@@ -311,7 +345,6 @@ freq_rmse %>%
 
 RMSE is slightly higher in high relatedness simulations.
 
-
 ```{r}
 freq_rmse %>%
   filter(lambda_initial == 0.1, eps_initial == 0.1, model == "IDM") %>%
@@ -320,7 +353,8 @@ freq_rmse %>%
   geom_boxplot()
 ```
 
-RMSE does not differ too much between high and low recombination simulations.
+RMSE does not differ too much between high and low recombination
+simulations.
 
 ```{r}
 freq_rmse %>%
@@ -329,9 +363,8 @@ freq_rmse %>%
   geom_boxplot()
 ```
 
-There is a clear trend of higher RMSE in simulations with higher true mean COI.
-
-
+There is a clear trend of higher RMSE in simulations with higher true
+mean COI.
 
 ```{r}
 freq_rmse %>%
@@ -342,7 +375,8 @@ freq_rmse %>%
 
 Similarly, higher RMSE in high COI parameter simulations.
 
-We can look at combinations of simulation parameters to see how they affect RMSE.
+We can look at combinations of simulation parameters to see how they
+affect RMSE.
 
 ```{r}
 freq_rmse %>%
@@ -359,34 +393,48 @@ freq_rmse %>%
 
 Again, we see that:
 
-- RMSE is higher in Cambodian simulations, and in high COI. 
-- The effect seems to be more pronounced in low recombination simulations for high relatedness simulations. 
-- Errors are slightly higher in high relatedness simulations.
-
+-   RMSE is higher in Cambodian simulations, and in high COI.
+-   The effect seems to be more pronounced in low recombination
+    simulations for high relatedness simulations.
+-   Errors are slightly higher in high relatedness simulations.
 
 We can also look at RMSE by frequency bins.
-```{r}
-freq_rmse_by_freq %>% 
-  replace_na(list(freq_rmse=0))%>% # DOUBLE CHECK THIS REPLACEMENT
+
+```{r, fig.width = 7, fig.height = 4}
+freq_rmse_by_freq %>%
   filter(lambda_initial == 0.1, eps_initial == 0.1, model == "IDM") %>%
   ggplot(mapping = aes(x = country, y = freq_rmse, color = coi_r)) +
   geom_boxplot() +
-  facet_grid(rows = vars(k_s), cols = vars(freq_bin), labeller = label_both) +
+  facet_grid(rows = vars(country), cols = vars(obs_freq_bin), labeller = label_both) +
   labs(
     y = "RMSE of Frequency Estimate",
   ) +
   theme(legend.position = "bottom")
 ```
 
-Here, we see that RMSE is much higher for low frequency alleles. 
+```{r, fig.width = 7, fig.height = 4}
+freq_rmse_by_freq %>%
+  filter(lambda_initial == 0.1, eps_initial == 0.1, model == "IDM") %>%
+  ggplot(mapping = aes(x = country, y = freq_rmse, color = coi_r)) +
+  geom_boxplot() +
+  facet_grid(rows = vars(country), cols = vars(exp_freq_bin), labeller = label_both) +
+  labs(
+    y = "RMSE of Frequency Estimate",
+  ) +
+  ylim(0, 0.07) +
+  theme(legend.position = "bottom")
+```
+
+
+Here, we see that RMSE is much higher for low frequency alleles.
 
 We may want to consider normalize the RMSE by allele frequencies?
 
 ## Calculate false negative and fale discovery rates
 
-Using whether an allele was observed (population frequency > 0) or not to
-determine whehter each observation is a true positive (TP), true negative (TN),
-false positive (FP), or false negative (FN).
+Using whether an allele was observed (population frequency \> 0) or not
+to determine whehter each observation is a true positive (TP), true
+negative (TN), false positive (FP), or false negative (FN).
 
 ```{r}
 ftnp <- df_st_tr_sp_tp %>%
@@ -403,11 +451,11 @@ ftnp <- df_st_tr_sp_tp %>%
 str(ftnp)
 ```
 
-Grouping by `simulation` and `ftnp` category to calculate False negative rate
-(FNR) and False Discovery Rate (FDR).
+Grouping by `simulation` and `ftnp` category to calculate False negative
+rate (FNR) and False Discovery Rate (FDR).
 
-FDR is used instead of False positive rate (FPR) because the number of true
-negatives is always zero, and FPR would be 1 and not informative.
+FDR is used instead of False positive rate (FPR) because the number of
+true negatives is always zero, and FPR would be 1 and not informative.
 
 ```{r}
 fnr_fdr <- ftnp %>%
@@ -477,10 +525,11 @@ fnr_fdr %>%
   theme(legend.position = "bottom")
 ```
 
-High FNR in Ghana-like simulations with high COI parameter and high relatedness.
-
+High FNR in Ghana-like simulations with high COI parameter and high
+relatedness.
 
 ### FNR by frequency bins
+
 ```{r, fig.width = 7, fig.height = 7}
 fnr_fdr_by_freq %>%
   ggplot(mapping = aes(x = country, y = FNR, color = factor(coi_r))) +
@@ -498,7 +547,8 @@ fnr_fdr_by_freq %>%
   theme(legend.position = "bottom")
 ```
 
-It is clear that alleles with very low frequencies or high frequencies have much higher FNR, especially in Ghana-like simulations.
+It is clear that alleles with very low frequencies or high frequencies
+have much higher FNR, especially in Ghana-like simulations.
 
 ## FDR
 
@@ -514,9 +564,11 @@ fnr_fdr %>%
   theme(legend.position = "bottom")
 ```
 
-Low FDR overall, but slightly higher in Ghana-like simulations with high COI parameter and high relatedness.
+Low FDR overall, but slightly higher in Ghana-like simulations with high
+COI parameter and high relatedness.
 
 ## FDR by frequency bins
+
 ```{r, fig.width = 7, fig.height = 7}
 fnr_fdr_by_freq %>%
   ggplot(mapping = aes(x = country, y = FDR, color = factor(coi_r))) +
@@ -534,35 +586,41 @@ fnr_fdr_by_freq %>%
   theme(legend.position = "bottom")
 ```
 
-When examining frequency bins, FDR is very high for alleles with lower frequencies. 
-
-
+When examining frequency bins, FDR is very high for alleles with lower
+frequencies.
 
 ## Summary and Next Steps
 
 ### Summary
 
-- IDM tool parameters do not seem to affect RMSE. 
+-   IDM tool parameters do not seem to affect RMSE.
 
-  - We may want to explore how missing data rates and IDM model (OM, IDM) affect RMSE in future analyses.
+    -   We may want to explore how missing data rates and IDM model (OM,
+        IDM) affect RMSE in future analyses.
 
-- Simulation parameters does affect RMSE.
+-   Simulation parameters does affect RMSE.
 
-  - RMSE is higher in Cambodian-like simulations and in high COI parameter simulations
-  - RMSE is slightly higher in high relatedness simulations.
-  - RMSE is much higher for high frequency alleles.
-    - suggesting RMSE being normalized by allele frequency?
-  
-- Simulation parameters also affect FNR and FDR.
+    -   RMSE is higher in Cambodian-like simulations and in high COI
+        parameter simulations
+    -   RMSE is slightly higher in high relatedness simulations.
+    -   RMSE is much higher for high frequency alleles.
+        -   suggesting RMSE being normalized by allele frequency?
 
-  - FNR is higher in Ghana-like simulations with high COI parameter and high relatedness.
-  - FDR is slightly higher in Ghana-like simulations with high COI parameter and high relatedness.
-  - Both FNR and FDR are much higher for low frequency alleles, especially in Ghana-like simulations.
-  
+-   Simulation parameters also affect FNR and FDR.
+
+    -   FNR is higher in Ghana-like simulations with high COI parameter
+        and high relatedness.
+    -   FDR is slightly higher in Ghana-like simulations with high COI
+        parameter and high relatedness.
+    -   Both FNR and FDR are much higher for low frequency alleles,
+        especially in Ghana-like simulations.
+
 ### Next steps
 
-- Consider normalizing RMSE by allele frequency.
-- Statistical testing
-- Correlation between simulation parameters, such country and COI, and relatedness.
-- Explore how missing data rates and IDM model (OM, IDM) affect RMSE, FNR, and FDR.
-- Compare with other tools.s
+-   Consider normalizing RMSE by allele frequency.
+-   Statistical testing
+-   Correlation between simulation parameters, such country and COI, and
+    relatedness.
+-   Explore how missing data rates and IDM model (OM, IDM) affect RMSE,
+    FNR, and FDR.
+-   Compare with other tools.s
