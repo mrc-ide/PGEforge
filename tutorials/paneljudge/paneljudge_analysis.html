@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -69,14 +69,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-73b2af05001355f237b3c635aa83b92c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-287c38d873e0ba8985e67f33d943c61c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -120,7 +121,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -162,7 +163,8 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../../index.html" class="sidebar-logo-link">
-      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
     <a href="https://github.com/mrc-ide/PGEforge" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
@@ -992,7 +994,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="the-data">The Data</h2>
 <p>As input for <code>paneljudge</code>, we will start with a variant call file, abbreviated as a <a href="chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://samtools.github.io/hts-specs/VCFv4.3.pdf">VCF</a> of the Sanger Barcode from Vietnam For <code>paneljudge</code>, we are attempting to determine the “information” contained in each site (and collective sites in a panel). In order to quantify information, we need to know the allele frequency across each site (the frequency that we see each allele at a given site). Given that we are using a monoclonal (simple genetic sample) and biallelic data (alleles have only two possible states), we can take the average across the VCF genotype calls and then the complement for first and second allele, respectively<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Below, we will use <code>vcfR</code> to convert the VCF into a population-level allele frequency matrix. We will then convert the PLAF to a dataframe/matrix with the frequency of each of our two alleles for each site (needed for <code>paneljudge</code>).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># vcf and plaf</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the VCF from the main data page </span></span>
@@ -1020,18 +1022,18 @@ window.Quarto = {
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">lapply</span>(POS, <span class="cf">function</span>(x){<span class="fu">diff</span>(<span class="fu">unlist</span>(x[,<span class="dv">2</span>]))})</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># make last pos end of chrom </span></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">lapply</span>(ds, <span class="cf">function</span>(x){x[<span class="fu">length</span>(x)] <span class="ot">&lt;-</span> <span class="fl">1e8</span>; <span class="fu">return</span>(x) })</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">unlist</span>(ds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">unlist</span>(ds)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Prior to using <code>paneljudge</code>, we can visualize our population-level allele frequencies (PLAF). If the population has undergone significant drift or is inbred, we may expect to see a clustering of PLAF around values less than 0.5 or greater than 0.5 (and more close to 0.1 or 0.9). In contrast, if a population is panmictic with multiple outbreeding populations, we may expect our PLAF values to be closer to 0.5.</p>
 <div class="cell" data-hide="true">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">plaf =</span> plaf,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">plaf =</span> plaf,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">allele =</span> <span class="fu">names</span>(plaf)) <span class="sc">%&gt;%</span> </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="fu">aes</span>(<span class="at">x =</span> allele, <span class="at">y =</span> plaf), <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span> </span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Alleles"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Pop. Lvl Allele Freq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Alleles"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Pop. Lvl Allele Freq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1051,21 +1053,21 @@ There are two mains ways to estimate relatedness among individuals: identity by 
 <h2 class="anchored" data-anchor-id="using-paneljudge">Using <code>paneljudge</code></h2>
 <p>Below, we will calculate the diversity, effective cardinality, and absolute cardinality of our sites.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diversities <span class="ot">&lt;-</span> <span class="fu">compute_diversities</span>(pjdat)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diversities <span class="ot">&lt;-</span> <span class="fu">compute_diversities</span>(pjdat)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>eff_cardinalities <span class="ot">&lt;-</span> <span class="fu">compute_eff_cardinalities</span>(pjdat,  <span class="at">warn_fs =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cardinalities <span class="ot">&lt;-</span> <span class="fu">apply</span>(pjdat, <span class="dv">1</span>, <span class="cf">function</span>(x){<span class="fu">sum</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>)}) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cardinalities <span class="ot">&lt;-</span> <span class="fu">apply</span>(pjdat, <span class="dv">1</span>, <span class="cf">function</span>(x){<span class="fu">sum</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>)}) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Note, the true cardinality of our data should all be 2, since we have biallelic sites. As a sanity check, we can test this assumption with the code <code>unqiue(cardinalities)</code>.</p>
 <p>Here, we can compare the diversity versus the effective cardinality of our sites. Notably, per Dr.&nbsp;Aimee Taylor’s package vignette/point above, effective cardinality will scale linearly with cardinality (as it is an adjustment of that original measure) whereas diversity does not have a clear relationship with cardinality. As a result, while diversity is a useful population-genetic statistic, it may not be as reliable of a marker for relatedness “informativeness”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">eff_cardinalities =</span> eff_cardinalities, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">eff_cardinalities =</span> eff_cardinalities, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">diversities =</span> diversities) <span class="sc">%&gt;%</span> </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> eff_cardinalities, <span class="at">x =</span> diversities)) <span class="sc">+</span> </span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_linedraw</span>() <span class="sc">+</span> </span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Eff. Cardinality"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Diversity"</span>) <span class="sc">+</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">"Red-Line Represent True Cardinality"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">"Red-Line Represent True Cardinality"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1081,10 +1083,10 @@ There are two mains ways to estimate relatedness among individuals: identity by 
 <h3 class="anchored" data-anchor-id="panel-competitor">Panel Competitor</h3>
 <p>For the purpose of this tutorial, we will make a panel with the same number of sites as the Sanger Barcode but has no information (alleles fixed).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all alleles fixed, no information </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all alleles fixed, no information </span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>badpjdat <span class="ot">&lt;-</span> pjdat</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>badpjdat[,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">0.99</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>badpjdat[,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">0.01</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>badpjdat[,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fl">0.01</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="using-simulation-to-evaluate-panel-informativeness" class="level3">
@@ -1093,7 +1095,7 @@ There are two mains ways to estimate relatedness among individuals: identity by 
 Simulations are created using a hidden-markov model that is described in <a href="https://pubmed.ncbi.nlm.nih.gov/31209105/">Taylor et al.&nbsp;2019, Genetics</a>. We will create simulates at very levels of <span class="math inline">\(r\)</span> but assume a fixed switch rate, <span class="math inline">\(k\)</span>.</p>
 <p>A simple conception of the hidden-markov model is to imagine two samples moving in parallel down a track, where they switch “diverge” and become unrelated based on our switch rate and relatedness factor. The samples can then re-converge again later depending on the switch rate and relatedness. In this way, region of DNA are shared from a common ancestor and sections of IBD are created.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#............................................................</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#............................................................</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for Making Simulations and Capturing Output </span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#...........................................................</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>get_sim_ret <span class="ot">&lt;-</span> <span class="cf">function</span>(fs, ds, k, r, n) {</span>
@@ -1141,11 +1143,11 @@ Simulations are created using a hidden-markov model that is described in <a href
 <span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                                <span class="at">ds =</span> ds, </span>
 <span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>                                <span class="at">k =</span> <span class="dv">5</span>, <span class="co"># Data-generating switch rate parameter value</span></span>
 <span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n =</span> <span class="dv">5</span>, <span class="co"># Number of pairs to simulate per r in rs</span></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>                                <span class="at">r =</span> rs) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>                                <span class="at">r =</span> rs) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now we can compare the results of the simulations and expect for the better panel to have smaller (tighter) confidence intervals. Tighter confidence intervals indicate that the panel provided more information that allowed for more precise estimates of relatedness (given the predetermined population allele frequencies).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># drop in R sim values</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># drop in R sim values</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>goodpanel_results_tb <span class="ot">&lt;-</span> goodpanel_results <span class="sc">%&gt;%</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>(.) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  magrittr<span class="sc">::</span><span class="fu">set_colnames</span>(<span class="fu">c</span>(<span class="st">"rhat"</span>, <span class="st">"LCI"</span>, <span class="st">"HCI"</span>)) <span class="sc">%&gt;%</span> </span>
@@ -1167,7 +1169,7 @@ Simulations are created using a hidden-markov model that is described in <a href
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> rfact, <span class="at">y =</span> CIwidth, <span class="at">fill =</span> level)) <span class="sc">+</span></span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span>level) <span class="sc">+</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Simualted R Value"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"95% CI Width"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Simualted R Value"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"95% CI Width"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1243,13 +1245,14 @@ Simulations are created using a hidden-markov model that is described in <a href
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

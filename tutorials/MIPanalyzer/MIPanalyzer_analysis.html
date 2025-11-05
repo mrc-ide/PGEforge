@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,14 +67,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-73b2af05001355f237b3c635aa83b92c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-287c38d873e0ba8985e67f33d943c61c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -118,7 +119,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -160,7 +161,8 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../../index.html" class="sidebar-logo-link">
-      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
     <a href="https://github.com/mrc-ide/PGEforge" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
@@ -965,11 +967,11 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="munging-mip-data">Munging MIP Data</h2>
 <p>As input for <code>MIPanalyzer</code>, we will start with a variant call file, abbreviated as a <a href="chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://samtools.github.io/hts-specs/VCFv4.3.pdf">VCF</a> of the Sanger Barcode from Vietnam. The VCF is converted into a <code>mipanalyzer</code> class that is either biallelic or multiallelic depending on the user specification.</p>
 <div class="cell" data-result="hide">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the VCF from the main data page </span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># and convert to  mipanalyzer_biallelic object</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#......................</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> MIPanalyzer<span class="sc">::</span><span class="fu">vcf_to_mipanalyzer_biallelic</span>(<span class="st">"../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> MIPanalyzer<span class="sc">::</span><span class="fu">vcf_to_mipanalyzer_biallelic</span>(<span class="st">"../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Scanning file to determine attributes.
 File attributes:
@@ -997,8 +999,8 @@ All variants processed</code></pre>
 <h3 class="anchored" data-anchor-id="filter">Filter</h3>
 <p>Data can be quickly filtered using a series of commands. Moreover, <code>MIPanalyzer</code> incorporates several data visualization functions that extend the interactiveness of filtering process. Below, I explore how much data will be lost if I filter loci that have at least 10 reads for all samples (minimal coverage is 10 reads with a 0% tolerance for any missing data).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">explore_filter_coverage_loci</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">explore_filter_coverage_loci</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1009,13 +1011,13 @@ All variants processed</code></pre>
 </div>
 <p>I then apply this filter as so:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_coverage_loci</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_coverage_loci</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>There are similar capabilities to filter by sample (<code>filter_samples</code>) and by loci (<code>filter_loci</code>). Within the <code>filter_samples</code> framework, users can exclude samples that have poor coverage cross the genome. Below, I should how these fucntions can be used: filtering samples based on coverage (25 depth for all sites is shown below).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">explore_filter_coverage_samples</span>(<span class="at">min_coverage =</span> <span class="dv">25</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">explore_filter_coverage_samples</span>(<span class="at">min_coverage =</span> <span class="dv">25</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1023,13 +1025,13 @@ All variants processed</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_coverage_samples</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_coverage_samples</span>(<span class="at">min_coverage =</span> <span class="dv">10</span>, <span class="at">max_low_coverage =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Similarly, loci that have an unexpected amount of sequencing effort (“jackpotting”) that may be prone to sequencing error can also be excluded with <code>filter_overcounts</code>. Finally, users can remove sites that are uninformative (all variants are the same) with <code>filter_loci_invariant</code>. This is demonstrated below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_loci_invariant</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat_biallelic <span class="ot">&lt;-</span> dat_biallelic <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter_loci_invariant</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1038,24 +1040,24 @@ All variants processed</code></pre>
 <p>For this section, we will explore pairwise relatedness through a variety of genetic distance measures. In the first schema, we can consider how allele frequencies are similar between samples using the <span class="math inline">\(d_{ab}\)</span> metric proposed by the MalariaGEN Plasmodium falciparum Community Project in the article “Genomic epidemiology of artemisinin resistant malaria”, eLIFE (2016) (<code>get_genomic_distance</code>).</p>
 <p>In a separate, schema, we can calculate the similarity between two samples based on whether the genetic sequence is identical at given genomic positions, or loci. We can either simply measure the number of sites with identical alleles between two individuals, termed identity by state (IBS), or, we can use statistical models to determine if identical alleles and “blocks” of the genome were likely to be inherited from a common ancestor, termed identity by descent (IBD). Separately, we can calculate if within-sample allele frequencies (+/- some degree of tolerance) are identical between two individuals - which is essentially a continuous extension of IBS. The IBS calculations are straightforward and just represent comparisons between samples. IBD calculations require parametric assumptions in order to account for the heritability factor (as part of its definition). The IBD calculator incorporated in MIPanalyzer is based off the classic Malécot definition of IBD and is considered in a maximum-likelihood framework.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AF based methods </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AF based methods </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dab_est <span class="ot">&lt;-</span> <span class="fu">get_genomic_distance</span>(dat_biallelic, <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># identity based methods</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>mix_est <span class="ot">&lt;-</span> <span class="fu">get_IB_mixture</span>(dat_biallelic, <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ibd_est <span class="ot">&lt;-</span> <span class="fu">inbreeding_mle</span>(dat_biallelic, </span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">f =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">l =</span> <span class="dv">5</span>),</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ibs_est <span class="ot">&lt;-</span> <span class="fu">get_IBS_distance</span>(dat_biallelic, <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ibs_est <span class="ot">&lt;-</span> <span class="fu">get_IBS_distance</span>(dat_biallelic, <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The output for each distance calculator is a distance matrix with the upper triangle filled in, with the exception of the IBD estimator that also includes the log-likelihood of each inbreeding level, <span class="math inline">\(f\)</span>, considered by the model (specified by user).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot all pairwise distances (make a distance instead of similarity score with 1-x)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot all pairwise distances (make a distance instead of similarity score with 1-x)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_distance</span>(<span class="dv">1</span> <span class="sc">-</span> ibd_est<span class="sc">$</span>mle, <span class="at">col_pal =</span> <span class="st">"magma"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"IBD Dist"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_distance</span>(<span class="dv">1</span> <span class="sc">-</span> mix_est, <span class="at">col_pal =</span> <span class="st">"inferno"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Mixture Dist"</span>)</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">plot_distance</span>(<span class="dv">1</span> <span class="sc">-</span> ibs_est, <span class="at">col_pal =</span> <span class="st">"plasma"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"IBS Dist"</span>)</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">plot_distance</span>(dab_est, <span class="at">col_pal =</span> <span class="st">"viridis"</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Dab Dist"</span>)</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(p1,p2,p3,p4, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(p1,p2,p3,p4, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1070,27 +1072,27 @@ All variants processed</code></pre>
 <h2 class="anchored" data-anchor-id="analyzing-genetic-structure">Analyzing Genetic Structure</h2>
 <p>In this section, we will perform a principal <em>component</em> analysis and plot the results to assess for structure (as part of an exploratory data analysis exercise).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate within-sample allele frequencies</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate within-sample allele frequencies</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>wsaf <span class="ot">&lt;-</span> <span class="fu">get_wsaf</span>(dat_biallelic, )</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># produce pca </span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">pca_wsaf</span>(wsaf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">pca_wsaf</span>(wsaf)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(pca, <span class="at">num_components =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca</span>(pca, <span class="at">num_components =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><img src="https://github.com/mrc-ide/MIPanalyzer/raw/master/vignettes/PCA_scatter.png" style="width: 80%"></p>
 <p>We can also look at the amount of variance captured in our principal components as well as which loci are contributing most to the variation. Understanding the amount of variance that is captured in the principal components conveys how much structure is in the data, while understanding which loci are contributing the most variation conveys signals of selection, drift, etc.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot percentage variance explained</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca_variance</span>(pca)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot percentage variance explained</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca_variance</span>(pca)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><img src="https://github.com/mrc-ide/MIPanalyzer/raw/master/vignettes/PCA_variance.png" style="width: 60%"></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get CHROM in numeric format for each locus</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get CHROM in numeric format for each locus</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>chrom_numeric <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(x) <span class="fu">as.numeric</span>(<span class="fu">strsplit</span>(x, <span class="st">"_"</span>)[[<span class="dv">1</span>]][<span class="dv">2</span>]), dat_biallelic<span class="sc">$</span>loci<span class="sc">$</span>CHROM)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot loading values</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca_contribution</span>(pca, <span class="at">component =</span> <span class="dv">1</span>, <span class="at">chrom =</span> chrom_numeric, <span class="at">pos =</span> dat_biallelic<span class="sc">$</span>loci<span class="sc">$</span>POS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pca_contribution</span>(pca, <span class="at">component =</span> <span class="dv">1</span>, <span class="at">chrom =</span> chrom_numeric, <span class="at">pos =</span> dat_biallelic<span class="sc">$</span>loci<span class="sc">$</span>POS)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1101,12 +1103,12 @@ All variants processed</code></pre>
 </div>
 <p>Another approach to analyzing structure is to assess principal <em>coordinate</em> analysis. While principal component analysis (PCA) is based on linear combinations, principal coordinate analysis (PCoA) is based on minimizing distance based on an internal loss function (also called classical scaling, function back-ended by <code>ape::pcoa</code>). The utility of PCoA versus PCA, is that PCoA can take <em>any</em> distance (matrix) that the user specifies and thus can capture genetic structures that may be nonlinear.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># genomic distance from malariagen manuscript as above</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># genomic distance from malariagen manuscript as above</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>gdist <span class="ot">&lt;-</span> <span class="fu">get_genomic_distance</span>(dat_biallelic, <span class="at">report_progress =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># perform PCoA</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>pcoa <span class="ot">&lt;-</span> <span class="fu">pcoa_genomic_distance</span>(gdist)</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># scatterplot</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pcoa</span>(pcoa, <span class="at">num_components =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pcoa</span>(pcoa, <span class="at">num_components =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><img src="https://github.com/mrc-ide/MIPanalyzer/raw/master/vignettes/PCOA_scatter.png" style="width: 80%"></p>
 </section>
@@ -1173,13 +1175,14 @@ All variants processed</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

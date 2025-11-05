@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -69,14 +69,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../website_docs/img/PGEforge_hex.png" rel="icon" type="image/png">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-73b2af05001355f237b3c635aa83b92c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-287c38d873e0ba8985e67f33d943c61c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -120,7 +121,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -162,7 +163,8 @@ window.Quarto = {
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="../../index.html" class="sidebar-logo-link">
-      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none">
+      <img src="../../website_docs/img/PGEforge_hex_pink.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none">
       </a>
       <div class="sidebar-tools-main">
     <a href="https://github.com/mrc-ide/PGEforge" title="Source code" class="quarto-navigation-tool px-1" aria-label="Source code"><i class="bi bi-github"></i></a>
@@ -954,13 +956,13 @@ window.Quarto = {
 <p>Our plan is to pool results over the 3 sites within each province to arrive at an estimate of the overall prevalence of SP mutations at the province level. When pooling results it is important to take account of intra-cluster correlation (ICC) in our confidence intervals (CIs). Failure to do so will lead to unrealistically tight intervals. <em>DRpower</em> provides several functions for calculating the expected margin of error (MoE) given assumptions about sample size, the ICC, and the known prevalence of mutations.</p>
 <p>First, let’s load the package and set the random seed so our results are reproducible:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DRpower)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We will use the <code>get_margin()</code> function to tell us the MoE we can expect if the prevalence of a mutation is 10% at the province level. We set the parameters to define 3 clusters of 100 samples. We assume an ICC value of 0.05:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get MoE using simple calculation</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get MoE using simple calculation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    lower     upper 
  1.719297 18.280703 </code></pre>
@@ -969,8 +971,8 @@ window.Quarto = {
 <p>This output tells us that we expect our CI to range from 1.7% at the lower end to 18.3% at the upper end when estimating a variant at 10% prevalence. In other words, we expect a MoE of 8.3%. This is precise enough for most purposes.</p>
 <p>Our worst case MoE will occur when the prevalence of the marker is 50%. We can explore this here:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin</span>(<span class="at">N =</span> <span class="dv">100</span>, <span class="at">n_clust =</span> <span class="dv">3</span>, <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   lower    upper 
 36.19883 63.80117 </code></pre>
@@ -979,8 +981,8 @@ window.Quarto = {
 <p>In the worst case our MoE goes up to <span class="math inline">\(\pm\)</span> 14%, which is still reasonably precise.</p>
 <p>However, this approach assumes that we know the level of intra-cluster correlation exactly. It also uses a normal approximation when producing CIs, which is a bad approximation when the prevalence is very low or very high. A more cautious approach is to estimate prevalence using the Bayesian model within <em>DRpower</em>. If we plan to use this approach, then we should use the <code>get_margin_Bayesian()</code> function to estimate the MoE:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get expected MoE via the Bayesian approach</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get expected MoE via the Bayesian approach</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      estimate    CI_2.5   CI_97.5
 lower   3.8705  3.391827  4.349173
@@ -990,8 +992,8 @@ upper  25.1018 23.891353 26.312247</code></pre>
 <p>We should look at the first column of this data.frame when comparing to the previous values. We now find that our credible interval (CrI) is expected to range from 3.8% to 25.1%. This is quite different from what we found under the simpler <code>get_margin()</code> method, being tighter at low prevalence but wider at high prevalence. Note that unlike the previous function these are estimated values, hence they are presented along with a 95% CI. We can make estimate more precise if needed by increasing <code>reps</code>.</p>
 <p>We can explore our worst case MoE using the same method:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE via the Bayesian approach</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get worst case MoE via the Bayesian approach</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_margin_Bayesian</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.5</span>, <span class="at">reps =</span> <span class="fl">1e2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      estimate   CI_2.5  CI_97.5
 lower  33.4947 31.92120 35.06820
@@ -1004,16 +1006,16 @@ upper  65.5736 64.12608 67.02112</code></pre>
 <h2 class="anchored" data-anchor-id="pfkelch13-mutations---presenceabsence-analysis"><em>pfkelch13</em> mutations - presence/absence analysis</h2>
 <p>When it comes to <em>pfkelch13</em>, we are interested in knowing if there are <em>any</em> mutants in the province, rather than estimating the prevalence of mutants. A single positive sample would prove that there are mutants in the province, however, if the prevalence is very low we may get unlucky and miss them. We can use the <code>get_power_presence()</code> function to explore our probability of detecting at least one positive sample:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 1%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.01</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 1%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.01</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 65.38844</code></pre>
 </div>
 </div>
 <p>We can see that if <em>pfkelch13</em> mutants were at 1% prevalence at the province level then we would have a 65% chance of detecting one in <em>any</em> of our 3 sites. This is quite low power - we normally aim for at least 80%. Compare that to the result if we assume mutants are at 2% in the province:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 2%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.02</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get power when prevalence is 2%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_presence</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.02</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 88.08013</code></pre>
 </div>
@@ -1024,8 +1026,8 @@ upper  65.5736 64.12608 67.02112</code></pre>
 <h2 class="anchored" data-anchor-id="pfhrp23-deletions---comparison-against-5-threshold"><em>pfhrp2/3</em> deletions - comparison against 5% threshold</h2>
 <p>We plan to follow the <a href="https://iris.who.int/bitstream/handle/10665/331197/9789240002050-eng.pdf">WHO Master Protocol</a>, switching RDTs at a national level if any province has a prevalence of <em>pfhrp2/3</em> deletions significantly over 5%. We can use the <code>get_power_threshold()</code> function to calculate our power under this model. We assume here that the prevalence of deletions at the province level is 10%:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power under WHO approach</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power under WHO approach</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">3</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  prev_thresh power lower upper
 1        0.05  59.9 56.79 62.95</code></pre>
@@ -1035,8 +1037,8 @@ upper  65.5736 64.12608 67.02112</code></pre>
 <p>In our case, we will instead abandon the threshold comparison approach in favour of a two-step design. Our new plan will be to look for the presence of <em>any</em> <em>pfhrp2/3</em> deletions at the province level, and only if they are detected we will perform a follow-up study in that province. The nice thing about this is that we have already performed this power calculation, as it becomes a presence/absence analysis exactly as we did for <em>pfkelch13</em>. We therefore know that we have power to detect single deletions down to around 2% prevalence.</p>
 <p>For our follow-up study, we can explore what would happen if we doubled the number of sites in a province:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power with 6 sites of 100</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">6</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate power with 6 sites of 100</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_power_threshold</span>(<span class="at">N =</span> <span class="fu">rep</span>(<span class="dv">100</span>, <span class="dv">6</span>), <span class="at">prevalence =</span> <span class="fl">0.1</span>, <span class="at">prev_thresh =</span> <span class="fl">0.05</span>, <span class="at">ICC =</span> <span class="fl">0.05</span>, <span class="at">reps =</span> <span class="fl">1e3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  prev_thresh power lower upper
 1        0.05  78.4 75.72 80.91</code></pre>
@@ -1108,13 +1110,14 @@ upper  65.5736 64.12608 67.02112</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
