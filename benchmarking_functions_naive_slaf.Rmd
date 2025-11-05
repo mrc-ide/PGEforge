@@ -1,0 +1,258 @@
+---
+title: "benchmarking_functions"
+author: "JNN"
+date: "2025-09-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+
+```
+## Load in the Benchmarking Outputs
+```{r}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+
+inp <- list(
+  sim_info_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/simulations/SpotMalaria", 
+  tool_res_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf", 
+  tool_params = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf.json"
+)
+```
+##First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        GeneName = col_character(), 
+        transcript_id = col_character(), 
+        aa = col_character(), 
+        is_ref = col_logical(), 
+        freq = col_double(), 
+        prev = col_double()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  select(
+    -pop, 
+    -country, 
+    -allele_count, 
+    -GeneName, 
+    -is_ref, 
+    -total_pop_samples, 
+    -total_pop_alleles, 
+    -unique_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        variant = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq
+  )
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble() %>%
+  mutate(slaf_method = paramset$method) %>%
+  select(-paramset)
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant"))
+```
+## Loaded it into R session
+```{r}
+getwd()
+source("hackathon_helper.R")
+```
+##selected the requred columns (observed and expected from the original data) and rename them accordingly
+```{r}
+combined_s <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
+df <- combined_s %>% select(obs_freq, exp_freq, slaf_method)
+```
+##run the means and difference of the observed and expected columns
+```{r}
+df <- add_diff_mean(df, expected_col = exp_freq, observed_col = obs_freq)
+```
+##Now we can make the bland altman plot
+```{r}
+g1 <- make_bland_altman_plot_by_label(df, label = "obs_freq", bins = 30) + transparentBackground
+g1
+```
+## To evaluate the performance of each method, we split the BA plot by slaf_method
+```{r}
+df_rc <- df %>% filter(slaf_method == "read_count_prop")
+df_pa <- df %>% filter(slaf_method == "presence_absence")
+```
+##Make BA for slaf_method read_count
+```{r}
+s1 <- make_bland_altman_plot_by_label(df_rc, label = "obs_freq", bins = 30) + transparentBackground 
+s1
+```
+## Do the same for presence_absence
+```{r}
+s2 <- make_bland_altman_plot_by_label(df_pa, label = "obs_freq", bins = 30) + transparentBackground
+s2
+```
+## We now proceed to make the general concordance plot
+```{r}
+g2 <- my_hex(df, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
+g2
+```
+## create a correlation plot by read count method
+```{r}
+c1 <- my_hex(df_rc, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
+c1
+```
+##make the same plot by presence_absence
+```{r}
+c2 <- my_hex(df_pa, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
+c2
+```
+## generate the overal correlation coefficient and lin's ccc
+```{r}
+d2 <- my_corr_ccc(df, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
+d2
+```
+## We can aslo estimate the correlation coefficients of each methodd
+## start with read_count
+```{r}
+d3_rc <- my_corr_ccc(df_rc, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
+d3_rc
+```
+## Do the same correlation for presence_absence
+```{r}
+d3_pa <- my_corr_ccc(df_pa, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
+d3_pa
+```
+##To generate the contingency tables, we extract the TP, FN and FP 
+```{r}
+#classify the variants as "False positive" or as "False Negative"
+combined_2 <- combined_s %>% mutate(status = case_when(!is.na(obs_freq) & is.na(exp_freq) ~ "FP", is.na(obs_freq) & !is.na(exp_freq) ~ "FN", TRUE ~ "TP"))
+
+#summarize the counts
+count_summarize <- combined_2 %>% group_by(status) %>% summarise(count = n(), .groups = "drop")
+
+count_summarize
+```
+##convert the count_summary tibble to a dataframe and ensure the three columns are well labelled
+```{r}
+count_summarize_df <- as.data.frame(count_summarize)
+input <- as.data.frame(t(count_summarize_df))
+colnames(input)[1] <- "FN"
+colnames(input)[2] <- "FP"
+colnames(input)[3] <- "TP"
+input <- input[-1, ]
+input <- input %>% mutate(TP = as.numeric(TP),                                                                     FP = as.numeric(FP),                                                                     FN = as.numeric(FN)                                            )
+
+input
+```
+## Generate the contingency table
+```{r}
+d1 <- input2 <- add_contigency_metrics_no_TN(input = input, summarize_first = F)
+d1
+```
+##generate a radar plot but we first generate the metric map
+```{r}
+metric_map1 <- c("Sensitivity" = "sensitivity", "Precision" = "precision", "F1-score" = "f1_score", "FDR" = "fdr")
+g3 <- radar_by_metrics(input2, color_col = NULL, facet_col = NULL, metric_map = metric_map1, palette = NULL, title = "Perfomance radar", outer_pad = 0.12, ring_breaks = seq(0,1,0.25))
+g3
+```
+
+
