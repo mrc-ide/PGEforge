@@ -1,0 +1,214 @@
+---
+title: Frequency tools Benchmarking Results
+author: Nicholas Hathaway
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+```
+
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, echo=FALSE}
+source("../tutorials/scripts/benchmarking_functions.R")
+```
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-line-numbers: true
+#| filename: ../scripts/benchmarking_functions.R
+#| file: ../scripts/benchmarking_functions.R
+
+```
+
+## Load in the Benchmarking Outputs
+
+```{r}
+inp <- list(
+  sim_info_dir = "../data/benchmarking//simulations/SpotMalaria/", 
+  madhatter_res_dir = "../data/benchmarking/tool_results/madhatter/"
+)
+
+inp_per_tools <- list(
+  "therealmccoil" = list(
+      tool_res_dir = "../data/benchmarking/tool_results/THEREALMcCOIL/", 
+      tool_params = "../data/benchmarking/tool_results/therealmccoil.json"
+  ), 
+  "moire" = list(
+      tool_res_dir = "../data/benchmarking/tool_results/MOIRE/", 
+      tool_params = "../data/benchmarking/tool_results/moire.json"
+  ), 
+  "naive_coi" = list(
+      tool_res_dir = "../data/benchmarking/tool_results/naive_coi/", 
+      tool_params = "../data/benchmarking/tool_results/naive_coi.json"
+  ),
+  "coiaf" = list(
+      tool_res_dir = "../data/benchmarking/tool_results/coiaf//", 
+      tool_params = "../data/benchmarking/tool_results/coiaf.json"
+  ) 
+)
+```
+
+
+
+First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+
+### Reading in expected truths 
+
+Read per in expected allele frequencies per sample tables to get true COIs
+
+```{r}
+expected_simulated_frequencies_per_sample <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "trimmed_expected_simulated_frequencies_per_sample.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>% 
+  dplyr::rename(library_sample_name = libary_sample_name)
+
+expected_simulated_frequencies_per_sample_COIs = expected_simulated_frequencies_per_sample %>% 
+  select(panel, population_name, country, library_sample_name, COI) %>% 
+  distinct() %>% 
+  dplyr::rename(expected_COI = COI) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name))
+
+```
+
+Read per in expected allele frequencies tables population level 
+```{r}
+population_trimmed_mhap_freqs_prevs <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_trimmed_mhap_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(),
+        population_name = col_character(), 
+        pop = col_character(), 
+        country = col_character(), 
+        target = col_character(), 
+        seq = col_character()
+      ),
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>% 
+  dplyr::rename(target_id = target)
+```
+
+
+Read in all simulation parameters into one tibble. Encode different population parameters as descriptive factors. 
+
+```{r}
+
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>% 
+  mutate(
+    coi_cat = case_when(
+      coi_r == 0.25 & coi_p == 0.7 ~"MeanCOI=1.26",
+      coi_r == 0.5  & coi_p == 0.2 ~"MeanCOI=3.41"
+    ), 
+    between_sample_related_cat = case_when(
+      pop_alpha == 99 ~ "_1%_related", 
+      pop_alpha == 9 ~ "10%_related", 
+      pop_alpha == 2.33 ~ "30%_related"
+    ), 
+    nonrecombinant_cat = case_when(
+      k_s == 0.5 ~ "50%_non-recombinant", 
+      k_s == 0.2 ~ "20%_non-recombinant", 
+    ), 
+    meiosis_cat = case_when(
+      k_s == 0.5 ~ "mean_meiosis=1.0", 
+      k_s == 0.2 ~ "mean_meiosis=3.5", 
+    )
+  ) %>% 
+  mutate(pop_cat = paste0(
+    between_sample_related_cat, "__", 
+    coi_cat, "__", 
+    nonrecombinant_cat
+  )) %>% 
+  mutate(pop_cat = factor(pop_cat, levels = sort(unique((.$pop_cat)))), 
+         coi_cat = factor(coi_cat, levels = sort(unique((.$coi_cat)))), 
+         between_sample_related_cat = factor(between_sample_related_cat, levels = sort(unique((.$between_sample_related_cat)))), 
+         nonrecombinant_cat = factor(nonrecombinant_cat, levels = sort(unique((.$nonrecombinant_cat)))), 
+         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat)))))
+
+create_dt(sim_params)
+```
+
+Read in madhatter pipeline allele tables 
+
+```{r}
+madhatter_allele_data <- tibble(
+    allele_data_path = list.files(
+      inp$madhatter_res_dir, 
+      pattern = "allele_data.txt.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    allele_data = map(
+      allele_data_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(allele_data_path)) %>%
+  mutate(population_name = gsub("_mh_results", "", basename(tool_res_dir))) %>%
+  select(-allele_data_path, -tool_res_dir) %>%
+  unnest(allele_data) %>% 
+  mutate(SampleID = gsub("_S[0-9]+$", "", SampleID)) %>% 
+  dplyr::rename(library_sample_name = SampleID, 
+                target_id = Locus, 
+                seq = ASV, 
+                reads = Reads) 
+```
+
