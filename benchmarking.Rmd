@@ -1,0 +1,287 @@
+---
+title: MalariaEM Benchmarking Results
+author: Zoe Gotthold
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load in the Benchmarking Outputs
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+
+
+inp <- list(
+  sim_info_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_pop_freqs_prevs_out.tsv",
+  sim_info_dir_ind = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_sample_out.tsv",
+  tool_res_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem_results/malariaem/",
+  tool_params = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem.json"
+)
+```
+
+First, all of the tool results, tool parameters, expected simulated values, and
+simulation parameters are read into a tibble.
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- read_table(inp$sim_info_dir) %>% distinct()
+
+country_diversity <- sim_truth %>% group_by(population_name, group_id, target) %>%
+  dplyr::summarize(n_alleles = n_distinct(seq)) %>% group_by(population_name, group_id) %>%
+  dplyr::summarize(max_n_alleles = max(n_alleles))
+
+sim_truth_individual <- read_table(inp$sim_info_dir_ind)
+
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "mlaf_results.tsv", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  dplyr::select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        seq = col_character(), 
+        target_id = col_character(), 
+        gt_id = col_integer(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  dplyr::select(-tool_res_path) %>%
+  unnest(tool_res)
+
+
+
+tool_results_ind <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "phasing_results.tsv", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  dplyr::select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        seq = col_character(), 
+        target_id = col_character(), 
+        gt_id = col_integer(), 
+        group_id = col_character(),
+        specimen_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  dplyr::select(-tool_res_path) %>%
+  unnest(tool_res)
+
+unique_seqs <- data.frame(seq = unique(c(sim_truth$seq, sim_truth_individual$seq, tool_results$seq, tool_results_ind$seq)))
+unique_seqs$key <- rownames(unique_seqs)
+
+sim_truth <- merge(sim_truth, unique_seqs, by="seq")
+sim_truth_individual <- merge(sim_truth_individual, unique_seqs, by="seq")
+tool_results <- merge(tool_results, unique_seqs, by="seq") %>% distinct()
+tool_results_ind <- merge(tool_results_ind, unique_seqs, by="seq")
+
+sim_truth_phased <- sim_truth %>% group_by(population_name, country, pop_simulated_gt_id, allele_freq, group_id) %>%
+  arrange(target) %>% dplyr::summarize(seq = paste(seq, collapse=""),
+                                target = paste(target, collapse=";"),
+                                key = paste(key, collapse = ","),
+                                nseqs = n())
+
+
+sim_truth_phased_ind <- sim_truth_individual %>% 
+  group_by(population_name, country, pop_simulated_gt_id, group_id, sample_name, simulated_within_sample_phase_hap_id) %>%
+  arrange(target) %>% distinct(seq, target, key) %>% dplyr::summarize(seq = paste(seq, collapse=""),
+                                target = paste(target, collapse=";"),
+                                key = paste(key, collapse = ","),
+                                nseqs = n()) %>%
+  group_by(population_name, group_id, sample_name, target) %>%
+  dplyr::summarize(key_TRUE = paste(str_sort(unique(key)), collapse="_"))
+
+
+tool_results_phased <- tool_results %>% group_by(sim_id, group_id, gt_id, freq) %>% arrange(target_id) %>%
+  dplyr::summarize(seq = paste(seq, collapse = ""),
+            key = paste(key, collapse = ","),
+            target = paste(target_id, collapse = ";")) %>% distinct()
+
+tool_results_ind_phased <- tool_results_ind %>% group_by(sim_id, group_id, gt_id, phase_id, specimen_id) %>% 
+  arrange(target_id) %>%
+  dplyr::summarize(seq = paste(seq, collapse = ""),
+            key = paste(key, collapse = ","),
+            target = paste(target_id, collapse = ";"),
+            posterior_est = min(posterior_est)) %>% distinct() %>%
+  mutate(specimen_id = as.numeric(str_split_i(specimen_id, "_", 1))) %>%
+  group_by(sim_id, group_id, specimen_id, target, posterior_est) %>%
+  dplyr::summarize(key_TOOL = paste(str_sort(unique(key)), collapse="_"))
+
+results_ind <- full_join(sim_truth_phased_ind, tool_results_ind_phased,
+                         by = join_by(target==target,
+                                      sample_name == specimen_id,
+                                      group_id == group_id,
+                                      population_name == sim_id)) %>%
+  mutate(match = key_TRUE==key_TOOL,
+         posterior_est = as.numeric(posterior_est))
+
+ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
+  geom_violin() + 
+  geom_jitter(alpha = 0.3) + theme_bw()
+
+ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
+  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue"))
+
+
+results_ind_summary <- results_ind %>% group_by(population_name, group_id,) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n()) %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_"))
+
+
+results_ind_summary_55 <- results_ind %>%
+  filter(posterior_est > 0.55) %>% 
+  group_by(population_name, group_id,) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n()) %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_"))
+
+
+
+ggplot(results_ind_summary, aes(x = group_id, y=prop_perfect)) + 
+  geom_boxplot(outliers = F) + geom_jitter() + theme_bw() + facet_wrap(~country) + ylab("Proportion of Samples Correctly Phased") + ylim(c(0, 1)) + xlab(NULL) + ggtitle("Efficacy of Sample-Level Phasing")
+
+ggplot(results_ind_summary_55, aes(x = group_id, y=prop_perfect)) + 
+  geom_boxplot(outliers = F) + geom_jitter(color = "darkblue") + theme_bw() + facet_wrap(~country) + ylab("Proportion of Samples Correctly Phased") + ylim(c(0, 1)) + xlab(NULL) + ggtitle("Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
+
+
+results <- full_join(sim_truth_phased, 
+                     tool_results_phased, 
+                     by=join_by(key==key,
+                                group_id==group_id,
+                                population_name==sim_id))
+results <- results %>% mutate(
+  freq = replace_na(freq, 0),
+  allele_freq = replace_na(allele_freq, 0)
+)
+
+results <- results %>% left_join(country_diversity, join_by(population_name, group_id))
+
+trc1 <- tool_results %>% filter(sim_id == "simulated_Cambodia_pop_001",
+                                group_id == "four")
+trc1p <- trc1 %>% group_by(sim_id, group_id, gt_id, freq) %>% arrange(target_id) %>%
+  dplyr::summarize(seq = paste(seq, collapse = ""),
+            key = paste(key, collapse = ","),
+            target = paste(target_id, collapse = ";")) %>% distinct()
+
+library(ggpmisc)
+ggplot(results, aes(x = allele_freq, y = freq, color = max_n_alleles >=5)) +
+                    #color = ifelse(population_name %in% 
+                    #                 c("simulated_Ghana_pop_043",
+                    #                   "simulated_Ghana_pop_003",
+                    #                   "simulated_Ghana_pop_051"), "High", "Low"))) + 
+  geom_point(alpha = 0.5) + 
+  ggtitle("Malaria EM") + theme_bw() + 
+  xlab("True Frequency") + 
+  ylab("Malaria EM Frequency") +
+  stat_poly_eq(group = 1) + facet_wrap(~group_id) +
+  labs(color = "High COI Pop") 
+
+ggplot(results, aes(x = allele_freq, y = freq), color = "black") +
+                    #color = ifelse(population_name %in% 
+                    #                 c("simulated_Ghana_pop_043",
+                    #                   "simulated_Ghana_pop_003",
+                    #                   "simulated_Ghana_pop_051"), "High", "Low"))) + 
+  geom_point(alpha = 0.5) + 
+  ggtitle("Malaria EM") + theme_bw() + 
+  xlab("True Frequency") + 
+  ylab("Malaria EM Frequency") +
+  stat_poly_eq(group = 1) + facet_wrap(~group_id) 
+
+
+results_summary <- results %>% group_by(population_name, group_id, max_n_alleles) %>%
+  dplyr::summarize(assay_cor = cor(allele_freq, freq)) 
+
+ggplot(results_summary %>% filter(group_id=="two_lowdiv") , aes(x = as.factor(max_n_alleles), y = assay_cor)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_jitter() +
+  facet_wrap(~group_id) + theme_bw() +
+  ylab("Assay Correlation Coefficient") + 
+  xlab("Number of Alleles (Max in Population)")
+
+
+n_alleles <- sim_truth %>%
+  distinct(population_name, target, seq, group_id) %>% group_by(population_name, target, group_id) %>%
+  dplyr::summarize(n_unique = n())
+
+
+sim_truth2 <- read_table("C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_sample_out.tsv") %>% distinct()
+n_alleles <- sim_truth2 %>%
+  filter(country=="Ghana") %>% #these are highest diversity samples
+  distinct(population_name, target, seq, group_id, sample_name) %>% 
+  group_by(population_name, target, group_id, sample_name) %>%
+  mutate(n_unique = n()) %>% 
+  group_by(population_name, group_id, sample_name) %>% dplyr::summarize(max_coi = max(n_unique)) %>%
+  group_by(population_name) %>% mutate(max_pop = max(max_coi)) %>%
+  filter(max_pop > 5) %>% ungroup()
+
+
+p <- ggplot(n_alleles, aes(x = max_coi)) + 
+  geom_histogram(fill = "darkorchid") +  ggtitle("Number of Samples - Simulated Data") + 
+  xlab("Maximum Alleles at Given Alleles") + theme_bw()
+p + facet_grid(rows = vars(group_id), cols = vars(population_name))
+
+
+
+#p43 <- ggplot(n_alleles %>% filter(group_id=="two_lowdiv",
+#                                   population_name == "simulated_Ghana_pop_043"), aes(x = max_coi)) + 
+##  geom_histogram(fill = "darkorchid4", binwidth = 0.5) +  ggtitle("Number of Samples - Simulated Data") + 
+#  xlab("Maximum Alleles at Given Alleles") + theme_bw()
+
+#p43
+
+#library(patchwork)
+#p43 / gene8_phasing_hist & xlab("Maximum Alleles") & scale_x_continuous(limits = c(1, 10))
+
+
+#test <- rbind(n_alleles %>% select(max_coi) %>% mutate(source = "Simulated Data"), 
+#              gene8_phasing_hist %>% select(max_coi) %>% mutate(source = "GenE8"))
+
+#ggplot(test, aes(x = max_coi, fill = source)) + geom_histogram(alpha = 0.5, position = "proportion") 
+
+```
+
+
+
+## Summary and Next Steps
+
+Malaria.em seems to be working. The next step is finishing this analysis.
