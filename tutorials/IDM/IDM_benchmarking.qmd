@@ -153,9 +153,9 @@ compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
 
 ```{r}
 input_config <- list(
-  sim_info_dir = "simulations/SpotMalaria",
-  tool_res_dir = "tool_results/IDM",
-  tool_params = "tool_results/idm.json"
+  sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria",
+  tool_res_dir = "../../data/benchmarking/tool_results/IDM",
+  tool_params = "../../data/benchmarking/tool_results/idm.json"
 )
 ```
 
