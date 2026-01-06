@@ -124,7 +124,6 @@ create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
 
 
 
-## Load in the Benchmarking Outputs
 
 ```{r, warning=FALSE, message=FALSE}
 
@@ -277,7 +276,7 @@ tool_results_wtruth$obs_n_denom<- as.numeric(tool_results_wtruth$obs_n_denom)
 
 # Allele Frequencies 
 
-Goals for allele frequencies: 
+## Goals for allele frequencies: 
 
 * Report RMSE (root mean squared error) across different groupings of populations, and simulation parameters. 
 
@@ -691,6 +690,14 @@ print(Sensitivity_byFreq)
 
 ```
 
+## Preliminary conclusions for allele frequencies: 
+
+* In general the tool performs best with fewer loci of lower diversity among samples with lower COI.  
+
+* There is high concordance between true and estimated allele frequencies for all simulation scenarios and loci sets except those involving six high diversity loci. 
+
+* These patterns are driven by the tool's inability to detect all alleles in the sample (false false negatives), and these are more common for low frequency alleles, and among samples with higher COI. 
+
 # Allele Prevalence
 
 Goals for allele prevalence: 
@@ -967,3 +974,10 @@ print(BA_plots[[7]])
 
 ```
 
+## Preliminary conclusions for allele prevalence: 
+
+* In general the tool performs best with fewer loci of lower diversity among samples with lower COI.  
+
+* There is high concordance between true and estimated allele prevalences for low COI simulation scenarios however for higher COI simulation scenarios multiple loci sets show poor concordance including the set of six high diversity loci and several drug resistance markers. 
+
+* In general, the greatest discrepancy between the true and estimated allele prevalence is found when the prevalence is between 0.25 and 0.5. 
