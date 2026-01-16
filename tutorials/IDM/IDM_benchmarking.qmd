@@ -34,7 +34,7 @@ library(rlang) # for as_name
 
 # plotting 
 library(ggplot2)
-library(scales) # help with axises 
+library(scales) # help with axes 
 library(GGally) # ggpairs for pairwise comparisons 
 
 # interactive html outputs
@@ -231,7 +231,9 @@ df_tr <- tibble(
       paramset_id,
       levels = sort(unique(paramset_id))
     ),
-  )
+  ) %>%
+  # remove placeholder NAs
+  drop_na(obs_freq) 
 str(df_tr)
 #  $ sim_id     : Factor w/ 240 levels "simulated_Cambodia_pop_001",..: 1 1 1 1 1 1 1 1 1 1 ...
 #  $ paramset_id: Factor w/ 24 levels "idm_paramset1",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -317,9 +319,14 @@ str(df_st_tr_sp_tp)
 
 
 #### Bland-Altman Plots 
+```{r}
+df_st_tr_sp_tp  %>% mutate (is_fp = (exp_freq == 0), is_fn = (obs_freq == 0), is_tp = (exp_freq>0) & (obs_freq>0)) %>% select (is_fp, is_fn, is_tp) %>% count(is_fp, is_fn, is_tp)
+```
+
 
 ```{r}
 df_ba <-  df_st_tr_sp_tp %>% 
+    filter(obs_freq>0, exp_freq > 0) %>% # focusing on true positive allele (excluding false positive and false negative)
     add_diff_mean(expected_col = exp_freq, observed_col = obs_freq)
 df_ba
 
@@ -731,7 +738,7 @@ cat(create_tabsetOfGgplotObjects(list(
 
 
 
-#### False positive and false negatives
+<!-- #### False positive and false negatives -->
 
 ```{r}
 # True Positive is both estimator and expected is great than 0 
