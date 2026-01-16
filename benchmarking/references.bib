@@ -1,0 +1,343 @@
+@ARTICLE{Paschalidis2023-fv,
+  title        = {coiaf: Directly estimating complexity of infection with allele
+                  frequencies},
+  author       = {Paschalidis, Aris and Watson, Oliver J and Aydemir, Ozkan and
+                  Verity, Robert and Bailey, Jeffrey A},
+  journaltitle = {PLoS Comput. Biol.},
+  publisher    = {Public Library of Science (PLoS)},
+  volume       = {19},
+  issue        = {6},
+  pages        = {e1010247},
+  date         = {2023-06-09},
+  abstract     = {In malaria, individuals are often infected with different
+                  parasite strains. The complexity of infection (COI) is defined
+                  as the number of genetically distinct parasite strains in an
+                  individual. Changes in the mean COI in a population have been
+                  shown to be informative of changes in transmission intensity
+                  with a number of probabilistic likelihood and Bayesian models
+                  now developed to estimate the COI. However, rapid, direct
+                  measures based on heterozygosity or FwS do not properly
+                  represent the COI. In this work, we present two new methods
+                  that use easily calculated measures to directly estimate the
+                  COI from allele frequency data. Using a simulation framework,
+                  we show that our methods are computationally efficient and
+                  comparably accurate to current approaches in the literature.
+                  Through a sensitivity analysis, we characterize how the
+                  distribution of parasite densities, the assumed sequencing
+                  depth, and the number of sampled loci impact the bias and
+                  accuracy of our two methods. Using our developed methods, we
+                  further estimate the COI globally from Plasmodium falciparum
+                  sequencing data and compare the results against the
+                  literature. We show significant differences in the estimated
+                  COI globally between continents and a weak relationship
+                  between malaria prevalence and COI.},
+  urldate      = {2025-12-17},
+  language     = {en}
+}
+@ARTICLE{Murphy2024-or,
+  title        = {{MOIRE}: a software package for the estimation of allele
+                  frequencies and effective multiplicity of infection from
+                  polyallelic data},
+  author       = {Murphy, Maxwell and Greenhouse, Bryan},
+  journaltitle = {Bioinformatics},
+  publisher    = {Oxford University Press (OUP)},
+  volume       = {40},
+  issue        = {10},
+  pages        = {btae619},
+  date         = {2024-10-01},
+  abstract     = {MOTIVATION: Malaria parasite genetic data can provide insight
+                  into parasite phenotypes, evolution, and transmission.
+                  However, estimating key parameters such as allele frequencies,
+                  multiplicity of infection (MOI), and within-host relatedness
+                  from genetic data is challenging, particularly in the presence
+                  of multiple related coinfecting strains. Existing methods
+                  often rely on single nucleotide polymorphism (SNP) data and do
+                  not account for within-host relatedness. RESULTS: We present
+                  Multiplicity Of Infection and allele frequency REcovery
+                  (MOIRE), a Bayesian approach to estimate allele frequencies,
+                  MOI, and within-host relatedness from genetic data subject to
+                  experimental error. MOIRE accommodates both polyallelic and
+                  SNP data, making it applicable to diverse genotyping panels.
+                  We also introduce a novel metric, the effective MOI (eMOI),
+                  which integrates MOI and within-host relatedness, providing a
+                  robust and interpretable measure of genetic diversity.
+                  Extensive simulations and real-world data from a malaria study
+                  in Namibia demonstrate the superior performance of MOIRE over
+                  naive estimation methods, accurately estimating MOI up to
+                  seven with moderate-sized panels of diverse loci (e.g.
+                  microhaplotypes). MOIRE also revealed substantial
+                  heterogeneity in population mean MOI and mean relatedness
+                  across health districts in Namibia, suggesting detectable
+                  differences in transmission dynamics. Notably, eMOI emerges as
+                  a portable metric of within-host diversity, facilitating
+                  meaningful comparisons across settings when allele frequencies
+                  or genotyping panels differ. Compared to existing software,
+                  MOIRE enables more comprehensive insights into within-host
+                  diversity and population structure. AVAILABILITY AND
+                  IMPLEMENTATION: MOIRE is available as an R package at
+                  https://eppicenter.github.io/moire/.},
+  urldate      = {2025-12-17},
+  language     = {en}
+}
+@ARTICLE{Chang2017-mq,
+  title        = {{THE} {REAL} {McCOIL}: A method for the concurrent estimation
+                  of the complexity of infection and {SNP} allele frequency for
+                  malaria parasites},
+  author       = {Chang, Hsiao-Han and Worby, Colin J and Yeka, Adoke and
+                  Nankabirwa, Joaniter and Kamya, Moses R and Staedke, Sarah G
+                  and Dorsey, Grant and Murphy, Maxwell and Neafsey, Daniel E
+                  and Jeffreys, Anna E and Hubbart, Christina and Rockett, Kirk
+                  A and Amato, Roberto and Kwiatkowski, Dominic P and Buckee,
+                  Caroline O and Greenhouse, Bryan},
+  journaltitle = {PLoS Comput. Biol.},
+  volume       = {13},
+  issue        = {1},
+  pages        = {e1005348},
+  date         = {2017-01},
+  abstract     = {As many malaria-endemic countries move towards elimination of
+                  Plasmodium falciparum, the most virulent human malaria
+                  parasite, effective tools for monitoring malaria epidemiology
+                  are urgent priorities. P. falciparum population genetic
+                  approaches offer promising tools for understanding
+                  transmission and spread of the disease, but a high prevalence
+                  of multi-clone or polygenomic infections can render estimation
+                  of even the most basic parameters, such as allele frequencies,
+                  challenging. A previous method, COIL, was developed to
+                  estimate complexity of infection (COI) from single nucleotide
+                  polymorphism (SNP) data, but relies on monogenomic infections
+                  to estimate allele frequencies or requires external allele
+                  frequency data which may not available. Estimates limited to
+                  monogenomic infections may not be representative, however, and
+                  when the average COI is high, they can be difficult or
+                  impossible to obtain. Therefore, we developed THE REAL McCOIL,
+                  Turning HEterozygous SNP data into Robust Estimates of ALelle
+                  frequency, via Markov chain Monte Carlo, and Complexity Of
+                  Infection using Likelihood, to incorporate polygenomic samples
+                  and simultaneously estimate allele frequency and COI. This
+                  approach was tested via simulations then applied to SNP data
+                  from cross-sectional surveys performed in three Ugandan sites
+                  with varying malaria transmission. We show that THE REAL
+                  McCOIL consistently outperforms COIL on simulated data,
+                  particularly when most infections are polygenomic. Using field
+                  data we show that, unlike with COIL, we can distinguish
+                  epidemiologically relevant differences in COI between and
+                  within these sites. Surprisingly, for example, we estimated
+                  high average COI in a peri-urban subregion with lower
+                  transmission intensity, suggesting that many of these cases
+                  were imported from surrounding regions with higher
+                  transmission intensity. THE REAL McCOIL therefore provides a
+                  robust tool for understanding the molecular epidemiology of
+                  malaria across transmission settings.},
+  language     = {en}
+}
+@ARTICLE{MalariaGEN2023-wz,
+  title        = {{Pf7}: an open dataset of Plasmodium falciparum genome
+                  variation in 20,000 worldwide samples},
+  author       = {{MalariaGEN} and Abdel Hamid, Muzamil Mahdi and Abdelraheem,
+                  Mohamed Hassan and Acheampong, Desmond Omane and Ahouidi,
+                  Ambroise and Ali, Mozam and Almagro-Garcia, Jacob and
+                  Amambua-Ngwa, Alfred and Amaratunga, Chanaki and Amenga-Etego,
+                  Lucas and Andagalu, Ben and Anderson, Tim and Andrianaranjaka,
+                  Voahangy and Aniebo, Ifeyinwa and Aninagyei, Enoch and Ansah,
+                  Felix and Ansah, Patrick O and Apinjoh, Tobias and Arnaldo,
+                  Paulo and Ashley, Elizabeth and Auburn, Sarah and Awandare,
+                  Gordon A and Ba, Hampate and Baraka, Vito and Barry, Alyssa
+                  and Bejon, Philip and Bertin, Gwladys I and Boni, Maciej F and
+                  Borrmann, Steffen and Bousema, Teun and Bouyou-Akotet,
+                  Marielle and Branch, Oralee and Bull, Peter C and Cheah, Huch
+                  and Chindavongsa, Keobouphaphone and Chookajorn, Thanat and
+                  Chotivanich, Kesinee and Claessens, Antoine and Conway, David
+                  J and Corredor, Vladimir and Courtier, Erin and Craig, Alister
+                  and D'Alessandro, Umberto and Dama, Souleymane and Day,
+                  Nicholas and Denis, Brigitte and Dhorda, Mehul and Diakite,
+                  Mahamadou and Djimde, Abdoulaye and Dolecek, Christiane and
+                  Dondorp, Arjen and Doumbia, Seydou and Drakeley, Chris and
+                  Drury, Eleanor and Duffy, Patrick and Echeverry, Diego F and
+                  Egwang, Thomas G and Enosse, Sonia Maria Mauricio and Erko,
+                  Berhanu and Fairhurst, Rick M and Faiz, Abdul and Fanello,
+                  Caterina A and Fleharty, Mark and Forbes, Matthew and Fukuda,
+                  Mark and Gamboa, Dionicia and Ghansah, Anita and Golassa, Lemu
+                  and Goncalves, Sonia and Harrison, G L Abby and Healy, Sara
+                  Anne and Hendry, Jason A and Hernandez-Koutoucheva, Anastasia
+                  and Hien, Tran Tinh and Hill, Catherine A and Hombhanje,
+                  Francis and Hott, Amanda and Htut, Ye and Hussein, Mazza and
+                  Imwong, Mallika and Ishengoma, Deus and Jackson, Scott A and
+                  Jacob, Chris G and Jeans, Julia and Johnson, Kimberly J and
+                  Kamaliddin, Claire and Kamau, Edwin and Keatley, Jon and
+                  Kochakarn, Theerarat and Konate, Drissa S and Konaté, Abibatou
+                  and Kone, Aminatou and Kwiatkowski, Dominic P and Kyaw, Myat P
+                  and Kyle, Dennis and Lawniczak, Mara and Lee, Samuel K and
+                  Lemnge, Martha and Lim, Pharath and Lon, Chanthap and Loua,
+                  Kovana M and Mandara, Celine I and Marfurt, Jutta and Marsh,
+                  Kevin and Maude, Richard James and Mayxay, Mayfong and
+                  Maïga-Ascofaré, Oumou and Miotto, Olivo and Mita, Toshihiro
+                  and Mobegi, Victor and Mohamed, Abdelrahim Osman and Mokuolu,
+                  Olugbenga A and Montgomery, Jaqui and Morang'a, Collins Misita
+                  and Mueller, Ivo and Murie, Kathryn and Newton, Paul N and Ngo
+                  Duc, Thang and Nguyen, Thuy and Nguyen, Thuy-Nhien and Nguyen
+                  Thi Kim, Tuyen and Nguyen Van, Hong and Noedl, Harald and
+                  Nosten, Francois and Noviyanti, Rintis and Ntui, Vincent
+                  Ntui-Njock and Nzila, Alexis and Ochola-Oyier, Lynette
+                  Isabella and Ocholla, Harold and Oduro, Abraham and Omedo,
+                  Irene and Onyamboko, Marie A and Ouedraogo, Jean-Bosco and
+                  Oyebola, Kolapo and Oyibo, Wellington Aghoghovwia and Pearson,
+                  Richard and Peshu, Norbert and Phyo, Aung P and Plowe,
+                  Christopher V and Price, Ric N and Pukrittayakamee, Sasithon
+                  and Quang, Huynh Hong and Randrianarivelojosia, Milijaona and
+                  Rayner, Julian C and Ringwald, Pascal and Rosanas-Urgell, Anna
+                  and Rovira-Vallbona, Eduard and Ruano-Rubio, Valentin and
+                  Ruiz, Lastenia and Saunders, David and Shayo, Alex and Siba,
+                  Peter and Simpson, Victoria J and Sissoko, Mahamadou S and
+                  Smith, Christen and Su, Xin-Zhuan and Sutherland, Colin and
+                  Takala-Harrison, Shannon and Talman, Arthur and Tavul,
+                  Livingstone and Thanh, Ngo Viet and Thathy, Vandana and Thu,
+                  Aung Myint and Toure, Mahamoudou and Tshefu, Antoinette and
+                  Verra, Federica and Vinetz, Joseph and Wellems, Thomas E and
+                  Wendler, Jason and White, Nicholas J and Whitton, Georgia and
+                  Yavo, William and van der Pluijm, Rob W},
+  journaltitle = {Wellcome Open Res.},
+  publisher    = {F1000 Research Ltd},
+  volume       = {8},
+  pages        = {22},
+  date         = {2023-01-16},
+  abstract     = {We describe the MalariaGEN Pf7 data resource, the seventh
+                  release of Plasmodium falciparum genome variation data from
+                  the MalariaGEN network. It comprises over 20,000 samples from
+                  82 partner studies in 33 countries, including several malaria
+                  endemic regions that were previously underrepresented. For the
+                  first time we include dried blood spot samples that were
+                  sequenced after selective whole genome amplification,
+                  necessitating new methods to genotype copy number variations.
+                  We identify a large number of newly emerging crt mutations in
+                  parts of Southeast Asia, and show examples of heterogeneities
+                  in patterns of drug resistance within Africa and within the
+                  Indian subcontinent. We describe the profile of variations in
+                  the C-terminal of the csp gene and relate this to the sequence
+                  used in the RTS,S and R21 malaria vaccines. Pf7 provides
+                  high-quality data on genotype calls for 6 million SNPs and
+                  short indels, analysis of large deletions that cause failure
+                  of rapid diagnostic tests, and systematic characterisation of
+                  six major drug resistance loci, all of which can be freely
+                  downloaded from the MalariaGEN website.},
+  language     = {en}
+}
+
+@ARTICLE{Jacob2021-ib,
+  title        = {Genetic surveillance in the Greater Mekong subregion and South
+                  Asia to support malaria control and elimination},
+  author       = {Jacob, Christopher G and Thuy-Nhien, Nguyen and Mayxay,
+                  Mayfong and Maude, Richard J and Quang, Huynh Hong and
+                  Hongvanthong, Bouasy and Vanisaveth, Viengxay and Ngo Duc,
+                  Thang and Rekol, Huy and van der Pluijm, Rob and von Seidlein,
+                  Lorenz and Fairhurst, Rick and Nosten, François and Hossain,
+                  Md Amir and Park, Naomi and Goodwin, Scott and Ringwald,
+                  Pascal and Chindavongsa, Keobouphaphone and Newton, Paul and
+                  Ashley, Elizabeth and Phalivong, Sonexay and Maude, Rapeephan
+                  and Leang, Rithea and Huch, Cheah and Dong, Le Thanh and
+                  Nguyen, Kim-Tuyen and Nhat, Tran Minh and Hien, Tran Tinh and
+                  Nguyen, Hoa and Zdrojewski, Nicole and Canavati, Sara and
+                  Sayeed, Abdullah Abu and Uddin, Didar and Buckee, Caroline and
+                  Fanello, Caterina I and Onyamboko, Marie and Peto, Thomas and
+                  Tripura, Rupam and Amaratunga, Chanaki and Myint Thu, Aung and
+                  Delmas, Gilles and Landier, Jordi and Parker, Daniel M and
+                  Chau, Nguyen Hoang and Lek, Dysoley and Suon, Seila and
+                  Callery, James and Jittamala, Podjanee and Hanboonkunupakarn,
+                  Borimas and Pukrittayakamee, Sasithon and Phyo, Aung Pyae and
+                  Smithuis, Frank and Lin, Khin and Thant, Myo and Hlaing, Tin
+                  Maung and Satpathi, Parthasarathi and Satpathi, Sanghamitra
+                  and Behera, Prativa K and Tripura, Amar and Baidya, Subrata
+                  and Valecha, Neena and Anvikar, Anupkumar R and Ul Islam,
+                  Akhter and Faiz, Abul and Kunasol, Chanon and Drury, Eleanor
+                  and Kekre, Mihir and Ali, Mozam and Love, Katie and
+                  Rajatileka, Shavanthi and Jeffreys, Anna E and Rowlands, Kate
+                  and Hubbart, Christina S and Dhorda, Mehul and Vongpromek,
+                  Ranitha and Kotanan, Namfon and Wongnak, Phrutsamon and
+                  Almagro Garcia, Jacob and Pearson, Richard D and Ariani,
+                  Cristina V and Chookajorn, Thanat and Malangone, Cinzia and
+                  Nguyen, T and Stalker, Jim and Jeffery, Ben and Keatley,
+                  Jonathan and Johnson, Kimberly J and Muddyman, Dawn and Chan,
+                  Xin Hui S and Sillitoe, John and Amato, Roberto and Simpson,
+                  Victoria and Gonçalves, Sonia and Rockett, Kirk and Day,
+                  Nicholas P and Dondorp, Arjen M and Kwiatkowski, Dominic P and
+                  Miotto, Olivo},
+  journaltitle = {Elife},
+  volume       = {10},
+  date         = {2021-08-10},
+  abstract     = {Background: National Malaria Control Programmes (NMCPs)
+                  currently make limited use of parasite genetic data. We have
+                  developed GenRe-Mekong, a platform for genetic surveillance of
+                  malaria in the Greater Mekong Subregion (GMS) that enables
+                  NMCPs to implement large-scale surveillance projects by
+                  integrating simple sample collection procedures in routine
+                  public health procedures. Methods: Samples from symptomatic
+                  patients are processed by SpotMalaria, a high-throughput
+                  system that produces a comprehensive set of genotypes
+                  comprising several drug resistance markers, species markers
+                  and a genomic barcode. GenRe-Mekong delivers Genetic Report
+                  Cards, a compendium of genotypes and phenotype predictions
+                  used to map prevalence of resistance to multiple drugs.
+                  Results: GenRe-Mekong has worked with NMCPs and research
+                  projects in eight countries, processing 9623 samples from
+                  clinical cases. Monitoring resistance markers has been
+                  valuable for tracking the rapid spread of parasites resistant
+                  to the dihydroartemisinin-piperaquine combination therapy. In
+                  Vietnam and Laos, GenRe-Mekong data have provided novel
+                  knowledge about the spread of these resistant strains into
+                  previously unaffected provinces, informing decision-making by
+                  NMCPs. Conclusions: GenRe-Mekong provides detailed knowledge
+                  about drug resistance at a local level, and facilitates data
+                  sharing at a regional level, enabling cross-border resistance
+                  monitoring and providing the public health community with
+                  valuable insights. The project provides a rich open data
+                  resource to benefit the entire malaria community. Funding: The
+                  GenRe-Mekong project is funded by the Bill and Melinda Gates
+                  Foundation (OPP11188166, OPP1204268). Genotyping and
+                  sequencing were funded by the Wellcome Trust (098051, 206194,
+                  203141, 090770, 204911, 106698/B/14/Z) and Medical Research
+                  Council (G0600718). A proportion of samples were collected
+                  with the support of the UK Department for International
+                  Development (201900, M006212), and Intramural Research Program
+                  of the National Institute of Allergy and Infectious Diseases.},
+  keywords     = {asia; drug resistance; epidemiology; genetic surveillance;
+                  global health; infectious disease; malaria; microbiology},
+  language     = {en}
+}
+@ARTICLE{Chai2014-cn,
+  title        = {Root mean square error ({RMSE}) or mean absolute error
+                  ({MAE})? – Arguments against avoiding {RMSE} in the literature},
+  author       = {Chai, T and Draxler, R R},
+  journaltitle = {Geosci. Model Dev.},
+  publisher    = {Copernicus GmbH},
+  volume       = {7},
+  issue        = {3},
+  pages        = {1247--1250},
+  date         = {2014-06-30},
+  abstract     = {Abstract. Both the root mean square error (RMSE) and the mean
+                  absolute error (MAE) are regularly employed in model
+                  evaluation studies. Willmott and Matsuura (2005) have
+                  suggested that the RMSE is not a good indicator of average
+                  model performance and might be a misleading indicator of
+                  average error, and thus the MAE would be a better metric for
+                  that purpose. While some concerns over using RMSE raised by
+                  Willmott and Matsuura (2005) and Willmott et al. (2009) are
+                  valid, the proposed avoidance of RMSE in favor of MAE is not
+                  the solution. Citing the aforementioned papers, many
+                  researchers chose MAE over RMSE to present their model
+                  evaluation statistics when presenting or adding the RMSE
+                  measures could be more beneficial. In this technical note, we
+                  demonstrate that the RMSE is not ambiguous in its meaning,
+                  contrary to what was claimed by Willmott et al. (2009). The
+                  RMSE is more appropriate to represent model performance than
+                  the MAE when the error distribution is expected to be
+                  Gaussian. In addition, we show that the RMSE satisfies the
+                  triangle inequality requirement for a distance metric, whereas
+                  Willmott et al. (2009) indicated that the
+                  sums-of-squares-based statistics do not satisfy this rule. In
+                  the end, we discussed some circumstances where using the RMSE
+                  will be more beneficial. However, we do not contend that the
+                  RMSE is superior over the MAE. Instead, a combination of
+                  metrics, including but certainly not limited to RMSEs and
+                  MAEs, are often required to assess model performance.},
+  language     = {en}
+}
+

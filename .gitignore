@@ -12,3 +12,5 @@ README_files
 _freeze
 benchmarking.tar.gz
 data/benchmarking
+
+**/*.quarto_ipynb

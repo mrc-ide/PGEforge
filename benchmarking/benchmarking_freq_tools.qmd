@@ -13,6 +13,8 @@ embed-resources: true
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
 options(width = 200)
 options(readr.show_col_types = FALSE)
+
+
 ```
 
 
@@ -22,6 +24,19 @@ options(readr.show_col_types = FALSE)
 
 ```{r, echo=FALSE}
 source("../tutorials/scripts/benchmarking_functions.R")
+
+# define once
+quick_summary <- function(x, probs = c(0, 0.25, 0.5, 0.75, 1)) {
+  q <- quantile(x, probs = probs, na.rm = TRUE)
+  tibble(
+    n = length(x[!is.na(x)]), 
+    sd = sd(x, na.rm = TRUE),
+    mean = mean(x, na.rm = TRUE),
+    min  = min(x, na.rm = TRUE),
+    max  = max(x, na.rm = TRUE),
+    !!!setNames(as.list(q), paste0("q", probs*100))
+  )
+}
 ```
 
 ```{r}
@@ -29,8 +44,8 @@ source("../tutorials/scripts/benchmarking_functions.R")
 #| eval: false
 #| code-fold: true
 #| code-line-numbers: true
-#| filename: ../scripts/benchmarking_functions.R
-#| file: ../scripts/benchmarking_functions.R
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
 
 ```
 
@@ -58,8 +73,39 @@ inp_per_tools <- list(
   "coiaf" = list(
       tool_res_dir = "../data/benchmarking/tool_results/coiaf//", 
       tool_params = "../data/benchmarking/tool_results/coiaf.json"
-  ) 
+  ), 
+  # multi-locus tools
+  "fem" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/FEM/", 
+    tool_params = "../data/benchmarking/tool_results/fem.json"
+  ), 
+  "mlbm" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/MLBM//", 
+    tool_params = "../data/benchmarking/tool_results/mlbm.json"
+  ), 
+  "naive_mlafp" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/naive_mlafp/", 
+    tool_params = "../data/benchmarking/tool_results/naive_mlafp.json"
+  ), 
+  # single locus allele frequencies 
+  "idm" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/IDM/", 
+    tool_params = "../data/benchmarking/tool_results/idm.json"
+  ), 
+  "naive_slaf" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/naive_slaf/", 
+    tool_params = "../data/benchmarking/tool_results/naive_slaf.json"
+  ), 
+  # multi-locus microhaplotype freq
+
+  "malariaem" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/malariaem//", 
+    tool_params = "../data/benchmarking/tool_results/malariaem.json"
+  )
 )
+
+
+
 ```
 
 
@@ -68,7 +114,7 @@ First, all of the tool results, tool parameters, expected simulated values, and 
 
 ### Reading in expected truths 
 
-Read per in expected allele frequencies per sample tables to get true COIs
+Read per in expected microhaplotype frequencies per sample tables to get true COIs
 
 ```{r}
 expected_simulated_frequencies_per_sample <- tibble(
@@ -98,12 +144,33 @@ expected_simulated_frequencies_per_sample_COIs = expected_simulated_frequencies_
 
 ```
 
-Read per in expected allele frequencies tables population level 
+
+Read in expected phased data 
+
+For several haplotype groups, the expected phased haplotype frequencies are calculated below 
+
 ```{r}
-population_trimmed_mhap_freqs_prevs <- tibble(
+all_phased_pop_freqs_prevs_out = readr::read_tsv("../data/benchmarking/simulations/SpotMalaria/all_phased_pop_freqs_prevs_out.tsv.gz") %>% 
+  dplyr::rename(target_id = target) %>% 
+  unique()
+
+colnames(all_phased_pop_freqs_prevs_out)[4:9] = paste0("expected_", colnames(all_phased_pop_freqs_prevs_out[4:9]))
+
+all_phased_sample_out = readr::read_tsv("../data/benchmarking/simulations/SpotMalaria/all_phased_sample_out.tsv.gz")%>% 
+  dplyr::rename(target_id = target) %>% 
+  unique()
+
+```
+
+
+Read per in expected aa multilocus freq/prev tables 
+
+
+```{r}
+expected_population_aa_multiloci_variants_freqs_prevs <- tibble(
     sim_truth_path = list.files(
       inp$sim_info_dir, 
-      pattern = "population_trimmed_mhap_freqs_prevs.tsv.gz", 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
       full.names = TRUE, 
       recursive = TRUE
     )
@@ -117,16 +184,80 @@ population_trimmed_mhap_freqs_prevs <- tibble(
         population_name = col_character(), 
         pop = col_character(), 
         country = col_character(), 
-        target = col_character(), 
-        seq = col_character()
+        variant = col_character(), 
+        aas_in_variant = col_integer(),
+				allele_count = col_integer(),
+				sample_count = col_integer(),
+				total_samples = col_integer(),
+				total_alleles = col_integer(),
+				freq = col_double(),
+				prev  = col_double(), 
+				group_id = col_character()
+      ),
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth)
+
+colnames(expected_population_aa_multiloci_variants_freqs_prevs)[5:11] = paste0("expected_",
+                                                                               colnames(expected_population_aa_multiloci_variants_freqs_prevs)[5:11])
+
+
+```
+
+
+
+Read per locus aa variant freq/prev tables 
+```{r}
+expected_population_aa_variants_freqs_prevs <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(),
+        population_name = col_character(), 
+        pop = col_character(), 
+        country = col_character(), 
+        GeneName = col_character(), 
+        transcript_id = col_character(), 
+        aa_position = col_integer(), 
+        aa = col_character(), 
+        is_ref = col_logical(), 
+				allele_count = col_integer(),
+				sample_count = col_integer(),
+				total_pop_alleles = col_integer(),
+				total_pop_samples = col_integer(),
+				unique_alleles = col_integer(),
+				freq = col_double(),
+				prev  = col_double()
       ),
       progress = FALSE
     )
   ) %>%
   select(-sim_truth_path) %>%
   unnest(sim_truth) %>% 
-  dplyr::rename(target_id = target)
+  mutate(variant = paste0(transcript_id, ":", aa_position, ":", aa)) 
+
+colnames(expected_population_aa_variants_freqs_prevs)[7:15] = paste0("expected_",
+                                                                               colnames(expected_population_aa_variants_freqs_prevs)[7:15])
+
+
+expected_population_aa_variants_freqs_prevs_sel = expected_population_aa_variants_freqs_prevs %>% 
+  select(population_name, variant, expected_freq)
 ```
+
+
+
+
 
 
 Read in all simulation parameters into one tibble. Encode different population parameters as descriptive factors. 
@@ -178,7 +309,8 @@ sim_params <- tibble(
          coi_cat = factor(coi_cat, levels = sort(unique((.$coi_cat)))), 
          between_sample_related_cat = factor(between_sample_related_cat, levels = sort(unique((.$between_sample_related_cat)))), 
          nonrecombinant_cat = factor(nonrecombinant_cat, levels = sort(unique((.$nonrecombinant_cat)))), 
-         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat)))))
+         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat))))) %>% 
+  select(-sample_count)
 
 create_dt(sim_params)
 ```
@@ -211,4 +343,869 @@ madhatter_allele_data <- tibble(
                 seq = ASV, 
                 reads = Reads) 
 ```
+
+
+
+## multi-locus variants 
+
+*  FreqEstimationModel
+*  MLBM
+*  naive multi locus freq estimator
+
+
+
+### Read in FreqEstimationModel results
+
+FreqEstimationModel outputs information on frequency and prevalence of alleles 
+
+Getting the frequency and prevs from the `FEM_summary.tsv.gz` files 
+
+```{r}
+fem_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$fem$tool_res_dir, 
+      pattern = "^FEM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+fem can take a COI argument 
+
+```{r}
+# Read in tool parameters
+fem_tool_params <- jsonlite::fromJSON(inp_per_tools$fem$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_coi = paramset.coi,
+  )
+
+create_dt(fem_tool_params)
+```
+
+
+
+### Read in MLBM results
+
+MLBM outputs information on frequency but not prevalence of alleles 
+
+Getting the frequency from the `MLBM_summary.tsv.gz` files 
+
+```{r}
+mlbm_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$mlbm$tool_res_dir, 
+      pattern = "^MLBM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+mlbm has no additional parameters  
+
+```{r}
+# Read in tool parameters
+mlbm_tool_params <- jsonlite::fromJSON(inp_per_tools$mlbm$tool_params, flatten = TRUE) %>%
+  as_tibble()
+
+create_dt(mlbm_tool_params)
+```
+
+
+
+### Read in naive multi locus freq estimator results
+
+naive multi locus freq estimator outputs information on frequency but not prevalence of alleles 
+
+Getting the freqs and prevs from the `mlafp.tsv.gz` files 
+
+```{r}
+naive_mlafp_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_mlafp$tool_res_dir, 
+      pattern = "^mlafp.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+naive_mlafp has no additional parameters  
+
+```{r}
+# Read in tool parameters
+naive_mlafp_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_mlafp$tool_params, flatten = TRUE) %>%
+  as_tibble()
+
+create_dt(naive_mlafp_tool_params)
+```
+
+
+### combining freqs 
+
+```{r}
+fem_freq_summary_out = fem_freq_summary %>% 
+  left_join(fem_tool_params)  %>% 
+  full_join(bind_rows(
+    expected_population_aa_multiloci_variants_freqs_prevs %>% mutate(paramset_id = "fem_paramset1"), 
+    expected_population_aa_multiloci_variants_freqs_prevs %>% mutate(paramset_id = "fem_paramset2"), 
+    expected_population_aa_multiloci_variants_freqs_prevs %>% mutate(paramset_id = "fem_paramset3")
+  )) %>% 
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>% 
+  mutate(prev = ifelse(is.na(prev), 0, prev)) %>% 
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>% 
+  mutate(expected_prev = ifelse(is.na(expected_prev), 0, expected_prev)) %>% 
+  mutate(tool =  "fem") 
+
+mlbm_freq_summary_out = mlbm_freq_summary %>% 
+  left_join(mlbm_tool_params)  %>% 
+  full_join(expected_population_aa_multiloci_variants_freqs_prevs %>% mutate(paramset_id = "mlbm_paramset1")) %>% 
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>% 
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))%>% 
+  mutate(tool =  "mlbm") 
+
+
+naive_mlafp_freq_summary_variant_info = naive_mlafp_freq_summary %>% 
+  select(variant) %>% 
+  unique() %>% 
+  rowwise() %>% 
+  mutate(observed_aas_in_variant = variantstring::variant_to_long(variant)[[1]] %>% select(gene, pos) %>% unique() %>% nrow())
+
+# filter to just the full called haplotype, the wrapper for the naive caller will generate all possible haplotypes and sub haplotypes it can (e.g. if 6 loci are being called, it will call for for 5,4,3,2 loci ) 
+naive_mlafp_freq_summary_out = naive_mlafp_freq_summary %>% 
+  select(-sample_total) %>% 
+  left_join(naive_mlafp_tool_params %>% 
+              select(-loci_groups)) %>% 
+  left_join(expected_population_aa_multiloci_variants_freqs_prevs %>% 
+              ungroup() %>% 
+              select(group_id, expected_aas_in_variant) %>% 
+              unique()) %>% 
+  left_join(naive_mlafp_freq_summary_variant_info)  %>% 
+  full_join(expected_population_aa_multiloci_variants_freqs_prevs %>% 
+              select(-expected_aas_in_variant)
+            %>% mutate(paramset_id = "naive_mlafp_paramset1"), by = c("population_name", "paramset_id", "group_id",  "variant")) 
+  
+naive_mlafp_freq_summary_out_filt = naive_mlafp_freq_summary_out%>% 
+  filter(observed_aas_in_variant == expected_aas_in_variant)
+  
+naive_mlafp_freq_summary_out_filt = naive_mlafp_freq_summary_out_filt %>% 
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>% 
+  mutate(prev = ifelse(is.na(prev), 0, prev)) %>% 
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>% 
+  mutate(expected_prev = ifelse(is.na(expected_prev), 0, expected_prev)) %>% 
+  mutate(tool =  "naive_mlafp")
+
+
+
+combined_mlfreq = bind_rows(
+  fem_freq_summary_out %>% 
+    select(-sequence, -median_freq, 
+           -CI_2.5, -CI_97.5), 
+  mlbm_freq_summary_out, 
+  naive_mlafp_freq_summary_out_filt
+) %>% 
+  mutate(tool_paramset_id = paste0(tool, paramset_id))
+
+
+
+```
+
+```{r}
+combined_mlfreq_ccc_by_tool_params = compute_ccc(combined_mlfreq, expected_freq, freq, c(tool, paramset_id))
+
+combined_mlfreq_ccc_by_tool_params_best = combined_mlfreq_ccc_by_tool_params %>% 
+  group_by(tool) %>% 
+  slice_max(n = 1, order_by = freq_ccc)  %>% 
+  mutate(tool_paramset_id = paste0(tool, paramset_id))
+
+
+combined_mlfreq_best = combined_mlfreq %>% 
+  filter(tool_paramset_id %in% combined_mlfreq_ccc_by_tool_params_best$tool_paramset_id) %>% 
+  mutate(group_id = factor(group_id, levels = c("two_group1", "pfdhfr", "pfdhps", "four_group1", "six_low_div", "pfdhfr_pfdhps", "six_med_div")))
+```
+
+```{r}
+
+combined_mlfreq_best = combined_mlfreq_best %>% 
+  add_diff_mean(expected_freq, freq)
+
+combined_mlfreq_best_altman_tool_groupid = make_bland_altman_plot_by_label(combined_mlfreq_best %>% 
+                                                                             filter(freq != 0, expected_freq != 0 ), "freq") + 
+  facet_grid(tool ~ group_id)
+
+
+cairo_pdf("combined_mlfreq_best_altman_tool_groupid.pdf", width = 12, height = 6)
+print(combined_mlfreq_best_altman_tool_groupid)
+dev.off()
+```
+
+
+```{r}
+combined_mlfreq_best_CCC = combined_mlfreq_best %>% 
+  compute_ccc(expected_freq, freq, c(tool, group_id, population_name)) %>% 
+  left_join(sim_params)
+
+
+cairo_pdf("combined_mlfreq_best_CCC_groupid_tool_ccc_boxplot.pdf", width = 10, height = 5)
+ggplot(combined_mlfreq_best_CCC) + 
+  geom_boxplot(aes(x = group_id, y =  freq_ccc, fill = tool)) + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted") + 
+  facet_grid(coi_cat~.)
+dev.off()
+
+
+```
+
+```{r}
+combined_mlfreq_best_mod = combined_mlfreq_best %>% 
+  mutate(TP = as.numeric(freq != 0 & expected_freq != 0))%>% 
+  mutate(FP = as.numeric(freq != 0 & expected_freq == 0))%>% 
+  mutate(FN = as.numeric(freq == 0 & expected_freq != 0))
+
+
+
+
+combined_mlfreq_best_mod_contig = combined_mlfreq_best_mod %>% 
+  group_by(tool, group_id) %>% 
+  add_contigency_metrics_no_TN(T)
+
+
+combined_mlfreq_best_mod_contig_recall_precision = combined_mlfreq_best_mod_contig %>% 
+  select(tool, group_id, recall, precision) %>% 
+  gather(measure, value, 3:4)
+
+
+cairo_pdf("combined_mlfreq_best_mod_contig_recall_precision.pdf", width = 8, height = 6)
+print(ggplot(combined_mlfreq_best_mod_contig_recall_precision) + 
+  geom_col(aes(x = group_id, y = value, fill = tool), color = "black", position = "dodge") + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) +
+  facet_wrap(~measure))
+dev.off()
+
+
+combined_mlfreq_best_mod_contig_by_coi_cat = combined_mlfreq_best_mod %>% 
+  left_join(sim_params, by = "population_name") %>% 
+  group_by(tool, group_id, coi_cat) %>% 
+  add_contigency_metrics_no_TN(T)
+
+
+combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision = combined_mlfreq_best_mod_contig_by_coi_cat %>% 
+  select(tool, group_id, coi_cat, recall, precision) %>% 
+  gather(measure, value,4:5)
+
+
+cairo_pdf("combined_mlfreq_best_mod_contig_coi_cat_recall_precision.pdf", width = 8, height = 6)
+print(ggplot(combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision) + 
+  geom_col(aes(x = group_id, y = value, fill = tool), color = "black", position = "dodge") + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) +
+  facet_wrap(coi_cat~measure))
+dev.off()
+
+
+```
+
+
+```{r}
+combined_mlfreq_best_mod_fp = combined_mlfreq_best_mod %>% 
+  filter(FP == 1)
+
+
+ggplot(combined_mlfreq_best_mod_fp) + 
+  geom_histogram(aes(x = freq)) + 
+  facet_grid(group_id ~ tool, scales = "free")
+```
+
+
+
+```{r}
+
+fem_freq_summary_out_mod = fem_freq_summary_out %>% 
+  add_diff_mean(expected_freq, freq)
+
+fem_freq_summary_out_mod_bland_altman_paramset_id_groupid = make_bland_altman_plot_by_label(fem_freq_summary_out_mod, "freq") + 
+  facet_grid( paramset_id ~ group_id)
+
+fem_freq_summary_out_ccc = fem_freq_summary_out %>% 
+  compute_ccc(expected_freq, freq, c(paramset_id, group_id, population_name)) %>% 
+  left_join(sim_params)
+
+
+```
+
+
+
+## single locus variants 
+
+naive single locus freq
+
+
+### Read in naive single locus freq results
+
+naive single locus freq outputs information on frequency and prevalence of alleles 
+
+Getting the frequency and prevs from the `slaf.tsv.gz` files 
+
+```{r}
+naive_slaf_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_slaf$tool_res_dir, 
+      pattern = "^slaf.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+
+```{r}
+# Read in tool parameters
+naive_slaf_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_slaf$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_method = paramset.method,
+  )
+
+create_dt(naive_slaf_tool_params)
+```
+
+
+### Read in IDM results
+
+
+IDM outputs information on frequency of alleles 
+
+Getting the frequency and prevs from the `IDM_summary.tsv.gz` files 
+
+```{r}
+idm_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$idm$tool_res_dir, 
+      pattern = "^IDM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+idm 
+
+```{r}
+# Read in tool parameters
+idm_tool_params <- jsonlite::fromJSON(inp_per_tools$idm$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_model = paramset.model ,
+    paramset_lambda_initial = paramset.lambda_initial ,
+    paramset_eps_initial = paramset.eps_initial,
+  )
+
+create_dt(idm_tool_params)
+```
+
+
+### Combining 
+
+```{r}
+
+naive_slaf_freq_summary_out = naive_slaf_freq_summary %>% 
+  left_join(naive_slaf_tool_params)  %>% 
+  full_join(bind_rows(
+    expected_population_aa_variants_freqs_prevs_sel %>% mutate(paramset_id = "naive_slaf_paramset1"), 
+    expected_population_aa_variants_freqs_prevs_sel %>% mutate(paramset_id = "naive_slaf_paramset2")
+  )) %>% 
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>% 
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>% 
+  mutate(tool =  "naive_slaf") %>% 
+  mutate(tool_paramset_id = paste0(tool, "-", paramset_id))
+
+
+
+
+idm_freq_summary_out = idm_freq_summary %>%
+  left_join(idm_tool_params)  %>%
+  full_join(
+    map_dfr(
+      unique(idm_freq_summary$paramset_id),
+      ~
+        expected_population_aa_variants_freqs_prevs_sel %>%
+        mutate(paramset_id = .x)
+    )
+  ) %>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>%
+  mutate(tool =  "idm") %>%
+  mutate(tool_paramset_id = paste0(tool, "-", paramset_id))
+
+
+```
+
+
+```{r}
+combined_slfreq = bind_rows(
+  naive_slaf_freq_summary_out %>% 
+    select(population_name, paramset_id, variant, freq, expected_freq, tool, tool_paramset_id), 
+  idm_freq_summary_out %>% 
+    select(population_name, paramset_id, variant, freq, expected_freq, tool, tool_paramset_id)
+)
+
+combined_slfreq_ccc_by_tool_params = combined_slfreq %>% 
+  compute_ccc(expected_freq, freq, c(tool, paramset_id, tool_paramset_id))
+
+combined_slfreq_ccc_by_tool_params_best = combined_slfreq_ccc_by_tool_params %>% 
+  group_by(tool) %>% 
+  slice_max(order_by = freq_ccc, with_ties = F)
+
+combined_slfreq_summary  = combined_slfreq %>% 
+  group_by(tool, paramset_id) %>% 
+  summarise(quick_summary(freq))
+
+```
+
+```{r}
+combined_slfreq_best = combined_slfreq %>% 
+  filter(tool_paramset_id  %in% combined_slfreq_ccc_by_tool_params_best$tool_paramset_id)
+```
+
+
+```{r}
+combined_slfreq_best = combined_slfreq_best %>% 
+  add_diff_mean(expected_freq, freq)
+combined_slfreq_best_by_tool = make_bland_altman_plot_by_label(combined_slfreq_best, "freq") + 
+  facet_wrap(~tool)
+
+
+combined_slfreq_best_ccc = combined_slfreq_best %>% 
+  compute_ccc(expected_freq, freq, c(tool, population_name))
+
+ggplot(combined_slfreq_best_ccc) + 
+  geom_boxplot(aes(x = tool, y = freq_ccc))
+```
+
+
+```{r}
+combined_slfreq_best_mod =  combined_slfreq_best %>%
+  mutate(TP = as.numeric(freq != 0 & expected_freq != 0))%>% 
+  mutate(FP = as.numeric(freq != 0 & expected_freq == 0))%>% 
+  mutate(FN = as.numeric(freq == 0 & expected_freq != 0))
+
+
+
+
+combined_slfreq_best_mod_contig = combined_slfreq_best_mod %>% 
+  group_by(tool) %>% 
+  add_contigency_metrics_no_TN(T)
+
+```
+
+
+
+## multi-locus microhaplotype freq
+
+### malariaem
+
+```{r}
+malariaem_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$malariaem$tool_res_dir, 
+      pattern = "^mlaf_results.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+```{r}
+malariaem_phased_per_sample_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$malariaem$tool_res_dir, 
+      pattern = "^phasing_results.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+malariaem_tool_params 
+
+```{r}
+# Read in tool parameters
+malariaem_tool_params <- jsonlite::fromJSON(inp_per_tools$malariaem$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_subset_targets = paramset.subset_targets
+  )
+
+create_dt(malariaem_tool_params)
+```
+
+
+
+
+
+####  two_meddiv
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_two_meddiv = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "two_meddiv")
+
+malariaem_freq_summary_two_meddiv = malariaem_freq_summary %>% 
+  filter(group_id == "two_meddiv")
+
+all_phased_pop_freqs_prevs_out_two_meddiv = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "two_meddiv")
+all_phased_sample_out_two_meddiv = all_phased_sample_out %>% 
+    filter(group_id == "two_meddiv")
+
+two_meddiv_group_popHapId = malariaem_phased_per_sample_summary_two_meddiv %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_two_meddiv %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_two_meddiv %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+two_meddiv_group_popHapId_sel = two_meddiv_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_two_meddiv_mod = all_phased_pop_freqs_prevs_out_two_meddiv %>% 
+  left_join(two_meddiv_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_meddiv_mod = malariaem_freq_summary_two_meddiv %>% 
+  left_join(two_meddiv_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_meddiv_mod_sel = malariaem_freq_summary_two_meddiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_two_meddiv_mod_sel = all_phased_pop_freqs_prevs_out_two_meddiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_two_meddiv_mod_sel_combined = malariaem_freq_summary_two_meddiv_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_two_meddiv_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+####  two_lowdiv
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_two_lowdiv = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "two_lowdiv")
+
+malariaem_freq_summary_two_lowdiv = malariaem_freq_summary %>% 
+  filter(group_id == "two_lowdiv")
+
+all_phased_pop_freqs_prevs_out_two_lowdiv = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "two_lowdiv")
+all_phased_sample_out_two_lowdiv = all_phased_sample_out %>% 
+    filter(group_id == "two_lowdiv")
+
+two_lowdiv_group_popHapId = malariaem_phased_per_sample_summary_two_lowdiv %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_two_lowdiv %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_two_lowdiv %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+two_lowdiv_group_popHapId_sel = two_lowdiv_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_two_lowdiv_mod = all_phased_pop_freqs_prevs_out_two_lowdiv %>% 
+  left_join(two_lowdiv_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_lowdiv_mod = malariaem_freq_summary_two_lowdiv %>% 
+  left_join(two_lowdiv_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_lowdiv_mod_sel = malariaem_freq_summary_two_lowdiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_two_lowdiv_mod_sel = all_phased_pop_freqs_prevs_out_two_lowdiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_two_lowdiv_mod_sel_combined = malariaem_freq_summary_two_lowdiv_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_two_lowdiv_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+####  four
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_four = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "four")
+
+malariaem_freq_summary_four = malariaem_freq_summary %>% 
+  filter(group_id == "four")
+
+all_phased_pop_freqs_prevs_out_four = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "four")
+all_phased_sample_out_four = all_phased_sample_out %>% 
+    filter(group_id == "four")
+
+four_group_popHapId = malariaem_phased_per_sample_summary_four %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_four %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_four %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+four_group_popHapId_sel = four_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_four_mod = all_phased_pop_freqs_prevs_out_four %>% 
+  left_join(four_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_four_mod = malariaem_freq_summary_four %>% 
+  left_join(four_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_four_mod_sel = malariaem_freq_summary_four_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_four_mod_sel = all_phased_pop_freqs_prevs_out_four_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_four_mod_sel_combined = malariaem_freq_summary_four_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_four_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+
+```{r}
+
+malariaem_freq_summary_all_combined = bind_rows(
+  malariaem_freq_summary_two_meddiv_mod_sel_combined, 
+  malariaem_freq_summary_two_lowdiv_mod_sel_combined, 
+  malariaem_freq_summary_four_mod_sel_combined
+) %>% 
+  mutate(group_id = factor(group_id, levels = c("two_lowdiv", "two_meddiv", "four")))
+
+malariaem_freq_summary_all_combined_ccc = compute_ccc(malariaem_freq_summary_all_combined, 
+                                                                     expected_freq, freq, 
+                                                                     c(group_id)
+                                                                     )
+
+malariaem_freq_summary_all_combined = malariaem_freq_summary_all_combined %>% 
+  add_diff_mean(expected_freq, freq)
+
+
+
+malariaem_freq_summary_all_combined_bland_alt = make_bland_altman_plot_by_label(malariaem_freq_summary_all_combined, "freq") + 
+  facet_grid(~group_id)
+
+cairo_pdf("malariaem_freq_summary_all_combined_bland_alt.pdf", width = 8, height = 4)
+print(malariaem_freq_summary_all_combined_bland_alt)
+dev.off()
+
+malariaem_freq_summary_all_combined = malariaem_freq_summary_all_combined %>%
+  mutate(TP = as.numeric(freq != 0 & expected_freq != 0)) %>% 
+  mutate(FP = as.numeric(freq != 0 & expected_freq == 0)) %>% 
+  mutate(FN = as.numeric(freq == 0 & expected_freq != 0))
+
+
+malariaem_freq_summary_all_combined_contig = malariaem_freq_summary_all_combined %>% 
+  group_by(group_id) %>% 
+  add_contigency_metrics_no_TN(T)
+
+malariaem_freq_summary_all_combined_contig_precission_recall = malariaem_freq_summary_all_combined_contig %>% 
+  gather(measure, value, 7, 9)
+
+
+malariaem_freq_summary_all_combined_contig_precission_recall_plot = ggplot(malariaem_freq_summary_all_combined_contig_precission_recall) + 
+  geom_col(aes(x = group_id, y = value, fill = measure), color = "black", position = "dodge") + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values =colorPalette_08)
+
+cairo_pdf("malariaem_freq_summary_all_combined_contig_precission_recall_plot.pdf", width = 4, height = 4)
+print(malariaem_freq_summary_all_combined_contig_precission_recall_plot)
+dev.off()
+
+
+malariaem_freq_summary_all_combined_fp = malariaem_freq_summary_all_combined %>% 
+  filter(FP == 1)
+
+
+malariaem_freq_summary_all_combined_false_positive_freq_plot = ggplot(malariaem_freq_summary_all_combined_fp) + 
+  geom_histogram(aes(x = freq)) +
+  scale_y_log10() + 
+  facet_grid(~group_id) + 
+  custom_ggplot_theme + 
+  labs(y = "count (log10)")
+
+cairo_pdf("malariaem_freq_summary_all_combined_false_positive_freq_plot.pdf", width = 6, height = 4)
+print(malariaem_freq_summary_all_combined_false_positive_freq_plot)
+dev.off()
+```
+
 

@@ -223,8 +223,14 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
-          - text: "Benchmarking"
-            file: website_docs/benchmarking.qmd
+          - section: "Benchmarking"
+            contents:
+            - text: "Overview"
+              file: benchmarking/Benchmarking_Overview.qmd
+            - text: "COI Tools"
+              file: benchmarking/benchmarking_COI_tools.qmd
+            - text: "Allele Frequency Tools"
+              file: benchmarking/benchmarking_freq_tools.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd

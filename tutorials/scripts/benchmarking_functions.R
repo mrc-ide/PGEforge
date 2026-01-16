@@ -170,10 +170,12 @@ add_contigency_metrics_no_TN <- function(input, summarize_first = F){
     output = output  %>%
       summarise(TP = sum(TP), 
                 FN = sum(FN), 
-                FP = sum(FP))
+                FP = sum(FP), 
+                n = n())
   }
   output = output %>%
     mutate(
+      
       sensitivity           = if_else(TP + FN > 0, TP / (TP + FN), NA_real_),
       recall                = sensitivity,
       ppv                   = if_else(TP + FP > 0, TP / (TP + FP), NA_real_),
@@ -417,13 +419,13 @@ my_corr_ccc <- function(data, mapping,
     ccc <- try(DescTools::CCC(x, y, ci = "z-transform", conf.level = ccc_conf), silent = TRUE)
     
     if (inherits(ccc, "try-error")) {
-      label <- sprintf("cor = %s\nCCC = NA", signif(r, digits))
+      label <- sprintf("cor = %s\n\nCCC = NA", signif(r, digits))
     } else {
       label <- paste0(
-        method, " cor = ", signif(r, digits), "\n",
+        method, " cor = ", signif(r, digits), "\n\n",
         "CCC = ",
         paste0(
-          signif(ccc$rho.c$est, digits), " (95% CI =",
+          signif(ccc$rho.c$est, digits), " \n(95% CI =",
           signif(ccc$rho.c$lwr.ci, digits), "–",
           signif(ccc$rho.c$upr.ci, digits), ")"
         )
@@ -510,32 +512,45 @@ make_bland_altman_plot_by_label <- function(
     mean_suffix = "_mean_with_exp",
     diff_suffix = "_diff_from_exp",
     expected_label = "Expected",
-    bins = 30 
+    bins = 30
 ) {
   stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
   
   mean_col <- paste0(label, mean_suffix)
   diff_col <- paste0(label, diff_suffix)
   
-  if (!(mean_col %in% names(df))) {
-    stop(sprintf("Column '%s' not found in df.", mean_col))
-  }
-  if (!(diff_col %in% names(df))) {
-    stop(sprintf("Column '%s' not found in df.", diff_col))
-  }
-  
-  # limits of agreement (±2 SD) computed once
-  sd_val <- stats::sd(df[[diff_col]], na.rm = TRUE)
+  if (!(mean_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", mean_col))
+  if (!(diff_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", diff_col))
   
   ggplot(df) +
-    geom_hex(aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
-             bins = bins) +
+    geom_hex(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
+      bins = bins
+    ) +
     scale_fill_viridis_c(name = "log10(count)") +
     theme_minimal() +
-    geom_smooth(aes(x = .data[[mean_col]], y = .data[[diff_col]]),
-                method = "gam", se = FALSE) +
-    geom_hline(yintercept =  2 * sd_val) +
-    geom_hline(yintercept = -2 * sd_val) +
+    geom_smooth(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]]),
+      method = "gam", se = FALSE
+    ) +
+    # +2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y)  2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
+    # -2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y) -2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
     labs(
       title = label,
       y = paste0(label, " - ", expected_label),
@@ -543,6 +558,7 @@ make_bland_altman_plot_by_label <- function(
     ) +
     coord_equal()
 }
+
 
 
 

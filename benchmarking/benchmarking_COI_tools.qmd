@@ -1,5 +1,5 @@
 ---
-title: COI tools Benchmarking Results
+title: Processing all COI tools Benchmarking Results
 author: Nicholas Hathaway
 format: html
 toc-depth: 5
@@ -7,6 +7,12 @@ code-fold: true
 fig-width: 15
 fig-height: 15
 embed-resources: true
+fig-dpi: 300
+fig-align: center
+number-sections: true
+anchor-sections: true
+bibliography: [references.bib]
+biblio-style: apalike
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +21,31 @@ options(width = 200)
 options(readr.show_col_types = FALSE)
 ```
 
+## Intro
+
+COI tools were evaluated on their ability to accurately estimate COI for amplicon data from simulated data, see [here](Benchmarking_Overview.qmd) for details. 
+
+COI tools evaluated: 
+
+*  THEREALMcCOIL[@Chang2017-mq]  
+*  MOIRE[@Murphy2024-or]  
+*  coiaf[@Paschalidis2023-fv]  
+*  naive estimators (bespoke code)  
+
+
+## Metrics 
+
+The following metrics were calculated on the results. Several tools have several parameters that can be modified and so have several results over different parameter sets. For final comparison between tools, the best parameter set was choosen. 
+
+
+*  Root mean squared error (RMSE) and Mean absolute error (MAE)[@Chai2014-cn]
+    *  Calculated by taking the square root of the mean sum of squared difference between two metrics, not bounded but greater than or equal to 0 
+*  [Bland-altman plots](https://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot) 
+    *  Plotting the observed minus the expected on the y and on the x-aixs the mean between the two measures, can illustrate where and by how measures differ 
+*  [Concoordance](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC)
+    *  R function documentation from library DescTools(Signorell, 2025) can be found here: <https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC>
+    *  Description: "Computes Lin's (Lin, 1989; Steichen & Cox, 2002) concordance correlation coefficient for agreement on a continuous measure obtained by two methods. The concordance correlation coefficient combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance (that is, the line at 45 degrees on a square scatter plot). Lin's coefficient increases in value as a function of the nearness of the data's reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data)."
+
 
 ## Set up 
 
@@ -22,6 +53,7 @@ options(readr.show_col_types = FALSE)
 
 ```{r, echo=FALSE}
 source("../tutorials/scripts/benchmarking_functions.R")
+
 ```
 
 ```{r}
@@ -29,8 +61,8 @@ source("../tutorials/scripts/benchmarking_functions.R")
 #| eval: false
 #| code-fold: true
 #| code-line-numbers: true
-#| filename: ../scripts/benchmarking_functions.R
-#| file: ../scripts/benchmarking_functions.R
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
 
 ```
 
@@ -498,7 +530,7 @@ naive_coi_coi_summary_out = naive_coi_coi_summary %>%
 
 ```
 
-```{r}
+```{r, echo = F, eval = F}
 
 coiaf_coi_summary_out_ccc = coiaf_coi_summary_out %>% 
   compute_ccc(expected_COI, c(coi_freq, coi_variant), c(paramset_id, population_name)) %>% 
@@ -521,7 +553,7 @@ make_bland_altman_plot_by_label(coiaf_coi_summary_out, label = "coi_variant") +
   facet_grid(coi_cat~paramset_id)
 ```
 
-```{r}
+```{r, echo = F, eval = F}
 
 coiaf_coi_summary_out_sp_coi_freq_paramset_id = coiaf_coi_summary_out %>% 
   select(population_name, paramset_id, library_sample_name, tool, coi_freq, expected_COI) %>% 
@@ -548,7 +580,7 @@ coiaf_coi_summary_out_sp_coi_variant_paramset_id_plot =  ggpairs(coiaf_coi_summa
 ```
 
 
-```{r}
+```{r, echo = F, eval = F}
 
 naive_coi_coi_summary_out_ccc = naive_coi_coi_summary_out %>% 
   compute_ccc(expected_COI, coi, c(paramset_id, population_name)) %>% 
@@ -561,5 +593,174 @@ naive_coi_coi_summary_out = naive_coi_coi_summary_out %>%
 make_bland_altman_plot_by_label(naive_coi_coi_summary_out, label = "coi") + 
   facet_grid(coi_cat~paramset_id)
 ```
+
+
+
+## Combining and getting best parameter set per program 
+
+Summarizing results over each program's various parameters to determine it's best peforming parameter to include for the final comparison 
+
+
+```{r}
+coiaf_coi_summary_out_gat = coiaf_coi_summary_out %>% 
+  gather(measure, coi, 5:6) %>% 
+  mutate(paramset_id = paste0(paramset_id, "-", measure))
+moire_coi_summary_out_mod = moire_coi_summary_out %>% 
+  mutate(tool = paste0(tool, "-coi"))
+moire_coi_summary_out_mod_offset_naive_coi = moire_coi_summary_out %>% 
+  select(-coi) %>% 
+  dplyr::rename(coi = offset_naive_coi) %>% 
+  mutate(tool = "offset_naive")
+moire_effective_coi_summary_out_mod =  moire_effective_coi_summary_out %>% 
+  mutate(tool = paste0(tool, "-ecoi")) %>% 
+  dplyr::rename(coi = ecoi)
+
+
+all_combined = bind_rows(
+  coiaf_coi_summary_out_gat %>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),
+  moire_coi_summary_out_mod %>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI), 
+  moire_effective_coi_summary_out_mod%>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),  
+  therealmccoil_coi_summary_out%>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),  
+  naive_coi_coi_summary_out %>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI), 
+  
+  # moire_coi_summary_out_mod_offset_naive_coi %>% 
+  #   select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI)
+) %>% 
+  mutate(tool_paramset_id = paste0(tool, paramset_id))
+
+all_combined_ccc_per_tool_per_params = all_combined %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, paramset_id)
+  )
+
+all_combined_ccc_per_tool_per_params_best = all_combined_ccc_per_tool_per_params %>% 
+  group_by(tool) %>% 
+  slice_max(order_by = coi_ccc, n = 1, with_ties = F) %>% 
+  mutate(tool_paramset_id = paste0(tool, paramset_id))
+
+
+all_combined_best = all_combined %>% 
+  filter(tool_paramset_id %in% all_combined_ccc_per_tool_per_params_best$tool_paramset_id)%>% 
+  add_diff_mean(expected_COI, coi) %>% 
+  left_join(sim_params)
+```
+
+
+```{r}
+
+all_combined_best_ccc = all_combined_best %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, population_name)
+  ) %>% 
+  left_join(sim_params)
+
+all_combined_best_ccc_plot = ggplot(all_combined_best_ccc) + 
+  geom_boxplot(aes(y = coi_ccc, fill = tool)) + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08, 
+                    guide = guide_legend(ncol = 2) 
+                    ) + 
+  theme(axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.title.x = element_blank()) + 
+  geom_hline(linetype = "dotted", color = "red", yintercept = 0.95)
+
+```
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+
+print(all_combined_best_ccc_plot)
+```
+
+```{r}
+
+cairo_pdf("all_combined_best_ccc_plot.pdf", width = 4, height = 4)
+print(all_combined_best_ccc_plot)
+dev.off()
+```
+
+```{r}
+all_combined_best_by_tool = make_bland_altman_plot_by_label(all_combined_best, label = "coi") + 
+  facet_grid(~tool)
+
+```
+
+```{r}
+#| fig-width: 10
+#| fig-height: 5
+
+print(all_combined_best_by_tool)
+```
+
+```{r}
+cairo_pdf("all_coi_tools_combined_best_bland_altman.pdf", width = 10, height = 5)
+print(all_combined_best_by_tool)
+dev.off()
+
+```
+
+
+```{r}
+all_combined_best_sp = all_combined_best %>% 
+  select(-paramset_id, -tool_paramset_id, -coi_diff_from_exp, -coi_mean_with_exp) %>% 
+  mutate(tool = gsub("-", "_", tool)) %>% 
+  spread(tool, coi)
+
+all_combined_best_sp_tool_plot =  ggpairs(all_combined_best_sp,
+                                                  columns = c("coiaf", "moire_coi", "moire_ecoi", "naive_coi", "therealmccoil", "expected_COI"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+```
+
+```{r}
+#| fig-width: 13
+#| fig-height: 13
+
+print(all_combined_best_sp_tool_plot)
+```
+
+```{r}
+cairo_pdf("all_combined_best_sp_tool_plot.pdf", width = 13, height = 13)
+print(all_combined_best_sp_tool_plot)
+dev.off()
+
+all_combined_best_sp_tool_plot_high_coi =  ggpairs(all_combined_best_sp %>% 
+                                            filter(coi_cat != "MeanCOI=1.26"),
+                                                  columns = c("coiaf", "moire_coi", "moire_ecoi", "naive_coi", "therealmccoil", "expected_COI"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+
+```
+
+```{r}
+#| fig-width: 13
+#| fig-height: 13
+
+print(all_combined_best_sp_tool_plot_high_coi)
+```
+
+```{r}
+cairo_pdf("all_combined_best_sp_tool_plot_high_coi.pdf", width = 13, height = 13)
+print(all_combined_best_sp_tool_plot_high_coi)
+dev.off()
+```
+
+
+
 
 
