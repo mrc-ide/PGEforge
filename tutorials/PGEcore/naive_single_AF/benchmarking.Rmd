@@ -22,9 +22,9 @@ library(tibble)
 library(tidyr)
 
 inp <- list(
-  sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria", 
-  tool_res_dir = "../../data/benchmarking/tool_results/MOIRE/", 
-  tool_params = "../../data/benchmarking/tool_results/moire.json"
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_slaf/", 
+  tool_params = "../../../data/benchmarking/tool_results/naive_slaf.json"
 )
 ```
 ## Create a tibble contatining all the required parameters and simulations.
@@ -156,8 +156,7 @@ tool_results_wtruth <- tool_results %>%
 ```
 ## Load the custom functions into R session
 ```{r}
-getwd()
-source("hackathon_helper.R")
+source("../../scripts/benchmarking_functions.R")
 ```
 ##  Combine the simulated and tool results into a single dataframe.
 ```{r}
