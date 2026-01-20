@@ -108,7 +108,7 @@ sim_params <- tibble(
 sim_truth <- sim_truth %>%
   left_join(sim_params, by = "sim_id")
 
-# Read in all FEM results into one tibble ------------------------------
+# Read in all tool results into one tibble -----------------------------
 tool_results <- tibble(
     tool_res_path = list.files(
       inp$tool_res_dir, 
@@ -145,14 +145,6 @@ tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
   select(-paramset)
 tool_results <- tool_results %>%
   left_join(tool_params, by = "paramset_id")
-
-# Join everything into one tibble --------------------------------------
-sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
-tool_results_wtruth <- tool_results %>%
-  # Use an inner join because FEM also estimates frequencies for 
-  # subsets of the requested multilocus genotypes, and these 
-  # frequencies are not benchmarked
-  inner_join(sim_truth, by = c("sim_id", "variant"))
 ```
 ## Load the custom functions into R session
 ```{r}
@@ -160,6 +152,8 @@ source("../../scripts/benchmarking_functions.R")
 ```
 ##  Combine the simulated and tool results into a single dataframe.
 ```{r}
+sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
+tool_results
 combined_s <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
 df <- combined_s %>% select(obs_freq, exp_freq, slaf_method)
 ```
