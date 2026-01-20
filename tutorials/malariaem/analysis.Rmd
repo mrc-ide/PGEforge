@@ -140,7 +140,7 @@ output |> glimpse()
 ### Summarizing population-level genotype frequencies
 We can now take a look at the estimated population-level multi-locus genotype (MLG) frequencies. We will reshape the `output$haplo.prob.tab` to create an object in long-format for plotting. 
 
-Every unique multi-locus genotype is composed of a set of alleles at *K* target loci. In this tutorial each MLG has `length(targets_to_subset)` target loci. The outputs from `malaria.em` keep track of MLG ID indices (row index, `gt_id`) that we now need to link back to our original target and target_popUIDs labels before pivotting to long-format.
+Every unique multi-locus genotype is composed of a set of alleles at *K* target loci. In this tutorial each MLG has `r length(targets_to_subset)` target loci. The outputs from `malaria.em` keep track of MLG ID indices (row index, `gt_id`) that we now need to link back to our original target and target_popUIDs labels before pivotting to long-format.
 ```{r}
 # Population-level multilocus genotype frequency estimate + standard error 
 gt_freq_summary <- output$haplo.prob.tab |> 
