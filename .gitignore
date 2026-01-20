@@ -9,3 +9,4 @@ ignore/
 /_site/
 *.html
 README_files
+data/benchmarking
