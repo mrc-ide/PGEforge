@@ -332,11 +332,28 @@ df_ba
 
 ```
 
-1. Overall
+First, all of the differences between predicted and expected frequencies were 
+pooled together and visualized in a Bland-Altman plot. A Bland-Altman plot 
+shows the mean of the observed (in this case, the value estimated by the tool) 
+and the expected (in this case, the simulated truth) values for a point 
+estimate plotted against the difference in those observed and expected values. 
+The horizontal lines indicate two standard deviations in this difference above 
+and below the mean. In the plots below, the point estimates were binned into 
+hexes, with the color of the hex indicating the density of points.
 
 ```{r}
 make_bland_altman_plot_by_label(df_ba, "obs_freq")
 ```
+
+In a Bland-Altman plot, points clustered along y = 0 indicate a good 
+prediction, whereas deviations from this line indicate ranges of values that 
+have worse performance. We can see that overall IDM has estimated allele 
+frequencies quite accurately. Estimates are generally more accurate for high or 
+low allele frequencies, which is expected. There are some substantial 
+overestimates in the middle of the range, but these are the minority.
+
+Note that false negatives and false positives were excluded from the analysis 
+in this section - those are analyzed further below.
 
 2. Showing the different parameter sets 
   - Results are not so sensitive to variations in tool parameters used.
