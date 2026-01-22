@@ -128,11 +128,7 @@ create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
 ```{r, warning=FALSE, message=FALSE}
 
 
-inp <- list(
-  sim_info_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/SpotMalaria", 
-  tool_res_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp/", 
-  tool_params = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp.json"
-)
+inp <- list(sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria",tool_res_dir = "../../data/benchmarking/tool_results/naive_mlafp/",madhatter_res_dir = "../../data/benchmarking/tool_results/madhatter/",tool_params = "../../data/benchmarking/tool_results/naive_mlafp.json")
 ```
 
 ```{r}
