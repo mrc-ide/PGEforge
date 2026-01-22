@@ -27,10 +27,10 @@ suppressPackageStartupMessages({
 
 
 inp <- list(
-  sim_info_dir = "data/simulations/SpotMalaria/", 
-  tool_res_dir = "data/naive_coi_results/", 
-  tool_params = "data/naive_coi.json",
-  out_dir = "coi_comparison_outputs/"
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_coi", 
+  tool_params = "../../../data/benchmarking/tool_results/naive_coi.json",
+  out_dir = "../../../coi_comparison_outputs"
 )
 params <- list(
   top_n_pops = 20
@@ -153,7 +153,6 @@ tool_results <- tibble(
   ) %>%
   select(-tool_res_path) %>%
   unnest(tool_res) %>%
- 
   mutate(
     specimen_id = as.character(specimen_id),
     specimen_id = sub("_.*$", "", specimen_id)
