@@ -15,19 +15,6 @@ options(width = 200)
 options(readr.show_col_types = FALSE)
 ```
 
-# Tool information
-
--   Main use-cases:
-    -   A maximum-likelihood based method to estimate allele frequency
-        and MOI
-        -   Work with multiallelic data for a single locus
-        -   Can account for incomplete data.
--   Authors
-    -   Meraj Hashemi, Kristan Schneider
--   Publication:
-    -   Hashemi M, Schneider KA (2024) Estimating multiplicity of
-        infection, allele frequencies, and prevalences accounting for
-        incomplete data. PLoS ONE 19(3): e0287161.
 
 ## Set up 
 
@@ -47,7 +34,7 @@ library(rlang) # for as_name
 
 # plotting 
 library(ggplot2)
-library(scales) # help with axises 
+library(scales) # help with axes 
 library(GGally) # ggpairs for pairwise comparisons 
 
 # interactive html outputs
@@ -63,88 +50,6 @@ library(DescTools) # CCC, Calculates Lin's concordance correlation coefficient
 ```{r}
 source("../scripts/benchmarking_functions.R")
 
-##### ccc calculation
-
-#' @title Concordance / Error Metrics (single or multiple observed columns)
-#' @keywords CCC RMSE MAE COI
-#'
-#' @description
-#' Compute metrics between an expected column and one or more observed columns.
-#' Each function accepts an optional set of grouping columns. If omitted, an
-#' overall (single-row) summary is returned.
-#'
-#' @param df A data frame.
-#' @param expected_col Unquoted column name of expected values.
-#' @param observed_cols One symbol or \code{c(sym1, sym2, ...)} of observed columns.
-#' @param group_cols Optional grouping columns supplied like
-#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
-#'   computes overall metrics (no grouping).
-#'
-#' @return A tibble with group columns (if any) and metric columns per observed variable.
-#'
-#' @importFrom dplyr group_by summarise distinct left_join bind_cols
-#' @importFrom rlang enquo enexpr is_call call_args as_quosure caller_env as_name
-#' @importFrom purrr map map_dbl
-#' @name vectorized_metrics
-
-
-# ---- CCC (DescTools::CCC) ----------------------------------------------------
-
-#' @rdname vectorized_metrics
-#' @export
-compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
-  stopifnot(is.data.frame(df))
-  expected_col <- rlang::enquo(expected_col)
-
-  # capture observed columns (symbol or c(...))
-  obs_expr <- rlang::enexpr(observed_cols)
-  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
-    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
-  }
-
-  # capture grouping columns (NULL/omitted => no groups)
-  grp_expr <- rlang::enexpr(group_cols)
-  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
-    list()
-  } else if (rlang::is_call(grp_expr, "c")) {
-    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
-  }
-
-  if (length(grp_quos) > 0) {
-    out <- df %>% dplyr::distinct(!!!grp_quos)
-    join_by_cols <- names(out)
-    for (q in obs_quos) {
-      obs_name <- rlang::as_name(q)
-      one <- df %>%
-        dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
-        dplyr::mutate(
-          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
-          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
-          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
-        ) %>%
-        dplyr::select(-.ccc)
-      out <- dplyr::left_join(out, one, by = join_by_cols)
-    }
-  } else {
-    pieces <- purrr::map(obs_quos, function(q) {
-      obs_name <- rlang::as_name(q)
-      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
-      tibble::tibble(
-        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
-        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
-        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
-      )
-    })
-    out <- dplyr::bind_cols(pieces)
-  }
-
-  out
-}
 
 ```
 
@@ -171,6 +76,7 @@ df_st <- tibble(
   sim_truth_path = list.files(
     input_config$sim_info_dir,
     pattern = "population_aa_variants_freqs_prevs.tsv.gz",
+    
     full.names = TRUE,
     recursive = TRUE
   )
@@ -325,7 +231,9 @@ df_tr <- tibble(
       paramset_id,
       levels = sort(unique(paramset_id))
     ),
-  )
+  ) %>%
+  # remove placeholder NAs
+  drop_na(obs_freq) 
 str(df_tr)
 #  $ sim_id     : Factor w/ 240 levels "simulated_Cambodia_pop_001",..: 1 1 1 1 1 1 1 1 1 1 ...
 #  $ paramset_id: Factor w/ 24 levels "idm_paramset1",..: 1 1 1 1 1 1 1 1 1 1 ...
@@ -411,9 +319,14 @@ str(df_st_tr_sp_tp)
 
 
 #### Bland-Altman Plots 
+```{r}
+df_st_tr_sp_tp  %>% mutate (is_fp = (exp_freq == 0), is_fn = (obs_freq == 0), is_tp = (exp_freq>0) & (obs_freq>0)) %>% select (is_fp, is_fn, is_tp) %>% count(is_fp, is_fn, is_tp)
+```
+
 
 ```{r}
 df_ba <-  df_st_tr_sp_tp %>% 
+    filter(obs_freq>0, exp_freq > 0) %>% # focusing on true positive allele (excluding false positive and false negative)
     add_diff_mean(expected_col = exp_freq, observed_col = obs_freq)
 df_ba
 
@@ -825,7 +738,7 @@ cat(create_tabsetOfGgplotObjects(list(
 
 
 
-#### False positive and false negatives
+<!-- #### False positive and false negatives -->
 
 ```{r}
 # True Positive is both estimator and expected is great than 0 
