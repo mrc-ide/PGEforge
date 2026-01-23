@@ -11,17 +11,16 @@ options(readr.show_col_types = FALSE)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-source("../scripts/benchmarking_functions.R")
+source("../../scripts/benchmarking_functions.R")
 ```
 
-
-
-
-
 ```{r, warning=FALSE, message=FALSE}
-
-
-inp <- list(sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria",tool_res_dir = "../../data/benchmarking/tool_results/naive_mlafp/",madhatter_res_dir = "../../data/benchmarking/tool_results/madhatter/",tool_params = "../../data/benchmarking/tool_results/naive_mlafp.json")
+inp <- list(
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria",
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_mlafp/",
+  madhatter_res_dir = "../../../data/benchmarking/tool_results/madhatter/",
+  tool_params = "../../../data/benchmarking/tool_results/naive_mlafp.json"
+)
 ```
 
 ```{r}
@@ -263,9 +262,9 @@ print(RMSE_byScenario_freq)
 ```
 
 
-```{r}
+## Concordance 
 
-#concordance 
+```{r}
 
 tool_results_Concordance_Freq <- tool_results_wtruth %>%
   group_by(
@@ -343,9 +342,9 @@ print(Concordance_byScenario_prev)
 
 ```
 
-```{r}
+## Bland-Altman Plots 
 
-#bland altman plots 
+```{r}
 
 tool_results_wtruth_BA<- tool_results_wtruth|>
   mutate(mean_freq= (obs_freq+exp_freq)/2, 
@@ -439,9 +438,9 @@ print(BA_plots[[7]])
 
 ```
 
-```{r}
-#false pos and false neg summaries 
+## False Positive and False Negative Summaries 
 
+```{r}
 tool_results_wtruth %>%
   group_by(
     sim_id, 
@@ -687,9 +686,9 @@ print(RMSE_byScenario_prev)
 ```
 
 
-```{r}
+## Concordance 
 
-#concordance 
+```{r}
 
 tool_results_Concordance_Prev <- tool_results_wtruth %>%
   group_by(
@@ -767,9 +766,9 @@ print(Concordance_byScenario_prev)
 
 ```
 
-```{r}
+## Bland-Altman Plots 
 
-#bland altman plots 
+```{r}
 
 tool_results_wtruth_BA<- tool_results_wtruth|>
   mutate(mean_prev= (obs_prev+exp_prev)/2, 
