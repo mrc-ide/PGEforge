@@ -49,8 +49,6 @@ library(DescTools) # CCC, Calculates Lin's concordance correlation coefficient
 
 ```{r}
 source("../scripts/benchmarking_functions.R")
-
-
 ```
 
 
@@ -69,6 +67,11 @@ First, all of the tool results, tool parameters, expected simulated values, and 
 
 ### Reading simulation truths (expected allele frequencies)
 
+Read simulation truths into a long table with columns:
+
+- `sim_id`: used to link back to simulation parameters
+- `variant`: defined as a combination of gene ID, genomic position, and amino acid variant
+- `exp_freq`: true allele frequencies.
 
 ```{r}
 # simulation truth data frame
@@ -119,12 +122,18 @@ df_st <- tibble(
     exp_freq
   )
 # str(df_st)
-#  $ sim_id  : chr [1:69053] "simulated_Cambodia_pop_001" "simulated_Cambodia_pop_001" "simulated_Cambodia_pop_001" "simulated_Cambodia_pop_001" ...
-#  $ variant : chr [1:69053] "PF3D7_0508900.1:935:Y" "PF3D7_0728200.1:543:N" "PF3D7_0728200.1:543:S" "PF3D7_1133400.1:121:E" ...
-#  $ exp_freq: num [1:69053] 1 0.379 0.621 1 1 ...
 ```
 
 ### Read simulation parameters
+
+Read the simulation parameters into a long table, which contains columns:
+
+- `sim_id`: simulation id
+- `country`: either Cambodia or Ghana
+- `coi_cat`: catgorical, COI parameter used in simulation
+- `between_sample_related_cat`: cateogrical, parameter used in simulation to control between-sample genetic relatedness
+- `nonrecombinant_cat`: categorical, parameter used in simulation to control the rate of recombination
+- `pop_cat`: combination of `coi_cat`, `between_sample_related_cat` and `nonrecombinant_cat`
 
 ```{r}
 # Read in all simulation parameters into one tibble --------------------
@@ -183,17 +192,16 @@ df_sp <- tibble(
          meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat))))) %>%
   select(-coi_p, -coi_r, -k_s, -pop_alpha)
 # str(df_sp)
-#  $ sim_id                    : Factor w/ 240 levels "simulated_Cambodia_pop_001",..: 1 2 3 4 5 6 7 8 9 10 ...
-#  $ country                   : Factor w/ 2 levels "Cambodia","Ghana": 1 1 1 1 1 1 1 1 1 1 ...
-#  $ true_mean_coi             : num [1:240] 1.33 1.28 3.82 3.9 1.36 1.44 4.1 3.43 1.33 1.31 ...
-#  $ coi_cat                   : Factor w/ 2 levels "MeanCOI=1.26",..: 1 1 2 2 1 1 2 2 1 1 ...
-#  $ between_sample_related_cat: Factor w/ 3 levels "_1%_related",..: 1 1 1 1 2 2 2 2 3 3 ...
-#  $ nonrecombinant_cat        : Factor w/ 2 levels "20%_non-recombinant",..: 2 1 2 1 2 1 2 1 2 1 ...
-#  $ meiosis_cat               : Factor w/ 2 levels "mean_meiosis=1.0",..: 1 2 1 2 1 2 1 2 1 2 ...
-#  $ pop_cat                   : Factor w/ 12 levels "_1%_related__MeanCOI=1.26__20%_non-recombinant",..: 2 1 4 3 6 5 8 7 10 9 ...
 ```
 
 ### Read tool (IDM) results
+
+Read tool results into a long table. The columns include:
+
+- `sim_id`:  simulation id (see above)
+- `paramset_id`: parameter id, each correspond to a combination of tool call parameters
+- `variant`: similar to a above, defined as a combination of gene id, genomic position, and amino acid variant
+- `obs_freq`: allele frequency reported by the tool (IDM)
 
 ```{r}
 # Read in all IDM results into one tibble ------------------------------
@@ -234,14 +242,17 @@ df_tr <- tibble(
   ) %>%
   # remove placeholder NAs
   drop_na(obs_freq) 
-str(df_tr)
-#  $ sim_id     : Factor w/ 240 levels "simulated_Cambodia_pop_001",..: 1 1 1 1 1 1 1 1 1 1 ...
-#  $ paramset_id: Factor w/ 24 levels "idm_paramset1",..: 1 1 1 1 1 1 1 1 1 1 ...
-#  $ variant    : chr [1:1548408] "PF3D7_0104100.1:304:R" "PF3D7_0104100.1:304:S" "PF3D7_0104100.1:311:E" "PF3D7_0104100.1:311:G" ...
-#  $ obs_freq   : num [1:1548408] NA NA 0.576 0.424 1 ...
+# str(df_tr)
 ```
 
 ### Read tool (IDM) parameters
+Read IDM tool calling parameters into a long table. The table contains:
+
+- `paramset_id`: parameter id, each correspond to a combination of tool (IDM) call parameters
+- `model`, `lambda_initial` and `eps_initial` are parameters used by IDM,
+see the [supplementary material](https://doi.org/10.1371/journal.pone.0287161.s003) of the correponding paper.
+
+
 ```{r}
 # Read in tool parameters, and join ------------------------------------
 df_tp <- jsonlite::fromJSON(input_config$tool_params) %>%
@@ -254,22 +265,14 @@ df_tp <- jsonlite::fromJSON(input_config$tool_params) %>%
     lambda_initial = factor(lambda_initial)
   )
 # str(df_tp)
-#  $ paramset_id   : Factor w/ 24 levels "idm_paramset1",..: 1 12 18 19 20 21 22 23 24 2 ...
-#  $ model         : Factor w/ 2 levels "OM","IDM": 1 2 1 2 1 2 1 2 1 2 ...
-#  $ lambda_initial: Factor w/ 4 levels "0.1","0.3","1",..: 1 1 1 1 1 1 2 2 2 2 ...
-#  $ eps_initial   : Factor w/ 3 levels "0.015","0.1",..: 1 1 2 2 3 3 1 1 2 2 ...
 ```
 
 ### Join tables
 
+Combining simulation truths, tool results, simulation parameters and tool call parameters into a long table.
+
 ```{r}
-df_tr_wide <- df_tr%>% pivot_wider(names_from = paramset_id, values_from = obs_freq) 
-# A tibble: 64,517 × 26
-#    sim_id     variant idm_paramset1 idm_paramset10 idm_paramset11 idm_paramset12
-#    <fct>      <chr>           <dbl>          <dbl>          <dbl>          <dbl>
-#  1 simulated… PF3D7_…        NA             NA             NA             NA    
-#  3 simulated… PF3D7_…         0.576          0.576          0.576          0.576
-#  5 simulated… PF3D7_…         1              1              1              1    
+df_tr_wide <- df_tr%>% pivot_wider(names_from = paramset_id, values_from = obs_freq)
 
 # NOTE: here, pivot_wider and then pivot_long were called to ensure that there
 # is a record for any variants that were true positives or false positives in any
@@ -282,54 +285,31 @@ df_st_tr_sp_tp <- df_st %>%
   select(sim_id, variant, paramset_id, obs_freq, exp_freq) %>%
   left_join(df_sp, by = "sim_id") %>%
   left_join(df_tp, by = "paramset_id") 
-str(df_st_tr_sp_tp)
-# tibble [1,692,552 × 15] (S3: tbl_df/tbl/data.frame)
-#  $ sim_id                    : chr [1:1692552] "simulated_Cambodia_pop_001" "simulated_Cambodia_pop_001" 
-#  $ variant                   : chr [1:1692552] "PF3D7_0508900.1:935:Y" "PF3D7_0508900.1:935:Y" "PF3D7_0508900.1:935:Y" "PF3D7_0508900.1:935:Y" ...
-#  $ paramset_id               : chr [1:1692552] "idm_paramset1" "idm_paramset10" "idm_paramset11" "idm_paramset12" ...
-#  $ obs_freq                  : num [1:1692552] 1 1 1 1 1 1 1 1 1 1 ...
-#  $ exp_freq                  : num [1:1692552] 1 1 1 1 1 1 1 1 1 1 ...
-#  $ country                   : Factor w/ 2 levels "Cambodia","Ghana": 1 1 1 1 1 1 1 1 1 1 ...
-#  $ true_mean_coi             : num [1:1692552] 1.33 1.33 1.33 1.33 1.33 1.33 1.33 1.33 1.33 1.33 ...
-#  $ coi_cat                   : Factor w/ 2 levels "MeanCOI=1.26",..: 1 1 1 1 1 1 1 1 1 1 ...
-#  $ between_sample_related_cat: Factor w/ 3 levels "_1%_related",..: 1 1 1 1 1 1 1 1 1 1 ...
-#  $ nonrecombinant_cat        : Factor w/ 2 levels "20%_non-recombinant",..: 2 2 2 2 2 2 2 2 2 2 ...
-#  $ meiosis_cat               : Factor w/ 2 levels "mean_meiosis=1.0",..: 1 1 1 1 1 1 1 1 1 1 ...
-#  $ pop_cat                   : Factor w/ 12 levels "_1%_related__MeanCOI=1.26__20%_non-recombinant",..: 2 2 2 2 2 2 2 2 2 2 ...
-#  $ model                     : Factor w/ 2 levels "OM","IDM": 1 2 1 2 1 2 1 2 1 2 ...
-#  $ lambda_initial            : Factor w/ 4 levels "0.1","0.3","1",..: 1 2 2 2 3 3 3 3 3 3 ...
-#  $ eps_initial               : Factor w/ 3 levels "0.015","0.1",..: 1 2 3 3 1 1 2 2 3 3 ...
-
+# str(df_st_tr_sp_tp)
 ```
 
 
 
 ## Benchmarking 
 
+IDM estimates the frequency of each lineage (allele) and the population-level MOI parameter.
+Here, we primarily focus on benchmarking the allele frequency estimates.
 
 ### Allele frequencies
 
 #### Metrics 
 
-*  Plotting Bland-Altman plots (plotting the mean of expected and observed frequencies vs their difference) 
-*  Calculating the RMSE (taking the square root of the mean squared difference between expected and observed)  
-*  Calculating [Lin's concordance correlation coefficient](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC) for agreement on a continuous measure 
-*  Calculating contingency table metrics for false positive and false negatives  
-
-
+- Plotting Bland-Altman plots (plotting the mean of expected and observed frequencies vs their difference) 
+- Calculating [Lin's concordance correlation coefficient](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC) for agreement on a continuous measure 
+- Calculating contingency table metrics for false positive and false negatives  
 
 #### Bland-Altman Plots 
-```{r}
-df_st_tr_sp_tp  %>% mutate (is_fp = (exp_freq == 0), is_fn = (obs_freq == 0), is_tp = (exp_freq>0) & (obs_freq>0)) %>% select (is_fp, is_fn, is_tp) %>% count(is_fp, is_fn, is_tp)
-```
-
 
 ```{r}
 df_ba <-  df_st_tr_sp_tp %>% 
     filter(obs_freq>0, exp_freq > 0) %>% # focusing on true positive allele (excluding false positive and false negative)
     add_diff_mean(expected_col = exp_freq, observed_col = obs_freq)
-df_ba
-
+uniq_parmset_ids <- df_ba %>% distinct(paramset_id) %>% pull(paramset_id)
 ```
 
 First, all of the differences between predicted and expected frequencies were 
@@ -355,20 +335,8 @@ overestimates in the middle of the range, but these are the minority.
 Note that false negatives and false positives were excluded from the analysis 
 in this section - those are analyzed further below.
 
-2. Showing the different parameter sets 
-  - Results are not so sensitive to variations in tool parameters used.
 
-```{r}
-#| fig-width: 20
-#| fig-height: 12
-make_bland_altman_plot_by_label(df_ba, "obs_freq") + 
-  facet_wrap(~paramset_id, ncol = 8)
-```
-
-
-3. Showing the different population characteristics 
-  - Larger errors occur in simulations with higher COIs and higher relatedness
-  - Recombination parameters seem to have little impact 
+Next, similar analyses were conducted using data grouped by various simulation parameters.
 
 ```{r}
 #| fig-width: 20
@@ -376,156 +344,34 @@ make_bland_altman_plot_by_label(df_ba, "obs_freq") +
 make_bland_altman_plot_by_label(df_ba, "obs_freq") + 
   facet_grid(between_sample_related_cat ~interaction(coi_cat, nonrecombinant_cat, sep = "\n"))
 ```
-
+From grouped Bland-Altman plots, higher COIs show a pattern of larger errors (`MeanCOI=3.41` vs `MeanCOI=1.26`).
+Recombination parameters and relatedness generally have little impact, except when `MeanCOI=3.41`,
+where high relatedness (`30%_related`) and low recombination (`50%_non-recombinant`) result in higher errors compared to other combinations.
+  
 
 #### Concordance 
 
-1. Overall 
+1. The General Pattern
+
+The paired plots show the distributions of expected and true allele frequencies (top left and bottom right),
+along with concordance dot plots (bottom left) and statistics (top right). In this analysis, false positives (FP) (expected frequency is 0/NA, but observed frequency is non-NA and non-zero) and false negatives (FN) (observed frequency is 0/NA, but expected frequency is non-NA and non-zero) are excluded. The analysis of FP and FN is performed separately below. The Concordance Correlation Coefficient (CCC) measures the agreement between two continuous, paired observations (e.g., test vs. gold standard) by evaluating how closely they fall on the y=x line of perfect concordance. Ranging from -1 to 1, a CCC of 1 indicates perfect agreement. This metric is used extensively below.
 
 ```{r}
 ggpairs(df_ba, columns = c("exp_freq", "obs_freq"), lower = list(continuous = wrap(my_hex)),
         diag  = list(continuous = wrap("barDiag", binwidth = 0.05)), 
         upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)), 
         title = "all")
-
 ```
+With FP/FNs excluded, the allele frequency estimated by IDM is highly consistent with the expected frequencies (ground truth from simulation):
+similar distributions, high concordance, and high correlations, with the scatter plots generally symmetric along the expected line (bottom left plots).
 
+2. Concordance by Tool Parameter Sets
 
-2. Plotting difference parameter sets  
-  - Results are not so sensitive to variations in tool parameters used.
-
-```{r}
-uniq_parmset_ids <- df_ba %>% distinct(paramset_id) %>% pull(paramset_id)
-
-res <- lapply(uniq_parmset_ids, function(ps_id){
-  ggpairs(df_ba %>% filter(paramset_id == ps_id), 
-                        columns = c("exp_freq", "obs_freq"), 
-                        lower = list(continuous = wrap(my_hex)), 
-                        diag  = list(continuous = wrap("barDiag", binwidth = 0.05)), 
-                        upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)), 
-                        title = ps_id)
-  }
-) 
-
-names(res) <- uniq_parmset_ids
-```
-
-
-```{r}
-#| results: asis
-#| echo: false
-#| fig-column: screen-inset
-
-cat(create_tabsetOfGgplotObjects(res))
-```
-
-3. Different population metrics 
-
-
-3.1. COI categories 
-- Higher COI corresponds to lower concordance.
-
-```{r}
-tmp1 = ggpairs(df_ba %>% filter(coi_cat == "MeanCOI=1.26"),
-        columns = c("exp_freq", "obs_freq"),
-        lower = list(continuous = wrap(my_hex)),
-        diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-        upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-        title = "MeanCOI=1.26")
-tmp2 = ggpairs(df_ba %>% filter(coi_cat == "MeanCOI=3.41"),
-        columns = c("exp_freq", "obs_freq"),
-        lower = list(continuous = wrap(my_hex)),
-        diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-        upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-        title = "MeanCOI=3.41")
-
-```
-
-```{r}
-#| results: asis
-#| echo: false
-#| fig-column: screen-inset
-
-cat(create_tabsetOfGgplotObjects(list("MeanCOI_1.26" = tmp1, "MeanCOI_3.41" = tmp2)))
-```
-
-
-3.2. between sample related categories 
-- CCC values:
-  - 0.1% related: 0.808
-  - 10%  related: 0.816
-  - 30%  related: 0.794
-
-```{r}
-tmp1 = ggpairs(df_ba %>%
-         filter(between_sample_related_cat == "_1%_related"),
-       columns = c("exp_freq", "obs_freq"),
-       lower = list(continuous = wrap(my_hex)),
-       diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-       upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-       title = "_1%_related")
-tmp2 = ggpairs(df_ba %>%
-         filter(between_sample_related_cat == "10%_related"),
-       columns = c("exp_freq", "obs_freq"),
-       lower = list(continuous = wrap(my_hex)),
-       diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-       upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-       title = "10%_related")
-tmp3 = ggpairs(df_ba %>%
-         filter(between_sample_related_cat == "30%_related"),
-       columns = c("exp_freq", "obs_freq"),
-       lower = list(continuous = wrap(my_hex)),
-       diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-       upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-       title = "30%_related")
-```
-
-```{r}
-#| results: asis
-#| echo: false
-#| fig-column: screen-inset
-
-cat(create_tabsetOfGgplotObjects(
-  list("_1perc_between_sample_related" = tmp1,
-       "10perc_between_sample_related" = tmp2, 
-       "30perc_between_sample_related" = tmp3 
-       )))
-```
-
-3.3. Recombination categories 
-- CCC value:
-  - 50% non-recombinant: 0.802
-  - 20% non-recombinant: 0.812
-```{r}
-tmp1 = ggpairs(df_ba %>% filter(nonrecombinant_cat == "50%_non-recombinant"),
-              columns = c("exp_freq", "obs_freq"),
-              lower = list(continuous = wrap(my_hex)),
-              diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-              upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-              title = "50%_non-recombinant")
-tmp2 = ggpairs(df_ba %>% filter(nonrecombinant_cat == "20%_non-recombinant"),
-              columns = c("exp_freq", "obs_freq"),
-              lower = list(continuous = wrap(my_hex)),
-              diag  = list(continuous = wrap("barDiag", binwidth = 0.05)),
-              upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-              title = "20%_non-recombinant")
-```
-
-```{r}
-#| results: asis
-#| echo: false
-#| fig-column: screen-inset
-
-cat(create_tabsetOfGgplotObjects(list("20perc_non_recomb" = tmp2,
-                                      "50perc_non_recomb" = tmp1
-                                      )))
-```
-
-##### Concordance Correlation Coefficient (CCC) 
 
 ```{r}
 # calculate Concordance Correlation Coefficient (CCC) 
-df_ccc <-  compute_ccc( df_st_tr_sp_tp,
+df_ccc <-  compute_ccc(
+    df_st_tr_sp_tp %>% filter(obs_freq>0, exp_freq > 0), # focusing on true positive allele (excluding false positive and false negative),
     expected_col  = exp_freq,
     observed_cols = obs_freq,
     group_cols    = c(sim_id, paramset_id)
@@ -541,8 +387,6 @@ df_ccc_gat =
 
 ```
 
-1. CCC over all comparing parameter sets
-  - no big difference
 
 ```{r}
 ggplot(df_ccc_gat %>% mutate(paramset_id = factor(paramset_id, level = uniq_parmset_ids))) +
@@ -553,6 +397,15 @@ ggplot(df_ccc_gat %>% mutate(paramset_id = factor(paramset_id, level = uniq_parm
 
 
 ```
+Despite variations in tool parameter sets,
+the concordance between expected and observed allele frequencies remains relatively consistent,
+indicating that IDM is robust against changes in test parameters.
+
+
+
+3. Concordance by simulation parameters
+
+
 
 ```{r}
 #| results: asis
@@ -572,12 +425,6 @@ create_tabsetOfHtmlWidgets <- function(htmlObjectsList) {
 }
 
 
-```
-
-2. CCC on the different simulation population characteristics 
-   - Higher COI corresponds to lower concordance.
-
-```{r}
 tmp1 =  ggplot(df_ccc_gat) +
   geom_boxplot( aes(x = pop_cat, y = ccc, fill = country) ) +
   custom_ggplot_theme_xRotate + 
@@ -611,153 +458,31 @@ tmp4 = ggplot(df_ccc_gat) +
 #| fig-height: 8
 
 cat(create_tabsetOfGgplotObjects(list(
-  "relatedness x coi x recombination x country" = tmp1,
   "relatedness x country" = tmp2,
   "recombinantion x country" = tmp3,
-  "coi x country" = tmp4
+  "coi x country" = tmp4,
+  "relatedness x coi x recombination x country" = tmp1
 )))
 ```
+Concordance do varies with different simulation parameters
 
-#### RMSE   
-```{r}
-#' @rdname vectorized_metrics
-#' @export
-compute_rmse <- function(df, expected_col, observed_cols, group_cols = NULL) {
-  stopifnot(is.data.frame(df))
-  expected_col <- rlang::enquo(expected_col)
-
-  obs_expr <- rlang::enexpr(observed_cols)
-  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
-    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
-  }
-
-  grp_expr <- rlang::enexpr(group_cols)
-  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
-    list()
-  } else if (rlang::is_call(grp_expr, "c")) {
-    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
-  }
-
-  metric_fun <- function(q) {
-    obs_name <- rlang::as_name(q)
-    if (length(grp_quos) > 0) {
-      df %>%
-        dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(
-          !!paste0(obs_name, "_rmse") := {
-            x <- !!q; y <- !!expected_col
-            ok <- !is.na(x) & !is.na(y) & (x>0) & (x<1) & (y>0) & (y<1)
-            n  <- sum(ok)
-            if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
-          },
-          .groups = "drop"
-        )
-    } else {
-      dplyr::summarise(df,
-        !!paste0(obs_name, "_rmse") := {
-          x <- !!q; y <- !!expected_col
-          ok <- !is.na(x) & !is.na(y)
-          n  <- sum(ok)
-          if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
-        }
-      )
-    }
-  }
-
-  if (length(grp_quos) > 0) {
-    out <- df %>% dplyr::distinct(!!!grp_quos)
-    join_by_cols <- names(out)
-    for (q in obs_quos) {
-      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
-    }
-  } else {
-    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
-  }
-
-  out
-}
-
-```
-
-```{r}
-# calculate RMSE 
-df_rmse = df_st_tr_sp_tp %>%
-  compute_rmse(
-    expected_col  = exp_freq,
-    observed_cols = obs_freq,
-    group_cols    = c(sim_id, paramset_id)
-  )
-
-# Gather into long format, left join in the simulation parameters
-df_rmse_gat = df_rmse %>%
-  gather(allele_freq_estimate, rmse, 3:ncol(.)) %>%
-  mutate(allele_freq_estimate = gsub("_rmse", "", allele_freq_estimate))%>%
-  left_join(df_sp)
-```
+- Concordance is generally lower in Cambodia when compared with Ghana
+- Lower concordance is associated with high MeanCOI
+- Relatedness parameter has little effect on the concordance, however,
+however in combination with low recombination (`50%_nonrecombiant`) and high COI (`MeanCOI=3.41`),
+high relatedness is associated with low concordance.
 
 
-1. RMSE over all  parameter sets
-  - no differences
+#### False positive and false negatives
+
+The analyses below focus on all rows including zero or NA values for `obs_freq` or `exp_freq` columns.
+False Positives (FPs) and False Negatives (FNs), along with True Positives, are analyzed (exact values are omitted). 
 
 ```{r}
 #| echo: false
 #| results: asis
 #| fig-width: 8
 #| fig-height: 8
-ggplot(df_rmse_gat %>% mutate(paramset_id = factor(paramset_id, level = uniq_parmset_ids))) +
-  geom_boxplot( aes( y = rmse, x = paramset_id) ) +
-  custom_ggplot_theme_xRotate +
-  theme_minimal() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-```
-
-
-2. RMSE on the different simulation population characteristics 
-  - Higher COI corresponds to higher RMSE
-
-```{r}
-
-tmp1 = ggplot(df_rmse_gat) +
-  geom_boxplot( aes(x = pop_cat, y = rmse, fill = country) ) +
-  custom_ggplot_theme_xRotate
-
-tmp2 = ggplot(df_rmse_gat) +
-  geom_boxplot( aes(x = between_sample_related_cat, y = rmse, fill = country) ) +
-  custom_ggplot_theme_xRotate
-
-tmp3 = ggplot(df_rmse_gat) +
-  geom_boxplot( aes(x = nonrecombinant_cat, y = rmse, fill = country) ) +
-  custom_ggplot_theme_xRotate
-
-tmp4 = ggplot(df_rmse_gat) +
-  geom_boxplot( aes(x = coi_cat, y = rmse, fill = country) ) +
-  custom_ggplot_theme_xRotate
-
-```
-
-```{r}
-#| echo: false
-#| results: asis
-#| fig-width: 8
-#| fig-height: 8
-
-cat(create_tabsetOfGgplotObjects(list(
-  "relatedness x coi x recombination x country" = tmp1,
-  "relatedness x country" = tmp2,
-  "recombination x country" = tmp3,
-  "coi x country" = tmp4
-
-)))
-```
-
-
-
-<!-- #### False positive and false negatives -->
-
-```{r}
 # True Positive is both estimator and expected is great than 0 
 # False Negative is that expected > 0 and estimator is 0 
 # False Positive is that expected is 0 and estimator is > 0
@@ -775,74 +500,28 @@ hap_metric_map <- c(
   "False Discovery Rate" = "fdr",
   "Overlap Coefficient"  = "overlap_coefficient"
 )
-```
-
-
-1. all
-
-```{r}
-#| echo: false
-#| results: asis
-#| fig-width: 8
-#| fig-height: 8
 tmp <-bind_rows(
   df_fnfp %>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='all'),
+  # df_fnfp %>% filter (obs_freq != 0) %>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='NA removed'),
 )
 radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
-
 ```
+The radar plot indicates generally high values for:
 
+- Recall: the ability of IDM to identify all actual positives
+- Precision: the quality of positive predictions
+- Negative Predictive Value (NPV): the reliability of negative predictions
+- F1-Score: the harmonic mean of Precision and Recall
 
+Also, there is a relatively low value for:
 
-2. Different coi, relatedness, recombination, and country
-  - low coi and cambodia is associated with better accuracy metrics
+- False Discovery Rate (FDR): the complement of Precision
 
-```{r}
-#| echo: false
-#| results: asis
-#| fig-width: 8
-#| fig-height: 8
+The results suggests a generally good quality of IDM estimates of the presence of alleles.
 
-# coi_cat
-tmp <-bind_rows(
-  df_fnfp %>% filter(coi_cat == "MeanCOI=1.26")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='MeanCOI=1.26'),
-  df_fnfp %>% filter(coi_cat == "MeanCOI=3.41")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='MeanCOI=3.41'),
+## Summary
 
-)
-tmp1 <- radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
-
-# between_sample_related_cat
-tmp <-bind_rows(
-  df_fnfp %>% filter(between_sample_related_cat == "_1%_related")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='_1%_related'),
-  df_fnfp %>% filter(between_sample_related_cat == "10%_related")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='10%_related'),
-  df_fnfp %>% filter(between_sample_related_cat == "30%_related")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='30%_related')
-)
-tmp2 <- radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
-
-# nonrecombinant_cat
-tmp <-bind_rows(
-  df_fnfp %>% filter(nonrecombinant_cat == "50%_non-recombinant")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='50%_non-recombinant'),
-  df_fnfp %>% filter(nonrecombinant_cat == "20%_non-recombinant")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='20%_non-recombinant')
-)
-tmp3 <- radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
-
-# country
-tmp <-bind_rows(
-  df_fnfp %>% filter(country == "Cambodia")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='Cambodia'),
-  df_fnfp %>% filter(country == "Ghana")%>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='Ghana')
-)
-tmp4 <- radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
-
-cat(create_tabsetOfGgplotObjects(list(
-  'coi' = tmp1,
-  "relatedness" = tmp2,
-  "recombination" = tmp3,
-  "country" = tmp4
-)))
-
-```
-
-
-
-
-
+The allele frequencies estimated by IDM are highly accurate when excluding false positives and false negatives.
+Accuracy may be slightly impacted by population parameters, such as higher error rates in Ghana compared to Cambodia, and in populations with higher COI.
+IDM shows robustness to the tested variations in its parameter values.
+When false positives and false negatives are included with true positives, IDM maintains good performance, with an FDR of approximately 0.24, a recall of 0.92, and an F1-score of 0.84.
