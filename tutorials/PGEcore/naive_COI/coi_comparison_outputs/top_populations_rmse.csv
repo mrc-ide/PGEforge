@@ -1,0 +1,21 @@
+sim_id,paramset_id,country,pop_alpha,coi_p,coi_r,k_s,n_samples,n_rows,rmse,mae,bias,pop_alpha_f,k_s_f,coi_r_f,coi_p_f
+simulated_Cambodia_pop_007,naive_coi_paramset1,Cambodia,9,0.2,0.5,0.5,100,100,5.1176166327695904,2.33,-2.33,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_027,naive_coi_paramset1,Cambodia,99,0.2,0.5,0.5,100,100,4.787483681434328,2.04,-2.04,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_007,naive_coi_paramset2,Cambodia,9,0.2,0.5,0.5,100,100,4.774934554525332,2.02,-2.02,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_060,naive_coi_paramset1,Ghana,2.33,0.2,0.5,0.2,100,100,4.769696007084728,2.13,-2.13,High Sim. Rel,High Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_007,naive_coi_paramset3,Cambodia,9,0.2,0.5,0.5,100,100,4.6097722286464435,1.83,-1.73,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_015,naive_coi_paramset1,Cambodia,99,0.2,0.5,0.5,100,100,4.565084884205333,2.24,-2.24,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_060,naive_coi_paramset2,Ghana,2.33,0.2,0.5,0.2,100,100,4.554119014694279,1.96,-1.96,High Sim. Rel,High Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_051,naive_coi_paramset1,Ghana,99,0.2,0.5,0.5,100,100,4.485532298401164,2.14,-2.14,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_007,naive_coi_paramset6,Cambodia,9,0.2,0.5,0.5,100,100,4.47213595499958,1.78,-1.68,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_059,naive_coi_paramset1,Ghana,2.33,0.2,0.5,0.5,100,100,4.421538193886832,1.75,-1.75,High Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_027,naive_coi_paramset2,Cambodia,99,0.2,0.5,0.5,100,100,4.36233882223745,1.59,-1.59,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_043,naive_coi_paramset1,Cambodia,9,0.2,0.5,0.5,100,100,4.318564576337839,2.57,-2.57,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_063,naive_coi_paramset1,Cambodia,99,0.2,0.5,0.5,100,100,4.275511665286393,2.16,-2.16,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_071,naive_coi_paramset1,Cambodia,2.33,0.2,0.5,0.5,100,100,4.255584566190641,2.35,-2.35,High Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_079,naive_coi_paramset1,Cambodia,9,0.2,0.5,0.5,100,100,4.252058325093858,2.16,-2.16,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_060,naive_coi_paramset6,Ghana,2.33,0.2,0.5,0.2,100,100,4.236744032862973,1.71,-1.67,High Sim. Rel,High Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_060,naive_coi_paramset3,Ghana,2.33,0.2,0.5,0.2,100,100,4.236744032862968,1.71,-1.63,High Sim. Rel,High Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_007,naive_coi_paramset5,Cambodia,9,0.2,0.5,0.5,100,100,4.22729227756965,1.77,-1.19,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Ghana_pop_043,naive_coi_paramset1,Ghana,9,0.2,0.5,0.5,100,100,4.219004621945801,1.74,-1.74,Med. Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2
+simulated_Cambodia_pop_027,naive_coi_paramset3,Cambodia,99,0.2,0.5,0.5,100,100,4.192851058647328,1.52,-1.26,Low Sim. Rel,Med. Recombination,Med. COI/Prop. Polyclonal,0.2

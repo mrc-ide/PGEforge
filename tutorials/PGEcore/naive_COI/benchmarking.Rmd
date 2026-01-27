@@ -1,0 +1,657 @@
+---
+title: "Benchmarking Naive COI Tool"
+output: html_document
+author: "Bassirou NGOM"
+date: "August, 11th 2025"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r packages, include=FALSE}
+# Packages
+suppressPackageStartupMessages({
+  library(readr)
+  library(dplyr)
+  library(stringr)
+  library(ggplot2)
+  library(tidyr)
+  library(purrr)
+  library(scales)
+  library(jsonlite)
+  library(magrittr)
+  library(tibble)
+  library(patchwork)
+
+
+inp <- list(
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_coi", 
+  tool_params = "../../../data/benchmarking/tool_results/naive_coi.json",
+  out_dir = "../../../coi_comparison_outputs"
+)
+params <- list(
+  top_n_pops = 20
+)
+})
+```
+
+## Data Loading and Preparation
+This section reads in the simulation data, tool results, and parameters needed for the analysis.
+The simulation data includes the expected COI values and parameters used in the simulations. The tool results are the outputs from the Naive COI tool, which estimates COI based on the simulated data.
+All these data are read into a tibble.
+
+```{r read_simulation_data, include=FALSE}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "output_numbers.tsv", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        target = col_character(), 
+        sample_name = col_character(),
+        hap_expected_relative_abundance = col_double(), 
+      ), 
+      progress = FALSE
+    )
+  )
+```
+
+```{r sim_truth_processing, include=FALSE}
+
+sim_truth <- sim_truth %>%
+  unnest(sim_truth) %>%
+  mutate(sim_id = basename(dirname(sim_truth_path))) %>%
+  rename(
+    sample_id = sample_name,  # sample_id
+    sim_COI = COI, 
+  ) %>%
+  select(
+    -expected_total_sample_reads, 
+    -target,
+    -total_reads_for_target,
+    -hap_id,
+    -expected_starting_template,
+    -hap_expected_relative_abundance,
+    -sample_target_starting_template,
+    -hap_pcred_sample_counts,
+    -hap_sampled_starting_template,
+    -total_pcr_count,
+    -non_chimera_total_pcr_count,
+    -sim_truth_path
+  ) %>%
+  distinct(sample_id, sim_COI, sim_id)
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -obs_freq_monoclonal,
+    -obs_non_recombinant,
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+
+#sim_params
+
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+#sim_truth
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>% # compute sim_id from the path. 
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(),
+        specimen_id = col_character(),
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  mutate(
+    specimen_id = as.character(specimen_id),
+    specimen_id = sub("_.*$", "", specimen_id)
+  )%>%
+  rename(
+    sample_id = specimen_id, 
+    tool_coi = coi
+  ) 
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble() %>%
+  mutate(mean_coi_tool_param = paramset$coi) %>%
+  select(-paramset)
+
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+#tool_results
+# Join everything into one tibble --------------------------------------
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "sample_id"))
+
+```
+
+```{r tool_results_wtruth, include=TRUE}
+tool_results_wtruth
+#save to csv
+write_csv(tool_results_wtruth, "coi_comparison_outputs/tool_results_wtruth.csv")
+```
+
+
+## sample level Root Mean Square Error (RMSE) estimation 
+This section computes the RMSE (Root Mean Square Error) at the sample level, compares the tool's estimated COI against the simulated COI for each sample. It also calculates the mean absolute error (MAE) and bias.
+
+```{r sample_rmse, include=TRUE}
+# Add error columns
+tool_results_wtruth <- tool_results_wtruth %>%
+  mutate(
+    error     = tool_coi - sim_COI,
+    abs_error = abs(error),
+    sq_error  = (tool_coi - sim_COI)^2
+  )
+
+sample_rmse <- tool_results_wtruth %>%
+  group_by(sample_id, paramset_id, country, pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_rows = n(),
+    rmse   = sqrt(mean(sq_error, na.rm = TRUE)),
+    mae    = mean(abs_error, na.rm = TRUE),
+    bias   = mean(error, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+readr::write_csv(sample_rmse, file.path(inp$out_dir, "sample_level_rmse.csv"))
+head(sample_rmse)
+
+
+```
+## Population-level RMSE (per sim_id, respecting parameters)
+This section computes the RMSE at the population level, aggregating results across all samples within each simulation. It also calculates the mean absolute error (MAE) and bias for each population.
+
+```{r pop_rmse, include=TRUE}
+pop_rmse <- tool_results_wtruth %>%
+  group_by(sim_id, paramset_id, country, pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_samples = n_distinct(sample_id),
+    n_rows    = n(),
+    rmse      = sqrt(mean(sq_error, na.rm = TRUE)),
+    mae       = mean(abs_error, na.rm = TRUE),
+    bias      = mean(error, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+readr::write_csv(pop_rmse, file.path(inp$out_dir, "population_level_rmse.csv"))
+head(pop_rmse)
+
+```
+
+## Detrmining  factor for plots
+this section prepares the data for plotting by converting the parameters into factors with meaningful labels. This will help in creating more interpretable plots.
+
+```{r factor_levels, include=TRUE}
+pop_rmse_plot <- pop_rmse %>%
+  mutate(
+    pop_alpha_f = factor(
+      as.character(pop_alpha),
+      c("2.33","9","99"),
+      labels = c("High Sim. Rel","Med. Sim. Rel","Low Sim. Rel")
+    ),
+    k_s_f = factor(
+      as.character(k_s),
+      c("0.5","0.2"),
+      labels = c("Med. Recombination","High Recombination")
+    ),
+    coi_r_f = factor(
+      as.character(coi_r),
+      c("0.25","0.5"),
+      labels = c("Low COI/Prop. Polyclonal","Med. COI/Prop. Polyclonal")
+    ),
+    coi_p_f = as.factor(coi_p)
+  )
+
+sample_rmse_plot <- sample_rmse %>%
+  mutate(
+    pop_alpha_f = factor(
+      as.character(pop_alpha),
+      c("2.33","9","99"),
+      labels = c("High Sim. Rel","Med. Sim. Rel","Low Sim. Rel")
+    ),
+    k_s_f = factor(
+      as.character(k_s),
+      c("0.5","0.2"),
+      labels = c("Med. Recombination","High Recombination")
+    ),
+    coi_r_f = factor(
+      as.character(coi_r),
+      c("0.25","0.5"),
+      labels = c("Low COI/Prop. Polyclonal","Med. COI/Prop. Polyclonal")
+    ),
+    coi_p_f = as.factor(coi_p)
+  )
+
+```
+
+## Plot RMSE distribution by parameters (Sample-level)
+here, we create a boxplot to visualize the distribution of RMSE values at the sample level, grouped by the simulated relatedness (pop_alpha), COI parameters (coi_p, coi_r), and recombination rate (k_s). This helps in understanding how these parameters affect the RMSE of the tool's COI estimates.
+
+```{r sample_rmse_plot, include=TRUE}
+p_sample_box <- ggplot(sample_rmse_plot, aes(x = pop_alpha_f, y = rmse, color = coi_p_f, fill=country)) +
+  geom_boxplot(outlier.shape = NA)+
+  coord_cartesian(ylim = quantile(sample_rmse_plot$rmse, c(0.01, 0.99), na.rm = TRUE)) +
+  facet_grid(rows = vars(k_s_f), cols = vars(coi_r_f)) +
+  labs(
+    x = "Simulated Relatedness (pop_alpha)",
+    y = "Sample-level RMSE (tool vs sim COI)",
+    color = "coi_p",
+    title = "Sample-level RMSE by pop_alpha, coi_r, k_s"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
+
+p_sample_box
+ggsave(file.path(inp$out_dir, "sample_level_rmse_box.png"), p_sample_box, width = 9, height = 7, dpi = 300)
+
+```
+
+For low simulated relatedness (pop_alpha = 99), the RMSE is generally higher, indicating that the tool struggles more with estimating COI when the relatedness is low. In contrast, for high simulated relatedness (pop_alpha = 2.33), the RMSE tends to be lower, suggesting better performance. The COI parameters (coi_p and coi_r) and recombination rates (k_s) also influence the RMSE, with different combinations leading to varying levels of error in the tool's COI estimates.
+
+low COI/Proportion Polyclonal (coi_r = 0.25) generally results in lower RMSE compared to medium COI/Proportion Polyclonal (coi_r = 0.5), indicating that the tool performs better when the COI is lower or when there is a lower proportion of polyclonal infections.
+
+##Distribution of sample mean-COI errors
+We now visualize the distribution of sample-level RMSE values across all samples. This histogram provides insights into the overall performance of the tool in estimating COI across different samples.
+```{r sample_rmse_dist, include=TRUE}
+p_sample_rmse_dist <- ggplot(sample_rmse_plot, aes(x = rmse)) +
+  geom_histogram(bins = 40) +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  labs(
+    x = "Sample-level RMSE (tool COI − simulated COI)",
+    y = "Number of samples",
+    title = "RMSE Distribution Across Samples"
+  ) +
+  theme_minimal(base_size = 12)
+p_sample_rmse_dist
+```
+
+The histogram of sample-level RMSE shows the distribution of errors across all samples. The dotted line at zero indicates where there is no error. A balanced distribution around zero suggests that the tool's estimates are generally accurate, while a skewed distribution may indicate systematic over- or under-estimation by the tool.
+
+## Plot RMSE distribution by parameters (Population-level)
+Below, we create a boxplot to visualize the distribution of RMSE values at the population level, grouped by the simulated relatedness (pop_alpha), COI parameters (coi_p, coi_r), and recombination rate (k_s). This helps in understanding how these parameters affect the RMSE of the tool's COI estimates across populations.
+
+```{r pop_rmse_plot, include=TRUE}
+p_pop_box <- ggplot(pop_rmse_plot, aes(x = pop_alpha_f, y = rmse, color = coi_p_f, fill=country)) +
+  geom_boxplot(outlier.shape = NA) +
+  coord_cartesian(ylim = quantile(pop_rmse_plot$rmse, c(0.01, 0.99), na.rm = TRUE)) +
+  facet_grid(rows = vars(k_s_f), cols = vars(coi_r_f)) +
+  labs(
+    x = "Simulated Relatedness (pop_alpha)",
+    y = "Population-level RMSE (tool vs sim COI)",
+    color = "coi_p",
+    title = "Population-level RMSE by pop_alpha, coi_r, k_s"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
+
+p_pop_box
+ggsave(file.path(inp$out_dir, "population_level_rmse_box.png"), p_pop_box, width = 9, height = 7, dpi = 300)
+
+```
+
+
+##Population means and mean-COI error
+For each population (sim_id), we compute the mean tool COI and mean simulated COI across its samples, then the error between those means.
+
+```{r pop_means, include=TRUE}
+pop_means <- tool_results_wtruth %>%
+  group_by(sim_id, country, pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_samples      = n_distinct(sample_id),
+    n_rows         = n(),
+    mean_tool_coi  = mean(tool_coi, na.rm = TRUE),
+    mean_sim_coi   = mean(sim_COI,  na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    mean_error        = mean_tool_coi - mean_sim_coi,
+    abs_mean_error    = abs(mean_error),
+    mean_sq_error     = mean_error^2
+  )
+
+readr::write_csv(pop_means, file.path(inp$out_dir, "population_mean_coi.csv"))
+head(pop_means)
+
+```
+
+Overall RMSE is the square root of the average mean-COI error squared across populations. 
+We also report MAE, bias, and correlation of population means.
+
+
+```{r pop_means_rmse, include=FALSE}
+summary_overall <- pop_means %>%
+  summarise(
+    n_populations = n(),
+    overall_rmse  = sqrt(mean(mean_sq_error, na.rm = TRUE)),
+    overall_mae   = mean(abs_mean_error, na.rm = TRUE),
+    overall_bias  = mean(mean_error, na.rm = TRUE),
+    pearson_r_means  = suppressWarnings(cor(mean_sim_coi, mean_tool_coi, method = "pearson")),
+    spearman_r_means = suppressWarnings(cor(mean_sim_coi, mean_tool_coi, method = "spearman"))
+  )
+
+summary_overall
+readr::write_csv(summary_overall, file.path(inp$out_dir, "summary_overall_population_means.csv"))
+
+
+```
+
+```{r pop_means_summary_by_params, include=FALSE}
+summary_by_params <- pop_means %>%
+  group_by(pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_populations = n(),
+    rmse          = sqrt(mean(mean_sq_error, na.rm = TRUE)),
+    mae           = mean(abs_mean_error, na.rm = TRUE),
+    bias          = mean(mean_error, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(pop_alpha, coi_p, coi_r, k_s)
+
+summary_by_params
+readr::write_csv(summary_by_params, file.path(inp$out_dir, "rmse_population_means_by_params.csv"))
+
+
+```
+
+#Distribution of population mean-COI errors
+We now visualize the distribution of mean COI errors across populations.
+
+```{r pop_means_errors_dist, include=TRUE}
+p_err_hist <- ggplot(pop_means, aes(x = mean_error)) +
+  geom_histogram(bins = 40) +
+  geom_vline(xintercept = 0, linetype = "dotted") +
+  labs(x = "Mean COI Error (mean tool COI − mean simulated COI)",
+       y = "Number of populations",
+       title = "Error Distribution Across Populations") +
+  theme_minimal(base_size = 12)
+
+p_err_hist
+ggsave(file.path(inp$out_dir, "hist_population_mean_error.png"),
+       p_err_hist, width = 8, height = 5, dpi = 300)
+
+
+```
+
+The histogram of mean COI errors shows the distribution of errors across populations. The dotted line at zero indicates where there is no error. A balanced distribution around zero suggests that the tool's estimates are generally accurate, while a skewed distribution may indicate systematic over- or under-estimation by the tool.
+
+```{r top_populations, include=FALSE}
+#Top populations by RMSE
+worst_pops <- pop_rmse_plot %>%
+  arrange(desc(rmse)) %>%
+  slice_head(n = params$top_n_pops) %>%
+  mutate(sim_id = forcats::fct_reorder(sim_id, rmse))
+
+p_top_pops <- ggplot(worst_pops, aes(x = sim_id, y = rmse, fill = pop_alpha_f)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    x = "Population (sim_id)",
+    y = "RMSE",
+    fill = "pop_alpha",
+    title = paste("Top", params$top_n_pops, "Populations by RMSE")
+  ) +
+  theme_minimal(base_size = 12)
+
+p_top_pops
+
+ggsave(file.path(inp$out_dir, "top_populations_rmse.png"), p_top_pops, width = 9, height = 6, dpi = 300)
+
+readr::write_csv(worst_pops, file.path(inp$out_dir, "top_populations_rmse.csv"))
+
+```
+
+#Population means (by sim_id & paramset_id)
+We now compute the mean COI for each population (sim_id) and parameter set (paramset_id), and calculate the error between the tool's mean COI and the simulated mean COI. This allows us to assess the performance of the tool across different parameter sets.
+```{r pop_means_by_paramset, include=TRUE}
+pop_means <- tool_results_wtruth %>%
+  group_by(sim_id, paramset_id, country, pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_samples      = n_distinct(sample_id),
+    n_rows         = n(),
+    mean_tool_coi  = mean(tool_coi, na.rm = TRUE),
+    mean_sim_coi   = mean(sim_COI,  na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    mean_error     = mean_tool_coi - mean_sim_coi,
+    abs_mean_error = abs(mean_error),
+    mean_sq_error  = mean_error^2
+  )
+
+readr::write_csv(pop_means, file.path(inp$out_dir, "population_means_by_paramset.csv"))
+#head(pop_means)
+
+#RMSE over populations (aggregate by paramset & parameters)
+rmse_by_paramset <- pop_means %>%
+  group_by(paramset_id, pop_alpha, coi_p, coi_r, k_s) %>%
+  summarise(
+    n_populations = n(),
+    rmse          = sqrt(mean(mean_sq_error, na.rm = TRUE)),
+    mae           = mean(abs_mean_error, na.rm = TRUE),
+    bias          = mean(mean_error, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(paramset_id, pop_alpha, coi_p, coi_r, k_s)
+
+rmse_by_paramset
+readr::write_csv(rmse_by_paramset, file.path(inp$out_dir, "rmse_population_means_by_paramset.csv"))
+
+# Overall summary of population means
+all_summary <- pop_means %>%
+  summarise(
+    n_populations = n(),
+    overall_rmse  = sqrt(mean(mean_sq_error, na.rm = TRUE)),
+    overall_mae   = mean(abs_mean_error, na.rm = TRUE),
+    overall_bias  = mean(mean_error, na.rm = TRUE),
+    pearson_r_means  = suppressWarnings(cor(mean_sim_coi, mean_tool_coi, method = "pearson")),
+    spearman_r_means = suppressWarnings(cor(mean_sim_coi, mean_tool_coi, method = "spearman"))
+  )
+all_summary
+readr::write_csv(all_summary, file.path(inp$out_dir, "all_summary_population_means_summary.csv"))
+
+```
+
+# Plot Mean COI (sim) vs Mean COI (tool)
+We create a scatter plot to visualize the relationship between the mean COI estimated by the tool and the mean COI from the simulations for each population. This helps in assessing how well the tool's estimates align with the simulated values across different parameter sets.
+
+# Boxplot of Mean COI Error by Parameter Set
+
+```{r read_json_paramset_id}
+
+# --- Read and flatten JSON with param definitions ---
+param_tbl <- fromJSON(inp$tool_params, simplifyVector = TRUE) |>
+  tibble::as_tibble() |>
+  tidyr::unnest_wider(paramset) |>
+  janitor::clean_names() |>
+  mutate(
+    across(c(quantile_threshold, integer_threshold), ~suppressWarnings(as.numeric(.))),
+    method = as.character(method)
+  )
+
+# --- Join param info to population means ---
+pop_means_annot <- pop_means |>
+  left_join(param_tbl, by = "paramset_id") |>
+  mutate(
+    paramset_label = dplyr::case_when(
+      method == "quantile_method" ~ sprintf("q=%s", scales::label_number(scale_cut = scales::cut_short_scale())(quantile_threshold)),
+      method == "integer_method"  ~ sprintf("int=%s",integer_threshold),
+      TRUE ~ paramset_id
+    )
+  )
+
+# Order paramsets by median |mean_error| for readability
+paramset_order <- pop_means_annot |>
+  group_by(paramset_id) |>
+  summarise(med_abs_err = median(abs_mean_error, na.rm = TRUE), .groups = "drop") |>
+  arrange(med_abs_err) |>
+  pull(paramset_id)
+
+pop_means_annot <- pop_means_annot |>
+  mutate(
+    paramset_id    = factor(paramset_id, levels = paramset_order),
+    paramset_label = forcats::fct_relevel(paramset_label, unique(paramset_label[order(match(as.character(paramset_id), as.character(paramset_order)))]))
+  )
+
+# Trim y-range to central 98% (optional) to reduce outlier distortion
+ylim_q <- quantile(pop_means_annot$mean_error, probs = c(0.01, 0.99), na.rm = TRUE)
+
+# --- Boxplot: mean COI error by paramset_id, colored by method ---
+p_box <- ggplot(pop_means_annot, aes(x = paramset_label, y = mean_error, fill = method, colour = country)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot(outlier.alpha = 0.25) +
+  coord_cartesian(ylim = ylim_q) +
+  labs(
+    x = "tool param (threshold)",
+    y = "Mean COI Error (tool COI − simulated COI)",
+    fill = "Method",
+    title = "Population Mean COI Error by tool param"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1))
+
+p_box
+
+# Save plot + annotated table
+ggsave(file.path(inp$out_dir, "box_mean_coi_error_by_paramset_json.png"),
+       p_box, width = 10, height = 6, dpi = 300)
+readr::write_csv(pop_means_annot, file.path(inp$out_dir, "population_mean_coi_errors_with_params.csv"))
+
+```
+# Concordance and Bland-Altman plots
+We now create concordance and Bland-Altman plots to further assess the agreement between the tool's estimated mean COI and the simulated mean COI across populations.
+
+```{r concordance}
+#Add concordance and Bland-Altman plots
+# Concordance plot
+p_concordance <- ggplot(pop_means, aes(x = mean_sim_coi, y = mean_tool_coi, color = paramset_id, shape = country)) +
+  geom_point(alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  labs(x = "Mean Simulated COI (per population)", y = "Mean Tool COI (per population)",
+       color = "paramset_id", title = "Concordance Plot: Tool vs Simulation") +
+  theme_minimal(base_size = 12)
+p_concordance
+
+```
+It seems very similar to the previous scatter plot, but it emphasizes the agreement between the two measures. The closer the points are to the dashed line, the better the concordance between the tool's estimates and the simulated values. The dashed line represents perfect agreement, where the tool's estimate matches the simulated value exactly. Points above this line indicate that the tool overestimates COI, while points below indicate underestimation.
+```{r Bland-Altman_plot}
+# Bland-Altman plot
+p_bland_altman <- ggplot(pop_means, aes(x = (mean_sim_coi + mean_tool_coi) / 2, y = mean_tool_coi - mean_sim_coi, color = paramset_id, shape = country)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(x = "Average COI (per population)", y = "Difference in COI (tool - simulated)",
+       color = "paramset_id", title = "Bland-Altman Plot: Tool vs Simulation") +
+  theme_minimal(base_size = 12)
+p_bland_altman
+```
+The Bland-Altman plot shows the difference between the tool's estimated mean COI and the simulated mean COI against their average for each population. The dashed line at zero indicates perfect agreement. Points above this line indicate that the tool overestimates COI, while points below indicate underestimation. The spread of points around the zero line provides insights into the variability of the tool's estimates compared to the simulations.
+
+```{r concordance_plot, fig.width=9, fig.height=5, out.width="100%"}
+#install.packages("epiR")
+library(epiR)
+
+# CCC
+concordance_results <- epiR::epi.ccc(
+  pop_means$mean_sim_coi,
+  pop_means$mean_tool_coi,
+  ci = "z-transform",
+  conf.level = 0.95
+)
+
+ccc_tbl <- as.data.frame(concordance_results$rho.c)
+nm <- tolower(names(ccc_tbl))
+ccc_est <- ccc_tbl[[ nm[grepl("rho.c|est|estimate", nm)][1] ]]
+ccc_lcl <- ccc_tbl[[ nm[grepl("lcl|lower", nm)][1] ]]
+ccc_ucl <- ccc_tbl[[ nm[grepl("ucl|upper", nm)][1] ]]
+
+# Build plotting data with the grouping variables you want to map
+df_ccc <- pop_means |>
+  dplyr::select(
+    sim  = mean_sim_coi,
+    tool = mean_tool_coi,
+    paramset_id,
+    country
+  ) |>
+  dplyr::filter(is.finite(sim), is.finite(tool)) |>
+  dplyr::mutate(
+    paramset_id = as.factor(paramset_id),
+    country     = as.factor(country)
+  )
+
+p_concordance_results <- ggplot(
+  df_ccc,
+  aes(x = sim, y = tool, color = paramset_id, shape = country)
+) +
+  geom_point(alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  coord_equal() +
+  labs(
+    x = "Mean Simulated COI", y = "Mean Tool COI",
+    title = "Agreement between methods",
+    subtitle = sprintf("Lin's CCC = %.3f (95%% CI %.3f–%.3f)", ccc_est, ccc_lcl, ccc_ucl),
+    color = "Param set",
+    shape = "Country"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "right")
+
+p_concordance_results
+
+
+```

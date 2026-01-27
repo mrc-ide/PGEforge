@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Tool Information
 
 There are several simple ways to estimate COI from raw data without relying on
-models. For example, if a sample contains any loci with 4 alleles then you could
+models. For example if a sample contains any loci with 4 alleles then you could
 argue that COI is 4 (at least). However, sequencing errors can also create this
 false signal. Slightly more nuanced methods that make use of thresholds can be
 used to provide results that are robust to errors.
