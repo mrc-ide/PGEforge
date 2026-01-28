@@ -130,8 +130,8 @@ Read the simulation parameters into a long table, which contains columns:
 
 - `sim_id`: simulation id
 - `country`: either Cambodia or Ghana
-- `coi_cat`: catgorical, COI parameter used in simulation
-- `between_sample_related_cat`: cateogrical, parameter used in simulation to control between-sample genetic relatedness
+- `coi_cat`: categorical, COI parameter used in simulation
+- `between_sample_related_cat`: categorical, parameter used in simulation to control between-sample genetic relatedness
 - `nonrecombinant_cat`: categorical, parameter used in simulation to control the rate of recombination
 - `pop_cat`: combination of `coi_cat`, `between_sample_related_cat` and `nonrecombinant_cat`
 
@@ -200,7 +200,7 @@ Read tool results into a long table. The columns include:
 
 - `sim_id`:  simulation id (see above)
 - `paramset_id`: parameter id, each correspond to a combination of tool call parameters
-- `variant`: similar to a above, defined as a combination of gene id, genomic position, and amino acid variant
+- `variant`: similar to above, defined as a combination of gene id, genomic position, and amino acid variant
 - `obs_freq`: allele frequency reported by the tool (IDM)
 
 ```{r}
@@ -464,12 +464,11 @@ cat(create_tabsetOfGgplotObjects(list(
   "relatedness x coi x recombination x country" = tmp1
 )))
 ```
-Concordance do varies with different simulation parameters
+Concordance does vary with different simulation parameters.
 
 - Concordance is generally lower in Cambodia when compared with Ghana
 - Lower concordance is associated with high MeanCOI
-- Relatedness parameter has little effect on the concordance, however,
-however in combination with low recombination (`50%_nonrecombiant`) and high COI (`MeanCOI=3.41`),
+- Relatedness parameter has little effect on the concordance. However, in combination with low recombination (`50%_nonrecombiant`) and high COI (`MeanCOI=3.41`),
 high relatedness is associated with low concordance.
 
 
