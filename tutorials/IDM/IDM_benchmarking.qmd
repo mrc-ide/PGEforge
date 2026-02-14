@@ -397,9 +397,12 @@ ggplot(df_ccc_gat %>% mutate(paramset_id = factor(paramset_id, level = uniq_parm
 
 
 ```
-Despite variations in tool parameter sets,
-the concordance between expected and observed allele frequencies remains relatively consistent,
-indicating that IDM is robust against changes in test parameters.
+```{r}
+df_ccc_gat %>% group_by( country, true_mean_coi, coi_cat, between_sample_related_cat, nonrecombinant_cat, meiosis_cat) %>%
+  summarize(ccc_std = sd(ccc, na.rm = TRUE))
+```
+
+The concordance between expected and observed allele frequencies remains highly consistent, showing minimal (nearly zero) variation across different tool parameter sets. This indicates that IDM is robust against parameter changes, according to our tests.
 
 
 
