@@ -518,9 +518,30 @@ Also, there is a relatively low value for:
 
 The results suggests a generally good quality of IDM estimates of the presence of alleles.
 
+To gain deeper insights into false positives and false negatives, we plot the enrichment of false positives across various bins of observed allele frequency and the enrichment of false negatives across different bins of expected allele frequency.
+```{r}
+df_st_tr_sp_tp %>%
+  filter(exp_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(obs_freq == 0))) +
+  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  labs(
+    y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Negatives"
+  )
+df_st_tr_sp_tp %>%
+  filter(obs_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(exp_freq == 0))) +
+  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  labs(
+    y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Positives"
+  )
+```
+We found that for false positives, the observed allele frequencies are mostly concentrated near zero. For false negatives, the expected frequencies follow a bimodal distribution, with one mode close to zero and the other close to one. This suggests that false positives are less problematic when a proper threshold is used, but a significant fraction of false negatives have high expected allele frequencies. 
+
 ## Summary
 
 The allele frequencies estimated by IDM are highly accurate when excluding false positives and false negatives.
 Accuracy may be slightly impacted by population parameters, such as higher error rates in Ghana compared to Cambodia, and in populations with higher COI.
 IDM shows robustness to the tested variations in its parameter values.
-When false positives and false negatives are included with true positives, IDM maintains good performance, with an FDR of approximately 0.24, a recall of 0.92, and an F1-score of 0.84.
+When false positives and false negatives are included with true positives, IDM maintains good performance, with an FDR of approximately 0.24, a recall of 0.92, and an F1-score of 0.84. False positives are less concerning because their observed allele frequencies are near zero, whereas some false negatives come from variants with high expected allele frequencies.
