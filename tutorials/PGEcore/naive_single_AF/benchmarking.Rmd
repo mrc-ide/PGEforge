@@ -22,9 +22,9 @@ library(tibble)
 library(tidyr)
 
 inp <- list(
-  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
-  tool_res_dir = "../../../data/benchmarking/tool_results/naive_slaf/", 
-  tool_params = "../../../data/benchmarking/tool_results/naive_slaf.json"
+  sim_info_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/simulations/SpotMalaria", 
+  tool_res_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf", 
+  tool_params = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf.json"
 )
 ```
 ## Create a tibble contatining all the required parameters and simulations.
@@ -108,7 +108,7 @@ sim_params <- tibble(
 sim_truth <- sim_truth %>%
   left_join(sim_params, by = "sim_id")
 
-# Read in all tool results into one tibble -----------------------------
+# Read in all FEM results into one tibble ------------------------------
 tool_results <- tibble(
     tool_res_path = list.files(
       inp$tool_res_dir, 
@@ -145,15 +145,22 @@ tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
   select(-paramset)
 tool_results <- tool_results %>%
   left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant"))
 ```
 ## Load the custom functions into R session
 ```{r}
-source("../../scripts/benchmarking_functions.R")
+getwd()
+source("hackathon_helper.R")
 ```
 ##  Combine the simulated and tool results into a single dataframe.
 ```{r}
-sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
-tool_results
 combined_s <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
 df <- combined_s %>% select(obs_freq, exp_freq, slaf_method)
 ```
@@ -279,6 +286,71 @@ g3
 ```
 ```{r}
 ## Overall acceptable sensitivity(100%), therefore able to detect all positives,but at can also include false positive (precision=75%) 
+```
+## Using a different code for correlation 
+```{r}
+ tool_results_Concordance_Freq <- tool_results_wtruth %>%
+         group_by(
+         slaf_method, 
+         pop_alpha, 
+         coi_r, 
+         k_s
+     )|>
+     summarize(conc_pt_est= CCC(exp_freq, obs_freq)$rho.c$est, 
+               conc_lwr_CI= CCC(exp_freq, obs_freq)$rho.c$lwr.ci, 
+               conc_upr_CI= CCC(exp_freq, obs_freq)$rho.c$upr.ci, .groups = "drop")|>
+     mutate(
+         group_id = factor(
+             slaf_method, 
+             c(
+                 "read_count", 
+                 "presence_absence"
+             ), 
+             labels = c(
+                 "read_count", 
+                 "presence_absence"
+             )
+         )
+     )|>
+     mutate(
+         pop_alpha = factor(
+             pop_alpha, 
+             c("2.33", "9", "99"), 
+             labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+         )
+     ) %>%
+     mutate(
+         k_s = factor(
+             k_s, 
+             c("0.5", "0.2"), 
+             labels = c("Med. Recombination", "High Recombination")
+         )
+     ) %>%
+     
+     mutate(
+         coi_r = factor(
+             coi_r, 
+             c("0.25", "0.5"), 
+             labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+         )
+     )
+```
+## Plot the concordance plot
+```{r}
+tool_results_Concordance_Freq %>%
+     ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = slaf_method)) +
+     geom_pointrange(position = position_jitter(width = 0.2)) +        theme_bw()+
+     facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+     labs(
+         x = "Simulated Relatedness", 
+         y = "Concordance Correlation Coeffifient"
+     ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
+     theme(legend.position = "bottom")-> Concordance_byScenario_prev
+ 
+print(Concordance_byScenario_prev)
+```
+```{r}
+##In this figure we see clearly that the read count method of estimating allele frequency was consistent in both low and high COI, whereas the presence_absence approach appeared to yield lower correlation coefficients.
 ```
 
 
