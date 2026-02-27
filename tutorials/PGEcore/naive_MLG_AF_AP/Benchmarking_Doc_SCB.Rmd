@@ -5,11 +5,136 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=F, message=F)
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
 options(width = 200)
 options(readr.show_col_types = FALSE)
 ```
 
+<<<<<<< HEAD
+```{r nickFunctions}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+library(flextable)
+library(DescTools)
+library(hexbin)
+#| code-fold: true
+
+# commonly used functions  
+`%!in%` <- Negate(`%in%`)
+is.notna <-function(x){
+  return(!is.na(x))
+}
+# ggplot themes 
+transparentBackground = theme(
+  panel.background = element_rect(fill='transparent'), #transparent panel bg
+  plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+  panel.grid.major = element_blank(), #remove major gridlines
+  panel.grid.minor = element_blank(), #remove minor gridlines
+  legend.background = element_rect(color = NA, fill='transparent'), #transparent legend bg
+  legend.box.background = element_rect(color = NA, fill='transparent') #transparent legend panel
+)
+custom_theme_noTransparentBackground = theme_bw() +
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
+  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
+          element_line(color="black", linewidth = 0.3))+
+  theme(text=element_text(size=12, family="Helvetica"))+
+  theme(axis.text.y = element_text(size=12))+
+  theme(axis.text.x = element_text(size=12)) +
+  theme(legend.position = "bottom") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+custom_theme = custom_theme_noTransparentBackground +
+  transparentBackground
+custom_theme_backgroundTransparent = custom_theme
+
+custom_theme_xRotate_noBackgroundTransparent = theme_bw() +
+  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
+  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
+          element_line(color="black", linewidth = 0.3))+
+  theme(text=element_text(size=12, family="Helvetica"))+
+  theme(axis.text.y = element_text(size=12))+
+  theme(axis.text.x = element_text(size=12)) +
+  theme(legend.position = "bottom") + 
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=12, angle = -90, vjust = 0.5, hjust = 0)) 
+
+custom_theme_xRotate = custom_theme_xRotate_noBackgroundTransparent + 
+  transparentBackground
+
+custom_theme_xRotate_backgroundTransparent = custom_theme_xRotate
+
+
+create_dt <- function(x){
+  DT::datatable(x,
+                extensions = 'Buttons',
+                options = list(dom = 'Blfrtip',
+                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               lengthMenu = list(c(10,25,50,-1),
+                                                 c(10,25,50,"All"))), 
+                filter = "top")
+}
+
+colorPalette_08 = c("#2271B2","#F748A5","#359B73","#F0E442","#D55E00","#3DB7E9","#E69F00","#000000")
+colorPalette_12 = c("#E20134","#FF6E3A","#008DF9","#8400CD","#FFC33B","#9F0162","#009F81","#FF5AAF","#00FCCF","#00C2F9","#FFB2FD","#A40122")
+colorPalette_15 = c("#F60239","#003C86","#EF0096","#9400E6","#009FFA","#008169","#68023F","#00DCB5","#FFCFE2","#FF71FD","#7CFFFA","#6A0213","#008607","#00E307","#FFDC3D")
+
+
+create_tabsetOfHtmlWidgets <- function(htmlObjectsList) {
+  zz <- textConnection("foo", "w")
+  sink(zz)
+  cat("::: {.panel-tabset}\n")
+  iwalk(htmlObjectsList, ~ {
+    cat('## ', .y, '\n\n')
+    tempList = list()
+    tempList[["item"]] = .x
+    print(htmltools::tagList(tempList))
+    cat('\n\n')
+  })
+  cat(":::\n")
+  sink()
+  close(zz)
+  paste0(foo, collapse = "\n")
+}
+
+
+create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
+  # zz <- textConnection("foo", "w")
+  # sink(zz)
+  cat("\n\n::: {.panel-tabset}\n\n")
+  iwalk(ggplotObjectsList, ~ {
+    cat('## ', .y, '\n\n')
+    print(.x)
+    # tempList = list()
+    # tempList[["item"]] = .x
+    # grid::grid.draw(ggplot2::ggplotGrob(.x))
+    cat('\n\n')
+  })
+  cat(":::\n")
+  # sink()
+  # close(zz)
+  # paste0(foo, collapse = "\n")
+}
+
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+
+
+inp <- list(
+  sim_info_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/SpotMalaria", 
+  tool_res_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp/", 
+  tool_params = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp.json"
+=======
 ```{r, warning=FALSE, message=FALSE}
 source("../../scripts/benchmarking_functions.R")
 ```
@@ -20,6 +145,7 @@ inp <- list(
   tool_res_dir = "../../../data/benchmarking/tool_results/naive_mlafp/",
   madhatter_res_dir = "../../../data/benchmarking/tool_results/madhatter/",
   tool_params = "../../../data/benchmarking/tool_results/naive_mlafp.json"
+>>>>>>> e7e90d474c6072704988e3ccd452da6363874fa1
 )
 ```
 
@@ -166,11 +292,10 @@ tool_results_wtruth$obs_n_denom<- as.numeric(tool_results_wtruth$obs_n_denom)
 
 ## Goals for allele frequencies: 
 
-* Report RMSE (root mean squared error) across different groupings of populations, and simulation parameters. 
 
-* Report Lin's concordance correlation coefficient with 95% confidence intervals between tool and simluation COIs across different groupings of populations, and parameters. 
+* Report Lin's concordance correlation coefficient with 95% confidence intervals between tool and simulation COIs across different groupings of populations, and parameters. 
 
-* Compare tool allele frequences to Simulated allele frequencies using Bland-Altman plots (mean of tool and simulation vs difference of tool vs simulation) across combinations of loci, and simulation parameters. 
+* Compare tool allele frequencies to simulated allele frequencies using Bland-Altman plots (mean of tool and simulation vs difference of tool vs simulation) across combinations of loci, and simulation parameters. 
   * Can choose to split this up across different groupings of populations, and simulation parameters. 
   
 * For each allele in each locus, report number of samples that contain a false positive (allele detected in sample with tool but not truly present in simulation), and that contain false negatives (allele not detected in sample with tool but is truly present in simulation). Report these as proportions (sensitivity, specificity). 
@@ -255,7 +380,7 @@ tool_results_with_rmse %>%
   ) +
   theme(legend.position = "bottom")-> RMSE_byScenario_freq
 
-print(RMSE_byScenario_freq)
+#print(RMSE_byScenario_freq)
 
 
 
@@ -337,7 +462,9 @@ tool_results_Concordance_Freq %>%
     color = "Loci Set"
   ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
   theme(legend.position = "bottom")-> Concordance_byScenario_prev
+```
 
+```{r fig.cap= "Figure 1: Lin's concordance correlation coefficient (with 95%CI) between simulated frequencies and tool estimated frequencies. Estimates compared across simulation scenarios (level of recombination, COI, and relatedness), and marker groups."}
 print(Concordance_byScenario_prev)
 
 ```
@@ -421,21 +548,27 @@ tool_results_wtruth_BA %>%
   BA_plots[[i]]<- BA_byScenario_prev
 
 }
-print(BA_plots[[1]])
-
-print(BA_plots[[2]])
-
-print(BA_plots[[3]])
-
-print(BA_plots[[4]])
-
-print(BA_plots[[5]])
-
-print(BA_plots[[6]])
-
-print(BA_plots[[7]])
 
 
+
+```
+
+
+
+
+
+```{r, fig.cap="Figure 2: Mean vs Difference of tool estimated and true alelle frequencies with LOESS line (in blue). Estimates compared across simulation scenarios (level of recombination and COI), and marker groups."}
+
+cat(create_tabsetOfGgplotObjects(
+  list(
+    "Six, Medium Diversity" = BA_plots[[1]], 
+    "Six, Low Diversity" = BA_plots[[2]],
+    "Four" = BA_plots[[3]], 
+    "Two" = BA_plots[[4]], 
+    "pfdhfr/pfdhps" = BA_plots[[5]], 
+    "pfdhfr" = BA_plots[[6]], 
+    "pfdhps" = BA_plots[[7]])
+))
 ```
 
 ## False Positive and False Negative Summaries 
@@ -523,9 +656,13 @@ False_negs_byScenario_and_freq %>%
     color = "Loci Set"
   ) +
   theme(legend.position = "bottom")-> FalseNeg_byScenario
+```
 
+```{r, fig.cap="Figure 3: Proportion of samples with false negative detection using tool. Proportions compared across simulation scenarios (level of recombination, COI, and relatedness) and marker groups."}
 print(FalseNeg_byScenario)
+```
 
+```{r}
 False_negs_byScenario_and_freq %>%
   ggplot(mapping = aes(x = pop_alpha, y = sensitivity, color = group_id)) +
   geom_boxplot() +theme_bw()+
@@ -536,10 +673,13 @@ False_negs_byScenario_and_freq %>%
     color = "Loci Set"
   ) +
   theme(legend.position = "bottom")-> Sensitivity_byScenario
+```
 
+```{r, fig.cap="Figure 4: Proportion of samples with true positive detection using tool. Proportions compared across simulation scenarios (level of recombination, COI, and relatedness) and marker groups."}
 print(Sensitivity_byScenario)
+```
 
-
+```{r}
 #replicate this plot as necessary for false positives
 
 False_negs_byScenario_and_freq %>%
@@ -554,10 +694,13 @@ False_negs_byScenario_and_freq %>%
     color = "Loci Set"
   ) +
   theme(legend.position = "bottom")-> FalseNeg_byFreq
+```
 
+```{r, fig.cap="Figure 5: Proportion of samples with fals negative detection using tool. Proportions compared across simulation scenarios (level of recombination and COI) and marker groups, and relatedness."}
 print(FalseNeg_byFreq)
+```
 
-
+```{r}
 False_negs_byScenario_and_freq %>%
   mutate(Freq_Quart= ifelse(exp_freq<0.25, "(0,0.25)", 
                             ifelse(exp_freq>=0.25&exp_freq<0.5, "(0.25,0.5)", ifelse(exp_freq>=0.5&exp_freq<0.75, "(0.5,0.75)", "(0.75,1)"))))|>
@@ -570,7 +713,9 @@ False_negs_byScenario_and_freq %>%
     color = "Loci Set"
   ) +
   theme(legend.position = "bottom")-> Sensitivity_byFreq
+```
 
+```{r, fig.cap="Figure 6: Proportion of samples with true positive detection using tool. Proportions compared across simulation scenarios (level of recombination and COI), marker groups, and true allele frequencies."}
 print(Sensitivity_byFreq)
 
 #replicate this plot as necessary for false positives
@@ -584,13 +729,12 @@ print(Sensitivity_byFreq)
 
 * There is high concordance between true and estimated allele frequencies for all simulation scenarios and loci sets except those involving six high diversity loci. 
 
-* These patterns are driven by the tool's inability to detect all alleles in the sample (false false negatives), and these are more common for low frequency alleles, and among samples with higher COI. 
+* These patterns are driven by the tool's inability to detect all alleles in the sample (occurance of false negatives), and these are more common for low frequency alleles, and among samples with higher COI. 
 
 # Allele Prevalence
 
 Goals for allele prevalence: 
 
-* Report RMSE (root mean squared error) across different groupings of populations, and simulation parameters, again below is a minimum set. 
 
 * Report Lin's concordance correlation coefficient with 95% confidence intervals between tool and simluation COIs across different groupings of populations, and parameters. 
 
@@ -679,7 +823,7 @@ tool_results_with_rmse %>%
   ) +
   theme(legend.position = "bottom")-> RMSE_byScenario_prev
 
-print(RMSE_byScenario_prev)
+#print(RMSE_byScenario_prev)
 
 
 
@@ -761,7 +905,9 @@ tool_results_Concordance_Prev %>%
     color = "Loci Set"
   ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
   theme(legend.position = "bottom")-> Concordance_byScenario_prev
+```
 
+```{r, fig.cap ="Figure 7: Concordance correlation coefficient (with 95% CI) between simulated and tool estimated allele prevalence. Concordance is compared across simulation scenarios (level of recombination, COI, and level of relatedness) and marker set."}
 print(Concordance_byScenario_prev)
 
 ```
@@ -845,27 +991,30 @@ tool_results_wtruth_BA %>%
   BA_plots[[i]]<- BA_byScenario_prev
 
 }
-print(BA_plots[[1]])
-
-print(BA_plots[[2]])
-
-print(BA_plots[[3]])
-
-print(BA_plots[[4]])
-
-print(BA_plots[[5]])
-
-print(BA_plots[[6]])
-
-print(BA_plots[[7]])
 
 
+
+```
+
+
+```{r, fig.cap= "Figure 8: Mean vs difference of simulated and tool estimated allele prevalence with LOESS line (blue). These relationships are showm across simulation scenarios (level of recombination, and COI) and marker sets."}
+
+cat(create_tabsetOfGgplotObjects(
+  list(
+    "Six, Medium Diversity" = BA_plots[[1]], 
+    "Six, Low Diversity" = BA_plots[[2]],
+    "Four" = BA_plots[[3]], 
+    "Two" = BA_plots[[4]], 
+    "pfdhfr/pfdhps" = BA_plots[[5]], 
+    "pfdhfr" = BA_plots[[6]], 
+    "pfdhps" = BA_plots[[7]])
+))
 ```
 
 ## Preliminary conclusions for allele prevalence: 
 
 * In general the tool performs best with fewer loci of lower diversity among samples with lower COI.  
 
-* There is high concordance between true and estimated allele prevalences for low COI simulation scenarios however for higher COI simulation scenarios multiple loci sets show poor concordance including the set of six high diversity loci and several drug resistance markers. 
+* There is high concordance between true and estimated allele prevalence for low COI simulation scenarios however for higher COI simulation scenarios multiple loci sets show poor concordance including the set of six high diversity loci and several drug resistance markers. 
 
 * In general, the greatest discrepancy between the true and estimated allele prevalence is found when the prevalence is between 0.25 and 0.5. 
