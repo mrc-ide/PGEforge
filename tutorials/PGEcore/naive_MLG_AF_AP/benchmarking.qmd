@@ -1,17 +1,38 @@
 ---
 title: Sample Benchmarking for Allele Frequencies
 author: Sophie Berube
-output: html_document
+format: html
+toc-depth: 5
+code-fold: true
+embed-resources: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning=F, message=F)
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
 options(width = 200)
 options(readr.show_col_types = FALSE)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
+# data manipulation libraries 
+library(dplyr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr) 
+library(magrittr)
+library(jsonlite)
+library(purrr)
+
+# plotting 
+library(ggplot2)
+
+# interactive html outputs
+library(plotly) # ggplotly to turn any ggplot object into an interactive plot 
+
+# stats package
+library(DescTools) # CCC, Calculates Lin's concordance correlation coefficient
+
 source("../../scripts/benchmarking_functions.R")
 ```
 
