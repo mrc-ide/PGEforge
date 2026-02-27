@@ -11,130 +11,6 @@ options(width = 200)
 options(readr.show_col_types = FALSE)
 ```
 
-<<<<<<< HEAD
-```{r nickFunctions}
-library(dplyr)
-library(ggplot2)
-library(jsonlite)
-library(magrittr)
-library(purrr)
-library(readr)
-library(stringr)
-library(tibble)
-library(tidyr)
-library(flextable)
-library(DescTools)
-library(hexbin)
-#| code-fold: true
-
-# commonly used functions  
-`%!in%` <- Negate(`%in%`)
-is.notna <-function(x){
-  return(!is.na(x))
-}
-# ggplot themes 
-transparentBackground = theme(
-  panel.background = element_rect(fill='transparent'), #transparent panel bg
-  plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
-  panel.grid.major = element_blank(), #remove major gridlines
-  panel.grid.minor = element_blank(), #remove minor gridlines
-  legend.background = element_rect(color = NA, fill='transparent'), #transparent legend bg
-  legend.box.background = element_rect(color = NA, fill='transparent') #transparent legend panel
-)
-custom_theme_noTransparentBackground = theme_bw() +
-  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
-  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
-          element_line(color="black", linewidth = 0.3))+
-  theme(text=element_text(size=12, family="Helvetica"))+
-  theme(axis.text.y = element_text(size=12))+
-  theme(axis.text.x = element_text(size=12)) +
-  theme(legend.position = "bottom") + 
-  theme(plot.title = element_text(hjust = 0.5))
-
-custom_theme = custom_theme_noTransparentBackground +
-  transparentBackground
-custom_theme_backgroundTransparent = custom_theme
-
-custom_theme_xRotate_noBackgroundTransparent = theme_bw() +
-  theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank() )+
-  theme(axis.line.x = element_line(color="black", linewidth = 0.3),axis.line.y =
-          element_line(color="black", linewidth = 0.3))+
-  theme(text=element_text(size=12, family="Helvetica"))+
-  theme(axis.text.y = element_text(size=12))+
-  theme(axis.text.x = element_text(size=12)) +
-  theme(legend.position = "bottom") + 
-  theme(plot.title = element_text(hjust = 0.5)) + 
-  theme(axis.text.x = element_text(size=12, angle = -90, vjust = 0.5, hjust = 0)) 
-
-custom_theme_xRotate = custom_theme_xRotate_noBackgroundTransparent + 
-  transparentBackground
-
-custom_theme_xRotate_backgroundTransparent = custom_theme_xRotate
-
-
-create_dt <- function(x){
-  DT::datatable(x,
-                extensions = 'Buttons',
-                options = list(dom = 'Blfrtip',
-                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-                               lengthMenu = list(c(10,25,50,-1),
-                                                 c(10,25,50,"All"))), 
-                filter = "top")
-}
-
-colorPalette_08 = c("#2271B2","#F748A5","#359B73","#F0E442","#D55E00","#3DB7E9","#E69F00","#000000")
-colorPalette_12 = c("#E20134","#FF6E3A","#008DF9","#8400CD","#FFC33B","#9F0162","#009F81","#FF5AAF","#00FCCF","#00C2F9","#FFB2FD","#A40122")
-colorPalette_15 = c("#F60239","#003C86","#EF0096","#9400E6","#009FFA","#008169","#68023F","#00DCB5","#FFCFE2","#FF71FD","#7CFFFA","#6A0213","#008607","#00E307","#FFDC3D")
-
-
-create_tabsetOfHtmlWidgets <- function(htmlObjectsList) {
-  zz <- textConnection("foo", "w")
-  sink(zz)
-  cat("::: {.panel-tabset}\n")
-  iwalk(htmlObjectsList, ~ {
-    cat('## ', .y, '\n\n')
-    tempList = list()
-    tempList[["item"]] = .x
-    print(htmltools::tagList(tempList))
-    cat('\n\n')
-  })
-  cat(":::\n")
-  sink()
-  close(zz)
-  paste0(foo, collapse = "\n")
-}
-
-
-create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
-  # zz <- textConnection("foo", "w")
-  # sink(zz)
-  cat("\n\n::: {.panel-tabset}\n\n")
-  iwalk(ggplotObjectsList, ~ {
-    cat('## ', .y, '\n\n')
-    print(.x)
-    # tempList = list()
-    # tempList[["item"]] = .x
-    # grid::grid.draw(ggplot2::ggplotGrob(.x))
-    cat('\n\n')
-  })
-  cat(":::\n")
-  # sink()
-  # close(zz)
-  # paste0(foo, collapse = "\n")
-}
-
-```
-
-
-
-```{r, warning=FALSE, message=FALSE}
-
-
-inp <- list(
-  sim_info_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/SpotMalaria", 
-  tool_res_dir = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp/", 
-  tool_params = "~/Library/CloudStorage/OneDrive-UniversityofFlorida/Desktop/Research/General_malaria_genomics/PGEForge_benchmarking/naive_mlafp.json"
-=======
 ```{r, warning=FALSE, message=FALSE}
 source("../../scripts/benchmarking_functions.R")
 ```
@@ -145,7 +21,6 @@ inp <- list(
   tool_res_dir = "../../../data/benchmarking/tool_results/naive_mlafp/",
   madhatter_res_dir = "../../../data/benchmarking/tool_results/madhatter/",
   tool_params = "../../../data/benchmarking/tool_results/naive_mlafp.json"
->>>>>>> e7e90d474c6072704988e3ccd452da6363874fa1
 )
 ```
 
@@ -379,11 +254,6 @@ tool_results_with_rmse %>%
     color = "Loci Set"
   ) +
   theme(legend.position = "bottom")-> RMSE_byScenario_freq
-
-#print(RMSE_byScenario_freq)
-
-
-
 ```
 
 
@@ -557,7 +427,7 @@ tool_results_wtruth_BA %>%
 
 
 
-```{r, fig.cap="Figure 2: Mean vs Difference of tool estimated and true alelle frequencies with LOESS line (in blue). Estimates compared across simulation scenarios (level of recombination and COI), and marker groups."}
+```{r, results="asis", echo=FALSE, fig.cap="Figure 2: Mean vs Difference of tool estimated and true alelle frequencies with LOESS line (in blue). Estimates compared across simulation scenarios (level of recombination and COI), and marker groups."}
 
 cat(create_tabsetOfGgplotObjects(
   list(
@@ -696,7 +566,7 @@ False_negs_byScenario_and_freq %>%
   theme(legend.position = "bottom")-> FalseNeg_byFreq
 ```
 
-```{r, fig.cap="Figure 5: Proportion of samples with fals negative detection using tool. Proportions compared across simulation scenarios (level of recombination and COI) and marker groups, and relatedness."}
+```{r, fig.cap="Figure 5: Proportion of samples with false negative detection using tool. Proportions compared across simulation scenarios (level of recombination and COI) and marker groups, and relatedness."}
 print(FalseNeg_byFreq)
 ```
 
@@ -997,7 +867,7 @@ tool_results_wtruth_BA %>%
 ```
 
 
-```{r, fig.cap= "Figure 8: Mean vs difference of simulated and tool estimated allele prevalence with LOESS line (blue). These relationships are showm across simulation scenarios (level of recombination, and COI) and marker sets."}
+```{r, results="asis", echo=FALSE, fig.cap= "Figure 8: Mean vs difference of simulated and tool estimated allele prevalence with LOESS line (blue). These relationships are showm across simulation scenarios (level of recombination, and COI) and marker sets."}
 
 cat(create_tabsetOfGgplotObjects(
   list(
