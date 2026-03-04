@@ -1,0 +1,550 @@
+---
+title: IDM Benchmarking Results
+author: Bing Guo
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+```
+
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, warning=FALSE, message=FALSE}
+# data manipulation libraries 
+library(dplyr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr) 
+library(magrittr)
+library(jsonlite)
+library(purrr)
+library(rlang) # for as_name
+
+# plotting 
+library(ggplot2)
+library(scales) # help with axes 
+library(GGally) # ggpairs for pairwise comparisons 
+
+# interactive html outputs
+library(plotly) # ggplotly to turn any ggplot object into an interactive plot 
+library(DT) # data tables for displaying tables 
+
+# stats package
+library(DescTools) # CCC, Calculates Lin's concordance correlation coefficient
+```
+
+### Some helpful R utilities 
+
+```{r}
+source("../scripts/benchmarking_functions.R")
+```
+
+
+## Load in the Benchmarking Outputs
+
+```{r}
+input_config <- list(
+  sim_info_dir = "../../data/benchmarking/simulations/SpotMalaria",
+  tool_res_dir = "../../data/benchmarking/tool_results/IDM",
+  tool_params = "../../data/benchmarking/tool_results/idm.json"
+)
+```
+
+
+First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+
+### Reading simulation truths (expected allele frequencies)
+
+Read simulation truths into a long table with columns:
+
+- `sim_id`: used to link back to simulation parameters
+- `variant`: defined as a combination of gene ID, genomic position, and amino acid variant
+- `exp_freq`: true allele frequencies.
+
+```{r}
+# simulation truth data frame
+df_st <- tibble(
+  sim_truth_path = list.files(
+    input_config$sim_info_dir,
+    pattern = "population_aa_variants_freqs_prevs.tsv.gz",
+    
+    full.names = TRUE,
+    recursive = TRUE
+  )
+) %>%
+  mutate(
+    # read all files, each as a row
+    sim_truth = map(
+      sim_truth_path,
+      read_tsv,
+      col_types = cols(
+        population_name = col_character(),
+        country = col_character(),
+        pop = col_character(),
+        GeneName = col_character(),
+        transcript_id = col_character(),
+        aa_position = col_integer(),
+        aa = col_character(),
+        is_ref = col_character(),
+        allele_count = col_integer(),
+        sample_count = col_integer(),
+        total_pop_alleles = col_integer(),
+        total_pop_samples = col_integer(),
+        unique_alleles = col_integer(),
+        freq = col_double(),
+        prev = col_double(),
+      ),
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  unite(variant, transcript_id, aa_position, aa, sep = ":") %>%
+  rename(
+    sim_id = population_name,
+    exp_freq = freq,
+  ) %>%
+  select(
+    sim_id,
+    variant,
+    exp_freq
+  )
+# str(df_st)
+```
+
+### Read simulation parameters
+
+Read the simulation parameters into a long table, which contains columns:
+
+- `sim_id`: simulation id
+- `country`: either Cambodia or Ghana
+- `coi_cat`: categorical, COI parameter used in simulation
+- `between_sample_related_cat`: categorical, parameter used in simulation to control between-sample genetic relatedness
+- `nonrecombinant_cat`: categorical, parameter used in simulation to control the rate of recombination
+- `pop_cat`: combination of `coi_cat`, `between_sample_related_cat` and `nonrecombinant_cat`
+
+```{r}
+# Read in all simulation parameters into one tibble --------------------
+df_sp <- tibble(
+  sim_params_path = list.files(
+    input_config$sim_info_dir,
+    pattern = "simulation_parameters.json",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path,
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  rename(
+    sim_id = population_name,
+    true_mean_coi = mean_coi
+  ) %>%
+  select(sim_id, country, pop_alpha, coi_r, coi_p, k_s, true_mean_coi) %>%
+  mutate(
+    sim_id = factor(sim_id, levels = sort(unique(sim_id))),
+    country = factor(country, levels = sort(unique(country))),
+    coi_cat = case_when(
+      coi_r == 0.25 & coi_p == 0.7 ~"MeanCOI=1.26",
+      coi_r == 0.5  & coi_p == 0.2 ~"MeanCOI=3.41"
+    ), 
+    between_sample_related_cat = case_when(
+      pop_alpha == 99 ~ "_1%_related", 
+      pop_alpha == 9 ~ "10%_related", 
+      pop_alpha == 2.33 ~ "30%_related"
+    ), 
+    nonrecombinant_cat = case_when(
+      k_s == 0.5 ~ "50%_non-recombinant", 
+      k_s == 0.2 ~ "20%_non-recombinant", 
+    ), 
+    meiosis_cat = case_when(
+      k_s == 0.5 ~ "mean_meiosis=1.0", 
+      k_s == 0.2 ~ "mean_meiosis=3.5", 
+    )
+  ) %>%
+  mutate(pop_cat = paste0(
+    between_sample_related_cat, "__", 
+    coi_cat, "__", 
+    nonrecombinant_cat
+  )) %>% 
+  mutate(pop_cat = factor(pop_cat, levels = sort(unique((.$pop_cat)))), 
+         coi_cat = factor(coi_cat, levels = sort(unique((.$coi_cat)))), 
+         between_sample_related_cat = factor(between_sample_related_cat, levels = sort(unique((.$between_sample_related_cat)))), 
+         nonrecombinant_cat = factor(nonrecombinant_cat, levels = sort(unique((.$nonrecombinant_cat)))), 
+         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat))))) %>%
+  select(-coi_p, -coi_r, -k_s, -pop_alpha)
+# str(df_sp)
+```
+
+### Read tool (IDM) results
+
+Read tool results into a long table. The columns include:
+
+- `sim_id`:  simulation id (see above)
+- `paramset_id`: parameter id, each correspond to a combination of tool call parameters
+- `variant`: similar to above, defined as a combination of gene id, genomic position, and amino acid variant
+- `obs_freq`: allele frequency reported by the tool (IDM)
+
+```{r}
+# Read in all IDM results into one tibble ------------------------------
+df_tr <- tibble(
+  tool_res_path = list.files(
+    input_config$tool_res_dir,
+    pattern = "*.tsv.gz",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path,
+      read_tsv,
+      col_types = cols(
+        variant = col_character(),
+        freq = col_double(),
+      ),
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq,
+  ) %>%
+  mutate(
+    sim_id = factor(sim_id, levels = sort(unique(sim_id))),
+    paramset_id = factor(
+      paramset_id,
+      levels = sort(unique(paramset_id))
+    ),
+  ) %>%
+  # remove placeholder NAs
+  drop_na(obs_freq) 
+# str(df_tr)
+```
+
+### Read tool (IDM) parameters
+Read IDM tool calling parameters into a long table. The table contains:
+
+- `paramset_id`: parameter id, each correspond to a combination of tool (IDM) call parameters
+- `model`, `lambda_initial` and `eps_initial` are parameters used by IDM,
+see the [supplementary material](https://doi.org/10.1371/journal.pone.0287161.s003) of the correponding paper.
+
+
+```{r}
+# Read in tool parameters, and join ------------------------------------
+df_tp <- jsonlite::fromJSON(input_config$tool_params) %>%
+  as_tibble() %>%
+  unnest(paramset) %>%
+  mutate(
+    paramset_id = factor(paramset_id),
+    model = factor(model, levels = c("OM", "IDM")),
+    eps_initial = factor(eps_initial),
+    lambda_initial = factor(lambda_initial)
+  )
+# str(df_tp)
+```
+
+### Join tables
+
+Combining simulation truths, tool results, simulation parameters and tool call parameters into a long table.
+
+```{r}
+df_tr_wide <- df_tr%>% pivot_wider(names_from = paramset_id, values_from = obs_freq)
+
+# NOTE: here, pivot_wider and then pivot_long were called to ensure that there
+# is a record for any variants that were true positives or false positives in any
+# parameter sets  
+df_st_tr_sp_tp <- df_st %>% 
+  full_join(df_tr_wide) %>% 
+  mutate(across(starts_with("idm_paramset"), ~ replace_na(.x, 0))) %>% 
+  mutate(exp_freq = replace_na(exp_freq, 0)) %>% 
+  pivot_longer(cols = starts_with("idm_paramset"), names_to = "paramset_id", values_to = "obs_freq")  %>%
+  select(sim_id, variant, paramset_id, obs_freq, exp_freq) %>%
+  left_join(df_sp, by = "sim_id") %>%
+  left_join(df_tp, by = "paramset_id") 
+# str(df_st_tr_sp_tp)
+```
+
+
+
+## Benchmarking 
+
+IDM estimates the frequency of each lineage (allele) and the population-level MOI parameter.
+Here, we primarily focus on benchmarking the allele frequency estimates.
+
+### Allele frequencies
+
+#### Metrics 
+
+- Plotting Bland-Altman plots (plotting the mean of expected and observed frequencies vs their difference) 
+- Calculating [Lin's concordance correlation coefficient](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC) for agreement on a continuous measure 
+- Calculating contingency table metrics for false positive and false negatives  
+
+#### Bland-Altman Plots 
+
+```{r}
+df_ba <-  df_st_tr_sp_tp %>% 
+    filter(obs_freq>0, exp_freq > 0) %>% # focusing on true positive allele (excluding false positive and false negative)
+    add_diff_mean(expected_col = exp_freq, observed_col = obs_freq)
+uniq_parmset_ids <- df_ba %>% distinct(paramset_id) %>% pull(paramset_id)
+```
+
+First, all of the differences between predicted and expected frequencies were 
+pooled together and visualized in a Bland-Altman plot. A Bland-Altman plot 
+shows the mean of the observed (in this case, the value estimated by the tool) 
+and the expected (in this case, the simulated truth) values for a point 
+estimate plotted against the difference in those observed and expected values. 
+The horizontal lines indicate two standard deviations in this difference above 
+and below the mean. In the plots below, the point estimates were binned into 
+hexes, with the color of the hex indicating the density of points.
+
+```{r}
+make_bland_altman_plot_by_label(df_ba, "obs_freq")
+```
+
+In a Bland-Altman plot, points clustered along y = 0 indicate a good 
+prediction, whereas deviations from this line indicate ranges of values that 
+have worse performance. We can see that overall IDM has estimated allele 
+frequencies quite accurately. Estimates are generally more accurate for high or 
+low allele frequencies, which is expected. There are some substantial 
+overestimates in the middle of the range, but these are the minority.
+
+Note that false negatives and false positives were excluded from the analysis 
+in this section - those are analyzed further below.
+
+
+Next, similar analyses were conducted using data grouped by various simulation parameters.
+
+```{r}
+#| fig-width: 20
+#| fig-height: 12
+make_bland_altman_plot_by_label(df_ba, "obs_freq") + 
+  facet_grid(between_sample_related_cat ~interaction(coi_cat, nonrecombinant_cat, sep = "\n"))
+```
+From grouped Bland-Altman plots, higher COIs show a pattern of larger errors (`MeanCOI=3.41` vs `MeanCOI=1.26`).
+Recombination parameters and relatedness generally have little impact, except when `MeanCOI=3.41`,
+where high relatedness (`30%_related`) and low recombination (`50%_non-recombinant`) result in higher errors compared to other combinations.
+  
+
+#### Concordance 
+
+1. The General Pattern
+
+The paired plots show the distributions of expected and true allele frequencies (top left and bottom right),
+along with concordance dot plots (bottom left) and statistics (top right). In this analysis, false positives (FP) (expected frequency is 0/NA, but observed frequency is non-NA and non-zero) and false negatives (FN) (observed frequency is 0/NA, but expected frequency is non-NA and non-zero) are excluded. The analysis of FP and FN is performed separately below. The Concordance Correlation Coefficient (CCC) measures the agreement between two continuous, paired observations (e.g., test vs. gold standard) by evaluating how closely they fall on the y=x line of perfect concordance. Ranging from -1 to 1, a CCC of 1 indicates perfect agreement. This metric is used extensively below.
+
+```{r}
+ggpairs(df_ba, columns = c("exp_freq", "obs_freq"), lower = list(continuous = wrap(my_hex)),
+        diag  = list(continuous = wrap("barDiag", binwidth = 0.05)), 
+        upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)), 
+        title = "all")
+```
+With FP/FNs excluded, the allele frequency estimated by IDM is highly consistent with the expected frequencies (ground truth from simulation):
+similar distributions, high concordance, and high correlations, with the scatter plots generally symmetric along the expected line (bottom left plots).
+
+2. Concordance by Tool Parameter Sets
+
+
+```{r}
+# calculate Concordance Correlation Coefficient (CCC) 
+df_ccc <-  compute_ccc(
+    df_st_tr_sp_tp %>% filter(obs_freq>0, exp_freq > 0), # focusing on true positive allele (excluding false positive and false negative),
+    expected_col  = exp_freq,
+    observed_cols = obs_freq,
+    group_cols    = c(sim_id, paramset_id)
+  )
+  
+# Gather into long format, left join in the simulation parameters
+df_ccc_gat = 
+  df_ccc %>%
+  select(sim_id, paramset_id, ends_with("_ccc")) %>% 
+  gather(allele_freq_estimate, ccc, 3:ncol(.)) %>%
+  mutate(allele_freq_estimate = gsub("_ccc", "", allele_freq_estimate)) %>%
+  left_join(df_sp)
+
+```
+
+
+```{r}
+ggplot(df_ccc_gat %>% mutate(paramset_id = factor(paramset_id, level = uniq_parmset_ids))) +
+  geom_boxplot( aes(fill = paramset_id, y = ccc, x = allele_freq_estimate) ) +
+  theme_minimal() +
+  # scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted")
+
+
+```
+```{r}
+df_ccc_gat %>% group_by( country, true_mean_coi, coi_cat, between_sample_related_cat, nonrecombinant_cat, meiosis_cat) %>%
+  summarize(ccc_std = sd(ccc, na.rm = TRUE))
+```
+
+The concordance between expected and observed allele frequencies remains highly consistent, showing minimal (nearly zero) variation across different tool parameter sets. This indicates that IDM is robust against parameter changes, according to our tests.
+
+
+
+3. Concordance by simulation parameters
+
+
+
+```{r}
+#| results: asis
+#| echo: false
+create_tabsetOfHtmlWidgets <- function(htmlObjectsList) {
+  out <- capture.output({
+    cat("::: {.panel-tabset}\n")
+    purrr::iwalk(htmlObjectsList, ~{
+      cat('## ', .y, '\n\n', sep = "")
+      tempList <- list(item = .x)
+      print(htmltools::tagList(tempList))
+      cat('\n\n')
+    })
+    cat(":::\n")
+  })
+  paste0(out, collapse = "\n")
+}
+
+
+tmp1 =  ggplot(df_ccc_gat) +
+  geom_boxplot( aes(x = pop_cat, y = ccc, fill = country) ) +
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted")
+
+tmp2 = ggplot(df_ccc_gat) + 
+  geom_boxplot( aes(x = between_sample_related_cat, y = ccc, fill = country) ) +
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted")
+
+tmp3 = ggplot(df_ccc_gat) +
+  geom_boxplot( aes(x = nonrecombinant_cat, y = ccc, fill = country) ) +
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted")
+
+tmp4 = ggplot(df_ccc_gat) +
+  geom_boxplot( aes(x = coi_cat, y = ccc, fill = country) ) +
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08) + 
+  geom_hline(yintercept = 0.95, color = "red", linetype = "dotted")
+
+```
+
+```{r}
+#| echo: false
+#| results: asis
+#| fig-width: 8
+#| fig-height: 8
+
+cat(create_tabsetOfGgplotObjects(list(
+  "relatedness x country" = tmp2,
+  "recombinantion x country" = tmp3,
+  "coi x country" = tmp4,
+  "relatedness x coi x recombination x country" = tmp1
+)))
+```
+Concordance does vary with different simulation parameters.
+
+- Concordance is generally lower in Cambodia when compared with Ghana
+- Lower concordance is associated with high MeanCOI
+- Relatedness parameter has little effect on the concordance. However, in combination with low recombination (`50%_nonrecombiant`) and high COI (`MeanCOI=3.41`),
+high relatedness is associated with low concordance.
+
+
+#### False positive and false negatives
+
+The analyses below focus on all rows including zero or NA values for `obs_freq` or `exp_freq` columns.
+False Positives (FPs) and False Negatives (FNs), along with True Positives, are analyzed (exact values are omitted). 
+
+```{r}
+#| echo: false
+#| results: asis
+#| fig-width: 8
+#| fig-height: 8
+# True Positive is both estimator and expected is great than 0 
+# False Negative is that expected > 0 and estimator is 0 
+# False Positive is that expected is 0 and estimator is > 0
+
+df_fnfp <- df_st_tr_sp_tp %>% 
+  mutate(TP = as.numeric(exp_freq > 0 & obs_freq > 0), 
+         FN = as.numeric(exp_freq > 0 & obs_freq == 0), 
+         FP = as.numeric(exp_freq == 0 & obs_freq > 0))
+
+hap_metric_map <- c(
+  "Recall"               = "recall",
+  "Precision"            = "precision",
+  "NPV"                  = "tpr",
+  "F1-score"             = "f1_score",
+  "False Discovery Rate" = "fdr",
+  "Overlap Coefficient"  = "overlap_coefficient"
+)
+tmp <-bind_rows(
+  df_fnfp %>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='all'),
+  # df_fnfp %>% filter (obs_freq != 0) %>%  add_contigency_metrics_no_TN(summarize_first = T) %>% mutate(label='NA removed'),
+)
+radar_by_metrics(tmp,  metric_map = hap_metric_map, color_col = "label")
+```
+The radar plot indicates generally high values for:
+
+- Recall: the ability of IDM to identify all actual positives
+- Precision: the quality of positive predictions
+- Negative Predictive Value (NPV): the reliability of negative predictions
+- F1-Score: the harmonic mean of Precision and Recall
+
+Also, there is a relatively low value for:
+
+- False Discovery Rate (FDR): the complement of Precision
+
+The results suggests a generally good quality of IDM estimates of the presence of alleles.
+
+To gain deeper insights into false positives and false negatives, we plot the enrichment of false positives across various bins of observed allele frequency and the enrichment of false negatives across different bins of expected allele frequency.
+```{r}
+df_st_tr_sp_tp %>%
+  filter(exp_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(obs_freq == 0))) +
+  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  labs(
+    y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Negatives"
+  )
+df_st_tr_sp_tp %>%
+  filter(obs_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(exp_freq == 0))) +
+  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  labs(
+    y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Positives"
+  )
+```
+We found that for false positives, the observed allele frequencies are mostly concentrated near zero. For false negatives, the expected frequencies follow a bimodal distribution, with one mode close to zero and the other close to one. This suggests that false positives are less problematic when a proper threshold is used, but a significant fraction of false negatives have high expected allele frequencies. 
+
+## Summary
+
+The allele frequencies estimated by IDM are highly accurate when excluding false positives and false negatives.
+Accuracy may be slightly impacted by population parameters, such as higher error rates in Ghana compared to Cambodia, and in populations with higher COI.
+IDM shows robustness to the tested variations in its parameter values.
+When false positives and false negatives are included with true positives, IDM maintains good performance, with an FDR of approximately 0.24, a recall of 0.92, and an F1-score of 0.84. False positives are less concerning because their observed allele frequencies are near zero, whereas some false negatives come from variants with high expected allele frequencies.
