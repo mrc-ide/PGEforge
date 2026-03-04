@@ -23,258 +23,18 @@ library(tidyr)
 library(DT)
 library(patchwork)
 library(ggpmisc)
+library(GGally)
 
 inp <- list(
-  sim_info_param_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/SpotMalaria",
-  sim_info_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_pop_freqs_prevs_out.tsv",
-  sim_info_dir_ind = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_sample_out.tsv",
-  tool_res_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem_results/malariaem/",
-  tool_params = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem.json"
+  sim_info_param_dir = "../../data/benchmarking/simulations/SpotMalaria/",
+    #"C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/SpotMalaria",
+  sim_info_dir = "../../data/benchmarking/simulations/all_phased_pop_freqs_prevs_out.tsv",
+  sim_info_dir_ind = "../../data/benchmarking/simulations/all_phased_sample_out.tsv",
+  tool_res_dir = "../../data/benchmarking/tool_results/malariaem/",
+  tool_params = "../../data/benchmarking/tool_results/malariaem.json"
 )
-```
 
-## Nick's Functions
-
-This section must be replaced by a call to Nick's script.
-
-```{r functions from Nick, echo = F}
-
-make_bland_altman_plot_by_label <- function(
-    df,
-    label,
-    mean_suffix = "_mean_with_exp",
-    diff_suffix = "_diff_from_exp",
-    expected_label = "Expected",
-    bins = 30
-) {
-  stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
-  
-  mean_col <- paste0(label, mean_suffix)
-  diff_col <- paste0(label, diff_suffix)
-  
-  if (!(mean_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", mean_col))
-  if (!(diff_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", diff_col))
-  
-  ggplot(df) +
-    geom_hex(
-      aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
-      bins = bins
-    ) +
-    scale_fill_viridis_c(name = "log10(count)") +
-    theme_minimal() +
-    geom_smooth(
-      aes(x = .data[[mean_col]], y = .data[[diff_col]]),
-      method = "gam", se = FALSE
-    ) +
-    # +2 SD per facet
-    stat_summary(
-      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
-      fun = function(y)  2 * stats::sd(y, na.rm = TRUE),
-      geom = "hline",
-      inherit.aes = TRUE,
-      linetype = "dashed",
-      color = "grey30"
-    ) +
-    # -2 SD per facet
-    stat_summary(
-      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
-      fun = function(y) -2 * stats::sd(y, na.rm = TRUE),
-      geom = "hline",
-      inherit.aes = TRUE,
-      linetype = "dashed",
-      color = "grey30"
-    ) +
-    labs(
-      title = label,
-      y = paste0(label, " - ", expected_label),
-      x = paste0("mean (", label, ", ", expected_label, ")")
-    ) +
-    coord_equal()
-}
-
-add_diff_mean <- function(df, expected_col, observed_col) {
-  expected_col <- enquo(expected_col)
-  observed_col <- enquo(observed_col)
-  
-  obs_name <- rlang::as_name(observed_col)
-  
-  df %>%
-    rowwise() %>%
-    mutate(
-      !!paste0(obs_name, "_diff_from_exp") := !!observed_col - !!expected_col,
-      !!paste0(obs_name, "_mean_with_exp") := mean(c(!!observed_col, !!expected_col))
-    ) %>%
-    ungroup()
-}
-
-
-#' @title Concordance / Error Metrics (single or multiple observed columns)
-#' @keywords CCC RMSE MAE COI
-#'
-#' @description
-#' Compute metrics between an expected column and one or more observed columns.
-#' Each function accepts an optional set of grouping columns. If omitted, an
-#' overall (single-row) summary is returned.
-#'
-#' @param df A data frame.
-#' @param expected_col Unquoted column name of expected values.
-#' @param observed_cols One symbol or \code{c(sym1, sym2, ...)} of observed columns.
-#' @param group_cols Optional grouping columns supplied like
-#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
-#'   computes overall metrics (no grouping).
-#'
-#' @return A tibble with group columns (if any) and metric columns per observed variable.
-#'
-#' @importFrom dplyr group_by summarise distinct left_join bind_cols
-#' @importFrom rlang enquo enexpr is_call call_args as_quosure caller_env as_name
-#' @importFrom purrr map map_dbl
-#' @name vectorized_metrics
-
-
-# ---- CCC (DescTools::CCC) ----------------------------------------------------
-
-#' @rdname vectorized_metrics
-#' @export
-compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
-  stopifnot(is.data.frame(df))
-  expected_col <- rlang::enquo(expected_col)
-  
-  # capture observed columns (symbol or c(...))
-  obs_expr <- rlang::enexpr(observed_cols)
-  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
-    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
-  }
-  
-  # capture grouping columns (NULL/omitted => no groups)
-  grp_expr <- rlang::enexpr(group_cols)
-  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
-    list()
-  } else if (rlang::is_call(grp_expr, "c")) {
-    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
-  }
-  
-  if (length(grp_quos) > 0) {
-    out <- df %>% dplyr::distinct(!!!grp_quos)
-    join_by_cols <- names(out)
-    for (q in obs_quos) {
-      obs_name <- rlang::as_name(q)
-      one <- df %>%
-        dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
-        dplyr::mutate(
-          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
-          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
-          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
-        ) %>%
-        dplyr::select(-.ccc)
-      out <- dplyr::left_join(out, one, by = join_by_cols)
-    }
-  } else {
-    pieces <- purrr::map(obs_quos, function(q) {
-      obs_name <- rlang::as_name(q)
-      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
-      tibble::tibble(
-        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
-        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
-        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
-      )
-    })
-    out <- dplyr::bind_cols(pieces)
-  }
-  
-  out
-}
-
-# ---- RMSE --------------------------------------------------------------------
-
-#' @rdname vectorized_metrics
-#' @export
-compute_rmse <- function(df, expected_col, observed_cols, group_cols = NULL) {
-  stopifnot(is.data.frame(df))
-  expected_col <- rlang::enquo(expected_col)
-  
-  obs_expr <- rlang::enexpr(observed_cols)
-  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
-    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
-  }
-  
-  grp_expr <- rlang::enexpr(group_cols)
-  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
-    list()
-  } else if (rlang::is_call(grp_expr, "c")) {
-    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
-  } else {
-    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
-  }
-  
-  metric_fun <- function(q) {
-    obs_name <- rlang::as_name(q)
-    if (length(grp_quos) > 0) {
-      df %>%
-        dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(
-          !!paste0(obs_name, "_rmse") := {
-            x <- !!q; y <- !!expected_col
-            ok <- !is.na(x) & !is.na(y)
-            n  <- sum(ok)
-            if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
-          },
-          .groups = "drop"
-        )
-    } else {
-      dplyr::summarise(df,
-                       !!paste0(obs_name, "_rmse") := {
-                         x <- !!q; y <- !!expected_col
-                         ok <- !is.na(x) & !is.na(y)
-                         n  <- sum(ok)
-                         if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
-                       }
-      )
-    }
-  }
-  
-  if (length(grp_quos) > 0) {
-    out <- df %>% dplyr::distinct(!!!grp_quos)
-    join_by_cols <- names(out)
-    for (q in obs_quos) {
-      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
-    }
-  } else {
-    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
-  }
-  
-  out
-}
-
-
-create_dt <- function(x){
-  DT::datatable(x,
-                extensions = 'Buttons',
-                options = list(dom = 'Blfrtip',
-                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-                               lengthMenu = list(c(10,25,50,-1),
-                                                 c(10,25,50,"All"))), 
-                filter = "top")
-}
-
-
-create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
-  cat("\n\n::: {.panel-tabset}\n\n")
-  iwalk(ggplotObjectsList, ~ {
-    cat('## ', .y, '\n\n')
-    print(.x)
-    cat('\n\n')
-  })
-  cat(":::\n")
-}
-
-
+source("../scripts/benchmarking_functions.R")
 ```
 
 First, all of the tool results, tool parameters, expected simulated values, and
@@ -312,7 +72,7 @@ sim_params <- tibble(
     -est_between_sample_relatedness,
     -country
   ) %>%
-  rename(
+  dplyr::rename(
     sim_id = population_name, 
     true_mean_coi = mean_coi
   )
@@ -516,12 +276,19 @@ Malaria.em provides both population-level and individual results. Here, we prese
 
 ```{r plotting individual results}
 conflicted::conflicts_prefer(dplyr::filter)
+results_ind <- results_ind %>% mutate(`Loci Group` = 
+                                              case_match(group_id, 
+                                                         "two_lowdiv" ~ "Two, Low Diversity",
+                                                         "two_meddiv" ~ "Two, Med Diversity",
+                                                         "four" ~ "Four"))
+
 a <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
   geom_violin(alpha = 0.3, aes(fill = match)) + 
-  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue"))
+  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Figure 1a")
 
 b <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
-  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue"))
+  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + 
+  facet_wrap(~`Loci Group`) + ggtitle("Figure 1b")
 
 a/b
 
@@ -541,17 +308,28 @@ results_ind_summary_55 <- results_ind %>%
          id = str_split_i(population_name, "_", 4),
          short_name = paste(country, id, sep="_"))
 
+samples_lost_summary_55 <- results_ind %>% 
+  group_by(population_name, group_id) %>%
+  summarize(Lost = (sum(posterior_est < 0.55) / sum(posterior_est>=0)))
+
 all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
-              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing")
+              "Proportion of Samples Correctly Phased", "Fig. 2. Efficacy of Sample-Level Phasing")
 
 post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
-              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
+              "Proportion of Samples Correctly Phased", "Fig. 3. Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
 
-all_accuracy / post_55
+prop_samples_lost <- make_boxplots(samples_lost_summary_55, "Lost", "Proportion of Samples Removed",
+                                   "Fig. 4. How much data was removed with Post. Est > 0.55?")
+
+all_accuracy 
+
+post_55
+
+prop_samples_lost 
 
 ```
 
-As shown in these figures, the accuracy, particularly among samples taken from regions with a medium COI as opposed to a low one, is rather low. Many of the populations have \< 75% of the samples correctly phased. This individual-level phasing accuracy requires more validation. Although adding a cutoff for positerior estimate certainty improves measures, this does lead to a loss of data.
+As shown in these figures, the accuracy, particularly among samples taken from regions with a medium COI as opposed to a low one, is rather low. Many of the populations have \< 75% of the samples correctly phased. This individual-level phasing accuracy requires more validation. Although adding a cutoff for posterior estimate certainty improves measures, this does lead to a loss of data, as shown in Figure 4.
 
 # Population-Level Analyses
 
@@ -583,7 +361,7 @@ results_ccc_grouped <- results_ccc_grouped %>%
                                           join_by(group_label))
 
 
-make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance")
+make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Fig. 5. Overall Plot of Concordance")
 
 ```
 
@@ -603,7 +381,7 @@ plot <- ggplot(results_plot, aes(x = allele_freq, y = freq), color = "black") +
                     #                   "simulated_Ghana_pop_003",
                     #                   "simulated_Ghana_pop_051"), "High", "Low"))) + 
   geom_point(alpha = 0.5) + 
-  ggtitle("Malaria EM") + theme_bw() + 
+  ggtitle("Fig. 6. Malaria EM") + theme_bw() + 
   xlab("True Frequency") + 
   ylab("Malaria EM Frequency") +
   stat_poly_eq(group = 1) + facet_wrap(~coi_r) 
@@ -626,23 +404,25 @@ Adapted from Bing's Code. There are some false negatives, but they are still rel
 ## allele freq is "real"
 ## freq is the estimated value
 
-results %>%
+Fig7a <- results %>%
   #filter(exp_freq > 0) %>% 
   ggplot(aes(x = allele_freq, y = as.numeric(freq == 0))) +
-  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "thistle", color = "white"  ) +
   labs(
     y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Negatives"
-  )
+  ) + theme_bw()
 
-results %>%
+Fig7b <- results %>%
   #filter(obs_freq > 0) %>% 
   ggplot(aes(x = freq, y = as.numeric(allele_freq == 0))) +
-  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "thistle", color = "white"  ) +
   labs(
     y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Positives"
-  )
+  ) + theme_bw()
+
+Fig7a | Fig7b
 ```
 
 
@@ -655,7 +435,8 @@ To show the bias across the range of possible allele frequencies, we generated B
 ```{r BA country}
 make_bland_altman_plot_by_label(results %>% 
                                   mutate(Country = ifelse(grepl("Ghana", population_name), "Ghana", "Cambodia")) %>%
-                                  add_diff_mean(allele_freq, freq), "freq") + 
+                                  add_diff_mean(allele_freq, freq), "freq", method = "loess",
+                                linecolor = "magenta") + 
   facet_wrap(~Country, nrow = 2) +
   ggtitle("Bland-Altmans by Country")
 ```
@@ -667,7 +448,8 @@ make_bland_altman_plot_by_label(results %>%
                                   mutate(`Loci Group` = 
                                            case_match(group_id, "two_lowdiv" ~ "Two (Set A)",
                                                       "two_meddiv" ~ "Two (Set B)", "four" ~ "Four")) %>%
-                                  add_diff_mean(allele_freq, freq), "freq" ) + 
+                                  add_diff_mean(allele_freq, freq), "freq" , method = "loess",
+                                linecolor = "magenta") + 
   ggtitle("Bland-Altmans by Loci Group") +
   facet_wrap(~`Loci Group`, nrow = 2)
 ```
@@ -678,7 +460,8 @@ make_bland_altman_plot_by_label(results %>%
 make_bland_altman_plot_by_label(results %>% 
                                    mutate(coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
                                                                 0.5 ~ "Med COI/Prop. Polyclonal")) %>%
-                                  add_diff_mean(allele_freq, freq), "freq" ) +
+                                  add_diff_mean(allele_freq, freq), "freq" , method = "loess",
+                                linecolor = "magenta") +
   facet_wrap(~coi_r, nrow = 2) + ggtitle("Bland-Altmans by COI")
 ```
 
@@ -691,7 +474,8 @@ make_bland_altman_plot_by_label(results %>%
                                                           9 ~ "Med. \nRelatedness",
                                                           99 ~ "Low \nRelatedness"
                                                           )) %>%
-                                  add_diff_mean(allele_freq, freq), "freq" ) +
+                                  add_diff_mean(allele_freq, freq), "freq" , method = "loess",
+                                linecolor = "magenta") +
   facet_wrap(~pop_alpha, nrow = 2) + ggtitle("Bland-Altmans by Relatedness")
 ```
 
@@ -702,7 +486,8 @@ make_bland_altman_plot_by_label(results %>%
 make_bland_altman_plot_by_label(results %>% 
                                    mutate(k_s = case_match(k_s, 0.2 ~ "High Recombination",
                                                               0.5 ~ "Med Recombination")) %>%
-                                  add_diff_mean(allele_freq, freq), "freq" ) +
+                                  add_diff_mean(allele_freq, freq), "freq", method = "loess",
+                                linecolor = "magenta") +
   facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination")
 
 
@@ -712,4 +497,9 @@ make_bland_altman_plot_by_label(results %>%
 
 ## Summary and Next Steps
 
-Malaria.em seems to be working! However, there are a lot of open questions around exactly how well it works on various allele sets. Additionally, the computational constraints limit wide-spread applicability and still need to be quantified for malaria.em
+Malaria.em seems to be working! However, there are a lot of open questions around exactly how well it works on various allele sets. Additionally, the computational constraints limit wide-spread applicability and still need to be quantified for malaria.em.
+
+* Ind level
+* pop-level
+* variables
+* There are minimal false positives and false negatives: most false positives are "hallucinated" at very low frequencies, and the few false negative represent a very small part of the overall population.
