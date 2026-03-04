@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load in the Benchmarking Outputs
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, echo = FALSE}
 library(dplyr)
 library(ggplot2)
 library(jsonlite)
@@ -20,27 +20,275 @@ library(readr)
 library(stringr)
 library(tibble)
 library(tidyr)
-
+library(DT)
+library(patchwork)
+library(ggpmisc)
 
 inp <- list(
-  sim_info_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_sample_out.tsv",
+  sim_info_param_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/SpotMalaria",
+  sim_info_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_pop_freqs_prevs_out.tsv",
+  sim_info_dir_ind = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/all_phased_sample_out.tsv",
   tool_res_dir = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem_results/malariaem/",
   tool_params = "C:/Users/zoeor/OneDrive/Documents/Life/Collaboration with Dr. Wesolowski/malaria.em.benchmark/malariaem.json"
 )
 ```
 
+## Nick's Functions
+
+This section must be replaced by a call to Nick's script.
+
+```{r functions from Nick, echo = F}
+
+make_bland_altman_plot_by_label <- function(
+    df,
+    label,
+    mean_suffix = "_mean_with_exp",
+    diff_suffix = "_diff_from_exp",
+    expected_label = "Expected",
+    bins = 30
+) {
+  stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
+  
+  mean_col <- paste0(label, mean_suffix)
+  diff_col <- paste0(label, diff_suffix)
+  
+  if (!(mean_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", mean_col))
+  if (!(diff_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", diff_col))
+  
+  ggplot(df) +
+    geom_hex(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
+      bins = bins
+    ) +
+    scale_fill_viridis_c(name = "log10(count)") +
+    theme_minimal() +
+    geom_smooth(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]]),
+      method = "gam", se = FALSE
+    ) +
+    # +2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y)  2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
+    # -2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y) -2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
+    labs(
+      title = label,
+      y = paste0(label, " - ", expected_label),
+      x = paste0("mean (", label, ", ", expected_label, ")")
+    ) +
+    coord_equal()
+}
+
+add_diff_mean <- function(df, expected_col, observed_col) {
+  expected_col <- enquo(expected_col)
+  observed_col <- enquo(observed_col)
+  
+  obs_name <- rlang::as_name(observed_col)
+  
+  df %>%
+    rowwise() %>%
+    mutate(
+      !!paste0(obs_name, "_diff_from_exp") := !!observed_col - !!expected_col,
+      !!paste0(obs_name, "_mean_with_exp") := mean(c(!!observed_col, !!expected_col))
+    ) %>%
+    ungroup()
+}
+
+
+#' @title Concordance / Error Metrics (single or multiple observed columns)
+#' @keywords CCC RMSE MAE COI
+#'
+#' @description
+#' Compute metrics between an expected column and one or more observed columns.
+#' Each function accepts an optional set of grouping columns. If omitted, an
+#' overall (single-row) summary is returned.
+#'
+#' @param df A data frame.
+#' @param expected_col Unquoted column name of expected values.
+#' @param observed_cols One symbol or \code{c(sym1, sym2, ...)} of observed columns.
+#' @param group_cols Optional grouping columns supplied like
+#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
+#'   computes overall metrics (no grouping).
+#'
+#' @return A tibble with group columns (if any) and metric columns per observed variable.
+#'
+#' @importFrom dplyr group_by summarise distinct left_join bind_cols
+#' @importFrom rlang enquo enexpr is_call call_args as_quosure caller_env as_name
+#' @importFrom purrr map map_dbl
+#' @name vectorized_metrics
+
+
+# ---- CCC (DescTools::CCC) ----------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+  
+  # capture observed columns (symbol or c(...))
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+  
+  # capture grouping columns (NULL/omitted => no groups)
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      obs_name <- rlang::as_name(q)
+      one <- df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
+        dplyr::mutate(
+          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
+          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
+          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
+        ) %>%
+        dplyr::select(-.ccc)
+      out <- dplyr::left_join(out, one, by = join_by_cols)
+    }
+  } else {
+    pieces <- purrr::map(obs_quos, function(q) {
+      obs_name <- rlang::as_name(q)
+      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
+      tibble::tibble(
+        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
+        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
+        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
+      )
+    })
+    out <- dplyr::bind_cols(pieces)
+  }
+  
+  out
+}
+
+# ---- RMSE --------------------------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_rmse <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+  
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+  
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  metric_fun <- function(q) {
+    obs_name <- rlang::as_name(q)
+    if (length(grp_quos) > 0) {
+      df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          !!paste0(obs_name, "_rmse") := {
+            x <- !!q; y <- !!expected_col
+            ok <- !is.na(x) & !is.na(y)
+            n  <- sum(ok)
+            if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+          },
+          .groups = "drop"
+        )
+    } else {
+      dplyr::summarise(df,
+                       !!paste0(obs_name, "_rmse") := {
+                         x <- !!q; y <- !!expected_col
+                         ok <- !is.na(x) & !is.na(y)
+                         n  <- sum(ok)
+                         if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+                       }
+      )
+    }
+  }
+  
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
+    }
+  } else {
+    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
+  }
+  
+  out
+}
+
+
+create_dt <- function(x){
+  DT::datatable(x,
+                extensions = 'Buttons',
+                options = list(dom = 'Blfrtip',
+                               buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+                               lengthMenu = list(c(10,25,50,-1),
+                                                 c(10,25,50,"All"))), 
+                filter = "top")
+}
+
+
+create_tabsetOfGgplotObjects <- function(ggplotObjectsList) {
+  cat("\n\n::: {.panel-tabset}\n\n")
+  iwalk(ggplotObjectsList, ~ {
+    cat('## ', .y, '\n\n')
+    print(.x)
+    cat('\n\n')
+  })
+  cat(":::\n")
+}
+
+
+```
+
 First, all of the tool results, tool parameters, expected simulated values, and
 simulation parameters are read into a tibble.
 
-```{r}
+```{r reading in results, echo = F, warning=F}
 # Read all expected frequencies into one tibble ------------------------
-sim_truth <- read_table(inp$sim_info_dir)
+sim_truth <- read_table(inp$sim_info_dir) %>% distinct()
 
 
 # Read in all simulation parameters into one tibble --------------------
 sim_params <- tibble(
     sim_params_path = list.files(
-      inp$sim_info_dir, 
+      inp$sim_info_param_dir, 
       pattern = "simulation_parameters.json", 
       full.names = TRUE, 
       recursive = TRUE
@@ -52,29 +300,31 @@ sim_params <- tibble(
       jsonlite::fromJSON
     )
   ) %>%
-  select(-sim_params_path) %>%
+  dplyr::select(-sim_params_path) %>%
   mutate(sim_params = map(sim_params, as_tibble)) %>%
   unnest(sim_params) %>%
-  select(
+  dplyr::select(
     -collection_year, 
     -obs_freq_monoclonal, 
     -obs_non_recombinant, 
     -mean_k, 
     -sample_count, 
-    -est_between_sample_relatedness
+    -est_between_sample_relatedness,
+    -country
   ) %>%
   rename(
     sim_id = population_name, 
     true_mean_coi = mean_coi
   )
 sim_truth <- sim_truth %>%
-  left_join(sim_params, by = "sim_id")
+  left_join(sim_params, by = join_by(population_name == sim_id))
 
+country_diversity <- sim_truth %>% group_by(population_name, group_id, target) %>%
+  dplyr::summarize(n_alleles = n_distinct(seq)) %>% group_by(population_name, group_id) %>%
+  dplyr::summarize(max_n_alleles = max(n_alleles))
 
-#specimen_id	target_id	seq	gt_id	posterior_est	phase_id	group_id
-#gt_id	target_id	seq	freq	freq_se	group_id (mlaf)
+sim_truth_individual <- read_table(inp$sim_info_dir_ind)
 
-# Read in all FEM results into one tibble ------------------------------
 tool_results <- tibble(
     tool_res_path = list.files(
       inp$tool_res_dir, 
@@ -104,201 +354,362 @@ tool_results <- tibble(
   dplyr::select(-tool_res_path) %>%
   unnest(tool_res)
 
-# Read in tool parameters, and join ------------------------------------
-tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
-  as_tibble() %>%
-  mutate(mean_coi_tool_param = paramset$coi) %>%
-  dplyr::select(-loci_groups, -paramset)
-tool_results <- tool_results %>%
-  left_join(tool_params, by = "paramset_id")
-
-lookuptable <- tool_results %>% select
-
-tool_results_phased <- tool_results %>% group_by(sim_id,paramset_id,gt_id) %>%
-  arrange(target_id) %>%
-  summarize(hap_id = paste0(target_id, sep="--"),
-            seq = paste0(seq, sep="--"))
-
-# Join everything into one tibble --------------------------------------
-tool_results_wtruth <- tool_results %>%
-  # Use an inner join because FEM also estimates frequencies for 
-  # subsets of the requested multilocus genotypes, and these 
-  # frequencies are not benchmarked
-  full_join(sim_truth, by = c("sim_id", "variant", "group_id"))
 
 
-
-
-```
-# LEFTOVER FROM FEM
-
-
-
-## Performance with Good COI Specification
-
-Next, performance is assessed when the specified COI is close to the true COI.
-This is done by finding the set of tool results for each simulation where the
-COI parameter was set the closest to the true COI.
-
-```{r}
-# Filter so that FEM COI parameter was close to the true mean COI -----
-tool_results_wtruth_goodcoi <- tool_results_wtruth %>%
-  mutate(coi_misspec = mean_coi_tool_param - true_mean_coi) %>%
-  group_by(sim_id, paramset_id, variant, group_id) %>%
-  filter(coi_misspec == min(abs(coi_misspec))) %>%
-  ungroup()
-```
-
-### Allele Frequency
-
-```{r}
-# Compute RMSE of frequency and prevalence -----------------------------
-goodcoi_rmse <- tool_results_wtruth_goodcoi %>%
-  group_by(
-    sim_id, 
-    paramset_id, 
-    country, 
-    group_id, 
-    pop_alpha, 
-    coi_p, 
-    coi_r, 
-    k_s
+tool_results_ind <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "phasing_results.tsv", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
   ) %>%
-  summarize(
-    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
-    prev_rmse = sqrt(mean((obs_prev - exp_prev)^2)), 
-    .groups = "drop"
-  )
-
-# Show all RMSEs as a boxplot ------------------------------------------
-goodcoi_rmse <- goodcoi_rmse %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  dplyr::select(-tool_res_dir) %>%
   mutate(
-    group_id = factor(
-      group_id, 
-      c(
-        "six_med_div", 
-        "six_low_div", 
-        "four_group1", 
-        "two_group1", 
-        "pfdhfr_pfdhps", 
-        "pfdhps", 
-        "pfdhfr"
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        seq = col_character(), 
+        target_id = col_character(), 
+        gt_id = col_integer(), 
+        group_id = col_character(),
+        specimen_id = col_character()
       ), 
-      labels = c(
-        "Six, Medium Diversity", 
-        "Six, Low Diversity", 
-        "Four", 
-        "Two", 
-        "pfdhfr/pfdhps", 
-        "pfdhps", 
-        "pfdhfr"
-      )
-    )
-  )
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = group_id, y = freq_rmse)) +
-  geom_boxplot() +
-  scale_x_discrete(
-  ) +
-  labs(x = "Loci Set", y = "RMSE of Allele Frequency Estimate") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-```
-
-These box plots shows the RMSE of allele frequency estimates based on all
-simulations (combining different parameter sets and replicates). Different boxes
-correspond to different loci sets. The median accuracy is comparable and fairly
-good regardless of the number of loci tested, but there are some high outliers
-for the medium diversity group of six loci.
-
-```{r out.width = "100%", fig.width = 9, fig.height = 7}
-# Create box plots of RMSE, separated by simulation parameters ---------
-goodcoi_rmse <- goodcoi_rmse %>%
-  mutate(
-    pop_alpha = factor(
-      pop_alpha, 
-      c("2.33", "9", "99"), 
-      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+      progress = FALSE
     )
   ) %>%
-  mutate(
-    k_s = factor(
-      k_s, 
-      c("0.5", "0.2"), 
-      labels = c("Med. Recombination", "High Recombination")
-    )
-  ) %>%
-  # coi_p was varied in synchronicity with coi_r to produce different 
-  # polyclonality levels, and thus coi_p is implicitly included when 
-  # using coi_r as a plotting aesthetic
-  mutate(
-    coi_r = factor(
-      coi_r, 
-      c("0.25", "0.5"), 
-      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
-    )
-  )
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = pop_alpha, y = freq_rmse, color = group_id)) +
-  geom_boxplot() +
-  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
-  labs(
-    x = "Simulated Relatedness", 
-    y = "RMSE of Allele Frequency Estimate", 
-    color = "Loci Set"
-  ) +
-  theme(legend.position = "bottom")
+  dplyr::select(-tool_res_path) %>%
+  unnest(tool_res)
+
+unique_seqs <- data.frame(seq = unique(c(sim_truth$seq, sim_truth_individual$seq, tool_results$seq, tool_results_ind$seq)))
+unique_seqs$key <- rownames(unique_seqs)
+
+sim_truth <- merge(sim_truth, unique_seqs, by="seq")
+sim_truth_individual <- merge(sim_truth_individual, unique_seqs, by="seq")
+tool_results <- merge(tool_results, unique_seqs, by="seq") %>% distinct()
+tool_results_ind <- merge(tool_results_ind, unique_seqs, by="seq")
+
+sim_truth_phased <- sim_truth %>% group_by(population_name, country, pop_simulated_gt_id, allele_freq, group_id) %>%
+  arrange(target) %>% dplyr::summarize(seq = paste(seq, collapse=""),
+                                target = paste(target, collapse=";"),
+                                key = paste(key, collapse = ","),
+                                nseqs = n())
+
+
+sim_truth_phased_ind <- sim_truth_individual %>% 
+  group_by(population_name, country, pop_simulated_gt_id, group_id, sample_name, simulated_within_sample_phase_hap_id) %>%
+  arrange(target) %>% distinct(seq, target, key) %>% dplyr::summarize(seq = paste(seq, collapse=""),
+                                target = paste(target, collapse=";"),
+                                key = paste(key, collapse = ","),
+                                nseqs = n()) %>%
+  group_by(population_name, group_id, sample_name, target) %>%
+  dplyr::summarize(key_TRUE = paste(str_sort(unique(key)), collapse="_"))
+
+
+tool_results_phased <- tool_results %>% group_by(sim_id, group_id, gt_id, freq) %>% arrange(target_id) %>%
+  dplyr::summarize(seq = paste(seq, collapse = ""),
+            key = paste(key, collapse = ","),
+            target = paste(target_id, collapse = ";")) %>% distinct()
+
+tool_results_ind_phased <- tool_results_ind %>% group_by(sim_id, group_id, gt_id, phase_id, specimen_id) %>% 
+  arrange(target_id) %>%
+  dplyr::summarize(seq = paste(seq, collapse = ""),
+            key = paste(key, collapse = ","),
+            target = paste(target_id, collapse = ";"),
+            posterior_est = min(posterior_est)) %>% distinct() %>%
+  mutate(specimen_id = as.numeric(str_split_i(specimen_id, "_", 1))) %>%
+  group_by(sim_id, group_id, specimen_id, target, posterior_est) %>%
+  dplyr::summarize(key_TOOL = paste(str_sort(unique(key)), collapse="_"))
+
+results_ind <- full_join(sim_truth_phased_ind, tool_results_ind_phased,
+                         by = join_by(target==target,
+                                      sample_name == specimen_id,
+                                      group_id == group_id,
+                                      population_name == sim_id)) %>%
+  mutate(match = key_TRUE==key_TOOL,
+         posterior_est = as.numeric(posterior_est))
+
+results_ind <- left_join(results_ind, sim_params, by = join_by(population_name == sim_id))
+
+# Read in tool parameters
+tool_params <- jsonlite::fromJSON(inp$tool_params, flatten = TRUE) %>%
+  as_tibble() 
+
+#create_dt(tool_params)
+
+```
+## Defining Plot Functions
+
+To quantify accuracy across a variety of simulation parameters, we have plotted data on two axes: one for the COI/proportion polyclonal, and another for the amount of recombination. Each loci group (two loci (set A), two loci (set B), and four loci) is separated out.
+
+```{r defining plot functions}
+
+make_boxplots <- function(df, response_var, ylab, title){
+  df <- df %>% left_join(sim_params, by = join_by(population_name==sim_id))
+  
+  plot <- ggplot(df %>% mutate(pop_alpha = 
+                                               case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
+                                                          9 ~ "Med. \nRelatedness",
+                                                          99 ~ "Low \nRelatedness"
+                                                          ),
+                                             coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
+                                                                0.5 ~ "Med COI/Prop. Polyclonal"),
+                                             k_s = case_match(k_s, 0.2 ~ "High Recombination",
+                                                              0.5 ~ "Med Recombination"),
+                                             `Loci Group` = case_match(group_id, "two_lowdiv" ~ "Two (Set A)",
+                                                                       "two_meddiv" ~ "Two (Set B)", "four" ~ "Four")), 
+         aes(x = `Loci Group`, y=!!sym(response_var), fill = `Loci Group`, color = `Loci Group`)) +
+    geom_boxplot(outliers = F, alpha = 0.3) + geom_jitter() + theme_bw() + 
+    ylab(ylab) + 
+    ylim(c(0, 1)) + xlab(NULL) + ggtitle(title) + 
+    scale_fill_manual(values = c( "goldenrod", "thistle", "orchid")) +
+  scale_color_manual(values = c( "goldenrod", "thistle", "orchid")) +
+  #geom_errorbar(aes(ymin = freq_ccc_lower, ymax = freq_ccc_upper), 
+    #            position=position_dodge(width=0.01)) + 
+  facet_grid(cols = vars(coi_r), rows = vars(k_s)) + xlab(NULL)
+  return(plot)
+}
+
+
+
+make_grouped_plot <- function(df, response_var, ylab, title){
+  plot <- ggplot(df %>% mutate(pop_alpha = 
+                                               case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
+                                                          9 ~ "Med. \nRelatedness",
+                                                          99 ~ "Low \nRelatedness"
+                                                          ),
+                                             coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
+                                                                0.5 ~ "Med COI/Prop. Polyclonal"),
+                                             k_s = case_match(k_s, 0.2 ~ "High Recombination",
+                                                              0.5 ~ "Med Recombination"),
+                                             `Loci Group` = case_match(group_id, "two_lowdiv" ~ "Two, Low Diversity",
+                                                                       "two_meddiv" ~ "Two, Med Diversity", "four" ~ "Four")), 
+                      aes(x = pop_alpha, y = !!sym(response_var), 
+                                       fill = `Loci Group`, color = `Loci Group`)) +
+  #geom_jitter() +
+  geom_point(alpha = 1, position = position_dodge(width = 0.5),
+             size = 3) +
+  geom_errorbar(aes(ymin = freq_ccc_lower, ymax = freq_ccc_upper) , 
+                position = position_dodge(width = 0.5),
+                width = 0,
+                linewidth = 1) + 
+  scale_fill_manual(values = c( "goldenrod", "thistle", "orchid")) +
+  scale_color_manual(values = c( "goldenrod", "thistle", "orchid")) +
+  #geom_errorbar(aes(ymin = freq_ccc_lower, ymax = freq_ccc_upper), 
+    #            position=position_dodge(width=0.01)) + 
+  facet_grid(cols = vars(coi_r), rows = vars(k_s)) + xlab(NULL) + ylab(ylab) + ggtitle(title)
+  return(plot)
+}
+  
+
 ```
 
-These box plots also show allele frequency RMSE, but separated out in terms of
-the simulation parameters, which affected the between-sample relatedness, the
-COI, and the rate of recombination.
 
-These results show that accuracy improves as between-sample relatedness
-declines. Also, accuracy tends to be higher in the medium COI condition. The
-relationship between accuracy and group size is not straightforward: the two
-loci group tends to have the best accuracy, but the six loci, medium diversity
-group sometimes has the worst accuracy and sometimes the best.
+# Individual-Level Analyses
 
-### Sample Prevalence
+Malaria.em provides both population-level and individual results. Here, we present the individual-level results (i.e. the phasing within each individual). The posterior estimates generated for each individual were generally higher when the matching was correct. We chose a posterior estimate of > 0.55 as a cutoff for being more likely to be accurate than not in this dataset, but this value will require further validation.
+
+```{r plotting individual results}
+conflicted::conflicts_prefer(dplyr::filter)
+a <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
+  geom_violin(alpha = 0.3, aes(fill = match)) + 
+  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue"))
+
+b <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
+  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue"))
+
+a/b
+
+
+results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_")) 
+
+
+results_ind_summary_55 <- results_ind %>%
+  filter(posterior_est > 0.55) %>% 
+  group_by(population_name, group_id,) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_"))
+
+all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
+              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing")
+
+post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
+              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
+
+all_accuracy / post_55
+
+```
+
+As shown in these figures, the accuracy, particularly among samples taken from regions with a medium COI as opposed to a low one, is rather low. Many of the populations have \< 75% of the samples correctly phased. This individual-level phasing accuracy requires more validation. Although adding a cutoff for positerior estimate certainty improves measures, this does lead to a loss of data.
+
+# Population-Level Analyses
+
+```{r plotting population results}
+results <- full_join(sim_truth_phased, 
+                     tool_results_phased, 
+                     by=join_by(key==key,
+                                group_id==group_id,
+                                population_name==sim_id))
+
+results <- left_join(results, sim_params, by= join_by(population_name == sim_id))
+results <- results %>% mutate(
+  freq = replace_na(freq, 0),
+  allele_freq = replace_na(allele_freq, 0)
+)
+
+results <- results %>% left_join(country_diversity, join_by(population_name, group_id))
+results_ccc_df <- results %>% mutate(group_label = paste(coi_r, group_id, pop_alpha, k_s)) 
+results_ccc <-  compute_ccc(results_ccc_df %>% ungroup(), allele_freq, freq, group = c(population_name, group_id))
+results_ccc <- results_ccc %>% inner_join(results_ccc_df %>% group_by(population_name, group_id) %>%
+                                            summarize_all(min), 
+                                          join_by(population_name == population_name, group_id ==
+                                                    group_id))
+
+results_ccc_grouped <-compute_ccc(results_ccc_df %>% ungroup(), allele_freq, freq, group = group_label)
+results_ccc_grouped <- results_ccc_grouped %>% 
+  inner_join(results_ccc_df %>% group_by(group_label) %>%
+                                            summarize_all(min), 
+                                          join_by(group_label))
+
+
+make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance")
+
+```
+
+Now, to further visualize these concordances, we can plot them against each other. The main variable that the CCC seems to vary by is COI, so here we can see the alignment of expected and estimated allele frequencies faceted by COI.
+
+```{r further visualizations}
+results_plot <- results %>% mutate(coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
+                                                                0.5 ~ "Med COI/Prop. Polyclonal"))
+test_ccc <- compute_ccc(results_plot  %>% ungroup(), allele_freq, 
+                        freq, group = coi_r)
+test_ccc <- test_ccc %>% mutate(label = paste0("CCC = ", round(freq_ccc, digits = 2),
+                                               " [", round(freq_ccc_lower, digits = 2), "-", round(freq_ccc_upper, digits = 2), "]"))
+
+plot <- ggplot(results_plot, aes(x = allele_freq, y = freq), color = "black") +
+                    #color = ifelse(population_name %in% 
+                    #                 c("simulated_Ghana_pop_043",
+                    #                   "simulated_Ghana_pop_003",
+                    #                   "simulated_Ghana_pop_051"), "High", "Low"))) + 
+  geom_point(alpha = 0.5) + 
+  ggtitle("Malaria EM") + theme_bw() + 
+  xlab("True Frequency") + 
+  ylab("Malaria EM Frequency") +
+  stat_poly_eq(group = 1) + facet_wrap(~coi_r) 
+
+plot + geom_text(
+  data    = test_ccc,
+  mapping = aes(x = -Inf, y = 0.8, label = label),
+  hjust   = -0.05,
+  vjust   = -1
+)
+```
+
+As you can see, even with a lower CCC, there is still strong agreement between the true and estimated frequencies from malaria.em.
+
+## False Positives and False Negatives
+
+Adapted from Bing's Code. There are some false negatives, but they are still relatively low overall. There are more false positives, but their estimated frequency is low.
 
 ```{r}
-# Show all RMSEs as a boxplot ------------------------------------------
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = group_id, y = prev_rmse)) +
-  geom_boxplot() +
-  scale_x_discrete(
-  ) +
-  labs(x = "Loci Set", y = "RMSE of Sample Prevalence Estimate") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
-```
+## allele freq is "real"
+## freq is the estimated value
 
-This box plot shows the RMSE of sample prevalence estimates based on all
-simulations (combining different parameter sets and replicates). Different boxes
-correspond to different loci sets. The accuracy of these estimates is generally
-pretty good, except for the six loci, medium diversity group.
-
-```{r out.width = "100%", fig.width = 9, fig.height = 7}
-# Create box plots of RMSE, separated by simulation parameters ---------
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = pop_alpha, y = prev_rmse, color = group_id)) +
-  geom_boxplot() +
-  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+results %>%
+  #filter(exp_freq > 0) %>% 
+  ggplot(aes(x = allele_freq, y = as.numeric(freq == 0))) +
+  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
   labs(
-    x = "Simulated Relatedness", 
-    y = "RMSE of Sample Prevalence Estimate", 
-    color = "Loci Set"
-  ) +
-  theme(legend.position = "bottom")
+    y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Negatives"
+  )
+
+results %>%
+  #filter(obs_freq > 0) %>% 
+  ggplot(aes(x = freq, y = as.numeric(allele_freq == 0))) +
+  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "steelblue", color = "white"  ) +
+  labs(
+    y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Positives"
+  )
 ```
 
-These box plots also show sample prevalence RMSE, but separated out in terms of
-the simulation parameters, which affected the between-sample relatedness, the
-COI, and the rate of recombination.
 
-The accuracy of the prevalence estimates tends to be very good in the low COI
-simulations, except in the six loci, medium diversity group noted above.
-Accuracy is still pretty good in the medium COI condition, and very good for the
-two loci group. The level of recombination doesn't seem to have a big effect.
+## Bland-Altman Plots {.tabset}
+
+To show the bias across the range of possible allele frequencies, we generated Bland-Altman plots faceted by a variety of simulation parameters.
+
+### By Country
+
+```{r BA country}
+make_bland_altman_plot_by_label(results %>% 
+                                  mutate(Country = ifelse(grepl("Ghana", population_name), "Ghana", "Cambodia")) %>%
+                                  add_diff_mean(allele_freq, freq), "freq") + 
+  facet_wrap(~Country, nrow = 2) +
+  ggtitle("Bland-Altmans by Country")
+```
+
+### By Group ID
+
+```{r BA Group ID}
+make_bland_altman_plot_by_label(results %>%
+                                  mutate(`Loci Group` = 
+                                           case_match(group_id, "two_lowdiv" ~ "Two (Set A)",
+                                                      "two_meddiv" ~ "Two (Set B)", "four" ~ "Four")) %>%
+                                  add_diff_mean(allele_freq, freq), "freq" ) + 
+  ggtitle("Bland-Altmans by Loci Group") +
+  facet_wrap(~`Loci Group`, nrow = 2)
+```
+
+### By COI_R
+
+```{r BA COI_r}
+make_bland_altman_plot_by_label(results %>% 
+                                   mutate(coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
+                                                                0.5 ~ "Med COI/Prop. Polyclonal")) %>%
+                                  add_diff_mean(allele_freq, freq), "freq" ) +
+  facet_wrap(~coi_r, nrow = 2) + ggtitle("Bland-Altmans by COI")
+```
+
+### By Relatedness
+
+```{r BA relate}
+make_bland_altman_plot_by_label(results %>% 
+                                   mutate(pop_alpha = 
+                                               case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
+                                                          9 ~ "Med. \nRelatedness",
+                                                          99 ~ "Low \nRelatedness"
+                                                          )) %>%
+                                  add_diff_mean(allele_freq, freq), "freq" ) +
+  facet_wrap(~pop_alpha, nrow = 2) + ggtitle("Bland-Altmans by Relatedness")
+```
+
+
+### By Recombination
+
+```{r BA recomb}
+make_bland_altman_plot_by_label(results %>% 
+                                   mutate(k_s = case_match(k_s, 0.2 ~ "High Recombination",
+                                                              0.5 ~ "Med Recombination")) %>%
+                                  add_diff_mean(allele_freq, freq), "freq" ) +
+  facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination")
+
+
+```
+
+## {-}
 
 ## Summary and Next Steps
 
+Malaria.em seems to be working! However, there are a lot of open questions around exactly how well it works on various allele sets. Additionally, the computational constraints limit wide-spread applicability and still need to be quantified for malaria.em
