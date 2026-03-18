@@ -27,11 +27,12 @@ df_summary |>
 
 ## Purpose
 
-The `SNP-slice` algorithm enables reconstruction of SNP haplotypes from bi-allelic data, allowing for inference of haplotype/strain frequencies.
+The `SNP-slice` algorthm enables reconstruction of SNP haplotypes from bi-allelic data, allowing for inference of haplotype/strain frequencies.
 
 ## Existing resources
 
-The [`SNP-slice` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes scripts for implementing the SNP-slice algorithm, as well as scripts for analyzing output and generating figures. 
+<!-- The [`SNP-slice` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes scripts for implementing the SNP-slice algorithm, as well as scripts for analyzing output and generating figures.  -->
+The `snp.slicer` [package](https://github.com/plasmogenepi/snp.slicer) provides an R package implementation of the `SNP-slice` [algorithm](https://doi.org/10.1093/bioinformatics/btae344).
 
 ## Citation
 
