@@ -1,8 +1,11 @@
 {
-  "hash": "7acb4542d5d23549aaa0c0c76b4175e6",
+  "hash": "af4c9c14d41b139f346bde7805a3a6a4",
   "result": {
-    "markdown": "---\ntitle: \"Benchmarking `insert bespoke functionality`\"\noutput: html_document\nauthor: \"TODO\"\ndate: \"TODO\"\n---\n\n\n\n\n\n## Analysis and viz\n\nTo be filled out :)",
-    "supporting": [],
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Benchmarking of PGEcore Naïve Single Locus Allele Frequency Tool\"\nauthor: \"Josphat N. Nyataya\"\noutput: html_document\n---\n\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n# Concordance\n\nFalse positives and false negatives were removed from this analysis to avoid non-infinite values in the plots.\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](benchmarking_files/figure-html/unnamed-chunk-6-1.png){width=672}\n:::\n:::\n\n\nIn this figure we see clearly that the read count method of estimating allele frequency was consistent in both low and medium COI, whereas the presence_absence approach yielded lower correlation coefficients in the medium COI simulations.\n\n# Bland-Altman Plots\n\nFalse positives and false negatives were also removed to create these plots.\n\n\n::: {.cell}\n\n:::\n\n\n## Presence-Absence Method\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](benchmarking_files/figure-html/unnamed-chunk-8-1.png){width=672}\n:::\n:::\n\n\nWhile the two measures show reasonable overall agreement, the plot reveals evidence of frequency-dependent bias, with overestimation at low frequencies and underestimation at high frequencies.\n\n## Read Count Method\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](benchmarking_files/figure-html/unnamed-chunk-9-1.png){width=672}\n:::\n:::\n\n\nThe plot indicates overall good agreement between observed and expected frequencies, with some heteroscedasticity at intermediate frequencies but no strong evidence of consistent bias.\n\n# False Positives and False Negatives\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n\n:::\n\n\n\n::: {.cell}\n::: {.cell-output .cell-output-stdout}\n\n```\n        FN    FP     TP sensitivity    recall       ppv precision\ncount 1914 40932 134278   0.9859463 0.9859463 0.7663832 0.7663832\n      overlap_coefficient       tpr       fdr  f1_score\ncount           0.7581017 0.9859463 0.2336168 0.8624094\n```\n\n\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](benchmarking_files/figure-html/unnamed-chunk-13-1.png){width=672}\n:::\n:::\n\n\nOverall, this method has excellent sensitivity (98.5%) and is therefore able to detect all positives with few false negatives. However, it also generated many false positives (precision=76.6%).\n",
+    "supporting": [
+      "benchmarking_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
