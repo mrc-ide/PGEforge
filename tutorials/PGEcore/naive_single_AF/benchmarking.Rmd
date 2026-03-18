@@ -1,16 +1,12 @@
 ---
 title: "Benchmarking of PGEcore Naïve Single Locus Allele Frequency Tool"
-author: "JNN"
-date: "2025-09-28"
+author: "Josphat N. Nyataya"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 
-```
-##  Load  the requied packages and list of Benchmarking inputs
-```{r}
 library(dplyr)
 library(ggplot2)
 library(jsonlite)
@@ -22,12 +18,14 @@ library(tibble)
 library(tidyr)
 
 inp <- list(
-  sim_info_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/simulations/SpotMalaria", 
-  tool_res_dir = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf", 
-  tool_params = "C:/Users/Josphat.Nyataya/OneDrive - USAMRU Kenya/Desktop/Desktop/R_analyses_2024/naive_slaf_results/naive_slaf.json"
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_slaf", 
+  tool_params = "../../../data/benchmarking/tool_results/naive_slaf.json"
 )
+
+source("../../scripts/benchmarking_functions.R")
 ```
-## Create a tibble contatining all the required parameters and simulations.
+
 ```{r}
 # Read all expected frequencies into one tibble ------------------------
 sim_truth <- tibble(
@@ -148,148 +146,28 @@ tool_results <- tool_results %>%
 
 # Join everything into one tibble --------------------------------------
 sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
-tool_results_wtruth <- tool_results %>%
-  # Use an inner join because FEM also estimates frequencies for 
-  # subsets of the requested multilocus genotypes, and these 
-  # frequencies are not benchmarked
-  inner_join(sim_truth, by = c("sim_id", "variant"))
-```
-## Load the custom functions into R session
-```{r}
-getwd()
-source("hackathon_helper.R")
-```
-##  Combine the simulated and tool results into a single dataframe.
-```{r}
-combined_s <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
-df <- combined_s %>% select(obs_freq, exp_freq, slaf_method)
-```
-##  Run the means and difference of the observed and expected columns
-```{r}
-df <- add_diff_mean(df, expected_col = exp_freq, observed_col = obs_freq)
-```
-##  Remove the missing (NAs) from the df to avoid non-infinite values in the plots
-```{r}
-sum(is.na(df))
-df <- na.omit(df)
-```
-##  Make a bland altman plot
-```{r}
-g1 <- make_bland_altman_plot_by_label(df, label = "obs_freq", bins = 30) + transparentBackground
-g1
-```
-
-## We split the BA plot by slaf_method
-```{r}
-df_rc <- df %>% filter(slaf_method == "read_count_prop")
-df_pa <- df %>% filter(slaf_method == "presence_absence")
-```
-##  Make BA based on read_count
-```{r}
-s1 <- make_bland_altman_plot_by_label(df_rc, label = "obs_freq", bins = 30) + transparentBackground 
-s1
-```
-```{r}
-# The plot indicates overall good agreement between observed and expected frequencies, with some heteroscedasticity at intermediate frequencies (low read count) but no strong evidence of consistent bias.
-```
-
-## Do the same based on presence_absence
-```{r}
-s2 <- make_bland_altman_plot_by_label(df_pa, label = "obs_freq", bins = 30) + transparentBackground
-s2
 ```
 
 ```{r}
-## While the two measures show reasonable overall agreement, the plot reveals evidence of frequency-dependent bias, particularly at higher mean frequencies, which should be considered when interpreting results or using the measures interchangeably.
-```
-
-## We now proceed to make the general concordance plot
-```{r}
-g2 <- my_hex(df, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
-g2
-```
-
-## Also create a concordance plot based on read count method
-```{r}
-c1 <- my_hex(df_rc, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
-c1
+# Combine the simulated and tool results into a single dataframe
+toolres_simtruth_combined <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
 ```
 
 ```{r}
-## Positive correlation between the expected and observed frequencies when the parameters are estimated  using read count
+# Run the means and difference of the observed and expected columns
+toolres_simtruth_combined <- add_diff_mean(toolres_simtruth_combined, expected_col = exp_freq, observed_col = obs_freq)
 ```
 
-##  Make the same plot based on presence_absence
+# Concordance
+
+False positives and false negatives were removed from this analysis to avoid non-infinite values in the plots.
+
 ```{r}
-c2 <- my_hex(df_pa, aes(x = exp_freq, y = obs_freq, bin = 30)) + transparentBackground
-c2
+toolres_simtruth_combined_nomissing <- na.omit(toolres_simtruth_combined)
 ```
 
 ```{r}
-## Using presence_absence  results in an S shaped plot where the rare events are underestimated (lower expected frequency results in higher observed frequency) and common events are overestimated(at high expected frequency, the observed frequency is low)
-```
-
-
-## We can aslo generate the overal correlation coefficient and lin's ccc
-```{r}
-d2 <- my_corr_ccc(df, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
-d2
-```
-
-## Also estimate the correlation coefficients based on read_count
-```{r}
-d3_rc <- my_corr_ccc(df_rc, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
-d3_rc
-```
-
-## Do the same correlation based on presence_absence
-```{r}
-d3_pa <- my_corr_ccc(df_pa, aes(x = exp_freq, y = obs_freq, method = "pearson", digits = 3, ccc_conf = 0.95, size = 4))
-d3_pa
-```
-
-##  To generate the contingency tables, we extract the TP, FN and FP 
-```{r}
-#classify the variants as "False positive" or as "False Negative"
-combined_2 <- combined_s %>% mutate(status = case_when(!is.na(obs_freq) & is.na(exp_freq) ~ "FP", is.na(obs_freq) & !is.na(exp_freq) ~ "FN", TRUE ~ "TP"))
-
-#summarize the counts
-count_summarize <- combined_2 %>% group_by(status) %>% summarise(count = n(), .groups = "drop")
-
-count_summarize
-```
-
-##  Convert the count_summary tibble to a dataframe and ensure the three columns are well labelled
-```{r}
-count_summarize_df <- as.data.frame(count_summarize)
-input <- as.data.frame(t(count_summarize_df))
-colnames(input)[1] <- "FN"
-colnames(input)[2] <- "FP"
-colnames(input)[3] <- "TP"
-input <- input[-1, ]
-input <- input %>% mutate(TP = as.numeric(TP),                                                                     FP = as.numeric(FP),                                                                     FN = as.numeric(FN)                                            )
-
-input
-```
-
-## Generate the contingency table
-```{r}
-d1 <- input2 <- add_contigency_metrics_no_TN(input = input, summarize_first = F)
-d1
-```
-
-##  Generate a radar plot but we first generate the metric map
-```{r}
-metric_map1 <- c("Sensitivity" = "sensitivity", "Precision" = "precision", "F1-score" = "f1_score", "FDR" = "fdr")
-g3 <- radar_by_metrics(input2, color_col = NULL, facet_col = NULL, metric_map = metric_map1, palette = NULL, title = "Perfomance radar", outer_pad = 0.12, ring_breaks = seq(0,1,0.25))
-g3
-```
-```{r}
-## Overall acceptable sensitivity(100%), therefore able to detect all positives,but at can also include false positive (precision=75%) 
-```
-## Using a different code for correlation 
-```{r}
- tool_results_Concordance_Freq <- tool_results_wtruth %>%
+ tool_results_Concordance_Freq <- toolres_simtruth_combined_nomissing %>%
          group_by(
          slaf_method, 
          pop_alpha, 
@@ -335,7 +213,7 @@ g3
          )
      )
 ```
-## Plot the concordance plot
+
 ```{r}
 tool_results_Concordance_Freq %>%
      ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = slaf_method)) +
@@ -343,14 +221,80 @@ tool_results_Concordance_Freq %>%
      facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
      labs(
          x = "Simulated Relatedness", 
-         y = "Concordance Correlation Coeffifient"
+         y = "Concordance Correlation Coeffifient", 
+         color = "Method"
      ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
      theme(legend.position = "bottom")-> Concordance_byScenario_prev
  
 print(Concordance_byScenario_prev)
 ```
+
+In this figure we see clearly that the read count method of estimating allele frequency was consistent in both low and medium COI, whereas the presence_absence approach yielded lower correlation coefficients in the medium COI simulations.
+
+# Bland-Altman Plots
+
+False positives and false negatives were also removed to create these plots.
+
 ```{r}
-##In this figure we see clearly that the read count method of estimating allele frequency was consistent in both low and high COI, whereas the presence_absence approach appeared to yield lower correlation coefficients.
+# We split the data by slaf_method
+toolres_simtruth_combined_rc <- toolres_simtruth_combined_nomissing %>% filter(slaf_method == "read_count_prop")
+toolres_simtruth_combined_pa <- toolres_simtruth_combined_nomissing %>% filter(slaf_method == "presence_absence")
 ```
 
+## Presence-Absence Method
 
+```{r message = FALSE}
+s2 <- make_bland_altman_plot_by_label(toolres_simtruth_combined_pa, label = "obs_freq", bins = 30) + transparentBackground
+s2
+```
+
+While the two measures show reasonable overall agreement, the plot reveals evidence of frequency-dependent bias, with overestimation at low frequencies and underestimation at high frequencies.
+
+## Read Count Method
+
+```{r message = FALSE}
+s1 <- make_bland_altman_plot_by_label(toolres_simtruth_combined_rc, label = "obs_freq", bins = 30) + transparentBackground 
+s1
+```
+
+The plot indicates overall good agreement between observed and expected frequencies, with some heteroscedasticity at intermediate frequencies but no strong evidence of consistent bias.
+
+# False Positives and False Negatives
+
+```{r}
+# To generate the contingency tables, we extract the TP, FN and FP
+combined_2 <- toolres_simtruth_combined %>% mutate(status = case_when(!is.na(obs_freq) & is.na(exp_freq) ~ "FP", is.na(obs_freq) & !is.na(exp_freq) ~ "FN", .default = "TP"))
+
+#summarize the counts
+count_summarize <- combined_2 %>% group_by(status) %>% summarise(count = n(), .groups = "drop")
+```
+
+```{r}
+# Convert the count_summary tibble to a dataframe and ensure the three columns are well labelled
+count_summarize_df <- as.data.frame(count_summarize)
+input <- as.data.frame(t(count_summarize_df))
+colnames(input)[1] <- "FN"
+colnames(input)[2] <- "FP"
+colnames(input)[3] <- "TP"
+input <- input[-1, ]
+input <- input %>% mutate(
+  TP = as.numeric(TP), 
+  FP = as.numeric(FP), 
+  FN = as.numeric(FN)
+)
+```
+
+```{r}
+# Generate the contingency table
+d1 <- input2 <- add_contigency_metrics_no_TN(input = input, summarize_first = F)
+d1
+```
+
+```{r}
+# Generate a radar plot but we first generate the metric map
+metric_map1 <- c("Sensitivity" = "sensitivity", "Precision" = "precision", "F1-score" = "f1_score", "FDR" = "fdr")
+g3 <- radar_by_metrics(input2, color_col = NULL, facet_col = NULL, metric_map = metric_map1, palette = NULL, title = "Perfomance radar", outer_pad = 0.12, ring_breaks = seq(0,1,0.25))
+g3
+```
+
+Overall, this method has excellent sensitivity (98.5%) and is therefore able to detect all positives with few false negatives. However, it also generated many false positives (precision=76.6%).
