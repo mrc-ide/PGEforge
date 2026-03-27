@@ -1,0 +1,834 @@
+---
+title: MultiLociBiallelicModel Benchmarking Results
+author: Shazia Ruybal-Pesántez
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide 
+    code_download: true
+    fig_width: 8
+    fig_height: 6
+    theme: cosmo
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set up
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+library(forcats)
+library(here)
+library(jsonlite)
+library(DescTools)
+
+inp <- list(
+  sim_info_dir = here("data", "pge-tools-benchmark", "simulations", "SpotMalaria"), 
+  tool_res_dir = here("data", "pge-tools-benchmark", "tool_results", "MLBM"), 
+  tool_params = here("data", "pge-tools-benchmark", "tool_results", "MLBM", "mlbm.json")
+)
+
+source(here("tutorials", "scripts", "benchmarking_functions.R"))
+```
+
+First, all of the tool results, tool parameters, expected simulated values, and
+simulation parameters are read into a tibble.
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        variant = col_character(), 
+        freq = col_double(), 
+        prev = col_double(), 
+        group_id = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  select(
+    -pop, 
+    -country, 
+    -aas_in_variant, 
+    -allele_count, 
+    -total_samples, 
+    -total_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all MLBM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        group_id = col_character(),
+        variant = col_character(), 
+        freq = col_number()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq
+  ) 
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) |> 
+  as_tibble()
+  # mutate(mean_coi_tool_param = paramset$coi) %>%
+  # dplyr::select(-loci_groups, -paramset)
+
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+tool_results_wtruth <- tool_results %>%
+  # Use an inner join because FEM also estimates frequencies for 
+  # subsets of the requested multilocus genotypes, and these 
+  # frequencies are not benchmarked
+  inner_join(sim_truth, by = c("sim_id", "variant", "group_id")) 
+
+# Key ids
+key_id_list <- sim_truth |> distinct(sim_id, variant, group_id) |> 
+  bind_rows(tool_results |> distinct(sim_id, variant, group_id)) |> 
+  distinct(sim_id, variant, group_id) |> 
+  mutate(key_id = 1:n())
+```
+
+```{r}
+# Checking difference between tool_results and sim_truth 
+
+# variant-level presence/absence: join ground truth and obs
+mlbm_all <- full_join(
+  # ground truth: exp_freq per variant
+  sim_truth |> 
+    select(sim_id, group_id, variant, exp_freq),
+  # observation: obs_freq per variant
+  tool_results |> 
+    select(sim_id, group_id, variant, obs_freq),
+  by = c("sim_id", "group_id", "variant")) |> 
+  # merge with params based on sim_id
+  left_join(sim_params |> 
+  select(sim_id, pop_alpha, coi_r, coi_p, k_s, true_mean_coi, country) |> 
+  distinct(), 
+            by = "sim_id") |> 
+  mutate(exp_freq = replace_na(exp_freq, 0),
+         obs_freq = replace_na(obs_freq, 0),
+         TP = as.numeric(exp_freq > 0 & obs_freq > 0),
+         FN = as.numeric(exp_freq > 0 & obs_freq == 0),
+         FP = as.numeric(exp_freq == 0 & obs_freq > 0))
+
+# note: the code below has been superseded now but keeping just in case
+# Saving a list of variants in tool_results but not sim_truth
+# list_false_positives <- tool_results |> 
+#   distinct(sim_id, group_id, variant) |> 
+#   anti_join(sim_truth |> 
+#               distinct(sim_id, group_id, variant),
+#             by = join_by(sim_id, group_id, variant)) |> 
+#   left_join(tool_results, by = join_by(sim_id, group_id, variant)) |> 
+#   left_join(key_id_list, by = join_by(sim_id, group_id, variant))
+# 
+# # Saving a list of variants in sim_truth that were not found in tool_results
+# list_false_negatives <- sim_truth |> 
+#   distinct(sim_id, group_id, variant) |> 
+#   anti_join(tool_results |> 
+#               distinct(sim_id, group_id, variant),
+#             by = join_by(sim_id, group_id, variant)) |> 
+#   left_join(sim_truth, by = join_by(sim_id, group_id, variant))|> 
+#   left_join(key_id_list, by = join_by(sim_id, group_id, variant))
+
+# true positive: full genotype found
+# false negative: full genotype not found 
+
+# comparison <- key_id_list |>
+#   mutate(false_negative = case_when(key_id %in% list_false_negatives$key_id ~ "yes",
+#                                     .default = "no"),
+#          false_positive = case_when(key_id %in% list_false_positives$key_id ~ "yes",
+#                                     .default = "no"),
+#          comparison_result = case_when(key_id %in% list_false_positives$key_id ~ "false positive",
+#                                        key_id %in% list_false_negatives$key_id ~ "false negative",
+#                                        .default = "observed in both")) |> 
+#   left_join(sim_truth, by = join_by(sim_id, variant, group_id)) |> 
+#   left_join(tool_results, by = join_by(sim_id, variant, group_id)) |> 
+#   mutate(country = str_extract(sim_id, "(?<=_)[^_]+(?=_)"))
+```
+
+## False Positive and False Negative Summaries 
+```{r, fig.height=10, eval=F}
+# redundant plotting code now 
+
+# tool_results |>
+#   left_join(key_id_list, by = join_by(sim_id, group_id, variant)) |>
+#   mutate(false_positive = case_when(key_id %in% list_false_positives$key_id ~ "yes",
+#                                     .default = "no")) |> 
+#   mutate(country = str_extract(sim_id, "(?<=_)[^_]+(?=_)")) |> 
+#   mutate(pop_id = str_extract(sim_id, "(?<=_)[^_]+$")) |> 
+#   ggplot(aes(x = pop_id, fill = fct_rev(false_positive))) +
+#     geom_bar(stat = "count", position = "fill") +
+#     scale_fill_manual(values = c("yes" = "indianred3",
+#                                      "no" = "lemonchiffon3")) +
+#     scale_y_continuous(labels = scales::percent_format(),
+#                        expand = c(0,0)) +
+#     labs(x = "Simulated population ID",
+#          y = "",
+#          fill = "False positive") +
+#     facet_grid(group_id~country) +
+#     theme_bw() +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 0.5))
+```
+
+```{r, fig.height=10, eval=F}
+# redundant plotting code now
+# sim_truth |>
+#   left_join(key_id_list, by = join_by(sim_id, group_id, variant)) |>
+#   mutate(false_negative = case_when(key_id %in% list_false_negatives$key_id ~ "yes",
+#                                     .default = "no")) |> 
+#   mutate(pop_id = str_extract(sim_id, "(?<=_)[^_]+$")) |> 
+#   ggplot(aes(x = pop_id, fill = fct_rev(false_negative))) +
+#     geom_bar(stat = "count", position = "fill") +
+#     scale_fill_manual(values = c("yes" = "skyblue3",
+#                                  "no" = "lemonchiffon3")) +
+#     scale_y_continuous(labels = scales::percent_format(),
+#                        expand = c(0,0)) +
+#     labs(x = "Simulated population ID",
+#          y = "",
+#          fill = "False negative") +
+#     facet_grid(group_id~country) +
+#     theme_bw() +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 0.5))
+```
+
+```{r, fig.height=10, eval=F}
+# redundant code now 
+# comparison |> 
+#   group_by(sim_id, group_id) |> 
+#   count(comparison_result, .drop = F) |> 
+#   mutate(prop = n / sum(n, na.rm = T)) |> 
+#   mutate(country = str_extract(sim_id, "(?<=_)[^_]+(?=_)")) |> 
+#   mutate(pop_id = str_extract(sim_id, "(?<=_)[^_]+$")) |> 
+#   mutate(comparison_result = factor(comparison_result, c("false positive", "false negative", "observed in both"))) |> 
+#   ggplot(aes(x = pop_id, y = prop, fill = comparison_result)) +
+#     geom_col() +
+#     scale_fill_manual(values = c("false positive" = "indianred3",
+#                                  "false negative" = "skyblue3",
+#                                  "observed in both" = "lemonchiffon3")) +
+#     scale_y_continuous(labels = scales::percent_format(),
+#                        expand = c(0,0)) +
+#     labs(x = "Simulated population ID",
+#          y = "",
+#          fill = "Comparison tool results \n with simulated truth") +
+#     facet_grid(group_id~country) +
+#     theme_bw() +
+#     theme(axis.text.x = element_text(angle = 90, hjust = 0.5))
+```
+
+### Summary across loci set and simulation scenarios
+
+```{r, fig.width=13, fig.height=10, fig.cap="Figure 1. Proportion of multilocus genotypes (variants) classified as false positives (red), false negatives (blue), or observed in both MLBM output and simulated truth (gold), stratified by loci set (rows) and simulation scenarios defined by recombination level and COI/polyclonality (columns), with simulated relatedness levels on the x‑axis. Bars sum to 100% within each loci‑set–scenario combination."}
+mlbm_all |> 
+  mutate(comparison = case_when(FP == 1 ~ "false positive",
+                                FN == 1 ~ "false negative",
+                                TP == 1 ~ "observed in both",
+                                TRUE    ~ NA_character_),
+    group_id = factor(group_id, 
+                      levels = c("six_med_div", "six_low_div", "four_group1", "two_group1", "pfdhfr_pfdhps", "pfdhps", "pfdhfr"),
+      labels = c("Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    ),
+    pop_alpha = factor(
+      pop_alpha, c(2.33, 9, 99),
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    ),
+    k_s = factor(
+      k_s, c(0.5, 0.2),
+      labels = c("Med. Recombination", "High Recombination")
+    ),
+    coi_r = factor(
+      coi_r, c(0.25, 0.5),
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  ) |> 
+  # remove true negs
+  filter(!is.na(comparison)) |> 
+  group_by(group_id, pop_alpha, k_s, coi_r, comparison, country) |> 
+  summarise(n = n(),.groups = "drop_last") |> 
+  mutate(comparison = factor(comparison,
+                             levels = c("false positive", "false negative", "observed in both")),
+         prop = n / sum(n, na.rm = TRUE)) |> 
+  ungroup() |> 
+  ggplot(aes(x = factor(pop_alpha), y = prop, fill = comparison)) +
+  geom_col(position = "fill") +
+  scale_fill_manual(
+    values = c(
+      "false positive"   = "indianred3",
+      "false negative"   = "skyblue3",
+      "observed in both" = "lemonchiffon3"
+    ),
+    name = "Comparison with\nsimulated truth"
+  ) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(
+    x = "Simulated Relatedness",
+    y = "Proportion of variants (multilocus genotypes)"
+  ) +
+  facet_grid(rows = vars(group_id), cols = vars(k_s, coi_r)) +
+  theme_bw()
+```
+
+Overall, MLBM correctly recovers a substantial fraction of expected multi-locus genotypes (variants), but the balance between missed genotypes (false negatives) and false genotypes (false positives) varies by marker panel and scenario. 
+
+## Performance metrics
+```{r, fig.cap="Figure 2. Distribution of observed frequencies for false positive multilocus genotypes (present in MLBM output but absent from the simulated truth) by country and loci set."}
+mlbm_all |> 
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    ),
+    country = str_extract(sim_id, "(?<=_)[^_]+(?=_)")) |> 
+  filter(exp_freq==0) |> 
+  ggplot(aes(x = country, y = obs_freq, color = reorder(group_id, obs_freq))) +
+    geom_boxplot() +
+    scale_color_brewer(palette = "Set2") +
+    labs(x = "Country",
+         y = "Observed frequency",
+         color = "",
+         title = "False positive allele frequencies (not in ground truth simulated dataset)") +
+    facet_wrap(~country, scales = "free_x") +
+    theme_bw()
+```
+False positives occur across all loci sets and populations. Most have low observed allele frequencies, with a small number of outliers with high observed allele frequencies. 
+
+```{r, fig.cap="Figure 3. Radar plot of performance metrics (recall, precision, NPV, F1‑score, FDR, overlap coefficient) for MLBM across all multilocus genotypes (variants). Metrics are computed from TP, FP, and FN defined by variant presence/absence."}
+# DERIVE:
+# True Positive: exp > 0 & obs > 0
+# False Negative: exp > 0 & obs == 0
+# False Positive: exp == 0 & obs > 0
+
+df_fnfp <- mlbm_all |>  
+  mutate(TP = as.numeric(exp_freq > 0 & obs_freq > 0),
+         FN = as.numeric(exp_freq > 0 & obs_freq == 0),
+         FP = as.numeric(exp_freq == 0 & obs_freq > 0))
+
+# check n's
+# df_fnfp |> 
+#   summarize(n_rows = n(),
+#             n_FP_cond = sum(FP == 1, na.rm = TRUE),
+#             n_FN_cond = sum(FN == 1, na.rm = TRUE),
+#             n_TP_cond = sum(TP == 1, na.rm = TRUE))
+
+# Mapping of metric names for radar_by_metrics()
+hap_metric_map <- c(
+  "Recall"               = "recall",
+  "Precision"            = "precision",
+  "NPV"                  = "tpr",
+  "F1-score"             = "f1_score",
+  "False Discovery Rate" = "fdr",
+  "Overlap Coefficient"  = "overlap_coefficient"
+)
+
+# Global (pooled) metrics
+df_fnfp |>  
+  add_contigency_metrics_no_TN(summarize_first = TRUE) |>  
+  mutate(label = "All variants") |> 
+  radar_by_metrics(metric_map = hap_metric_map, 
+                   # color_col  = "label"
+                   )
+```
+
+MLBM shows similar recall and precision with a reasonably strong F1‑score, but a non‑zero false discovery rate, indicating mostly accurate detection of multilocus genotypes with some overcalling at the variant level.
+
+
+```{r, eval=F}
+# note: larely redundant now, but keeping code just in case 
+# variant level (eg genotype)
+# df_genotype_fnfp <- comparison |> 
+#   mutate(TP = as.numeric(comparison_result == "observed in both"),
+#          FN = as.numeric(comparison_result == "false negative"),
+#          FP = as.numeric(comparison_result == "false positive"))
+# 
+# # check n's
+# df_genotype_fnfp |> 
+#   summarize(n_rows = n(),
+#             n_FP_cond = sum(FP == 1, na.rm = TRUE),
+#             n_FN_cond = sum(FN == 1, na.rm = TRUE),
+#             n_TP_cond = sum(TP == 1, na.rm = TRUE))
+# 
+# df_genotype_fnfp |> 
+#   add_contigency_metrics_no_TN(summarize_first = TRUE) |> 
+#   mutate(label = "All genotypes") |> 
+#   radar_by_metrics(metric_map = hap_metric_map)
+```
+
+```{r, fig.cap="Figure 4. Enrichment of false negatives as a function of expected variant frequency. Bars show the fraction of variants in each true frequency bin that are missed by MLBM (FN / total)."}
+mlbm_all %>%
+  filter(exp_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(obs_freq == 0))) +
+  stat_summary_bin(
+    fun = "mean",
+    geom = "bar",
+    bins = 50,
+    fill = "skyblue3",
+    color = "white"
+  ) +
+  labs(
+    x = "Expected Allele Frequency",
+    y = "Ratio (FN / Total)",
+    title = "Enrichment of False Negatives"
+  ) +
+  theme_bw()
+
+```
+False negatives are strongly enriched among variants with very low true frequency, whereas variants with moderate to high expected frequency (>0.50) are called correctly.
+
+
+```{r, fig.cap="Figure 5. Enrichment of false positives as a function of observed variant frequency. Bars show the fraction of variants in each observed frequency bin that are false postives called by MLBM (FN / total)."}
+mlbm_all %>%
+  filter(obs_freq > 0) %>% 
+  ggplot(aes(x = obs_freq, y = as.numeric(exp_freq == 0))) +
+  stat_summary_bin(
+    fun = "mean",
+    geom = "bar",
+    bins = 50,
+    fill = "indianred3",
+    color = "white"
+  ) +
+  labs(x = "Observed allele frequency",
+       y = "Ratio (FP / Total)",
+       title = "Enrichment of False Positives"
+  ) +
+  theme_bw()
+```
+False positives are concentrated among very low‑frequency bins, with few false positives at higher observed frequencies. 
+
+
+```{r, fig.cap="Figure 6. Enrichment of false negatives across bins of expected allele frequency, stratified by recombination level (rows) and COI (columns). Bars show the FN proportion in each bin within each scenario."}
+mlbm_all |> 
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    ),
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    ),
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    ),
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  ) |> 
+  filter(exp_freq > 0) %>% 
+  ggplot(aes(x = exp_freq, y = as.numeric(obs_freq == 0))) +
+  stat_summary_bin(
+    fun = "mean",
+    geom = "bar",
+    bins = 50,
+    fill = "skyblue3",
+    color = "white"
+  ) +
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Expected Allele Frequency",
+    y = "Ratio (FN / Total)",
+    title = "Enrichment of False Negatives"
+  ) +
+  theme_bw()
+```
+Across all recombination and COI scenarios, MLBM primarily misses rare variants, while sensitivity for common variants (eg 0.50 frequency) remains high across the varied simulation parameter sets.
+
+### Allele Frequency RMSE
+
+```{r}
+# Compute RMSE of frequency and prevalence -----------------------------
+# goodcoi_rmse <- tool_results_wtruth_goodcoi %>%
+goodcoi_rmse <- tool_results_wtruth |> 
+  group_by(
+    sim_id, 
+    paramset_id, 
+    country, 
+    group_id, 
+    pop_alpha, 
+    coi_p, 
+    coi_r, 
+    k_s
+  ) %>%
+  summarize(
+    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
+    .groups = "drop"
+  )
+
+# Show all RMSEs as a boxplot ------------------------------------------
+goodcoi_rmse <- goodcoi_rmse %>%
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  ) %>%
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  ) |> 
+  mutate(group_id = factor(group_id, levels = c("Two", "pfdhfr", "pfdhps", "pfdhfr/pfdhps", "Four", "Six, Low Diversity", "Six, Medium Diversity"))) 
+```
+
+```{r out.width = "100%", fig.width = 9, fig.height = 7, fig.cap="Figure 7. Root mean squared error (RMSE) of MLBM allele frequency estimates by loci set, simulated relatedness, recombination level, and COI. Each box summarizes RMSE across simulated populations for a specific scenario."}
+goodcoi_rmse %>%
+  ggplot(mapping = aes(x = fct_rev(pop_alpha), y = freq_rmse, color = group_id)) +
+  geom_boxplot() +
+  scale_color_brewer(palette="Set2") +
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "RMSE of Allele Frequency Estimate", 
+    color = "Loci Set"
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+Frequency estimates are generally accurate (low RMSE) across marker panels and simulation scenarios, with only modest increases in error for the panels with multiple loci (eg Six) and recombination and COI parameter sets consistent with higher levels of transmission.
+
+
+### Concordance 
+
+```{r}
+tool_results_concordance_freq <- tool_results_wtruth %>%
+  group_by(
+    group_id, 
+    pop_alpha, 
+    coi_r, 
+    k_s
+  )|>
+  summarize(conc_pt_est= CCC(exp_freq, obs_freq)$rho.c$est, 
+         conc_lwr_CI= CCC(exp_freq, obs_freq)$rho.c$lwr.ci, 
+         conc_upr_CI= CCC(exp_freq, obs_freq)$rho.c$upr.ci)|>
+  mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+```
+
+```{r, fig.cap= "Figure 8. Lin's concordance correlation coefficient (with 95%CI) between simulated frequencies and tool estimated frequencies. Estimates compared across simulation scenarios (level of recombination, COI, and relatedness), and marker groups.", fig.height=5, fig.width=7}
+tool_results_concordance_freq %>%
+  ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = group_id)) +
+  geom_pointrange(position = position_jitter(width = 0.2)) +
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Simulated Relatedness", 
+    y = "Concordance Correlation Coeffifient", 
+    color = "Loci Set"
+  ) + 
+  geom_hline(yintercept= 0.95, color='red', lty=2) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+Overall, MLBM exhibits strong concordance with true allele frequencies (CCC typically ≥ 0.9) for all observed variants, with much lower concordance for the panel with six medium diversity loci. Although, as expected in the case of lower transmission settings (eg low COI/high relatednesss/medium recombination rate) the concordance is slightly overall.
+
+### Bland-Altman plots
+
+```{r}
+tool_results_wtruth_BA<- tool_results_wtruth|>
+  mutate(mean_freq= (obs_freq+exp_freq)/2, 
+         dif_freq= obs_freq-exp_freq)|>
+   mutate(
+    group_id = factor(
+      group_id, 
+      c(
+        "six_med_div", 
+        "six_low_div", 
+        "four_group1", 
+        "two_group1", 
+        "pfdhfr_pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      ), 
+      labels = c(
+        "Six, Medium Diversity", 
+        "Six, Low Diversity", 
+        "Four", 
+        "Two", 
+        "pfdhfr/pfdhps", 
+        "pfdhps", 
+        "pfdhfr"
+      )
+    )
+  )|>
+  mutate(
+    pop_alpha = factor(
+      pop_alpha, 
+      c("2.33", "9", "99"), 
+      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+    )
+  ) %>%
+  mutate(
+    k_s = factor(
+      k_s, 
+      c("0.5", "0.2"), 
+      labels = c("Med. Recombination", "High Recombination")
+    )
+  ) %>%
+  # coi_p was varied in synchronicity with coi_r to produce different 
+  # polyclonality levels, and thus coi_p is implicitly included when 
+  # using coi_r as a plotting aesthetic
+  mutate(
+    coi_r = factor(
+      coi_r, 
+      c("0.25", "0.5"), 
+      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+    )
+  )
+
+
+LocusSets<- unique(tool_results_wtruth_BA$group_id)
+
+BA_plots<- vector(mode='list', length=length(LocusSets))
+
+for(i in 1:length(LocusSets)){
+
+tool_results_wtruth_BA %>%
+    filter(group_id==LocusSets[i])|>
+  ggplot() +
+  geom_hex(
+    aes(x = mean_freq, y = dif_freq, fill = log10(after_stat(count))))+
+  scale_fill_viridis_c(name = "log10(count)") +
+  theme_minimal() + 
+  geom_smooth(aes(x = mean_freq, y = dif_freq), method='loess', formula = 'y ~ x',  se=F) + 
+  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+  labs(
+    x = "Mean of Observed and Expected Freq", 
+    y = "Difference of Observed and Expected Freq"
+  ) +ggtitle(LocusSets[i])-> BA_byScenario_prev
+  
+  BA_plots[[i]]<- BA_byScenario_prev
+
+}
+
+```
+
+```{r, results="asis", echo=FALSE, fig.cap="Figure 9. Mean vs Difference of tool estimated and true alelle frequencies with LOESS line (in blue). Estimates compared across simulation scenarios (level of recombination and COI), and marker groups."}
+
+cat(create_tabsetOfGgplotObjects(
+  list(
+    "Six, Medium Diversity" = BA_plots[[1]], 
+    "Six, Low Diversity" = BA_plots[[2]],
+    "Four" = BA_plots[[3]], 
+    "Two" = BA_plots[[4]], 
+    "pfdhfr/pfdhps" = BA_plots[[5]], 
+    "pfdhfr" = BA_plots[[6]], 
+    "pfdhps" = BA_plots[[7]])
+))
+```
+Across all loci sets and simulation parameter sets, differences between observe and expected allele frequencies cluster around zero, with only small, panel‑specific biases at mid‑to‑high frequencies and generally no large systematic departures.
+
+
+## Summary and Next Steps
+Across scenarios with varying COI/proportion polyclonality, between-sample relatedness and recombination rates, MLBM estimates multi-locus genotype (variant) allele frequencies accurately and pretty robustly (overall high CCC and low differences between observed/expected frequencies), with only modest biases in specific loci sets and some scenarios. Next steps are to dive deeper into some of the loci set-specific 'deviations' and perhaps also better understand the false positive/negative detection relative to the loci set and simulation scenario combinations (see Figure 1).
