@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load in the Benchmarking Outputs
 
-```{r, warning=FALSE, message=FALSE, echo = FALSE}
+```{r, warning=FALSE, message=FALSE, echo = FALSE, error = F}
 library(dplyr)
 library(ggplot2)
 library(jsonlite)
@@ -22,7 +22,6 @@ library(tibble)
 library(tidyr)
 library(DT)
 library(patchwork)
-library(ggpmisc)
 library(GGally)
 
 inp <- list(
@@ -40,7 +39,7 @@ source("../scripts/benchmarking_functions.R")
 First, all of the tool results, tool parameters, expected simulated values, and
 simulation parameters are read into a tibble.
 
-```{r reading in results, echo = F, warning=F}
+```{r reading in results, echo = F, warning=F, message=FALSE, error = F}
 # Read all expected frequencies into one tibble ------------------------
 sim_truth <- read_table(inp$sim_info_dir) %>% distinct()
 
@@ -203,11 +202,10 @@ tool_params <- jsonlite::fromJSON(inp$tool_params, flatten = TRUE) %>%
 #create_dt(tool_params)
 
 ```
-## Defining Plot Functions
 
 To quantify accuracy across a variety of simulation parameters, we have plotted data on two axes: one for the COI/proportion polyclonal, and another for the amount of recombination. Each loci group (two loci (set A), two loci (set B), and four loci) is separated out.
 
-```{r defining plot functions}
+```{r defining plot functions, echo = F, message=F, error = F}
 
 make_boxplots <- function(df, response_var, ylab, title){
   df <- df %>% left_join(sim_params, by = join_by(population_name==sim_id))
@@ -270,70 +268,12 @@ make_grouped_plot <- function(df, response_var, ylab, title){
 ```
 
 
-# Individual-Level Analyses
-
-Malaria.em provides both population-level and individual results. Here, we present the individual-level results (i.e. the phasing within each individual). The posterior estimates generated for each individual were generally higher when the matching was correct. We chose a posterior estimate of > 0.55 as a cutoff for being more likely to be accurate than not in this dataset, but this value will require further validation.
-
-```{r plotting individual results}
-conflicted::conflicts_prefer(dplyr::filter)
-results_ind <- results_ind %>% mutate(`Loci Group` = 
-                                              case_match(group_id, 
-                                                         "two_lowdiv" ~ "Two, Low Diversity",
-                                                         "two_meddiv" ~ "Two, Med Diversity",
-                                                         "four" ~ "Four"))
-
-a <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
-  geom_violin(alpha = 0.3, aes(fill = match)) + 
-  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Figure 1a")
-
-b <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
-  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + 
-  facet_wrap(~`Loci Group`) + ggtitle("Figure 1b")
-
-a/b
-
-
-results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
-  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
-  mutate(country = str_split_i(population_name, "_", 2),
-         id = str_split_i(population_name, "_", 4),
-         short_name = paste(country, id, sep="_")) 
-
-
-results_ind_summary_55 <- results_ind %>%
-  filter(posterior_est > 0.55) %>% 
-  group_by(population_name, group_id,) %>%
-  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
-  mutate(country = str_split_i(population_name, "_", 2),
-         id = str_split_i(population_name, "_", 4),
-         short_name = paste(country, id, sep="_"))
-
-samples_lost_summary_55 <- results_ind %>% 
-  group_by(population_name, group_id) %>%
-  summarize(Lost = (sum(posterior_est < 0.55) / sum(posterior_est>=0)))
-
-all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
-              "Proportion of Samples Correctly Phased", "Fig. 2. Efficacy of Sample-Level Phasing")
-
-post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
-              "Proportion of Samples Correctly Phased", "Fig. 3. Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
-
-prop_samples_lost <- make_boxplots(samples_lost_summary_55, "Lost", "Proportion of Samples Removed",
-                                   "Fig. 4. How much data was removed with Post. Est > 0.55?")
-
-all_accuracy 
-
-post_55
-
-prop_samples_lost 
-
-```
 
 As shown in these figures, the accuracy, particularly among samples taken from regions with a medium COI as opposed to a low one, is rather low. Many of the populations have \< 75% of the samples correctly phased. This individual-level phasing accuracy requires more validation. Although adding a cutoff for posterior estimate certainty improves measures, this does lead to a loss of data, as shown in Figure 4.
 
 # Population-Level Analyses
 
-```{r plotting population results}
+```{r plotting population results, echo = F, message = F, error = F, warning = F}
 results <- full_join(sim_truth_phased, 
                      tool_results_phased, 
                      by=join_by(key==key,
@@ -361,13 +301,13 @@ results_ccc_grouped <- results_ccc_grouped %>%
                                           join_by(group_label))
 
 
-make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Fig. 5. Overall Plot of Concordance")
+make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance")
 
 ```
 
 Now, to further visualize these concordances, we can plot them against each other. The main variable that the CCC seems to vary by is COI, so here we can see the alignment of expected and estimated allele frequencies faceted by COI.
 
-```{r further visualizations}
+```{r further visualizations, echo = F, message = F, error = F, warning = F}
 results_plot <- results %>% mutate(coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
                                                                 0.5 ~ "Med COI/Prop. Polyclonal"))
 test_ccc <- compute_ccc(results_plot  %>% ungroup(), allele_freq, 
@@ -375,22 +315,22 @@ test_ccc <- compute_ccc(results_plot  %>% ungroup(), allele_freq,
 test_ccc <- test_ccc %>% mutate(label = paste0("CCC = ", round(freq_ccc, digits = 2),
                                                " [", round(freq_ccc_lower, digits = 2), "-", round(freq_ccc_upper, digits = 2), "]"))
 
-plot <- ggplot(results_plot, aes(x = allele_freq, y = freq), color = "black") +
+plot <- ggplot(results_plot, aes(x = allele_freq, y = freq)) +
                     #color = ifelse(population_name %in% 
                     #                 c("simulated_Ghana_pop_043",
                     #                   "simulated_Ghana_pop_003",
                     #                   "simulated_Ghana_pop_051"), "High", "Low"))) + 
   geom_point(alpha = 0.5) + 
-  ggtitle("Fig. 6. Malaria EM") + theme_bw() + 
+  ggtitle("Malaria EM Population-Level Frequency (True vs. Predicted)") + theme_bw() + 
   xlab("True Frequency") + 
   ylab("Malaria EM Frequency") +
-  stat_poly_eq(group = 1) + facet_wrap(~coi_r) 
+  facet_wrap(~coi_r) 
 
 plot + geom_text(
   data    = test_ccc,
-  mapping = aes(x = -Inf, y = 0.8, label = label),
+  mapping = aes(x = -Inf, y = 0.9, label = label),
   hjust   = -0.05,
-  vjust   = -1
+  vjust   = 0
 )
 ```
 
@@ -400,7 +340,7 @@ As you can see, even with a lower CCC, there is still strong agreement between t
 
 Adapted from Bing's Code. There are some false negatives, but they are still relatively low overall. There are more false positives, but their estimated frequency is low.
 
-```{r}
+```{r, echo = F, message=F}
 ## allele freq is "real"
 ## freq is the estimated value
 
@@ -411,7 +351,7 @@ Fig7a <- results %>%
   labs(
     y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Negatives"
-  ) + theme_bw()
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7))
 
 Fig7b <- results %>%
   #filter(obs_freq > 0) %>% 
@@ -420,9 +360,9 @@ Fig7b <- results %>%
   labs(
     y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Positives"
-  ) + theme_bw()
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7))
 
-Fig7a | Fig7b
+Fig7a | Fig7b + plot_layout(axes = "collect")
 ```
 
 
@@ -432,7 +372,7 @@ To show the bias across the range of possible allele frequencies, we generated B
 
 ### By Country
 
-```{r BA country}
+```{r BA country, echo = F, message = F}
 make_bland_altman_plot_by_label(results %>% 
                                   mutate(Country = ifelse(grepl("Ghana", population_name), "Ghana", "Cambodia")) %>%
                                   add_diff_mean(allele_freq, freq), "freq", method = "loess",
@@ -443,7 +383,7 @@ make_bland_altman_plot_by_label(results %>%
 
 ### By Group ID
 
-```{r BA Group ID}
+```{r BA Group ID, echo = F, message = F}
 make_bland_altman_plot_by_label(results %>%
                                   mutate(`Loci Group` = 
                                            case_match(group_id, "two_lowdiv" ~ "Two (Set A)",
@@ -456,7 +396,7 @@ make_bland_altman_plot_by_label(results %>%
 
 ### By COI_R
 
-```{r BA COI_r}
+```{r BA COI_r, echo = F, message = F}
 make_bland_altman_plot_by_label(results %>% 
                                    mutate(coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
                                                                 0.5 ~ "Med COI/Prop. Polyclonal")) %>%
@@ -467,7 +407,7 @@ make_bland_altman_plot_by_label(results %>%
 
 ### By Relatedness
 
-```{r BA relate}
+```{r BA relate, echo = F, message = F}
 make_bland_altman_plot_by_label(results %>% 
                                    mutate(pop_alpha = 
                                                case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
@@ -482,7 +422,7 @@ make_bland_altman_plot_by_label(results %>%
 
 ### By Recombination
 
-```{r BA recomb}
+```{r BA recomb, echo = F, message = F}
 make_bland_altman_plot_by_label(results %>% 
                                    mutate(k_s = case_match(k_s, 0.2 ~ "High Recombination",
                                                               0.5 ~ "Med Recombination")) %>%
@@ -495,11 +435,73 @@ make_bland_altman_plot_by_label(results %>%
 
 ## {-}
 
+# Individual-Level Analyses
+
+Malaria.em provides both population-level and individual results. Here, we present the individual-level results (i.e. the phasing within each individual). The posterior estimates generated for each individual were generally higher when the matching was correct. We chose a posterior estimate of > 0.55 as a cutoff for being more likely to be accurate than not in this dataset, but this value will require further validation.
+
+```{r plotting individual results, echo = F, message=F, error = F, warning=F}
+conflicted::conflicts_prefer(dplyr::filter)
+results_ind <- results_ind %>% mutate(`Loci Group` = 
+                                              case_match(group_id, 
+                                                         "two_lowdiv" ~ "Two, Low Diversity",
+                                                         "two_meddiv" ~ "Two, Med Diversity",
+                                                         "four" ~ "Four"))
+
+a <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
+  geom_violin(alpha = 0.3, aes(fill = match)) + 
+  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Violin Plots")
+
+b <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
+  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + 
+  facet_wrap(~`Loci Group`) + ggtitle("Density Plots")
+
+a/b + plot_annotation(title = "Comparing Posterior Estimates by Correctness of Sample",
+                      subtitle = "Match = True means the individual-level phasing was completely correct")
+
+
+results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_")) 
+
+
+results_ind_summary_55 <- results_ind %>%
+  filter(posterior_est > 0.55) %>% 
+  group_by(population_name, group_id,) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_"))
+
+samples_lost_summary_55 <- results_ind %>% 
+  group_by(population_name, group_id) %>%
+  summarize(Lost = (sum(posterior_est < 0.55) / sum(posterior_est>=0)))
+
+all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
+              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing")
+
+post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
+              "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
+
+prop_samples_lost <- make_boxplots(samples_lost_summary_55, "Lost", "Proportion of Samples Removed",
+                                   "How much data was removed with Post. Est > 0.55?")
+
+all_accuracy 
+
+post_55
+
+prop_samples_lost 
+
+```
+
+
 ## Summary and Next Steps
 
 Malaria.em seems to be working! However, there are a lot of open questions around exactly how well it works on various allele sets. Additionally, the computational constraints limit wide-spread applicability and still need to be quantified for malaria.em.
 
-* Ind level
-* pop-level
-* variables
+
+* On a population-level, malaria.em is quite accurate. For all populations, concordance between the estimated and overall phased population-level frequencies was > 0.9.
+* On an individual-level, malaria.em seems to phase samples from low-COI populations accurately. Accuracy improves upon applying a posterior-estimate filter. Our sampling showed that 0.55 seemed appropriate, but this should be further validated.
+* Malaria.em appears most sensitive to population COI/ polyclonality (i.e. is generally accurate on populations with a high proportion of single infections.) 
 * There are minimal false positives and false negatives: most false positives are "hallucinated" at very low frequencies, and the few false negative represent a very small part of the overall population.
