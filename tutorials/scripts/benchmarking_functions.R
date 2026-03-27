@@ -511,7 +511,8 @@ make_bland_altman_plot_by_label <- function(
     diff_suffix = "_diff_from_exp",
     expected_label = "Expected",
     bins = 30 ,
-    method = "gam"
+    method = "gam",
+    linecolor = "blue"
 ) {
   stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
   
@@ -534,7 +535,7 @@ make_bland_altman_plot_by_label <- function(
     scale_fill_viridis_c(name = "log10(count)") +
     theme_minimal() +
     geom_smooth(aes(x = .data[[mean_col]], y = .data[[diff_col]]),
-                method = method, se = FALSE) +
+                method = method, se = FALSE, color = linecolor) +
     geom_hline(yintercept =  2 * sd_val) +
     geom_hline(yintercept = -2 * sd_val) +
     labs(
