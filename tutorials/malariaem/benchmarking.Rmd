@@ -237,16 +237,18 @@ make_boxplots <- function(df, response_var, ylab, title){
 
 make_grouped_plot <- function(df, response_var, ylab, title){
   plot <- ggplot(df %>% mutate(pop_alpha = 
-                                               case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
+                                               factor(case_match(pop_alpha, 2.33 ~ "High \nRelatedness",
                                                           9 ~ "Med. \nRelatedness",
                                                           99 ~ "Low \nRelatedness"
-                                                          ),
+                                                          ), levels = c("Low \nRelatedness",
+                                                                      "Med. \nRelatedness",
+                                                                      "High \nRelatedness")),
                                              coi_r = case_match(coi_r, 0.25 ~ "Low COI/Prop. Polyclonal",
                                                                 0.5 ~ "Med COI/Prop. Polyclonal"),
                                              k_s = case_match(k_s, 0.2 ~ "High Recombination",
                                                               0.5 ~ "Med Recombination"),
-                                             `Loci Group` = case_match(group_id, "two_lowdiv" ~ "Two, Low Diversity",
-                                                                       "two_meddiv" ~ "Two, Med Diversity", "four" ~ "Four")), 
+                                             `Loci Group` = case_match(group_id, "two_lowdiv" ~ "Two, Group A",
+                                                                       "two_meddiv" ~ "Two, Group B", "four" ~ "Four")), 
                       aes(x = pop_alpha, y = !!sym(response_var), 
                                        fill = `Loci Group`, color = `Loci Group`)) +
   #geom_jitter() +
@@ -300,10 +302,11 @@ results_ccc_grouped <- results_ccc_grouped %>%
                                             summarize_all(min), 
                                           join_by(group_label))
 
-
-make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance")
-
+make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance") +
+  plot_annotation(caption = paste(strwrap("Population-level Concordance. Point estimates with 95% confidence intervals (CIs) for each group of simulation parameters: low vs. high COI (columns), medium vs. high recombination (rows), low vs. medium vs. high relatedness (x-axis), and each loci group (colors).",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 ```
+
 
 Now, to further visualize these concordances, we can plot them against each other. The main variable that the CCC seems to vary by is COI, so here we can see the alignment of expected and estimated allele frequencies faceted by COI.
 
@@ -331,16 +334,17 @@ plot + geom_text(
   mapping = aes(x = -Inf, y = 0.9, label = label),
   hjust   = -0.05,
   vjust   = 0
-)
+) + plot_annotation(caption = paste(strwrap("Comparison of estimated vs. predicted haplotype-level frequencies. Scatterplots showing the frequency of each haplotype, both true (x-axis) and estimated (y-axis). Concordance Correlation Coefficient (CCC) with 95% CIs is printed on each plot. Scatterplots are faceted by population-level COI.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 ```
 
 As you can see, even with a lower CCC, there is still strong agreement between the true and estimated frequencies from malaria.em.
 
 ## False Positives and False Negatives
 
-Adapted from Bing's Code. There are some false negatives, but they are still relatively low overall. There are more false positives, but their estimated frequency is low.
+These figures have been adapted from Bing. As shown in the below plot, There are some false negatives, but they represent a relatively low proportion of the overall samples. There are more false positives, but their estimated frequency is low. For the other analyses (concordance at the population level) these false negatives and positives were included, meaning the CCC is representative even of these haplotypes.
 
-```{r, echo = F, message=F}
+```{r, echo = F, message=F, warning = F}
 ## allele freq is "real"
 ## freq is the estimated value
 
@@ -351,7 +355,7 @@ Fig7a <- results %>%
   labs(
     y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Negatives"
-  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7))
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7)) + xlab("True frequency of missed haplotypes")
 
 Fig7b <- results %>%
   #filter(obs_freq > 0) %>% 
@@ -360,9 +364,10 @@ Fig7b <- results %>%
   labs(
     y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
     title = "Enrichment of False Positives"
-  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7))
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7)) + xlab("Estimated Frequency (of non-existent haplotypes)")
 
-Fig7a | Fig7b + plot_layout(axes = "collect")
+(Fig7a | Fig7b) + plot_annotation(caption = paste(strwrap("Left: true frequency of values that do not exist in the malaria.em estimation (i.e. those that were falsely missed), accounting for the baseline allele frequency distribution. Right: estimated frequency of values that were predicted by malaria.em despite not being present in the original sample, accounting for baseline allele frequency distribution.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 ```
 
 
@@ -428,7 +433,8 @@ make_bland_altman_plot_by_label(results %>%
                                                               0.5 ~ "Med Recombination")) %>%
                                   add_diff_mean(allele_freq, freq), "freq", method = "loess",
                                 linecolor = "magenta") +
-  facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination")
+  facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination") + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by recombination level of the simulations.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 
 
 ```
@@ -447,17 +453,29 @@ results_ind <- results_ind %>% mutate(`Loci Group` =
                                                          "two_meddiv" ~ "Two, Med Diversity",
                                                          "four" ~ "Four"))
 
-a <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(x = match, y=posterior_est)) + 
+a <- ggplot(results_ind %>% filter(!is.na(posterior_est)) %>%
+                                     mutate(match = factor(match, 
+                                                           levels = c(TRUE, FALSE), 
+                                                           labels = c("Correctly\nPhased",  "Incorrectly\nPhased"
+                                                                      ))), aes(x = match, y=posterior_est)) + 
   geom_violin(alpha = 0.3, aes(fill = match)) + 
-  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Violin Plots")
+  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Violin Plots") + ylab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + xlab(NULL)
 
-b <- ggplot(results_ind %>% filter(!is.na(posterior_est)), aes(fill = match, x = posterior_est)) + 
-  geom_density(alpha = 0.3)  + theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + 
-  facet_wrap(~`Loci Group`) + ggtitle("Density Plots")
+b <- ggplot(results_ind %>% filter(!is.na(posterior_est)) %>%
+              mutate(match = factor(match, levels = c(TRUE, FALSE), 
+                                    labels = c("Correctly\nPhased",  "Incorrectly\nPhased"))), 
+            aes(fill = match, x = posterior_est)) + 
+  geom_density(alpha = 0.3)  + theme_bw() + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  facet_wrap(~`Loci Group`) + ggtitle("Density Plots") + 
+  xlab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + ylab("Density")
 
 a/b + plot_annotation(title = "Comparing Posterior Estimates by Correctness of Sample",
                       subtitle = "Match = True means the individual-level phasing was completely correct")
 
+## TODO correctly phased vs incorrectly phased
+
+## TODO fix axis labels
 
 results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
   dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
@@ -489,9 +507,9 @@ prop_samples_lost <- make_boxplots(samples_lost_summary_55, "Lost", "Proportion 
 
 all_accuracy 
 
-post_55
+post_55 / prop_samples_lost
 
-prop_samples_lost 
+#TODO maybe switch
 
 ```
 
@@ -504,4 +522,6 @@ Malaria.em seems to be working! However, there are a lot of open questions aroun
 * On a population-level, malaria.em is quite accurate. For all populations, concordance between the estimated and overall phased population-level frequencies was > 0.9.
 * On an individual-level, malaria.em seems to phase samples from low-COI populations accurately. Accuracy improves upon applying a posterior-estimate filter. Our sampling showed that 0.55 seemed appropriate, but this should be further validated.
 * Malaria.em appears most sensitive to population COI/ polyclonality (i.e. is generally accurate on populations with a high proportion of single infections.) 
-* There are minimal false positives and false negatives: most false positives are "hallucinated" at very low frequencies, and the few false negative represent a very small part of the overall population.
+* There are minimal false negatives, and most false positives are estimated at very low frequencies. The few false negatives represent a very small part of the overall population.
+
+#TODO add captions either fig.caption or first paragraph below figure
