@@ -170,10 +170,12 @@ add_contigency_metrics_no_TN <- function(input, summarize_first = F){
     output = output  %>%
       summarise(TP = sum(TP), 
                 FN = sum(FN), 
-                FP = sum(FP))
+                FP = sum(FP), 
+                n = n())
   }
   output = output %>%
     mutate(
+      
       sensitivity           = if_else(TP + FN > 0, TP / (TP + FN), NA_real_),
       recall                = sensitivity,
       ppv                   = if_else(TP + FP > 0, TP / (TP + FP), NA_real_),
@@ -417,13 +419,13 @@ my_corr_ccc <- function(data, mapping,
     ccc <- try(DescTools::CCC(x, y, ci = "z-transform", conf.level = ccc_conf), silent = TRUE)
     
     if (inherits(ccc, "try-error")) {
-      label <- sprintf("cor = %s\nCCC = NA", signif(r, digits))
+      label <- sprintf("cor = %s\n\nCCC = NA", signif(r, digits))
     } else {
       label <- paste0(
-        method, " cor = ", signif(r, digits), "\n",
+        method, " cor = ", signif(r, digits), "\n\n",
         "CCC = ",
         paste0(
-          signif(ccc$rho.c$est, digits), " (95% CI =",
+          signif(ccc$rho.c$est, digits), " \n(95% CI =",
           signif(ccc$rho.c$lwr.ci, digits), "–",
           signif(ccc$rho.c$upr.ci, digits), ")"
         )
@@ -510,32 +512,45 @@ make_bland_altman_plot_by_label <- function(
     mean_suffix = "_mean_with_exp",
     diff_suffix = "_diff_from_exp",
     expected_label = "Expected",
-    bins = 30 
+    bins = 30
 ) {
   stopifnot(is.data.frame(df), is.character(label), length(label) == 1)
   
   mean_col <- paste0(label, mean_suffix)
   diff_col <- paste0(label, diff_suffix)
   
-  if (!(mean_col %in% names(df))) {
-    stop(sprintf("Column '%s' not found in df.", mean_col))
-  }
-  if (!(diff_col %in% names(df))) {
-    stop(sprintf("Column '%s' not found in df.", diff_col))
-  }
-  
-  # limits of agreement (±2 SD) computed once
-  sd_val <- stats::sd(df[[diff_col]], na.rm = TRUE)
+  if (!(mean_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", mean_col))
+  if (!(diff_col %in% names(df))) stop(sprintf("Column '%s' not found in df.", diff_col))
   
   ggplot(df) +
-    geom_hex(aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
-             bins = bins) +
+    geom_hex(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]], fill = log10(after_stat(count))),
+      bins = bins
+    ) +
     scale_fill_viridis_c(name = "log10(count)") +
     theme_minimal() +
-    geom_smooth(aes(x = .data[[mean_col]], y = .data[[diff_col]]),
-                method = "gam", se = FALSE) +
-    geom_hline(yintercept =  2 * sd_val) +
-    geom_hline(yintercept = -2 * sd_val) +
+    geom_smooth(
+      aes(x = .data[[mean_col]], y = .data[[diff_col]]),
+      method = "gam", se = FALSE
+    ) +
+    # +2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y)  2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
+    # -2 SD per facet
+    stat_summary(
+      aes(x = 1, y = .data[[diff_col]], yintercept = after_stat(y)),
+      fun = function(y) -2 * stats::sd(y, na.rm = TRUE),
+      geom = "hline",
+      inherit.aes = TRUE,
+      linetype = "dashed",
+      color = "grey30"
+    ) +
     labs(
       title = label,
       y = paste0(label, " - ", expected_label),
@@ -543,6 +558,7 @@ make_bland_altman_plot_by_label <- function(
     ) +
     coord_equal()
 }
+
 
 
 
@@ -577,6 +593,31 @@ compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
   stopifnot(is.data.frame(df))
   expected_col <- rlang::enquo(expected_col)
   
+  # helper: TRUE if vectors match perfectly (after dropping NA pairs)
+  is_perfect_match <- function(x, y) {
+    ok <- stats::complete.cases(x, y)
+    x <- x[ok]; y <- y[ok]
+    length(x) > 0 && isTRUE(all.equal(x, y, tolerance = 0))
+  }
+  
+  # helper: compute CCC, but return 1/1/1 when perfectly matching (or when CCC yields NA)
+  ccc_safe <- function(x, y) {
+    if (is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    res <- DescTools::CCC(x, y)
+    est <- res$rho.c$est
+    lwr <- res$rho.c$lwr.ci
+    upr <- res$rho.c$upr.ci
+    
+    # guard: if DescTools gives NA even though it's a perfect match (or for numerical edge cases)
+    if (is.na(est) && is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    
+    list(est = est, lwr = lwr, upr = upr)
+  }
+  
   # capture observed columns (symbol or c(...))
   obs_expr <- rlang::enexpr(observed_cols)
   obs_quos <- if (rlang::is_call(obs_expr, "c")) {
@@ -598,29 +639,41 @@ compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
   if (length(grp_quos) > 0) {
     out <- df %>% dplyr::distinct(!!!grp_quos)
     join_by_cols <- names(out)
+    
     for (q in obs_quos) {
       obs_name <- rlang::as_name(q)
+      
       one <- df %>%
         dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
+        dplyr::summarise(
+          .ccc = list(ccc_safe(rlang::eval_tidy(expected_col, data = dplyr::cur_data()),
+                               rlang::eval_tidy(q,            data = dplyr::cur_data()))),
+          .groups = "drop"
+        ) %>%
         dplyr::mutate(
-          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
-          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
-          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
+          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$est),
+          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$lwr),
+          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$upr)
         ) %>%
         dplyr::select(-.ccc)
+      
       out <- dplyr::left_join(out, one, by = join_by_cols)
     }
   } else {
     pieces <- purrr::map(obs_quos, function(q) {
       obs_name <- rlang::as_name(q)
-      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
+      
+      x <- rlang::eval_tidy(expected_col, data = df)
+      y <- rlang::eval_tidy(q,            data = df)
+      v <- ccc_safe(x, y)
+      
       tibble::tibble(
-        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
-        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
-        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
+        !!paste0(obs_name, "_ccc")       := v$est,
+        !!paste0(obs_name, "_ccc_lower") := v$lwr,
+        !!paste0(obs_name, "_ccc_upper") := v$upr
       )
     })
+    
     out <- dplyr::bind_cols(pieces)
   }
   
@@ -752,6 +805,18 @@ compute_mae <- function(df, expected_col, observed_cols, group_cols = NULL) {
 }
 
 
+
+quick_summary <- function(x, probs = c(0, 0.25, 0.5, 0.75, 1)) {
+  q <- quantile(x, probs = probs, na.rm = TRUE)
+  tibble(
+    n = length(x[!is.na(x)]), 
+    sd = sd(x, na.rm = TRUE),
+    mean = mean(x, na.rm = TRUE),
+    min  = min(x, na.rm = TRUE),
+    max  = max(x, na.rm = TRUE),
+    !!!setNames(as.list(q), paste0("q", probs*100))
+  )
+}
 
 
 
