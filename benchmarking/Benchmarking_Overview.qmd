@@ -16,7 +16,7 @@ biblio-style: apalike
 ---
 
 
-# Overview 
+## Overview 
 
 In addition to reviewing the available analysis tools, we have benchmarked several tools by creating several simulated populations with a focus on tools that work with allele/amplicon/microhaplotype calls. 
 
@@ -24,46 +24,50 @@ In addition to reviewing the available analysis tools, we have benchmarked sever
 The following tools have been benchmarked on amplicon data [simulations](#simulations). 
 
 * [Complexity of infection(COI)](benchmarking_COI_tools.qmd) estimators
-    * naive COI estimator (taking a max/percentile of COI)
-    * MOIRE
-    * TheREALMcCOIL
-    * COIAF
-* single locus variant freq
-    * naive single locus freq
-    * IDM
-* single locus microhaplotype freq
-    * MOIRE
-* multi-locus variant freq
+    * naive COI estimator (taking a max/percentile of COI), [tool info here](../tutorials/PGEcore/naive_COI/background.Rmd)
+    * MOIRE[@Murphy2024-or], [tool info here](../tutorials/moire/moire_background.Rmd)
+    * TheREALMcCOIL[@Chang2017-mq], [tool info here](../tutorials/THEREALMcCOIL/RMCL_background.Rmd)
+    * COIAF[@Paschalidis2023-fv], [tool info here](../tutorials/coiaf/coiaf_background.Rmd)
+    * snp-slice[@Ju2024-fh], [tool info here](../tutorials/SNP-slice/background.Rmd)
+* [single locus variant freq](benchmarking_freq_tools_single_locus_variant.qmd)
+    * naive single locus freq (estimating frequency based on presence/absence or weighted by within sample frequency)
+    * IDM[@Tsoungui_Obama2022-gz]
+    * estimating from microhaplotype frequencies estimated by 1 step EM algorithim from dcifer[@Gerlovina2022-ya]
+* [single locus microhaplotype freq](benchmarking_freq_tools_single_microhaplotype.qmd)
+    * MOIRE[@Murphy2024-or]
+    * 1 step EM algorithim from dcifer[@Gerlovina2022-ya]  
+    * naive estimator (estimating frequency based on presence/absence or weighted by within sample frequency)
+* [multi-locus variant freq](benchmarking_freq_tools_multi_locus_variant.qmd)
     * naive multi locus freq estimator
-    * FreqEstimationModel
-    * MLBM
-* multi-locus microhaplotype freq
-    * malariaem
-    
+    * FreqEstimationModel(FEM)[@Taylor2014-hk]
+    * MultiLociBiallelicModel(MLBM)[@Tsoungui_Obama2022-gz]
+    * snp-slice[@Ju2024-fh]
+<!-- * [multi-locus microhaplotype freq](benchmarking_freq_tools_multi_locus_microhaplotype.qmd) -->
+<!--     * malariaem[@Li2007-ph] -->
 
-# Simulation framework 
+## Simulation framework 
 
 In order to robustly benchmark the above tools, we created several different populations with various characteristics for between sample relatedness, complexity of infection (COI), and different geographic backgrounds. These simulations create raw fastq files that are then run through amplicon calling pipelines and then the tools themselves to emulate real world analysis.  
 
-## Simulating Populations 
+### Simulating Populations 
 
 In order to create populations with various characteristics to benchmark we created a simulation framework. The first part of this simulation is creating new populations by simulating recombination from an original ancestor population. This allows to incorporate real genomic data from any original population and then create a new population with desired characteristics (between-sample relatedness, average COI, etc). We have accomplished this by creating an R package (under development) called [recombuddy](https://github.com/PlasmoGenEpi/recombuddy). This packages takes a list of ancestors (samples with known genotyping data) and create a new population of mosaic genomes (e.g. strain 1 with chr1 pos 0-1000 from ancestor 1, pos 1001-2500 ancestor 2, etc) which can then be intersected with the original genotyping data to create a new strain with known genotypes phased across the whole genome. This package requires just a list of ancestors and chromosome(s) size(s) so any haploid genome can be simulated. 
 
 ![](recombuddy_population_simulation.png)
 
 
-## Simulating PCR/sequencing error  
+### Simulating PCR/sequencing error  
 
 The above simulated populations can then be intersected with any known genotyping data known for the ancestor population which can be a targeted amplicon panel. The new samples with known strain genotypes are then simulated for PCR amplification (with setting for starting template amount, number of PCR rounds, degree of chimera formation, taq error rate) and sequencing is simulated by using an empirically derived error profile from real sequencing data. 
 
-# Benchmark simulations 
+## Benchmark simulations 
 
 Using the above framework we simulated 240 populations by combining the following characteristics: 
 
 *  Population characteristics (each combination done replicate 10 times with 100 samples each)
     *  Ancestral population 
-        *  Ghana (sourced from 2011 Pf7[@MalariaGEN2023-wz] data)
-        *  Cambodia (sourced from 2011 Pf7[@MalariaGEN2023-wz] data)
+        *  Ghana (sourced from 2010 Pf7[@MalariaGEN2023-wz] data)
+        *  Cambodia (sourced from 2010 Pf7[@MalariaGEN2023-wz] data)
     *  Between-sample relatedness 
         *  30%
         *  10%
@@ -83,5 +87,30 @@ Using the above framework we simulated 240 populations by combining the followin
 
 
 
+## Field Samples 
 
+To further benchmark tools, amplicon data from field samples were utilized. Since "known truth" cannot be determine from field samples, the benchmarking done for these samples were instead focused on comparing different tool results to each other rather than an expected truth in order to summarize how similar their results are on real data. The fields samples are from 32 health clinics throughout Uganda from the years 2023-2024[@Kiyaga2025-di] with varying degree of transmission intensities. The targeted amplicon panel was the MAD4HatTeR[@Aranda-Diaz2025-yg] *Plasmodium falciparum* targeted amplicon panel containing both diversity targets and drug resistant targets.  
+
+[COI tools comparisons](benchmarking_field_samples_COI_tools.qmd) 
+
+[single locus frequency estimate tools comparisons](benchmarking_field_sample_freq_tools_single_locus_variant.qmd)
+
+[microhaplotype frequency estimate tools comparisons](benchmarking_field_sample_freq_tools_single_microhaplotype.qmd)
+
+
+* Characteristics 
+    * Population:
+        * 34 health clinics across Uganda 
+        * Samples collected from 2023-2024
+          * 80-395 (mean 251) samples per site 
+    * MAD4HatTeR[@Aranda-Diaz2025-yg] panel
+      * 161 high diversity amplicons 
+      * 30 amplicons covering 15 drug resistance genes
+    * Data processing
+      * Each of the tools above were ran on each clinic separately.
+
+
+## Benchmarking pipeline 
+
+In order to make benchmarking across different amplicon panels and sets of data, a nextflow pipeline was created to run various tools with varying parameters. Results are organized by different parameters and a JSON file of the parameters used are output with the results. This pipeline is built in order to be flexible allowing the use of different panels and to run only desired tools. New tools to be benchmarked can be added this to pipeline and this pipeline itself will serve as a valuable resource. Pipeline is currently under development still but can be found here, <https://github.com/PlasmoGenEpi/pge-tools-benchmark>.  
 

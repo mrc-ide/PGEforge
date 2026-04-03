@@ -23,14 +23,15 @@ options(readr.show_col_types = FALSE)
 
 ## Intro
 
-COI tools were evaluated on their ability to accurately estimate COI for amplicon data from simulated data, see [here](Benchmarking_Overview.qmd) for details. 
+complexity of infection (COI) tools were evaluated on their ability to accurately estimate COI for amplicon data from simulated data, see [here](Benchmarking_Overview.qmd) for details. 
 
-COI tools evaluated: 
+COI tools evaluated, please see their respective pages for background on each: 
 
-*  THEREALMcCOIL[@Chang2017-mq]  
-*  MOIRE[@Murphy2024-or]  
-*  coiaf[@Paschalidis2023-fv]  
-*  naive estimators (bespoke code)  
+* naive COI estimator (taking a max/percentile of COI), [tool info here](../tutorials/PGEcore/naive_COI/background.Rmd)
+* MOIRE[@Murphy2024-or], [tool info here](../tutorials/moire/moire_background.Rmd)
+* TheREALMcCOIL[@Chang2017-mq], [tool info here](../tutorials/THEREALMcCOIL/RMCL_background.Rmd)
+* COIAF[@Paschalidis2023-fv], [tool info here](../tutorials/coiaf/coiaf_background.Rmd)
+* snp-slice[@Ju2024-fh], [tool info here](../tutorials/SNP-slice/background.Rmd)
 
 
 ## Metrics 
@@ -38,10 +39,10 @@ COI tools evaluated:
 The following metrics were calculated on the results. Several tools have several parameters that can be modified and so have several results over different parameter sets. For final comparison between tools, the best parameter set was choosen. 
 
 
-*  Root mean squared error (RMSE) and Mean absolute error (MAE)[@Chai2014-cn]
-    *  Calculated by taking the square root of the mean sum of squared difference between two metrics, not bounded but greater than or equal to 0 
-*  [Bland-altman plots](https://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot) 
-    *  Plotting the observed minus the expected on the y and on the x-aixs the mean between the two measures, can illustrate where and by how measures differ 
+*  Mean absolute error (MAE)[@Chai2014-cn]
+    *  Calculated by taking the mean absolute difference between expected and observed, not bounded but greater than or equal to 0 
+*  [modified Bland-altman plots](https://en.wikipedia.org/wiki/Bland%E2%80%93Altman_plot) 
+    *  Plotting the observed minus the expected on the y and on the x-aixs the expected value (in a classic Bland-altman you plot the mean between two measures to get closer to the ground truth but since ground truth is known here, will just use that), can illustrate where and by how measures differ 
 *  [Concoordance](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC)
     *  R function documentation from library DescTools(Signorell, 2025) can be found here: <https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC>
     *  Description: "Computes Lin's (Lin, 1989; Steichen & Cox, 2002) concordance correlation coefficient for agreement on a continuous measure obtained by two methods. The concordance correlation coefficient combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance (that is, the line at 45 degrees on a square scatter plot). Lin's coefficient increases in value as a function of the nearness of the data's reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data)."
@@ -54,6 +55,7 @@ The following metrics were calculated on the results. Several tools have several
 ```{r, echo=FALSE}
 source("../tutorials/scripts/benchmarking_functions.R")
 
+library(ComplexHeatmap)
 ```
 
 ```{r}
@@ -90,17 +92,19 @@ inp_per_tools <- list(
   "coiaf" = list(
       tool_res_dir = "../data/benchmarking/tool_results/coiaf//", 
       tool_params = "../data/benchmarking/tool_results/coiaf.json"
-  ) 
+  ), 
+  "snpslice" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/SNPSlice/", 
+    tool_params = "../data/benchmarking/tool_results/snpslice.json"
+  )
 )
 ```
 
-
-
-First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+First, read all of the tool results, tool parameters, expected simulated values, and simulation parameters. 
 
 ### Reading in expected truths 
 
-Read per in expected allele frequencies per sample tables to get true COIs
+Read per in expected allele frequencies per sample tables to get true COIs.
 
 ```{r}
 expected_simulated_frequencies_per_sample <- tibble(
@@ -129,36 +133,6 @@ expected_simulated_frequencies_per_sample_COIs = expected_simulated_frequencies_
   mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name)) %>% 
   mutate(library_sample_name = as.character(library_sample_name))
 
-```
-
-Read per in expected allele frequencies tables population level 
-```{r}
-population_trimmed_mhap_freqs_prevs <- tibble(
-    sim_truth_path = list.files(
-      inp$sim_info_dir, 
-      pattern = "population_trimmed_mhap_freqs_prevs.tsv.gz", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(
-    sim_truth = map(
-      sim_truth_path, 
-      read_tsv, 
-      col_types = cols(
-        .default = col_double(),
-        population_name = col_character(), 
-        pop = col_character(), 
-        country = col_character(), 
-        target = col_character(), 
-        seq = col_character()
-      ),
-      progress = FALSE
-    )
-  ) %>%
-  select(-sim_truth_path) %>%
-  unnest(sim_truth) %>% 
-  dplyr::rename(target_id = target)
 ```
 
 
@@ -216,44 +190,40 @@ sim_params <- tibble(
 create_dt(sim_params)
 ```
 
-Read in madhatter pipeline allele tables 
+
+#### Expected COI distributions 
+
+Populations were simulated with either a mean COI of 1.26 or 3.41 with some extreme COIs simulated as high as 36
 
 ```{r}
-madhatter_allele_data <- tibble(
-    allele_data_path = list.files(
-      inp$madhatter_res_dir, 
-      pattern = "allele_data.txt.gz", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(
-    allele_data = map(
-      allele_data_path, 
-      read_tsv, 
-      progress = FALSE
-    )
-  ) %>%
-  mutate(tool_res_dir = dirname(allele_data_path)) %>%
-  mutate(population_name = gsub("_mh_results", "", basename(tool_res_dir))) %>%
-  select(-allele_data_path, -tool_res_dir) %>%
-  unnest(allele_data) %>% 
-  mutate(SampleID = gsub("_S[0-9]+$", "", SampleID)) %>% 
-  dplyr::rename(library_sample_name = SampleID, 
-                target_id = Locus, 
-                seq = ASV, 
-                reads = Reads) 
+expected_simulated_frequencies_per_sample_COIs_with_params = expected_simulated_frequencies_per_sample_COIs %>% 
+  left_join(sim_params, by = c("population_name", "country")) %>% 
+  mutate(library_sample_name = as.character(library_sample_name))
+
+ggplotly(ggplot(expected_simulated_frequencies_per_sample_COIs_with_params) + 
+  geom_boxplot(aes(x = coi_cat, y = expected_COI)) + 
+  theme_minimal())
+
 ```
 
+
+```{r}
+expected_simulated_frequencies_per_sample_COIs_with_params_sum = expected_simulated_frequencies_per_sample_COIs_with_params %>% 
+  group_by(coi_cat) %>% 
+  summarise(quick_summary(expected_COI))
+
+create_dt(expected_simulated_frequencies_per_sample_COIs_with_params_sum)
+```
 
 
 ### Read in THEREALMcCOI results
 
-THEREALMcCOI outputs information on complexity of infection (COI) and on population allele frequencies and several different outputs need to be read in. 
+THEREALMcCOI outputs information on complexity of infection (COI) as well as several other metrics but will focus on the COI results below 
 
-Getting the complexity of infection (COI) from the `coi.tsv.gz` files 
+COI from the `coi.tsv.gz` files 
 
 ```{r}
+#| code-fold: true
 therealmccoil_coi_summary <- tibble(
     tool_res_path = list.files(
       inp_per_tools$therealmccoil$tool_res_dir, 
@@ -281,7 +251,7 @@ therealmccoil_coi_summary <- tibble(
 
 ```
 
-THEREALMcCOI can run in two different models, categorical vs proportional
+THEREALMcCOI can run in two different models, categorical vs proportional. 
 
 ```{r}
 # Read in tool parameters
@@ -297,11 +267,12 @@ create_dt(therealmccoil_tool_params)
 
 ### Read in MOIRE results
 
-MOIRE outputs information on complexity of infection (COI) and on population allele frequencies, will read in only the COIs results for the below analysis, see [here](benchmarking_freq_tools.qmd) for freq results
+MOIRE outputs information on COI and on population allele frequencies, will read in only the COI results for the below analysis, see [here](benchmarking_freq_tools_single_microhaplotype.qmd) for freq results. 
 
-Getting the complexity of infection (COI) from the `coi_summary.tsv.gz` files 
+Getting the COI from the `coi_summary.tsv.gz` files 
 
 ```{r}
+#| code-fold: true
 moire_coi_summary <- tibble(
     tool_res_path = list.files(
       inp_per_tools$moire$tool_res_dir, 
@@ -329,37 +300,8 @@ moire_coi_summary <- tibble(
 
 ```
 
-Getting the effective COI from the `effective_coi_summary.tsv.gz` files. 
 
-```{r}
-moire_effective_coi_summary <- tibble(
-    tool_res_path = list.files(
-      inp_per_tools$moire$tool_res_dir, 
-      pattern = "effective_coi_summary.tsv.gz", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(tool_res_dir = dirname(tool_res_path)) %>%
-  mutate(population_name = basename(dirname(tool_res_dir))) %>%
-  mutate(paramset_id = basename(tool_res_dir)) %>%
-  select(-tool_res_dir) %>%
-  mutate(
-    tool_res = map(
-      tool_res_path, 
-      read_tsv, 
-      progress = FALSE
-    )
-  ) %>%
-  select(-tool_res_path) %>%
-  unnest(tool_res) %>% 
-  mutate(specimen_id = gsub("_S[0-9]+$", "", specimen_id))%>% 
-  dplyr::rename(library_sample_name = specimen_id) %>% 
-  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name))
-
-```
-
-Getting what tool parameters were used. For MOIRE benchmarking we set the priors on the assumed amount of relatedness with moire_paramset1 assuming uniform relatedness and then each moire_paramset 2 and 3 increasing the amount of assumed relatedness. moire_paramsets3-6 are the same prior relatedness as 1-3 but have more parallel burin to explore more pace for convergence.   
+Getting what tool parameters were used. For MOIRE benchmarking we set the priors on the assumed amount of relatedness with moire_paramset1 assuming uniform relatedness and then each moire_paramset 2 and 3 increasing the amount of assumed relatedness. moire_paramsets3-6 are the same prior relatedness as 1-3 but have more parallel burin to explore more space for convergence.   
 
 ```{r}
 # Read in tool parameters
@@ -376,9 +318,7 @@ create_dt(moire_tool_params)
 
 ### Read in COIAF results
 
-COIAF outputs information on complexity of infection (COI) 
-
-Getting the complexity of infection (COI) from the `coi.tsv.gz` files 
+COIAF outputs information on COI, getting results from the `coi.tsv.gz` files 
 
 ```{r}
 coiaf_coi_summary <- tibble(
@@ -428,9 +368,7 @@ create_dt(coiaf_tool_params)
 
 ### Read in naive COI results
 
-naive COI outputs information on complexity of infection (COI)  
-
-Getting the complexity of infection (COI) from the `coi.tsv.gz` files 
+Getting naive COI outputs from the `coi.tsv.gz` files 
 
 ```{r}
 naive_coi_coi_summary <- tibble(
@@ -460,7 +398,9 @@ naive_coi_coi_summary <- tibble(
 
 ```
 
-naive_coi can run with different assumptions of sequencing error and different maxs set on COI 
+naive_coi has two methods, calculating by taking the nth max COI of all loci or taking the max COI after removing a top quantile (e.g. if quantile method is used with a threshold of 0.025 and there are 200 loci, after sorting by COI, remove the top 5 highest COIs across all loci and the take the max COI of the loci left to get final COI calculation.) 
+
+Notably, the max COI that a naive method could ever achieve is the max unqiue alleles for all loci. 
 
 ```{r}
 # Read in tool parameters
@@ -479,54 +419,90 @@ create_dt(naive_coi_tool_params)
 
 
 
+### Read in snp-slice results
+
+Getting the COI from the `coi.tsv.gz` files 
+
+```{r}
+snpslice_coi_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$snpslice$tool_res_dir, 
+      pattern = "^coi.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  mutate(specimen_id = gsub("_S[0-9]+$", "", specimen_id)) %>% 
+  dplyr::rename(library_sample_name = specimen_id) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name))
+
+```
+
+snpslice's parameters 
+
+```{r}
+# Read in tool parameters
+snpslice_tool_params <- jsonlite::fromJSON(inp_per_tools$snpslice$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_model = paramset.model,
+    paramset_loci_limit = paramset.loci_limit,
+    paramset_alpha = paramset.alpha,
+    paramset_gap = paramset.gap,
+    paramset_use_mcmc_for_af_and_coi = paramset.use_mcmc_for_af_and_coi
+  ) 
+
+create_dt(snpslice_tool_params)
+```
+
+
+
 ## Benchmarking 
 
 ### COI  
 
-#### Metrics 
-
-*  Plotting Bland-Altman plots (plotting the mean of expected and obs vs difference) 
-*  Calculating the RMSE (taking the square root of the mean squared difference between expected and observed)  
-*  Calculating [Lin's concordance correlation coefficient](https://www.rdocumentation.org/packages/DescTools/versions/0.99.60/topics/CCC) for agreement on a continuous measure 
-*  Calculating contingency table of determining a sample as monoclonal vs polyclonal 
-
 #### Results 
+
+Combining results into one data table for comparison 
 
 ```{r}
 therealmccoil_coi_summary_out = therealmccoil_coi_summary %>%
-    mutate(tool = "therealmccoil")%>% 
-    select(population_name, paramset_id, library_sample_name, tool, coi)%>% 
-  left_join(expected_simulated_frequencies_per_sample_COIs %>% 
-              mutate(library_sample_name = as.character(library_sample_name))) %>% 
-  left_join(sim_params)
+    mutate(tool = "therealmccoil") %>% 
+    select(population_name, paramset_id, library_sample_name, tool, coi) %>% 
+  left_join(expected_simulated_frequencies_per_sample_COIs_with_params, by = c("population_name", "library_sample_name"))
 
 moire_coi_summary_out = moire_coi_summary %>%
     mutate(tool = "moire") %>% 
-    select(population_name, paramset_id, library_sample_name, tool, coi, naive_coi, offset_naive_coi) %>% 
-  left_join(expected_simulated_frequencies_per_sample_COIs %>% 
-              mutate(library_sample_name = as.character(library_sample_name))) %>% 
-  left_join(sim_params)
-  
-moire_effective_coi_summary_out = moire_effective_coi_summary %>%
-    mutate(tool = "moire")%>% 
-    select(population_name, paramset_id, library_sample_name, tool, ecoi)%>% 
-  left_join(expected_simulated_frequencies_per_sample_COIs %>% 
-              mutate(library_sample_name = as.character(library_sample_name))) %>% 
-  left_join(sim_params)
+    select(population_name, paramset_id, library_sample_name, tool, coi)  %>% 
+  left_join(expected_simulated_frequencies_per_sample_COIs_with_params, by = c("population_name", "library_sample_name"))
 
 coiaf_coi_summary_out =  coiaf_coi_summary %>%
     mutate(tool = "coiaf") %>% 
-    select(population_name, paramset_id, library_sample_name, tool, coi_freq, coi_variant) %>% 
-  left_join(expected_simulated_frequencies_per_sample_COIs %>% 
-              mutate(library_sample_name = as.character(library_sample_name))) %>% 
-  left_join(sim_params)
+    select(population_name, paramset_id, library_sample_name, tool, coi_freq, coi_variant)  %>% 
+  left_join(expected_simulated_frequencies_per_sample_COIs_with_params, by = c("population_name", "library_sample_name"))
   
 naive_coi_coi_summary_out = naive_coi_coi_summary %>%
     mutate(tool = "naive_coi") %>% 
-  left_join(expected_simulated_frequencies_per_sample_COIs %>% 
-              mutate(library_sample_name = as.character(library_sample_name))) %>% 
-  left_join(sim_params)
+  select(population_name, paramset_id, library_sample_name, tool, coi) %>% 
+  left_join(expected_simulated_frequencies_per_sample_COIs_with_params, by = c("population_name", "library_sample_name"))
 
+snpslice_coi_summary_out = snpslice_coi_summary %>%
+    mutate(tool = "snpslice") %>% 
+  select(population_name, paramset_id, library_sample_name, tool, coi)%>% 
+  full_join(expected_simulated_frequencies_per_sample_COIs_with_params, by = c("population_name", "library_sample_name"))
 
 ```
 
@@ -564,7 +540,11 @@ coiaf_coi_summary_out_sp_coi_freq_paramset_id_plot =  ggpairs(coiaf_coi_summary_
                                                   lower = list(continuous = wrap(my_hex)),
                                                   diag  = list(continuous = wrap("barDiag", binwidth = 1)),
                                                   upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-                                                  title = "all")
+                                                  title = "coi_freq")
+
+cairo_pdf("coiaf_coi_summary_out_sp_coi_freq_paramset_id_plot.pdf", width = 9, height = 9)
+print(coiaf_coi_summary_out_sp_coi_freq_paramset_id_plot)
+dev.off()
 
 coiaf_coi_summary_out_sp_coi_variant_paramset_id = coiaf_coi_summary_out %>% 
   select(population_name, paramset_id, library_sample_name, tool, coi_variant, expected_COI) %>% 
@@ -575,10 +555,43 @@ coiaf_coi_summary_out_sp_coi_variant_paramset_id_plot =  ggpairs(coiaf_coi_summa
                                                   lower = list(continuous = wrap(my_hex)),
                                                   diag  = list(continuous = wrap("barDiag", binwidth = 1)),
                                                   upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
-                                                  title = "all")
+                                                  title = "coi_variant")
 
+
+cairo_pdf("coiaf_coi_summary_out_sp_coi_variant_paramset_id_plot.pdf", width = 9, height = 9)
+print(coiaf_coi_summary_out_sp_coi_variant_paramset_id_plot)
+dev.off()
+
+
+coiaf_coi_summary_out_mae = coiaf_coi_summary_out %>% 
+  mutate(expected_COI_factor = factor(expected_COI)) %>% 
+  compute_mae(expected_COI, c(coi_freq, coi_variant), c(paramset_id, population_name, expected_COI_factor)) %>% 
+  left_join(coiaf_tool_params)
+
+coiaf_coi_summary_out_mae_coi_variant_plot = ggplot(coiaf_coi_summary_out_mae %>% 
+         filter(as.numeric(as.character(expected_COI_factor)) <= 4)) + 
+  geom_boxplot(aes(x = expected_COI_factor, y = coi_variant_mean_abs_error, fill = paramset_id)) + 
+  custom_ggplot_theme + 
+  scale_fill_manual(values = colorPalette_08) + 
+  labs(x = "Expected COI", y = "Mean absoluate error", title = "COIAF coi_variant")
+ 
+
+cairo_pdf("coiaf_coi_summary_out_mae_coi_variant_plot.pdf", width = 8, height = 4)
+print(coiaf_coi_summary_out_mae_coi_variant_plot)
+dev.off()
+
+coiaf_coi_summary_out_mae_coi_freq_plot = ggplot(coiaf_coi_summary_out_mae %>% 
+         filter(as.numeric(as.character(expected_COI_factor)) <= 4)) + 
+  geom_boxplot(aes(x = expected_COI_factor, y = coi_freq_mean_abs_error, fill = paramset_id)) + 
+  custom_ggplot_theme + 
+  scale_fill_manual(values = colorPalette_08) + 
+  labs(x = "Expected COI", y = "Mean absoluate error", title = "COIAF coi_freq")
+ 
+
+cairo_pdf("coiaf_coi_summary_out_mae_coi_freq_plot.pdf", width = 8, height = 4)
+print(coiaf_coi_summary_out_mae_coi_freq_plot)
+dev.off()
 ```
-
 
 ```{r, echo = F, eval = F}
 
@@ -590,49 +603,80 @@ naive_coi_coi_summary_out_ccc = naive_coi_coi_summary_out %>%
 naive_coi_coi_summary_out = naive_coi_coi_summary_out %>% 
   add_diff_mean(expected_COI, coi)
 
-make_bland_altman_plot_by_label(naive_coi_coi_summary_out, label = "coi") + 
-  facet_grid(coi_cat~paramset_id)
+bland_altman_plot_naive_coi = make_bland_altman_plot_by_label(naive_coi_coi_summary_out, label = "coi") + 
+  facet_grid(~paramset_id)
 ```
 
+```{r, echo = F, eval = F}
+
+naive_coi_coi_summary_out_sp_coi_freq_paramset_id = naive_coi_coi_summary_out %>% 
+  select(population_name, paramset_id, library_sample_name, tool, coi, expected_COI) %>% 
+  spread(paramset_id, coi)
+
+naive_coi_coi_summary_out_sp_coi_freq_paramset_id_plot =  ggpairs(naive_coi_coi_summary_out_sp_coi_freq_paramset_id,
+                                                  columns = c(colnames(naive_coi_coi_summary_out_sp_coi_freq_paramset_id)[grepl("param", colnames(naive_coi_coi_summary_out_sp_coi_freq_paramset_id))], "expected_COI"),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi_freq")
+
+cairo_pdf("naive_coi_coi_summary_out_sp_coi_freq_paramset_id_plot.pdf", width = 12, height = 12)
+print(naive_coi_coi_summary_out_sp_coi_freq_paramset_id_plot)
+dev.off()
+
+naive_coi_coi_summary_out_mae = naive_coi_coi_summary_out %>% 
+  mutate(expected_COI_factor = factor(expected_COI)) %>% 
+  compute_mae(expected_COI, c(coi), c(paramset_id, population_name, expected_COI_factor)) %>% 
+  left_join(coiaf_tool_params)
+
+naive_coi_coi_summary_out_mae_coi_variant_plot = ggplot(naive_coi_coi_summary_out_mae %>% 
+         filter(as.numeric(as.character(expected_COI_factor)) <= 6)) + 
+  geom_boxplot(aes(x = expected_COI_factor, y = coi_mean_abs_error, fill = paramset_id)) + 
+  custom_ggplot_theme + 
+  scale_fill_manual(values = colorPalette_08) + 
+  labs(x = "Expected COI", y = "Mean absoluate error", title = "Naive COI")
+ 
+
+cairo_pdf("naive_coi_coi_summary_out_mae_coi_variant_plot.pdf", width = 8, height = 4)
+print(naive_coi_coi_summary_out_mae_coi_variant_plot)
+dev.off()
+
+```
 
 
 ## Combining and getting best parameter set per program 
 
 Summarizing results over each program's various parameters to determine it's best peforming parameter to include for the final comparison 
 
-
 ```{r}
 coiaf_coi_summary_out_gat = coiaf_coi_summary_out %>% 
   gather(measure, coi, 5:6) %>% 
-  mutate(paramset_id = paste0(paramset_id, "-", measure))
-moire_coi_summary_out_mod = moire_coi_summary_out %>% 
-  mutate(tool = paste0(tool, "-coi"))
-moire_coi_summary_out_mod_offset_naive_coi = moire_coi_summary_out %>% 
-  select(-coi) %>% 
-  dplyr::rename(coi = offset_naive_coi) %>% 
-  mutate(tool = "offset_naive")
-moire_effective_coi_summary_out_mod =  moire_effective_coi_summary_out %>% 
-  mutate(tool = paste0(tool, "-ecoi")) %>% 
-  dplyr::rename(coi = ecoi)
-
+  rowwise() %>% 
+  mutate(paramset_id = gsub("coiaf_", paste0("coiaf_", measure, "_"), paramset_id))
 
 all_combined = bind_rows(
   coiaf_coi_summary_out_gat %>% 
     select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),
-  moire_coi_summary_out_mod %>% 
+  moire_coi_summary_out %>% 
     select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI), 
-  moire_effective_coi_summary_out_mod%>% 
-    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),  
   therealmccoil_coi_summary_out%>% 
     select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI),  
   naive_coi_coi_summary_out %>% 
     select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI), 
-  
-  # moire_coi_summary_out_mod_offset_naive_coi %>% 
-  #   select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI)
-) %>% 
-  mutate(tool_paramset_id = paste0(tool, paramset_id))
+  snpslice_coi_summary_out %>% 
+    select(population_name, tool, paramset_id, library_sample_name, coi, population_name_library_sample_name, panel, country, expected_COI)
+) %>%
+  mutate(tool_paramset_id = paste0(tool, paramset_id)) %>% 
+  left_join(sim_params)
 
+```
+
+
+### Getting best parameters over all 
+
+This summarizes concordance over all simulations and characteristics 
+
+```{r}
 all_combined_ccc_per_tool_per_params = all_combined %>% 
   compute_ccc(
     expected_COI, coi, 
@@ -644,6 +688,7 @@ all_combined_ccc_per_tool_per_params_best = all_combined_ccc_per_tool_per_params
   slice_max(order_by = coi_ccc, n = 1, with_ties = F) %>% 
   mutate(tool_paramset_id = paste0(tool, paramset_id))
 
+create_dt(all_combined_ccc_per_tool_per_params_best)
 
 all_combined_best = all_combined %>% 
   filter(tool_paramset_id %in% all_combined_ccc_per_tool_per_params_best$tool_paramset_id)%>% 
@@ -651,15 +696,251 @@ all_combined_best = all_combined %>%
   left_join(sim_params)
 ```
 
+Performance over all parameter sets for all tools. For some tools parameter set can make a large difference in performance (naive coi, moire, therealmccoil) while other there are no difference (snpslice, coiaf-coi_freq). 
 
 ```{r}
+all_combined_ccc_per_tool_per_params_plot_per_paramset = ggplot(all_combined_ccc_per_tool_per_params %>% 
+         mutate(paramset_id = ifelse(grepl("moire", tool), paste0(tool, "-", paramset_id), paramset_id))) + 
+  geom_col(aes(x = paramset_id, y = coi_ccc, fill = tool)) + 
+  geom_errorbar(aes(x = paramset_id, ymin = coi_ccc_lower, ymax = coi_ccc_upper)) + 
+  scale_fill_manual(values = colorPalette_15) + 
+  custom_ggplot_theme_xRotate + 
+  ylim(min(all_combined_ccc_per_tool_per_params$coi_ccc),1)
 
-all_combined_best_ccc = all_combined_best %>% 
+print(all_combined_ccc_per_tool_per_params_plot_per_paramset)
+
+cairo_pdf("all_combined_ccc_per_tool_per_params_plot_per_paramset.pdf", width = 15, height = 8)
+print(all_combined_ccc_per_tool_per_params_plot_per_paramset)
+dev.off()
+```
+
+### Best per population COI parameters 
+
+The mean population COI makes a large difference to which parameter set works best for which tool. This is due to the max possible COIs in each population. 
+
+```{r}
+all_combined_ccc_per_tool_per_params_per_coi_cat = all_combined %>% 
   compute_ccc(
     expected_COI, coi, 
-    c(tool, population_name)
+    c(tool, paramset_id, coi_cat)
+  )
+
+all_combined_ccc_per_tool_per_params_per_coi_cat_sp = all_combined_ccc_per_tool_per_params_per_coi_cat %>% 
+  ungroup() %>% 
+  select(paramset_id, coi_cat, coi_ccc) %>% 
+  spread(coi_cat, coi_ccc)
+
+all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat = as.matrix(all_combined_ccc_per_tool_per_params_per_coi_cat_sp[,2:ncol(all_combined_ccc_per_tool_per_params_per_coi_cat_sp)])
+rownames(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat) = all_combined_ccc_per_tool_per_params_per_coi_cat_sp$paramset_id
+
+tool_meta = tibble(
+  paramset_id = rownames(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat)
+) %>% 
+  mutate(tool = gsub("_coi_(freq|variant)", "", gsub("_p.*", "", paramset_id)))
+
+
+library(circlize)
+col_fun = colorRamp2(c(min(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat), 0.5,1), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 10
+all_combined_ccc_per_tool_per_params_per_coi_cat_sp_hp = Heatmap(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = F, 
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 row_split = tool_meta$tool, 
+                                                                   cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", all_combined_ccc_per_tool_per_params_per_coi_cat_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_hp)
+
+cairo_pdf("coi_ccc_per_coi_cat_per_tool_params.pdf", width = 8, height = 10, bg = "transparent")
+draw(all_combined_ccc_per_tool_per_params_per_coi_cat_sp_hp, background = "transparent")
+dev.off()
+
+```
+
+### Best per population COI parameters and relatedness 
+
+The amount of between sample relatedness also plays a significant role in performance 
+
+```{r}
+all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness = all_combined %>% 
+  mutate(coi_cat_related_ness = paste0(coi_cat, "\n", between_sample_related_cat)) %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, paramset_id, coi_cat_related_ness)
+  )
+
+all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp = all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness %>% 
+  ungroup() %>% 
+  select(paramset_id, coi_cat_related_ness, coi_ccc) %>% 
+  spread(coi_cat_related_ness, coi_ccc)
+
+all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat = as.matrix(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp[,2:ncol(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp)])
+rownames(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat) = all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp$paramset_id
+
+tool_meta = tibble(
+  paramset_id = rownames(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat)
+) %>% 
+  mutate(tool = gsub("_coi_(freq|variant)", "", gsub("_p.*", "", paramset_id)))
+
+
+library(circlize)
+col_fun = colorRamp2(c(min(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat), 0.5,1), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp = Heatmap(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = F, 
+                                                                 cluster_columns = F,
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 row_split = tool_meta$tool, 
+                                                                   cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp)
+
+cairo_pdf("coi_ccc_per_coi_cat_related_ness_per_tool_params.pdf", width = 12, height = 10, bg = "transparent")
+draw(all_combined_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp, background = "transparent")
+dev.off()
+
+```
+
+
+### Best per COI bins 
+
+Breaking down performance per tool per bins of COIs. This way performance can be 
+
+```{r}
+all_combined_ccc_per_coi_bin_per_tool = all_combined %>% 
+  ungroup() %>% 
+  filter(expected_COI!= 1) %>% 
+  mutate(expected_COI_bin = cut(expected_COI, breaks = seq(2, ceiling((max(expected_COI) + 1)/5) * 5, by = 5), include.lowest = T, right = F)) %>% 
+  group_by(expected_COI_bin) %>% 
+  filter(n_distinct(expected_COI) > 1) %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, paramset_id, expected_COI_bin)
+  )
+
+
+all_combined_ccc_per_coi_bin_per_tool_sp = all_combined_ccc_per_coi_bin_per_tool %>% 
+  ungroup() %>% 
+  select(paramset_id, expected_COI_bin, coi_ccc) %>% 
+  spread(expected_COI_bin, coi_ccc)
+
+all_combined_ccc_per_coi_bin_per_tool_sp_mat = as.matrix(all_combined_ccc_per_coi_bin_per_tool_sp[,2:ncol(all_combined_ccc_per_coi_bin_per_tool_sp)])
+rownames(all_combined_ccc_per_coi_bin_per_tool_sp_mat) = all_combined_ccc_per_coi_bin_per_tool_sp$paramset_id
+
+tool_meta = tibble(
+  paramset_id = rownames(all_combined_ccc_per_coi_bin_per_tool_sp_mat)
+) %>% 
+  mutate(tool = gsub("_coi_(freq|variant)", "", gsub("_p.*", "", paramset_id)))
+
+
+library(circlize)
+col_fun = colorRamp2(c(min(all_combined_ccc_per_coi_bin_per_tool_sp_mat, na.rm = T), 0.5,1), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+```
+
+```{r}
+#| fig-width: 16
+#| fig-height: 10
+all_combined_ccc_per_coi_bin_per_tool_sp_hp = Heatmap(all_combined_ccc_per_coi_bin_per_tool_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = F,
+                                                      cluster_columns = F,
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 row_split = tool_meta$tool, 
+                                                                   cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", all_combined_ccc_per_coi_bin_per_tool_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(all_combined_ccc_per_coi_bin_per_tool_sp_hp)
+
+cairo_pdf("all_combined_ccc_per_coi_bin_per_tool.pdf", width = 16, height = 10, bg = "transparent")
+draw(all_combined_ccc_per_coi_bin_per_tool_sp_hp, background = "transparent")
+dev.off()
+
+```
+
+
+
+### CCC by polyclonal 
+
+Breaking down COI performance over 2-9 COIs
+
+```{r}
+all_combined_ccc_per_tool_per_params_polyclonal = all_combined %>% 
+  filter(expected_COI > 1, expected_COI <= 9) %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, paramset_id)
+  )
+
+all_combined_ccc_per_tool_per_params_polyclonal_best = all_combined_ccc_per_tool_per_params_polyclonal %>% 
+  group_by(tool) %>% 
+  slice_max(order_by = coi_ccc, n = 1, with_ties = F) %>% 
+  mutate(tool_paramset_id = paste0(tool, paramset_id))
+
+# write out best paramset so field samples can use 
+cat(all_combined_ccc_per_tool_per_params_polyclonal_best$paramset_id, file = "best_coi_tool_paramset_ids.txt", sep = "\n")
+
+print(all_combined_ccc_per_tool_per_params_polyclonal_best)
+
+all_combined_best = all_combined %>% 
+  filter(tool_paramset_id %in% all_combined_ccc_per_tool_per_params_polyclonal_best$tool_paramset_id)%>% 
+  add_diff_mean(expected_COI, coi) %>% 
+  left_join(sim_params)
+```
+
+
+### Summarizing best performance 
+
+Summarizing across all simulated population, excluding the COIs of 1 as majority of tools are able to do well on monoclonals. 
+
+```{r}
+all_combined_best_ccc = all_combined_best %>% 
+  filter(expected_COI != 1) %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, tool_paramset_id, population_name)
   ) %>% 
   left_join(sim_params)
+
+create_dt(all_combined_best_ccc %>% group_by(tool_paramset_id) %>% summarise(quick_summary(coi_ccc)))
+
 
 all_combined_best_ccc_plot = ggplot(all_combined_best_ccc) + 
   geom_boxplot(aes(y = coi_ccc, fill = tool)) + 
@@ -670,7 +951,10 @@ all_combined_best_ccc_plot = ggplot(all_combined_best_ccc) +
   theme(axis.text.x = element_blank(), 
         axis.ticks.x = element_blank(), 
         axis.title.x = element_blank()) + 
-  geom_hline(linetype = "dotted", color = "red", yintercept = 0.95)
+  geom_hline(linetype = "dotted", color = "red", yintercept = 0.95) + 
+  scale_y_continuous(
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  )
 
 ```
 
@@ -682,14 +966,71 @@ print(all_combined_best_ccc_plot)
 ```
 
 ```{r}
-
 cairo_pdf("all_combined_best_ccc_plot.pdf", width = 4, height = 4)
 print(all_combined_best_ccc_plot)
 dev.off()
 ```
 
+#### Performance on COIs 2-9 
+
 ```{r}
-all_combined_best_by_tool = make_bland_altman_plot_by_label(all_combined_best, label = "coi") + 
+all_combined_best_ccc_cap9 = all_combined_best %>% 
+  filter(expected_COI != 1, expected_COI <=9) %>% 
+  compute_ccc(
+    expected_COI, coi, 
+    c(tool, tool_paramset_id, population_name)
+  ) %>% 
+  left_join(sim_params)
+
+create_dt(all_combined_best_ccc_cap9 %>% group_by(tool_paramset_id) %>% summarise(quick_summary(coi_ccc)))
+
+
+all_combined_best_ccc_cap9_plot = ggplot(all_combined_best_ccc_cap9) + 
+  geom_boxplot(aes(y = coi_ccc, fill = tool)) + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values = colorPalette_08, 
+                    guide = guide_legend(ncol = 2) 
+                    ) + 
+  theme(axis.text.x = element_blank(), 
+        axis.ticks.x = element_blank(), 
+        axis.title.x = element_blank()) + 
+  geom_hline(linetype = "dotted", color = "red", yintercept = 0.95) + 
+  scale_y_continuous(
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  )
+
+```
+
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+
+print(all_combined_best_ccc_cap9_plot)
+```
+
+```{r}
+cairo_pdf("all_combined_best_ccc_plot.pdf", width = 4, height = 4)
+print(all_combined_best_ccc_plot)
+dev.off()
+```
+
+
+
+
+
+
+### Difference plots 
+
+Plotting the difference between the calculated COI and against the expected COI to see in which direction estimates go as expected COI increases. Plotting from the "best" parameter set. 
+
+```{r}
+all_combined_best_by_tool_diff_plots = make_diff_vs_expected_plot(all_combined_best, 
+                                                       expected_col = "expected_COI", 
+                                                       diff_col = "coi_diff_from_exp", 
+                                                       y_label = "COI - Expected COI", 
+                                                       x_label = "Expected COI",
+                                                       title = "COI"
+                                                       ) + 
   facet_grid(~tool)
 
 ```
@@ -698,16 +1039,66 @@ all_combined_best_by_tool = make_bland_altman_plot_by_label(all_combined_best, l
 #| fig-width: 10
 #| fig-height: 5
 
-print(all_combined_best_by_tool)
+print(all_combined_best_by_tool_diff_plots)
 ```
 
 ```{r}
-cairo_pdf("all_coi_tools_combined_best_bland_altman.pdf", width = 10, height = 5)
-print(all_combined_best_by_tool)
+cairo_pdf("all_combined_best_by_tool_diff_plots.pdf", width = 10, height = 5)
+print(all_combined_best_by_tool_diff_plots)
 dev.off()
 
 ```
 
+
+### Getting mean absolute difference 
+
+For the determined best parameter sets, exploring the mean absolute difference as COI increases 
+
+```{r}
+#| fig-width: 10
+#| fig-height: 6
+
+
+all_combined_best_mae = all_combined_best  %>% 
+  mutate(expected_COI_factor = factor(expected_COI)) %>% 
+  compute_mae(
+    expected_COI, coi, 
+    c(tool, tool_paramset_id, population_name, expected_COI_factor)
+  ) %>% 
+  left_join(sim_params)
+
+
+all_combined_best_coi_mae_plot = ggplot(all_combined_best_mae %>% 
+         filter(as.numeric(as.character(expected_COI_factor)) <= 9)) + 
+  geom_boxplot(aes(x = expected_COI_factor, y = coi_mean_abs_error, fill = tool)) + 
+  custom_ggplot_theme + 
+  scale_fill_manual(values = colorPalette_08) + 
+  labs(x = "Expected COI", y = "Mean absoluate error", title = "Comparing against specific COI")
+
+
+```
+
+Majority of tools are have varying absolute difference between expected and observed while snp-slice has fairly consistent error 
+
+```{r}
+create_dt(all_combined_best_mae %>% filter(as.numeric(as.character(expected_COI_factor)) <= 9) %>%  group_by(tool, tool_paramset_id, expected_COI_factor) %>% summarise(quick_summary(coi_mean_abs_error)))
+```
+
+
+```{r}
+
+#| fig-width: 10
+#| fig-height: 6
+
+print(all_combined_best_coi_mae_plot)
+
+cairo_pdf("all_combined_best_coi_mae_plot.pdf", width = 10, height = 6)
+print(all_combined_best_coi_mae_plot)
+dev.off()
+```
+
+
+### Pairwise comparison between all tools 
 
 ```{r}
 all_combined_best_sp = all_combined_best %>% 
@@ -715,8 +1106,11 @@ all_combined_best_sp = all_combined_best %>%
   mutate(tool = gsub("-", "_", tool)) %>% 
   spread(tool, coi)
 
-all_combined_best_sp_tool_plot =  ggpairs(all_combined_best_sp,
-                                                  columns = c("coiaf", "moire_coi", "moire_ecoi", "naive_coi", "therealmccoil", "expected_COI"),
+all_combined_best_sp_tool_plot =  ggpairs(all_combined_best_sp ,
+                                                  columns = c("expected_COI", "coiaf", "moire", 
+                                                              "naive_coi", "therealmccoil",
+                                                              "snpslice"
+                                                              ),
                                                   lower = list(continuous = wrap(my_hex)),
                                                   diag  = list(continuous = wrap("barDiag", binwidth = 1)),
                                                   upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
@@ -736,9 +1130,13 @@ cairo_pdf("all_combined_best_sp_tool_plot.pdf", width = 13, height = 13)
 print(all_combined_best_sp_tool_plot)
 dev.off()
 
+```
+
+```{r}
 all_combined_best_sp_tool_plot_high_coi =  ggpairs(all_combined_best_sp %>% 
                                             filter(coi_cat != "MeanCOI=1.26"),
-                                                  columns = c("coiaf", "moire_coi", "moire_ecoi", "naive_coi", "therealmccoil", "expected_COI"),
+                                                  columns = c("expected_COI", "coiaf", "moire", "naive_coi", "therealmccoil",
+                                                              "snpslice"),
                                                   lower = list(continuous = wrap(my_hex)),
                                                   diag  = list(continuous = wrap("barDiag", binwidth = 1)),
                                                   upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
@@ -760,6 +1158,48 @@ print(all_combined_best_sp_tool_plot_high_coi)
 dev.off()
 ```
 
+
+### Pairwise between tool parameter sets 
+
+
+```{r}
+all_combined_moire_sp = all_combined %>%
+  filter(tool == "moire") %>% 
+  select(-tool_paramset_id) %>% 
+  mutate(paramset_id = gsub("-", "_", paramset_id)) %>% 
+  spread(paramset_id, coi)
+
+all_combined_moire_sp_tool_plot =  ggpairs(all_combined_moire_sp ,
+                                                  columns = c(colnames(all_combined_moire_sp)[grepl("moire", colnames(all_combined_moire_sp))]
+                                                              ),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+```
+
+```{r}
+#| fig-width: 13
+#| fig-height: 13
+
+print(all_combined_moire_sp_tool_plot)
+```
+
+```{r}
+cairo_pdf("all_combined_moire_sp_tool_plot.pdf", width = 13, height = 13)
+print(all_combined_moire_sp_tool_plot)
+dev.off()
+```
+
+
+
+
+## Final conclusions 
+
+* Almost all tools and for most parameter sets do well for estimating if sample is monoclonal or not 
+* Majority of tools performance decreases as COI becomes higher 
+* Naive COI estimates performance will have be affected significantly by panel and population 
 
 
 

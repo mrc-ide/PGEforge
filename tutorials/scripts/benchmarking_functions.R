@@ -472,7 +472,7 @@ add_diff_mean <- function(df, expected_col, observed_col) {
 #'
 #' This function generates a hex-binned Bland–Altman plot for a given COI measure
 #' compared against an expected COI. It automatically looks up the mean and diff
-#' columns based on a provided label (e.g., `"ecoi"`, `"coi"`, `"naive_coi"`, 
+#' columns based on a provided label (e.g., `"coi"`, `"naive_coi"`, 
 #' `"offset_naive_coi"`).
 #'
 #' @param df A data frame containing the mean and diff columns.
@@ -562,8 +562,100 @@ make_bland_altman_plot_by_label <- function(
 
 
 
+#' Create a plot of difference vs expected value (modified Bland–Altman style)
+#'
+#' This function generates a hex-binned plot where the x-axis represents an
+#' expected value column and the y-axis represents a difference column. It
+#' preserves all Bland–Altman functionality (GAM smoother, hex
+#' binning) but replaces the classic mean-of-two-measures x-axis with a
+#' user-supplied expected value column.
+#'
+#' @param df A data frame containing the expected and difference columns.
+#' @param expected_col A character string giving the name of the column to plot
+#'   on the x-axis (the expected / reference values).
+#' @param diff_col A character string giving the name of the column to plot on
+#'   the y-axis (the difference between observed and expected).
+#' @param title A character string for the plot title. Default is `NULL`, which
+#'   produces no title.
+#' @param x_label A character string for the x-axis label. Default is `NULL`,
+#'   which falls back to `expected_col`.
+#' @param y_label A character string for the y-axis label. Default is `NULL`,
+#'   which falls back to `diff_col`.
+#' @param bins Integer, number of bins for the hex plot. Default is `30`.
+#'
+#' @returns A `ggplot` object.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Minimal usage — column names become axis labels automatically
+#' p <- make_diff_vs_expected_plot(
+#'   df    = moire_all_coi_summary,
+#'   expected_col = "expected_coi",
+#'   diff_col     = "ecoi_diff_from_exp"
+#' )
+#'
+#' # With explicit labels
+#' p <- make_diff_vs_expected_plot(
+#'   df           = moire_all_coi_summary,
+#'   expected_col = "expected_coi",
+#'   diff_col     = "ecoi_diff_from_exp",
+#'   title        = "eCOI vs Expected COI",
+#'   x_label      = "Expected COI",
+#'   y_label      = "eCOI - Expected COI"
+#' )
+#' }
+make_diff_vs_expected_plot <- function(
+    df,
+    expected_col,
+    diff_col,
+    title    = NULL,
+    x_label  = NULL,
+    y_label  = NULL,
+    bins     = 30
+) {
+  stopifnot(
+    is.data.frame(df),
+    is.character(expected_col), length(expected_col) == 1,
+    is.character(diff_col),     length(diff_col)     == 1
+  )
+  
+  if (!(expected_col %in% names(df))) {
+    stop(sprintf("Column '%s' not found in df.", expected_col))
+  }
+  if (!(diff_col %in% names(df))) {
+    stop(sprintf("Column '%s' not found in df.", diff_col))
+  }
+  
+  x_label <- x_label %||% expected_col
+  y_label <- y_label %||% diff_col
+  
+  ggplot(df) +
+    geom_hex(
+      aes(
+        x    = .data[[expected_col]],
+        y    = .data[[diff_col]],
+        fill = log10(after_stat(count))
+      ),
+      bins = bins
+    ) +
+    scale_fill_viridis_c(name = "log10(count)") +
+    geom_smooth(
+      aes(x = .data[[expected_col]], y = .data[[diff_col]]),
+      method = "gam",
+      se     = FALSE
+    ) +
+    labs(
+      title = title,
+      x     = x_label,
+      y     = y_label
+    ) +
+    theme_minimal() +
+    coord_equal()
+}
+
 #' @title Concordance / Error Metrics (single or multiple observed columns)
-#' @keywords CCC RMSE MAE COI
+#' @keywords CCC 
 #'
 #' @description
 #' Compute metrics between an expected column and one or more observed columns.
@@ -593,6 +685,31 @@ compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
   stopifnot(is.data.frame(df))
   expected_col <- rlang::enquo(expected_col)
   
+  # helper: TRUE if vectors match perfectly (after dropping NA pairs)
+  is_perfect_match <- function(x, y) {
+    ok <- stats::complete.cases(x, y)
+    x <- x[ok]; y <- y[ok]
+    length(x) > 0 && isTRUE(all.equal(x, y, tolerance = 0))
+  }
+  
+  # helper: compute CCC, but return 1/1/1 when perfectly matching (or when CCC yields NA)
+  ccc_safe <- function(x, y) {
+    if (is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    res <- DescTools::CCC(x, y)
+    est <- res$rho.c$est
+    lwr <- res$rho.c$lwr.ci
+    upr <- res$rho.c$upr.ci
+    
+    # guard: if DescTools gives NA even though it's a perfect match (or for numerical edge cases)
+    if (is.na(est) && is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    
+    list(est = est, lwr = lwr, upr = upr)
+  }
+  
   # capture observed columns (symbol or c(...))
   obs_expr <- rlang::enexpr(observed_cols)
   obs_quos <- if (rlang::is_call(obs_expr, "c")) {
@@ -614,30 +731,183 @@ compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
   if (length(grp_quos) > 0) {
     out <- df %>% dplyr::distinct(!!!grp_quos)
     join_by_cols <- names(out)
+    
     for (q in obs_quos) {
       obs_name <- rlang::as_name(q)
+      
       one <- df %>%
         dplyr::group_by(!!!grp_quos) %>%
-        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
+        dplyr::summarise(
+          .ccc = list(ccc_safe(rlang::eval_tidy(expected_col, data = dplyr::cur_data()),
+                               rlang::eval_tidy(q,            data = dplyr::cur_data()))),
+          .groups = "drop"
+        ) %>%
         dplyr::mutate(
-          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
-          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
-          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
+          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$est),
+          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$lwr),
+          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$upr)
         ) %>%
         dplyr::select(-.ccc)
+      
       out <- dplyr::left_join(out, one, by = join_by_cols)
     }
   } else {
     pieces <- purrr::map(obs_quos, function(q) {
       obs_name <- rlang::as_name(q)
-      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
+      
+      x <- rlang::eval_tidy(expected_col, data = df)
+      y <- rlang::eval_tidy(q,            data = df)
+      v <- ccc_safe(x, y)
+      
       tibble::tibble(
-        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
-        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
-        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
+        !!paste0(obs_name, "_ccc")       := v$est,
+        !!paste0(obs_name, "_ccc_lower") := v$lwr,
+        !!paste0(obs_name, "_ccc_upper") := v$upr
       )
     })
+    
     out <- dplyr::bind_cols(pieces)
+  }
+  
+  out
+}
+
+
+#' @title Pairwise CCC Between Multiple Columns
+#' @keywords CCC pairwise concordance
+#'
+#' @description
+#' Compute Lin's CCC for all unique pairs among a supplied set of columns.
+#' Each function accepts an optional set of grouping columns. If omitted, an
+#' overall (single-row-per-pair) summary is returned.
+#'
+#' @param df A data frame.
+#' @param cols One symbol or \code{c(sym1, sym2, ...)} of columns to compare pairwise.
+#' @param group_cols Optional grouping columns supplied like
+#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
+#'   computes overall metrics (no grouping).
+#'
+#' @return A tibble with columns \code{col1}, \code{col2}, \code{ccc},
+#'   \code{ccc_lower}, \code{ccc_upper}, plus any group columns prepended.
+#'
+#' @importFrom dplyr group_by summarise distinct left_join bind_rows mutate select
+#' @importFrom rlang enexpr is_call call_args as_quosure caller_env as_name eval_tidy
+#' @importFrom purrr map map_dbl
+#' @export
+compute_pairwise_ccc <- function(df, cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  
+  # helper: TRUE if vectors match perfectly (after dropping NA pairs)
+  is_perfect_match <- function(x, y) {
+    ok <- stats::complete.cases(x, y)
+    x <- x[ok]; y <- y[ok]
+    length(x) > 0 && isTRUE(all.equal(x, y, tolerance = 0))
+  }
+  
+  # helper: compute CCC safely, returning 1/1/1 on perfect match or NA edge cases
+  ccc_safe <- function(x, y) {
+    if (is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    res <- DescTools::CCC(x, y)
+    est <- res$rho.c$est
+    lwr <- res$rho.c$lwr.ci
+    upr <- res$rho.c$upr.ci
+    
+    if (is.na(est) && is_perfect_match(x, y)) {
+      return(list(est = 1, lwr = 1, upr = 1))
+    }
+    
+    list(est = est, lwr = lwr, upr = upr)
+  }
+  
+  # capture column quosures — accepts either:
+  #   tidy-select style:  c(method_a, method_b, method_c)
+  #   character vector:   c("method_a", "method_b")  or  colnames(df)[...]
+  cols_expr <- rlang::enexpr(cols)
+  
+  col_quos <- if (is.character(cols)) {
+    # already evaluated to a character vector before being passed in
+    purrr::map(rlang::syms(cols), rlang::as_quosure, env = rlang::caller_env())
+  } else if (rlang::is_call(cols_expr, "c")) {
+    purrr::map(rlang::call_args(cols_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(cols_expr, env = rlang::caller_env()))
+  }
+  
+  if (length(col_quos) < 2) {
+    stop("`cols` must contain at least two columns to form a pair.")
+  }
+  
+  # all unique index pairs (i < j)
+  idx_pairs <- utils::combn(seq_along(col_quos), 2, simplify = FALSE)
+  
+  # capture grouping column quosures
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  if (length(grp_quos) > 0) {
+    # grouped path: summarise per group per pair, then stack
+    grp_keys <- dplyr::distinct(df, !!!grp_quos)
+    join_by_cols <- names(grp_keys)
+    
+    pair_chunks <- purrr::map(idx_pairs, function(pair) {
+      qa <- col_quos[[pair[1]]]
+      qb <- col_quos[[pair[2]]]
+      name_a <- rlang::as_name(qa)
+      name_b <- rlang::as_name(qb)
+      
+      one <- df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          .ccc = list(ccc_safe(
+            rlang::eval_tidy(qa, data = dplyr::cur_data()),
+            rlang::eval_tidy(qb, data = dplyr::cur_data())
+          )),
+          .groups = "drop"
+        ) %>%
+        dplyr::mutate(
+          col1      = name_a,
+          col2      = name_b,
+          ccc       = purrr::map_dbl(.ccc, ~ .x$est),
+          ccc_lower = purrr::map_dbl(.ccc, ~ .x$lwr),
+          ccc_upper = purrr::map_dbl(.ccc, ~ .x$upr)
+        ) %>%
+        dplyr::select(!!!grp_quos, col1, col2, ccc, ccc_lower, ccc_upper)
+      
+      one
+    })
+    
+    out <- dplyr::bind_rows(pair_chunks)
+    
+  } else {
+    # ungrouped path: one row per pair
+    pair_rows <- purrr::map(idx_pairs, function(pair) {
+      qa <- col_quos[[pair[1]]]
+      qb <- col_quos[[pair[2]]]
+      name_a <- rlang::as_name(qa)
+      name_b <- rlang::as_name(qb)
+      
+      x <- rlang::eval_tidy(qa, data = df)
+      y <- rlang::eval_tidy(qb, data = df)
+      v <- ccc_safe(x, y)
+      
+      tibble::tibble(
+        col1      = name_a,
+        col2      = name_b,
+        ccc       = v$est,
+        ccc_lower = v$lwr,
+        ccc_upper = v$upr
+      )
+    })
+    
+    out <- dplyr::bind_rows(pair_rows)
   }
   
   out
@@ -768,6 +1038,16 @@ compute_mae <- function(df, expected_col, observed_cols, group_cols = NULL) {
 }
 
 
+
+quick_summary <- function(x, probs = c(0, 0.25, 0.5, 0.75, 1)) {
+  q <- quantile(x, probs = probs, na.rm = TRUE)
+  tibble(
+    n = length(x[!is.na(x)]), 
+    sd = sd(x, na.rm = TRUE),
+    mean = mean(x, na.rm = TRUE),
+    !!!setNames(as.list(q), paste0("q", probs*100))
+  )
+}
 
 
 

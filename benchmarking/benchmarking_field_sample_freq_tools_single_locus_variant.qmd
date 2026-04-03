@@ -1,0 +1,331 @@
+---
+title: Field Samples Results - Single Locus frequency Tools
+author: Nicholas Hathaway
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: true
+fig-dpi: 300
+fig-align: center
+number-sections: true
+anchor-sections: true
+bibliography: [references.bib]
+biblio-style: apalike
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+
+
+```
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, echo=FALSE}
+source("../tutorials/scripts/benchmarking_functions.R")
+```
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-line-numbers: true
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
+
+```
+
+
+
+## Load in the Benchmarking Outputs
+
+
+```{r}
+inp_per_tools <- list(
+  # single locus allele frequencies 
+  "idm" = list(
+    tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/IDM/", 
+    tool_params = "../data/benchmarking/field_samples/immrse_field/full/IDM/tool_params.json"
+  ), 
+  "naive_slaf" = list(
+    tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/naive_slaf/", 
+    tool_params = "../data/benchmarking/field_samples/immrse_field/full/naive_slaf/tool_params.json"
+  ), 
+  "dcifer_slaf_from_mhap_freqs" = list(
+    tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/dcifer_slaf_from_mhap_freqs/", 
+    tool_params = "../data/benchmarking/field_samples/immrse_field/full/dcifer_slaf_from_mhap_freqs/tool_params.json"
+  )
+)
+
+```
+
+
+
+## single locus variants 
+
+naive single locus freq
+
+
+### Read in naive single locus freq results
+
+naive single locus freq outputs information on frequency and prevalence of alleles 
+
+Getting the frequency and prevs from the `slaf.tsv.gz` files 
+
+```{r}
+naive_slaf_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_slaf$tool_res_dir, 
+      pattern = "^slaf.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res)  %>% 
+  mutate(tool = "naive_slaf")
+
+```
+
+
+The naive estimator has two modes that it can be ran in read_count_prop (weighting the frequencies by within sample allele frequencies) and presence_absence (calculating frequencies simply by their presence and absence in samples, if all samples were monocloanl this would be the same as prevalance)
+
+```{r}
+# Read in tool parameters
+naive_slaf_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_slaf$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_method = paramset.method,
+  )
+
+create_dt(naive_slaf_tool_params)
+```
+
+
+
+### Read in dcifer slaf from microhaplotype freqs 
+
+dcifer slaf from microhaplotype freqs outputs information on frequency per haplotype  
+
+Getting the frequency and prevs from the `slaf.tsv.gz` files 
+
+```{r}
+dcifer_slaf_from_mhap_freqs_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$dcifer_slaf_from_mhap_freqs$tool_res_dir, 
+      pattern = "^slaf.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res)  %>% 
+  mutate(tool = "dcifer_slaf_from_mhap_freqs")
+
+```
+
+Three different parameters, each set uses a different nth-max (lrank) for the COI calculation that is then used for the calculating the microhaplotype frequency with a 1 step EM algorithm. 
+
+```{r}
+# Read in tool parameters
+dcifer_slaf_from_mhap_freqs_tool_params <- jsonlite::fromJSON(inp_per_tools$dcifer_slaf_from_mhap_freqs$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_coi_lrank = paramset.coi_lrank,
+    paramset_qstart = paramset.qstart
+  )
+
+create_dt(dcifer_slaf_from_mhap_freqs_tool_params)
+```
+
+
+### Read in IDM results
+
+
+IDM outputs information on frequency of alleles 
+
+Getting the frequency and prevs from the `IDM_summary.tsv.gz` files 
+
+```{r}
+idm_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$idm$tool_res_dir, 
+      pattern = "^IDM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  mutate(tool = "idm")
+
+```
+
+idm 
+
+```{r}
+# Read in tool parameters
+idm_tool_params <- jsonlite::fromJSON(inp_per_tools$idm$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_model = paramset.model ,
+    paramset_lambda_initial = paramset.lambda_initial ,
+    paramset_eps_initial = paramset.eps_initial,
+  )
+
+create_dt(idm_tool_params)
+```
+
+## combine 
+
+
+## combine 
+
+```{r}
+#| fig-width: 18
+#| fig-height: 18
+
+combined_slaf_freqs = bind_rows(
+  naive_slaf_freq_summary                   %>% select(population_name, paramset_id, freq, variant, tool), 
+  dcifer_slaf_from_mhap_freqs_freq_summary  %>% select(population_name, paramset_id, freq, variant, tool), 
+  idm_freq_summary                          %>% select(population_name, paramset_id, freq, variant, tool)
+) %>% 
+  mutate(variant_pos = gsub(":[A-Z*]", "", variant))
+
+combined_slaf_freqs_sp = combined_slaf_freqs %>% 
+  ungroup() %>% 
+  select(-tool) %>% 
+  spread(paramset_id, freq)
+
+
+```
+
+
+### IDM parameters 
+
+All IDM results are exactly the same no matter the parameters 
+
+```{r}
+combined_slaf_freqs_sp_pairwise_ccc_idm = compute_pairwise_ccc(combined_slaf_freqs_sp, cols = colnames(combined_slaf_freqs_sp)[grepl("idm", colnames(combined_slaf_freqs_sp))])
+
+create_dt(combined_slaf_freqs_sp_pairwise_ccc_idm)
+
+```
+
+
+### naive parameters 
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+
+combined_slaf_freqs_sp_naive_pair_plot =  ggpairs(combined_slaf_freqs_sp,
+                                                  columns = colnames(combined_slaf_freqs_sp)[grepl("naive", colnames(combined_slaf_freqs_sp))],
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 0.01, boundary = 0)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "slaf allele frequencies")
+
+print(combined_slaf_freqs_sp_naive_pair_plot)
+
+
+cairo_pdf("field_samples_combined_slaf_freqs_sp_naive_pair_plot.pdf", width = 8, height = 8)
+print(combined_slaf_freqs_sp_naive_pair_plot)
+dev.off()
+
+
+```
+
+
+
+### dcifer parameters 
+
+Very minimumal difference between parameters of auto determining the COI by nth rank for dcifer allele frequency estimate. 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+
+combined_slaf_freqs_sp_dcifer_pair_plot =  ggpairs(combined_slaf_freqs_sp,
+                                                  columns = colnames(combined_slaf_freqs_sp)[grepl("dcifer", colnames(combined_slaf_freqs_sp))],
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 0.01, boundary = 0)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "slaf allele frequencies")
+
+print(combined_slaf_freqs_sp_dcifer_pair_plot)
+
+
+cairo_pdf("field_samples_combined_slaf_freqs_sp_dcifer_pair_plot.pdf", width = 8, height = 8)
+print(combined_slaf_freqs_sp_dcifer_pair_plot)
+dev.off()
+
+
+```
+
+
+### all tools 
+
+Seeing similar patterns to simulation results in terms of the agreement between tools 
+
+```{r}
+#| fig-width: 15
+#| fig-height: 15
+
+combined_slaf_freqs_sp_all_pair_plot =  ggpairs(combined_slaf_freqs_sp,
+                                                  columns = colnames(combined_slaf_freqs_sp)[grepl("(dcifer|naive|idm_paramset20)", colnames(combined_slaf_freqs_sp))],
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 0.01, boundary = 0)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "slaf allele frequencies")
+
+print(combined_slaf_freqs_sp_all_pair_plot)
+
+
+cairo_pdf("field_samples_combined_slaf_freqs_sp_all_pair_plot.pdf", width = 15, height = 15)
+print(combined_slaf_freqs_sp_all_pair_plot)
+dev.off()
+
+
+```

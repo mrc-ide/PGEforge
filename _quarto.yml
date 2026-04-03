@@ -227,10 +227,21 @@ website:
             contents:
             - text: "Overview"
               file: benchmarking/Benchmarking_Overview.qmd
+            - text: "-------------------------------------"
+            - text: "Simulations"
             - text: "COI Tools"
-              file: benchmarking/benchmarking_COI_tools.qmd
+              href: benchmarking/benchmarking_COI_tools.qmd
             - text: "Allele Frequency Tools"
-              file: benchmarking/benchmarking_freq_tools.qmd
+            - href: benchmarking/benchmarking_freq_tools_single_locus_variant.qmd
+            - href: benchmarking/benchmarking_freq_tools_single_microhaplotype.qmd
+            - href: benchmarking/benchmarking_freq_tools_multi_locus_variant.qmd
+            - href: benchmarking/benchmarking_freq_tools_multi_locus_microhaplotype.qmd
+            - text: "-------------------------------------"
+            - text: "Field Samples"
+            - text: "COI Tools"
+            - href: benchmarking/benchmarking_field_samples_COI_tools.qmd
+            - href: benchmarking/benchmarking_field_sample_freq_tools_single_locus_variant.qmd
+            - href: benchmarking/benchmarking_field_sample_freq_tools_single_microhaplotype.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd

@@ -1,0 +1,397 @@
+---
+title: Field Samples Results - COI Tools
+author: Nicholas Hathaway
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: true
+fig-dpi: 300
+fig-align: center
+number-sections: true
+anchor-sections: true
+bibliography: [references.bib]
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+
+
+```
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, echo=FALSE}
+source("../tutorials/scripts/benchmarking_functions.R")
+```
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-line-numbers: true
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
+
+```
+
+
+
+## Load in the Benchmarking Outputs
+
+```{r}
+inp_per_tools <- list(
+  # coi tools 
+  "therealmccoil" = list(
+      tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/THEREALMcCOIL/", 
+      tool_params = "../data/benchmarking/field_samples/immrse_field/full/THEREALMcCOIL/tool_params.json"
+  ), 
+  # also does allele frequencies 
+  "moire" = list(
+      tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/MOIRE/", 
+      tool_params = "../data/benchmarking/field_samples/immrse_field/full/MOIRE/tool_params.json"
+  ), 
+  "naive_coi" = list(
+      tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/naive_coi/", 
+      tool_params = "../data/benchmarking/field_samples/immrse_field/full/naive_coi/tool_params.json"
+  ), 
+  "coiaf" = list(
+      tool_res_dir = "../data/benchmarking/field_samples/immrse_field/full/coiaf/", 
+      tool_params = "../data/benchmarking/field_samples/immrse_field/full/coiaf/tool_params.json"
+  )
+)
+
+
+
+```
+
+
+## THEREALMcCOI
+
+```{r}
+therealmccoil_coi_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$therealmccoil$tool_res_dir, 
+      pattern = "^coi.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  dplyr::rename(library_sample_name = specimen_id) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name)) %>% 
+  mutate(tool = "therealmccoil")
+
+```
+
+THEREALMcCOI can run in two different models, categorical vs proportional
+
+```{r}
+# Read in tool parameters
+therealmccoil_tool_params <- jsonlite::fromJSON(inp_per_tools$therealmccoil$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_model = paramset.model,
+  ) 
+
+create_dt(therealmccoil_tool_params)
+```
+
+
+### Read in MOIRE results
+
+MOIRE outputs information on complexity of infection (COI) and on population allele frequencies, will read in only the COIs results for the below analysis
+
+Getting the COI from the `coi_summary.tsv.gz` files 
+
+```{r}
+moire_coi_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$moire$tool_res_dir, 
+      pattern = "^coi_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  dplyr::rename(library_sample_name = specimen_id) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name)) %>% 
+  mutate(tool = "moire-coi")
+
+```
+
+
+Getting what tool parameters were used. For MOIRE benchmarking we set the priors on the assumed amount of relatedness with moire_paramset1 assuming uniform relatedness and then each moire_paramset 2 and 3 increasing the amount of assumed relatedness. moire_paramsets3-6 are the same prior relatedness as 1-3 but have more parallel burin to explore more pace for convergence.   
+
+```{r}
+# Read in tool parameters
+moire_tool_params <- jsonlite::fromJSON(inp_per_tools$moire$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    r_alpha = paramset.r_alpha,
+    r_beta = paramset.r_beta
+  )
+
+create_dt(moire_tool_params)
+```
+
+
+### Read in COIAF results
+
+Getting the COI from the `coi.tsv.gz` files 
+
+```{r}
+coiaf_coi_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$coiaf$tool_res_dir, 
+      pattern = "^coi.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  dplyr::rename(library_sample_name = specimen_id) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name))%>% 
+  mutate(tool = "coiaf")
+
+
+# when the COI for the sample is 1, coi_freq returns NA 
+coiaf_coi_summary = coiaf_coi_summary %>% 
+  mutate(coi_freq = ifelse(is.na(coi_freq), 1, coi_freq))
+
+coiaf_coi_summary_gat = coiaf_coi_summary %>% 
+  gather(measure, coi, 4:5) %>% 
+  rowwise() %>% 
+  mutate(paramset_id = gsub("coiaf_", paste0("coiaf_", measure, "_"), paramset_id))
+
+
+```
+
+coiaf can run with different assumptions of sequencing error and different maxs set on COI 
+
+```{r}
+# Read in tool parameters
+coiaf_tool_params <- jsonlite::fromJSON(inp_per_tools$coiaf$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_seq_error = paramset.seq_error,
+    paramset_max_coi = paramset.max_coi
+  ) 
+
+create_dt(coiaf_tool_params)
+```
+
+
+### Read in naive COI results
+
+Getting naive COI outputs from the `coi.tsv.gz` files 
+
+```{r}
+naive_coi_coi_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_coi$tool_res_dir, 
+      pattern = "^coi.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>% 
+  dplyr::rename(library_sample_name = specimen_id) %>% 
+  mutate(population_name_library_sample_name = paste0(population_name, "-", library_sample_name)) %>% 
+  mutate(tool = "naive_coi")
+
+```
+
+naive_coi can run with different assumptions of sequencing error and different maxs set on COI 
+
+```{r}
+# Read in tool parameters
+naive_coi_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_coi$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_method = paramset.method,
+    paramset_quantile_threshold = paramset.quantile_threshold,
+    paramset_integer_threshold = paramset.integer_threshold
+  ) %>% 
+  mutate(paramset_threshold = ifelse(is.na(paramset_integer_threshold), paramset_quantile_threshold, paramset_integer_threshold)) %>% 
+  select(-paramset_quantile_threshold, -paramset_integer_threshold)
+
+create_dt(naive_coi_tool_params)
+```
+
+
+
+## Combine results 
+
+
+```{r}
+
+combined_COI_tools_results = bind_rows(
+  therealmccoil_coi_summary %>% select(population_name, paramset_id, library_sample_name, coi, tool), 
+  moire_coi_summary %>% select(population_name, paramset_id, library_sample_name, coi, tool), 
+  coiaf_coi_summary_gat %>% select(population_name, paramset_id, library_sample_name, coi, tool), 
+  naive_coi_coi_summary %>% select(population_name, paramset_id, library_sample_name, coi, tool)
+)
+
+combined_COI_tools_results_sp = combined_COI_tools_results %>% 
+  ungroup() %>% 
+  select(-tool) %>% 
+  spread(paramset_id, coi)
+
+
+# getting the parameter set that was found to be the "best" out of the simulations 
+
+best_coi_tool_paramset_ids = readr::read_tsv("best_coi_tool_paramset_ids.txt", col_names = "paramset_id")
+combined_COI_tools_results_best_paramset = combined_COI_tools_results %>% 
+  filter(paramset_id %in% best_coi_tool_paramset_ids$paramset_id)
+
+combined_COI_tools_results_best_paramset_sp = combined_COI_tools_results_best_paramset %>% 
+  ungroup() %>% 
+  select(-tool) %>% 
+  spread(paramset_id, coi)
+
+```
+
+
+Plotting pairwise comparisons between the parameter sets that were fond to be "best" for the simulated data  
+
+```{r}
+#| fig-height: 13
+#| fig-width: 13
+
+
+combined_COI_tools_results_best_paramset_sp_all_pair_plot =  ggpairs(combined_COI_tools_results_best_paramset_sp,
+                                                  columns = rev(colnames(combined_COI_tools_results_best_paramset_sp)[grepl("paramset", colnames(combined_COI_tools_results_best_paramset_sp))]),
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+print(combined_COI_tools_results_best_paramset_sp_all_pair_plot)
+
+cairo_pdf("combined_field_samples_COI_tools_results_best_paramset_sp_all_pair_plot.pdf", width = 13, height = 13)
+print(combined_COI_tools_results_best_paramset_sp_all_pair_plot)
+dev.off()
+
+
+```
+
+```{r}
+
+# combined_COI_tools_results_sp_all_pair_plot =  ggpairs(combined_COI_tools_results_sp,
+#                                                   columns = colnames(combined_COI_tools_results_sp)[grepl("paramset", colnames(combined_COI_tools_results_sp))],
+#                                                   lower = list(continuous = wrap(my_hex)),
+#                                                   diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+#                                                   upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+#                                                   title = "coi")
+# 
+# cairo_pdf("combined_field_samples_COI_tools_results_sp_all_pair_plot.pdf", width = 75, height = 75)
+# print(combined_COI_tools_results_sp_all_pair_plot)
+# dev.off()
+# 
+
+```
+
+
+```{r}
+#| fig-height: 18
+#| fig-width: 18
+
+subset_coi_columns = colnames(combined_COI_tools_results_sp)[grepl("paramset", colnames(combined_COI_tools_results_sp))]
+# remove ones that clearly don't work 
+subset_coi_columns = subset_coi_columns[!grepl("coiaf", subset_coi_columns)]
+subset_coi_columns = subset_coi_columns[!grepl("therealmccoil_paramset2", subset_coi_columns)]
+
+subset_coi_columns = rev(subset_coi_columns)
+
+combined_COI_tools_results_sp_all_pair_subset_plot =  ggpairs(combined_COI_tools_results_sp,
+                                                  columns = subset_coi_columns,
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+print(combined_COI_tools_results_sp_all_pair_subset_plot)
+
+cairo_pdf("combined_field_samples_COI_tools_results_sp_all_pair_subset_plot.pdf", width = 17, height = 17)
+print(combined_COI_tools_results_sp_all_pair_subset_plot)
+dev.off()
+
+```
+
+```{r}
+#| fig-height: 7
+#| fig-width: 7
+
+
+combined_COI_tools_results_sp_all_pair_moire_subset_plot =  ggpairs(combined_COI_tools_results_sp,
+                                                  columns = subset_coi_columns[grepl("moire", subset_coi_columns)],
+                                                  lower = list(continuous = wrap(my_hex)),
+                                                  diag  = list(continuous = wrap("barDiag", binwidth = 1)),
+                                                  upper = list(continuous = wrap(my_corr_ccc, digits = 3, size = 3.8)),
+                                                  title = "coi")
+
+print(combined_COI_tools_results_sp_all_pair_moire_subset_plot)
+
+cairo_pdf("field_samples_combined_COI_tools_results_sp_all_pair_moire_subset_plot.pdf", width = 7, height = 7)
+print(combined_COI_tools_results_sp_all_pair_moire_subset_plot)
+dev.off()
+
+```
+
+
+

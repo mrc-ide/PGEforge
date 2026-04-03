@@ -1,0 +1,1052 @@
+---
+title: Benchmarking Results - Frequency Tools Multi locus Variants
+author: Nicholas Hathaway
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: true
+fig-dpi: 300
+fig-align: center
+number-sections: true
+anchor-sections: true
+bibliography: [references.bib]
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+
+library(ComplexHeatmap)
+
+
+get_color_scale_breaks <-function(mat_dat){
+  min_val = min(mat_dat, na.rm = T)
+  max_val = max(mat_dat, na.rm = T)
+  
+  return(c(min_val, min_val + (max_val - min_val)/2, max_val))
+}
+
+```
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, echo=FALSE}
+source("../tutorials/scripts/benchmarking_functions.R")
+```
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-line-numbers: true
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
+
+```
+
+## Load in the Benchmarking Outputs
+
+```{r}
+inp <- list(
+  sim_info_dir = "../data/benchmarking//simulations/SpotMalaria/", 
+  madhatter_res_dir = "../data/benchmarking/tool_results/madhatter/"
+)
+
+inp_per_tools <- list(
+  # multi-locus tools
+  "fem" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/FEM/", 
+    tool_params = "../data/benchmarking/tool_results/fem.json"
+  ), 
+  "mlbm" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/MLBM//", 
+    tool_params = "../data/benchmarking/tool_results/mlbm.json"
+  ), 
+  "naive_mlafp" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/naive_mlafp/", 
+    tool_params = "../data/benchmarking/tool_results/naive_mlafp.json"
+  ), 
+  "naive_mlafp_njh" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/naive_mlafp_njh/", 
+    tool_params = "../data/benchmarking/tool_results/naive_mlafp_njh.json"
+  ), 
+  "snpslice" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/SNPSlice/", 
+    tool_params = "../data/benchmarking/tool_results/snpslice.json"
+  )
+)
+
+
+
+```
+
+
+
+First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+
+### Reading in expected truths 
+
+Read per in expected aa multilocus freq/prev tables 
+
+
+```{r}
+expected_population_aa_multiloci_variants_freqs_prevs <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(),
+        population_name = col_character(), 
+        pop = col_character(), 
+        country = col_character(), 
+        variant = col_character(), 
+        aas_in_variant = col_integer(),
+				allele_count = col_integer(),
+				sample_count = col_integer(),
+				total_samples = col_integer(),
+				total_alleles = col_integer(),
+				freq = col_double(),
+				prev  = col_double(), 
+				group_id = col_character()
+      ),
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth)
+
+colnames(expected_population_aa_multiloci_variants_freqs_prevs)[5:11] = paste0("expected_",
+                                                                               colnames(expected_population_aa_multiloci_variants_freqs_prevs)[5:11])
+
+
+```
+
+Read in all simulation parameters into one tibble. Encode different population parameters as descriptive factors. 
+
+```{r}
+
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>% 
+  mutate(
+    coi_cat = case_when(
+      coi_r == 0.25 & coi_p == 0.7 ~"MeanCOI=1.26",
+      coi_r == 0.5  & coi_p == 0.2 ~"MeanCOI=3.41"
+    ), 
+    between_sample_related_cat = case_when(
+      pop_alpha == 99 ~ "_1%_related", 
+      pop_alpha == 9 ~ "10%_related", 
+      pop_alpha == 2.33 ~ "30%_related"
+    ), 
+    nonrecombinant_cat = case_when(
+      k_s == 0.5 ~ "50%_non-recombinant", 
+      k_s == 0.2 ~ "20%_non-recombinant", 
+    ), 
+    meiosis_cat = case_when(
+      k_s == 0.5 ~ "mean_meiosis=1.0", 
+      k_s == 0.2 ~ "mean_meiosis=3.5", 
+    )
+  ) %>% 
+  mutate(pop_cat = paste0(
+    between_sample_related_cat, "__", 
+    coi_cat, "__", 
+    nonrecombinant_cat
+  )) %>% 
+  mutate(pop_cat = factor(pop_cat, levels = sort(unique((.$pop_cat)))), 
+         coi_cat = factor(coi_cat, levels = sort(unique((.$coi_cat)))), 
+         between_sample_related_cat = factor(between_sample_related_cat, levels = sort(unique((.$between_sample_related_cat)))), 
+         nonrecombinant_cat = factor(nonrecombinant_cat, levels = sort(unique((.$nonrecombinant_cat)))), 
+         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat))))) %>% 
+  select(-sample_count)
+
+create_dt(sim_params)
+```
+
+
+## multi-locus variants 
+
+
+* FreqEstimationModel(FEM)[@Taylor2014-hk]
+* MultiLociBiallelicModel(MLBM)[@Tsoungui_Obama2022-gz]
+* snp-slice[@Ju2024-fh]
+* naive multi locus freq estimator variant_string
+* naive multi locus freq estimator njh
+
+
+
+### Read in FreqEstimationModel results
+
+FreqEstimationModel outputs information on frequency and prevalence of alleles 
+
+Getting the frequency and prevs from the `FEM_summary.tsv.gz` files 
+
+```{r}
+fem_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$fem$tool_res_dir, 
+      pattern = "^FEM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+fem can take a COI argument 
+
+```{r}
+# Read in tool parameters
+fem_tool_params <- jsonlite::fromJSON(inp_per_tools$fem$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_coi = paramset.coi,
+  )
+
+create_dt(fem_tool_params)
+```
+
+
+
+### Read in MLBM results
+
+MLBM outputs information on frequency but not prevalence of alleles 
+
+Getting the frequency from the `MLBM_summary.tsv.gz` files 
+
+```{r}
+mlbm_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$mlbm$tool_res_dir, 
+      pattern = "^MLBM_summary.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+mlbm has no additional parameters  
+
+```{r}
+# Read in tool parameters
+mlbm_tool_params <- jsonlite::fromJSON(inp_per_tools$mlbm$tool_params, flatten = TRUE) %>%
+  as_tibble()
+
+create_dt(mlbm_tool_params)
+```
+
+
+
+### Read in naive multi locus freq estimator results
+
+naive multi locus freq estimator outputs information on frequency but not prevalence of alleles 
+
+Getting the freqs and prevs from the `mlafp.tsv.gz` files 
+
+```{r}
+naive_mlafp_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_mlafp$tool_res_dir, 
+      pattern = "^mlafp.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+naive_mlafp has no additional parameters  
+
+```{r}
+# Read in tool parameters
+naive_mlafp_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_mlafp$tool_params, flatten = TRUE) %>%
+  as_tibble()
+
+create_dt(naive_mlafp_tool_params)
+```
+
+
+
+### Read in SNPSLICE multi locus freq estimator results
+
+SNPSLICE multi locus freq estimator  
+
+Getting the freqs and prevs from the `mlaf.tsv.gz` files 
+
+```{r}
+snpslice_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$snpslice$tool_res_dir, 
+      pattern = "^mlaf.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+snpslice   
+
+```{r}
+# Read in tool parameters
+snpslice_tool_params <- jsonlite::fromJSON(inp_per_tools$snpslice$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_model = paramset.model,
+    paramset_loci_limit = paramset.loci_limit,
+    paramset_alpha = paramset.alpha,
+    paramset_gap = paramset.gap,
+    paramset_use_mcmc_for_af_and_coi = paramset.use_mcmc_for_af_and_coi
+  ) 
+
+create_dt(snpslice_tool_params)
+```
+
+
+
+### Read in naive multi locus freq estimator results njh
+
+naive multi locus freq estimator outputs information on frequency but not prevalence of alleles 
+
+Getting the freqs and prevs from the `mlafp.tsv.gz` files 
+
+```{r}
+naive_mlafp_njh_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$naive_mlafp_njh$tool_res_dir, 
+      pattern = "^mlafp.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+naive_mlafp_njh has no additional parameters  
+
+```{r}
+# Read in tool parameters
+naive_mlafp_njh_tool_params <- jsonlite::fromJSON(inp_per_tools$naive_mlafp_njh$tool_params, flatten = TRUE) %>%
+  as_tibble()
+
+create_dt(naive_mlafp_njh_tool_params)
+```
+
+
+### Summarizing expected frequenies
+
+```{r}
+# calculating he 
+expected_population_aa_multiloci_variants_freqs_prevs_he = expected_population_aa_multiloci_variants_freqs_prevs %>% 
+  group_by(population_name, group_id) %>% 
+  summarise(he = 1 - sum(expected_freq ^2), 
+            variant_n = n_distinct(variant))
+
+expected_population_aa_multiloci_variants_freqs_prevs_he_sum = expected_population_aa_multiloci_variants_freqs_prevs_he %>% 
+  group_by(group_id) %>% 
+  summarise(quick_summary(he))
+# filtering to just sites that have at least some variation in any of the simulated populations 
+
+expected_population_aa_multiloci_variants_freqs_prevs_he_sum_invariant = expected_population_aa_multiloci_variants_freqs_prevs_he_sum %>% 
+  filter(q100 == 0)
+expected_population_aa_multiloci_variants_freqs_prevs_he_sum_variant = expected_population_aa_multiloci_variants_freqs_prevs_he_sum %>% 
+  filter(q100 != 0) %>% 
+  arrange(mean) %>% 
+  mutate(group_id = factor(group_id, levels = unique(.$group_id)))
+
+expected_population_aa_multiloci_variants_freqs_prevs_he_variant = expected_population_aa_multiloci_variants_freqs_prevs_he %>% 
+  filter(group_id %!in% expected_population_aa_multiloci_variants_freqs_prevs_he_sum_invariant$group_id)
+
+
+expected_population_aa_multiloci_variants_freqs_prevs_variant = expected_population_aa_multiloci_variants_freqs_prevs %>% 
+  filter(group_id %!in% expected_population_aa_multiloci_variants_freqs_prevs_he_sum_invariant$group_id)
+```
+
+Ranges of he for loci 
+
+```{r}
+ggplot(expected_population_aa_multiloci_variants_freqs_prevs_he_variant %>% 
+         left_join(sim_params) %>% 
+         mutate(group_id = factor(group_id, levels = expected_population_aa_multiloci_variants_freqs_prevs_he_sum_variant$group_id))
+       ) + 
+  geom_boxplot(aes(x = group_id, y = he)) + 
+  custom_ggplot_theme_xRotate + 
+  scale_color_manual(values = colorPalette_08) + 
+  facet_grid(country~.)
+
+```
+
+Some variants are invariant in one ancestor population but may be highly variant in the other 
+
+```{r}
+#| fig-width: 30
+#| fig-height: 10
+# Get ordered variant positions
+variant_levels <- expected_population_aa_multiloci_variants_freqs_prevs_he_sum_variant$group_id
+
+# Create shading data frame
+n_variants <- length(variant_levels)
+shade_df <- data.frame(
+  group_id = factor(variant_levels, levels = variant_levels),
+  xmin = seq_along(variant_levels) - 0.5,
+  xmax = seq_along(variant_levels) + 0.5,
+  fill = rep(c("gray", "white"), length.out = n_variants)
+)
+
+ggplot(expected_population_aa_multiloci_variants_freqs_prevs_he_variant %>% 
+         left_join(sim_params) %>% 
+         mutate(group_id = factor(group_id, levels = variant_levels))
+       ) + 
+  geom_rect(data = shade_df,
+            aes(xmin = xmin, xmax = xmax, ymin = -Inf, ymax = Inf, fill = fill),
+            inherit.aes = FALSE, alpha = 0.4) +
+  scale_fill_manual(values = c("gray" = "grey50", "white" = "white"), guide = "none") +
+  geom_boxplot(aes(x = group_id, y = he, color = factor(country))) + 
+  custom_ggplot_theme_xRotate + 
+  scale_color_manual(values = colorPalette_08)
+
+
+```
+
+
+So unlike the single locus variants, these groups rarely have allele frequencies of 1 and majority of frequencies are low level frequencies. 
+
+```{r}
+ggplot(expected_population_aa_multiloci_variants_freqs_prevs_variant) + 
+  geom_histogram(aes(x = expected_freq), binwidth = 0.01)
+```
+
+
+
+### combining freqs 
+
+```{r}
+add_expected_freqs <- function(summary_dat, expected_dat, tool_params, tool_name) {
+  
+  # some tools  
+  summary_dat_variant_info = summary_dat %>% 
+    select(variant) %>% 
+    unique() %>% 
+    rowwise() %>% 
+    mutate(observed_aas_in_variant = variantstring::variant_to_long(variant)[[1]] %>%
+             select(gene, pos) %>%
+             unique() %>%
+             nrow())
+
+  ## expand expected results for all parameter sets so they all get expected results
+  ## fill the unmatched expected with 0's and with unmatched observed (false haps) with 0's
+  summary_dat_out = summary_dat %>%
+    left_join(tool_params%>% 
+              select(-loci_groups)) %>% 
+    left_join(expected_dat %>% 
+                ungroup() %>% 
+                select(group_id, expected_aas_in_variant) %>% 
+                unique()) %>% 
+    left_join(summary_dat_variant_info) %>%
+    full_join(expected_dat %>%
+                crossing(paramset_id = unique(sort(
+                  summary_dat$paramset_id
+                )))%>% 
+              select(-expected_aas_in_variant), 
+              by = c("population_name", "paramset_id", "group_id",  "variant")) %>%
+    mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+    mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>%
+    mutate(tool =  tool_name) %>%
+    mutate(tool_paramset_id = paste0(tool, "-", paramset_id))
+  
+  # not all tools output prev
+  if ("prev" %in% colnames(summary_dat_out)) {
+    summary_dat_out = summary_dat_out %>%
+      mutate(prev = ifelse(is.na(prev), 0, prev)) %>%
+      mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq)) %>%
+      mutate(expected_prev = ifelse(is.na(expected_prev), 0, expected_prev))
+  }
+  
+  return(summary_dat_out)
+}
+
+```
+
+
+```{r}
+fem_freq_summary_out = add_expected_freqs(fem_freq_summary, 
+                                          expected_population_aa_multiloci_variants_freqs_prevs, 
+                                          fem_tool_params, 
+                                          "fem")
+
+mlbm_freq_summary_out = add_expected_freqs(mlbm_freq_summary, 
+                                          expected_population_aa_multiloci_variants_freqs_prevs, 
+                                          mlbm_tool_params, 
+                                          "mlbm")
+
+snpslice_freq_summary_out = add_expected_freqs(snpslice_freq_summary, 
+                                          expected_population_aa_multiloci_variants_freqs_prevs, 
+                                          snpslice_tool_params, 
+                                          "snpslice")
+
+naive_mlafp_freq_summary_out = add_expected_freqs(naive_mlafp_freq_summary, 
+                                          expected_population_aa_multiloci_variants_freqs_prevs, 
+                                          naive_mlafp_tool_params, 
+                                          "naive_mlafp")
+
+naive_mlafp_njh_freq_summary_out = add_expected_freqs(naive_mlafp_njh_freq_summary, 
+                                          expected_population_aa_multiloci_variants_freqs_prevs, 
+                                          naive_mlafp_njh_tool_params, 
+                                          "naive_mlafp_njh")
+
+```
+
+```{r}
+combined_mlfreq = 
+  bind_rows(
+    fem_freq_summary_out %>%
+      select(population_name, tool, paramset_id, tool_paramset_id, group_id, variant, freq, expected_freq, observed_aas_in_variant, expected_aas_in_variant), 
+    mlbm_freq_summary_out %>%
+      select(population_name, tool, paramset_id, tool_paramset_id, group_id, variant, freq, expected_freq, observed_aas_in_variant, expected_aas_in_variant), 
+    snpslice_freq_summary_out %>%
+      select(population_name, tool, paramset_id, tool_paramset_id, group_id, variant, freq, expected_freq, observed_aas_in_variant, expected_aas_in_variant), 
+    naive_mlafp_freq_summary_out %>%
+      select(population_name, tool, paramset_id, tool_paramset_id, group_id, variant, freq, expected_freq, observed_aas_in_variant, expected_aas_in_variant), 
+    naive_mlafp_njh_freq_summary_out %>%
+      select(population_name, tool, paramset_id, tool_paramset_id, group_id, variant, freq, expected_freq, observed_aas_in_variant, expected_aas_in_variant)
+  ) %>%  # remove output for tools that have output multi-locus haplotypes that aren't the full group
+  filter(is.na(observed_aas_in_variant) | observed_aas_in_variant == expected_aas_in_variant)
+
+```
+
+
+
+
+
+```{r}
+# looking at just at frequencies that aren't 1, it's important that sites with a frequency of 1 are also correct but currently 
+# no tool has any issues with getting a freq of 1, having it being over representation makes evaluation biased  
+
+combined_mlfreq_ccc_by_tool_group_id_params_filt = combined_mlfreq %>% 
+  compute_ccc(expected_freq, freq, c(tool, group_id, paramset_id, tool_paramset_id))
+
+combined_mlfreq_ccc_by_tool_group_id_params_filt_filt = combined_mlfreq_ccc_by_tool_group_id_params_filt 
+
+combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp = combined_mlfreq_ccc_by_tool_group_id_params_filt_filt %>% 
+  ungroup() %>% 
+  select(group_id, tool_paramset_id, freq_ccc) %>% 
+  spread(tool_paramset_id, freq_ccc)
+
+combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat = as.matrix(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp[,2:ncol(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp)])
+rownames(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat) = combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp$group_id
+
+
+library(circlize)
+col_fun = colorRamp2(get_color_scale_breaks(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+variant_meta = tibble(
+  group_id = rownames(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat)
+) %>% 
+  left_join(expected_population_aa_multiloci_variants_freqs_prevs_he_sum %>% 
+              select(group_id, mean) %>% 
+              dplyr::rename(mean_he = mean)) %>% 
+  select(-group_id) %>% 
+  as.data.frame()
+row_anno = rowAnnotation(
+  df = variant_meta, 
+  col = list(
+    mean_he = colorRamp2(c(min(variant_meta$mean_he, na.rm = T),
+                       median(variant_meta$mean_he, na.rm = T),
+                     max(variant_meta$mean_he, na.rm = T)),
+                   c( "#ffffcc", "#feb24c", "#fc4e2a"))
+  )
+)
+
+```
+
+```{r}
+#| fig-width: 15
+#| fig-height: 10
+combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat_hp = Heatmap(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = T,
+                                                                 cluster_columns = F,
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 left_annotation = row_anno,
+                                                                 # row_split = tool_meta$tool, 
+                                                                cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat_hp, 
+     background = "transparent", 
+     padding = unit(c(50, 5, 5, 5), "mm"), 
+     merge_legends = T)
+
+cairo_pdf("combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat_hp.pdf", width = 15, height = 10, bg = "transparent")
+draw(combined_mlfreq_ccc_by_tool_group_id_params_filt_filt_sp_mat_hp, background = "transparent", 
+     padding = unit(c(50, 5, 5, 5), "mm"), 
+     merge_legends = T)
+dev.off()
+
+```
+
+
+
+### Best per population COI parameters 
+
+The mean population COI makes a large difference to which parameter set works best for which tool. This is due to the max possible COIs in each population. 
+
+```{r}
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat = combined_mlfreq %>% 
+  left_join(sim_params) %>% 
+  compute_ccc(
+    expected_freq, freq, 
+    c(tool, paramset_id, coi_cat, group_id)
+  )
+
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp = combined_mlfreq_ccc_per_tool_per_params_per_coi_cat %>% 
+  ungroup() %>% 
+  mutate(group_id_coi_cat = paste0(group_id, "\n", coi_cat)) %>% 
+  select(paramset_id, group_id_coi_cat, freq_ccc) %>% 
+  spread(group_id_coi_cat, freq_ccc)
+
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat = as.matrix(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp[,2:ncol(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp)])
+rownames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat) = combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp$paramset_id
+
+tool_meta = tibble(
+  paramset_id = rownames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat)
+)%>% 
+  mutate(tool = gsub("_coi_(freq|variant)", "", gsub("_p.*", "", paramset_id)))
+
+col_meta = tibble(
+  group_id_coi_cat = colnames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat)
+) %>% 
+  mutate(group_id = gsub("\\n.*", "", group_id_coi_cat)) %>% 
+  mutate(group_id = factor(group_id,
+                           levels = c("two_group1",
+                                      "pfdhfr",
+                                      "pfdhps",
+                                      "four_group1",
+                                      "six_low_div",
+                                      "pfdhfr_pfdhps",
+                                      "six_med_div")))
+
+library(circlize)
+col_fun = colorRamp2(get_color_scale_breaks(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+```
+
+
+```{r}
+#| fig-width: 20
+#| fig-height: 8
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_hp = Heatmap(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = F, 
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 row_split = tool_meta$tool, 
+                                                                 row_title = NULL,
+                                                                 column_split = col_meta$group_id, 
+                                                                 column_gap = unit(0.5, "cm"),
+                                                                 column_title_rot = -45,
+                                                                 cluster_column_slices = F,
+                                                                   cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_hp)
+
+cairo_pdf("multilocus_freq_ccc_per_coi_cat_per_tool_params.pdf", width = 20, height = 8, bg = "transparent")
+draw(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_sp_hp, background = "transparent")
+dev.off()
+
+```
+
+
+
+### Best per population COI parameters and relatedness 
+
+The amount of between sample relatedness also plays a significant role in performance 
+
+```{r}
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness = combined_mlfreq %>% 
+  left_join(sim_params) %>% 
+  mutate(coi_cat_related_ness = paste0(coi_cat, "\n", between_sample_related_cat)) %>% 
+  compute_ccc(
+    expected_freq, freq, 
+    c(tool, paramset_id, coi_cat_related_ness, group_id)
+  )
+
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp = combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness %>% 
+  ungroup() %>% 
+  mutate(group_id_coi_cat_related_ness = paste0(group_id, "\n", coi_cat_related_ness)) %>% 
+  select(paramset_id, group_id_coi_cat_related_ness, freq_ccc) %>% 
+  spread(group_id_coi_cat_related_ness, freq_ccc)
+
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat = as.matrix(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp[,2:ncol(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp)])
+rownames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat) = combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp$paramset_id
+
+tool_meta = tibble(
+  paramset_id = rownames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat)
+) %>% 
+  mutate(tool = gsub("_coi_(freq|variant)", "", gsub("_p.*", "", paramset_id)))
+
+col_meta = tibble(
+  group_id_coi_cat = colnames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat)
+) %>% 
+  mutate(group_id = gsub("\\n.*", "", group_id_coi_cat)) %>% 
+  mutate(group_id = factor(group_id,
+                           levels = c("two_group1",
+                                      "pfdhfr",
+                                      "pfdhps",
+                                      "four_group1",
+                                      "six_low_div",
+                                      "pfdhfr_pfdhps",
+                                      "six_med_div"))) %>% 
+  mutate(new_col_name = gsub(".*\\nMean", "Mean", group_id_coi_cat))
+
+colnames(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat) = col_meta$new_col_name
+
+library(circlize)
+col_fun = colorRamp2(get_color_scale_breaks(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat), c( "#3288bd", "#ffffbf", "#d53e4f"))
+
+```
+
+```{r}
+#| fig-width: 24
+#| fig-height: 10
+combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp = Heatmap(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat, 
+                                                                 name = "concordance", 
+                                                                 cluster_rows = F, 
+                                                                 cluster_columns = F,
+                                                                 row_gap = unit(0.5, "cm"),
+                                                                 col = col_fun,
+                                                                 rect_gp = gpar(col = "black", lwd = 1),
+                                                                 row_split = tool_meta$tool, 
+                                                                 row_title = NULL,
+                                                                 column_split = col_meta$group_id, 
+                                                                 column_gap = unit(0.5, "cm"),
+                                                                 column_title_rot = -45,
+                                                                 cluster_column_slices = F, 
+                                                                   cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.text(
+      sprintf("%.2f", combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_mat[i, j]),
+      x,
+      y
+      #,gp = gpar(fontsize = 8, col = "black")
+    )
+  })
+
+draw(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp)
+
+cairo_pdf("multilocus_freq_ccc_per_coi_cat_related_ness_per_tool_params.pdf", width = 24, height = 10, bg = "transparent")
+draw(combined_mlfreq_ccc_per_tool_per_params_per_coi_cat_related_ness_sp_hp, background = "transparent")
+dev.off()
+
+```
+
+
+
+
+### Overall 
+
+```{r}
+combined_mlfreq_ccc_by_tool_params = combined_mlfreq %>% 
+  compute_ccc(expected_freq, freq, c(tool, paramset_id, tool_paramset_id))
+
+combined_mlfreq_ccc_by_tool_params_best = combined_mlfreq_ccc_by_tool_params %>% 
+  group_by(tool) %>% 
+  slice_max(order_by = freq_ccc, with_ties = F)
+
+```
+
+
+Overall and broken down by group there is frequently is just small changes in performance based on parameters. 
+
+```{r}
+combined_mlfreq_ccc_by_tool_params_plot_per_paramset = ggplot(combined_mlfreq_ccc_by_tool_params) + 
+  geom_col(aes(x = paramset_id, y = freq_ccc, fill = tool)) + 
+  geom_errorbar(aes(x = paramset_id, ymin = freq_ccc_lower, ymax = freq_ccc_upper)) + 
+  scale_fill_manual(values = colorPalette_15) + 
+  custom_ggplot_theme_xRotate + 
+  geom_abline(slope = 0, intercept = 0.95, color = "red", linetype = "dotted")
+
+create_dt(combined_mlfreq_ccc_by_tool_params)
+
+print(combined_mlfreq_ccc_by_tool_params_plot_per_paramset)
+
+cairo_pdf("combined_mlfreq_ccc_by_tool_params_plot_per_paramset.pdf", width = 15, height = 8)
+print(combined_mlfreq_ccc_by_tool_params_plot_per_paramset)
+dev.off()
+
+
+```
+
+
+
+
+```{r}
+combined_mlfreq_ccc_by_tool_params = compute_ccc(combined_mlfreq, expected_freq, freq, c(tool, paramset_id))
+
+combined_mlfreq_ccc_by_tool_params_best = combined_mlfreq_ccc_by_tool_params %>%
+  group_by(tool) %>%
+  slice_max(n = 1, order_by = freq_ccc)  %>%
+  mutate(tool_paramset_id = paste0(tool, "-", paramset_id))
+
+combined_mlfreq_best = combined_mlfreq %>%
+  filter(tool_paramset_id %in% combined_mlfreq_ccc_by_tool_params_best$tool_paramset_id) %>%
+  mutate(group_id = factor(group_id,
+                           levels = c("two_group1",
+                                      "pfdhfr",
+                                      "pfdhps",
+                                      "four_group1",
+                                      "six_low_div",
+                                      "pfdhfr_pfdhps",
+                                      "six_med_div")))
+```
+
+```{r}
+#| fig-width: 15
+#| fig-height: 8
+
+
+combined_mlfreq_best = combined_mlfreq_best %>%
+  add_diff_mean(expected_freq, freq)
+
+combined_mlfreq_best_altman_tool_groupid = make_diff_vs_expected_plot(combined_mlfreq_best,
+                                                                      expected_col = "expected_freq", 
+                                                                      diff_col = "freq_diff_from_exp",
+                                                                      "freq") +
+  facet_grid(tool ~ group_id)
+
+print(combined_mlfreq_best_altman_tool_groupid)
+
+
+cairo_pdf("combined_mlfreq_best_altman_tool_groupid.pdf", width = 15, height = 8)
+print(combined_mlfreq_best_altman_tool_groupid)
+dev.off()
+```
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+
+
+combined_mlfreq_best_mod = combined_mlfreq_best %>%
+  mutate(TP = as.numeric(freq != 0 & expected_freq != 0))%>%
+  mutate(FP = as.numeric(freq != 0 & expected_freq == 0))%>%
+  mutate(FN = as.numeric(freq == 0 & expected_freq != 0))
+
+combined_mlfreq_best_mod_contig = combined_mlfreq_best_mod %>%
+  group_by(tool, group_id) %>%
+  add_contigency_metrics_no_TN(T)
+
+
+combined_mlfreq_best_mod_contig_recall_precision = combined_mlfreq_best_mod_contig %>%
+  select(tool, group_id, recall, precision) %>%
+  gather(measure, value, 3:4)
+
+combined_mlfreq_best_mod_contig_recall_precision_plot = ggplot(combined_mlfreq_best_mod_contig_recall_precision) +
+  geom_col(aes(x = group_id, y = value, fill = tool), color = "black", position = "dodge") +
+  custom_ggplot_theme_xRotate +
+  scale_fill_manual(values = colorPalette_08) +
+  facet_wrap(~measure)
+
+print(combined_mlfreq_best_mod_contig_recall_precision_plot)
+
+cairo_pdf("combined_mlfreq_best_mod_contig_recall_precision.pdf", width = 8, height = 6)
+print(combined_mlfreq_best_mod_contig_recall_precision_plot)
+dev.off()
+
+```
+
+Models FEM, mlbm, snpslice have a better recall for the higher diversity group of six but this comes at the cost of precision 
+
+```{r}
+#| fig-width: 8
+#| fig-height: 6
+
+
+combined_mlfreq_best_mod_contig_by_coi_cat = combined_mlfreq_best_mod %>%
+  left_join(sim_params, by = "population_name") %>%
+  group_by(tool, group_id, coi_cat) %>%
+  add_contigency_metrics_no_TN(T)
+
+combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision = combined_mlfreq_best_mod_contig_by_coi_cat %>%
+  select(tool, group_id, coi_cat, recall, precision) %>%
+  gather(measure, value,4:5)
+
+
+combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision_plot = ggplot(combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision) +
+  geom_col(aes(x = group_id, y = value, fill = tool), color = "black", position = "dodge") +
+  custom_ggplot_theme_xRotate +
+  scale_fill_manual(values = colorPalette_08) +
+  facet_wrap(coi_cat~measure)
+
+
+print(combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision_plot)
+
+cairo_pdf("combined_mlfreq_best_mod_contig_coi_cat_recall_precision.pdf", width = 8, height = 6)
+print(combined_mlfreq_best_mod_contig_by_coi_cat_recall_precision_plot)
+dev.off()
+
+
+```
+
+
+The false positives are at low frequencies for the models but the majority of haplotypes are at the same frequencies so a cut off would not solve the false positive problem. In addition, multi-locus that may not exist ever (like biological incompatiable combinations) may be called by these models.  
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+
+combined_mlfreq_best_mod_FP = combined_mlfreq_best_mod %>%
+  filter(FP == 1)
+
+combined_mlfreq_best_mod_FP_plot = ggplot(combined_mlfreq_best_mod_FP) +
+  geom_histogram(aes(x = freq), binwidth = 0.02, boundary = 0) +
+  facet_grid(group_id ~ tool, scales = "free") +
+  custom_ggplot_theme + 
+  xlim(0,1)
+
+cairo_pdf("combined_mlfreq_best_mod_false_positives.pdf", width = 10, height = 8)
+print(combined_mlfreq_best_mod_FP_plot)
+dev.off()
+
+combined_mlfreq_best_mod_TP = combined_mlfreq_best_mod %>%
+  filter(TP == 1)
+
+combined_mlfreq_best_mod_TP_plot = ggplot(combined_mlfreq_best_mod_TP) +
+  geom_histogram(aes(x = freq), binwidth = 0.02, boundary = 0) +
+  facet_grid(group_id ~ tool, scales = "free") +
+  custom_ggplot_theme + 
+  xlim(0,1)
+
+cairo_pdf("combined_mlfreq_best_mod_true_positives.pdf", width = 10, height = 8)
+print(combined_mlfreq_best_mod_TP_plot)
+dev.off()
+
+```
+
+ 
+
+```{r}
+#| results: asis
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+
+cat(create_tabsetOfGgplotObjects(
+  list("true_positive" = combined_mlfreq_best_mod_TP_plot,
+       "false_positive" = combined_mlfreq_best_mod_FP_plot)
+))
+
+```
+
+
+

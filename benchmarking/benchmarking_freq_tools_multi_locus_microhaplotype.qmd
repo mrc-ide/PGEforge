@@ -1,0 +1,489 @@
+---
+title: Benchmarking Results - Frequency Tools Multi locus microhaplotypes
+author: Nicholas Hathaway
+format: html
+toc-depth: 5
+code-fold: true
+fig-width: 15
+fig-height: 15
+embed-resources: true
+fig-dpi: 300
+fig-align: center
+number-sections: true
+anchor-sections: true
+bibliography: [references.bib]
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, comment = "", cache = F, fig.align = "center")
+options(width = 200)
+options(readr.show_col_types = FALSE)
+
+library(ComplexHeatmap)
+
+
+get_color_scale_breaks <-function(mat_dat){
+  min_val = min(mat_dat, na.rm = T)
+  max_val = max(mat_dat, na.rm = T)
+  
+  return(c(min_val, min_val + (max_val - min_val)/2, max_val))
+}
+
+```
+
+## Set up 
+
+### Libraries used in the analysis below 
+
+```{r, echo=FALSE}
+source("../tutorials/scripts/benchmarking_functions.R")
+```
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-line-numbers: true
+#| filename: ../tutorials/scripts/benchmarking_functions.R
+#| file: ../tutorials/scripts/benchmarking_functions.R
+
+```
+
+## Load in the Benchmarking Outputs
+
+```{r}
+inp <- list(
+  sim_info_dir = "../data/benchmarking//simulations/SpotMalaria/", 
+  madhatter_res_dir = "../data/benchmarking/tool_results/madhatter/"
+)
+
+inp_per_tools <- list(
+  # multi-locus microhaplotype freq
+  "malariaem" = list(
+    tool_res_dir = "../data/benchmarking/tool_results/malariaem//", 
+    tool_params = "../data/benchmarking/tool_results/malariaem.json"
+  )
+)
+
+
+
+```
+
+
+
+First, all of the tool results, tool parameters, expected simulated values, and simulation parameters are read into a tibble.
+
+### Reading in expected truths 
+
+
+Read in expected phased data 
+
+For several haplotype groups, the expected phased haplotype frequencies are calculated below 
+
+```{r}
+all_phased_pop_freqs_prevs_out = readr::read_tsv("../data/benchmarking/simulations/SpotMalaria/all_phased_pop_freqs_prevs_out.tsv.gz") %>% 
+  dplyr::rename(target_id = target) %>% 
+  unique()
+
+colnames(all_phased_pop_freqs_prevs_out)[4:9] = paste0("expected_", colnames(all_phased_pop_freqs_prevs_out[4:9]))
+
+all_phased_sample_out = readr::read_tsv("../data/benchmarking/simulations/SpotMalaria/all_phased_sample_out.tsv.gz")%>% 
+  dplyr::rename(target_id = target) %>% 
+  unique()
+
+```
+
+
+
+Read in all simulation parameters into one tibble. Encode different population parameters as descriptive factors. 
+
+```{r}
+
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>% 
+  mutate(
+    coi_cat = case_when(
+      coi_r == 0.25 & coi_p == 0.7 ~"MeanCOI=1.26",
+      coi_r == 0.5  & coi_p == 0.2 ~"MeanCOI=3.41"
+    ), 
+    between_sample_related_cat = case_when(
+      pop_alpha == 99 ~ "_1%_related", 
+      pop_alpha == 9 ~ "10%_related", 
+      pop_alpha == 2.33 ~ "30%_related"
+    ), 
+    nonrecombinant_cat = case_when(
+      k_s == 0.5 ~ "50%_non-recombinant", 
+      k_s == 0.2 ~ "20%_non-recombinant", 
+    ), 
+    meiosis_cat = case_when(
+      k_s == 0.5 ~ "mean_meiosis=1.0", 
+      k_s == 0.2 ~ "mean_meiosis=3.5", 
+    )
+  ) %>% 
+  mutate(pop_cat = paste0(
+    between_sample_related_cat, "__", 
+    coi_cat, "__", 
+    nonrecombinant_cat
+  )) %>% 
+  mutate(pop_cat = factor(pop_cat, levels = sort(unique((.$pop_cat)))), 
+         coi_cat = factor(coi_cat, levels = sort(unique((.$coi_cat)))), 
+         between_sample_related_cat = factor(between_sample_related_cat, levels = sort(unique((.$between_sample_related_cat)))), 
+         nonrecombinant_cat = factor(nonrecombinant_cat, levels = sort(unique((.$nonrecombinant_cat)))), 
+         meiosis_cat = factor(meiosis_cat, levels = sort(unique((.$meiosis_cat))))) %>% 
+  select(-sample_count)
+
+create_dt(sim_params)
+```
+
+
+
+## multi-locus microhaplotype freq
+
+### malariaem
+
+```{r}
+malariaem_freq_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$malariaem$tool_res_dir, 
+      pattern = "^mlaf_results.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+```{r}
+malariaem_phased_per_sample_summary <- tibble(
+    tool_res_path = list.files(
+      inp_per_tools$malariaem$tool_res_dir, 
+      pattern = "^phasing_results.tsv.gz$", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(population_name = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) 
+
+```
+
+malariaem_tool_params 
+
+```{r}
+# Read in tool parameters
+malariaem_tool_params <- jsonlite::fromJSON(inp_per_tools$malariaem$tool_params, flatten = TRUE) %>%
+  as_tibble() %>%
+  rename(
+    paramset_subset_targets = paramset.subset_targets
+  )
+
+create_dt(malariaem_tool_params)
+```
+
+
+
+
+
+####  two_meddiv
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_two_meddiv = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "two_meddiv")
+
+malariaem_freq_summary_two_meddiv = malariaem_freq_summary %>% 
+  filter(group_id == "two_meddiv")
+
+all_phased_pop_freqs_prevs_out_two_meddiv = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "two_meddiv")
+all_phased_sample_out_two_meddiv = all_phased_sample_out %>% 
+    filter(group_id == "two_meddiv")
+
+two_meddiv_group_popHapId = malariaem_phased_per_sample_summary_two_meddiv %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_two_meddiv %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_two_meddiv %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+two_meddiv_group_popHapId_sel = two_meddiv_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_two_meddiv_mod = all_phased_pop_freqs_prevs_out_two_meddiv %>% 
+  left_join(two_meddiv_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_meddiv_mod = malariaem_freq_summary_two_meddiv %>% 
+  left_join(two_meddiv_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_meddiv_mod_sel = malariaem_freq_summary_two_meddiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_two_meddiv_mod_sel = all_phased_pop_freqs_prevs_out_two_meddiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_two_meddiv_mod_sel_combined = malariaem_freq_summary_two_meddiv_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_two_meddiv_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+####  two_lowdiv
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_two_lowdiv = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "two_lowdiv")
+
+malariaem_freq_summary_two_lowdiv = malariaem_freq_summary %>% 
+  filter(group_id == "two_lowdiv")
+
+all_phased_pop_freqs_prevs_out_two_lowdiv = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "two_lowdiv")
+all_phased_sample_out_two_lowdiv = all_phased_sample_out %>% 
+    filter(group_id == "two_lowdiv")
+
+two_lowdiv_group_popHapId = malariaem_phased_per_sample_summary_two_lowdiv %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_two_lowdiv %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_two_lowdiv %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+two_lowdiv_group_popHapId_sel = two_lowdiv_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_two_lowdiv_mod = all_phased_pop_freqs_prevs_out_two_lowdiv %>% 
+  left_join(two_lowdiv_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_lowdiv_mod = malariaem_freq_summary_two_lowdiv %>% 
+  left_join(two_lowdiv_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_two_lowdiv_mod_sel = malariaem_freq_summary_two_lowdiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_two_lowdiv_mod_sel = all_phased_pop_freqs_prevs_out_two_lowdiv_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_two_lowdiv_mod_sel_combined = malariaem_freq_summary_two_lowdiv_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_two_lowdiv_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+####  four
+
+
+```{r}
+
+malariaem_phased_per_sample_summary_four = malariaem_phased_per_sample_summary %>% 
+  filter(group_id == "four")
+
+malariaem_freq_summary_four = malariaem_freq_summary %>% 
+  filter(group_id == "four")
+
+all_phased_pop_freqs_prevs_out_four = all_phased_pop_freqs_prevs_out %>% 
+  filter(group_id == "four")
+all_phased_sample_out_four = all_phased_sample_out %>% 
+    filter(group_id == "four")
+
+four_group_popHapId = malariaem_phased_per_sample_summary_four %>% 
+  select(target_id, seq) %>% 
+  bind_rows(all_phased_sample_out_four %>% 
+              select(target_id, seq), 
+            malariaem_freq_summary_four %>% 
+              select(target_id, seq)) %>% 
+  group_by(target_id, seq) %>% 
+  summarise(n = n()) %>%
+  arrange(target_id, desc(n)) %>% 
+  group_by(target_id) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(seq_name = paste0(target_id, ".", stringr::str_pad(row, width = nchar(max(row)), pad = "0")))
+
+four_group_popHapId_sel = four_group_popHapId %>% 
+  ungroup() %>% 
+  select(target_id, seq, seq_name)
+
+all_phased_pop_freqs_prevs_out_four_mod = all_phased_pop_freqs_prevs_out_four %>% 
+  left_join(four_group_popHapId_sel)%>% 
+  group_by(population_name, group_id, pop_simulated_gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_four_mod = malariaem_freq_summary_four %>% 
+  left_join(four_group_popHapId_sel) %>% 
+  group_by(population_name, group_id, gt_id) %>% 
+  arrange(target_id) %>% 
+  mutate(hap_name = paste0(seq_name, collapse = "__"))
+
+malariaem_freq_summary_four_mod_sel = malariaem_freq_summary_four_mod %>% 
+  ungroup() %>% 
+  select(population_name, paramset_id, hap_name, freq, freq_se, group_id) %>% 
+  unique()
+
+all_phased_pop_freqs_prevs_out_four_mod_sel = all_phased_pop_freqs_prevs_out_four_mod %>% 
+  ungroup() %>% 
+  select(population_name, hap_name, expected_allele_freq, group_id) %>% 
+  unique()
+
+malariaem_freq_summary_four_mod_sel_combined = malariaem_freq_summary_four_mod_sel %>% 
+  full_join(all_phased_pop_freqs_prevs_out_four_mod_sel %>% 
+              dplyr::rename("expected_freq" = expected_allele_freq))%>%
+  mutate(freq = ifelse(is.na(freq), 0, freq)) %>%
+  mutate(expected_freq = ifelse(is.na(expected_freq), 0, expected_freq))
+
+
+```
+
+
+
+```{r}
+
+malariaem_freq_summary_all_combined = bind_rows(
+  malariaem_freq_summary_two_meddiv_mod_sel_combined, 
+  malariaem_freq_summary_two_lowdiv_mod_sel_combined, 
+  malariaem_freq_summary_four_mod_sel_combined
+) %>% 
+  mutate(group_id = factor(group_id, levels = c("two_lowdiv", "two_meddiv", "four")))
+
+malariaem_freq_summary_all_combined_ccc = compute_ccc(malariaem_freq_summary_all_combined, 
+                                                                     expected_freq, freq, 
+                                                                     c(group_id)
+                                                                     )
+
+malariaem_freq_summary_all_combined = malariaem_freq_summary_all_combined %>% 
+  add_diff_mean(expected_freq, freq)
+
+
+
+malariaem_freq_summary_all_combined_bland_alt = make_bland_altman_plot_by_label(malariaem_freq_summary_all_combined, "freq") + 
+  facet_grid(~group_id)
+
+cairo_pdf("malariaem_freq_summary_all_combined_bland_alt.pdf", width = 8, height = 4)
+print(malariaem_freq_summary_all_combined_bland_alt)
+dev.off()
+
+malariaem_freq_summary_all_combined = malariaem_freq_summary_all_combined %>%
+  mutate(TP = as.numeric(freq != 0 & expected_freq != 0)) %>% 
+  mutate(FP = as.numeric(freq != 0 & expected_freq == 0)) %>% 
+  mutate(FN = as.numeric(freq == 0 & expected_freq != 0))
+
+
+malariaem_freq_summary_all_combined_contig = malariaem_freq_summary_all_combined %>% 
+  group_by(group_id) %>% 
+  add_contigency_metrics_no_TN(T)
+
+malariaem_freq_summary_all_combined_contig_precission_recall = malariaem_freq_summary_all_combined_contig %>% 
+  gather(measure, value, 7, 9)
+
+
+malariaem_freq_summary_all_combined_contig_precission_recall_plot = ggplot(malariaem_freq_summary_all_combined_contig_precission_recall) + 
+  geom_col(aes(x = group_id, y = value, fill = measure), color = "black", position = "dodge") + 
+  custom_ggplot_theme_xRotate + 
+  scale_fill_manual(values =colorPalette_08)
+
+cairo_pdf("malariaem_freq_summary_all_combined_contig_precission_recall_plot.pdf", width = 4, height = 4)
+print(malariaem_freq_summary_all_combined_contig_precission_recall_plot)
+dev.off()
+
+
+malariaem_freq_summary_all_combined_fp = malariaem_freq_summary_all_combined %>% 
+  filter(FP == 1)
+
+
+malariaem_freq_summary_all_combined_false_positive_freq_plot = ggplot(malariaem_freq_summary_all_combined_fp) + 
+  geom_histogram(aes(x = freq)) +
+  scale_y_log10() + 
+  facet_grid(~group_id) + 
+  custom_ggplot_theme + 
+  labs(y = "count (log10)")
+
+cairo_pdf("malariaem_freq_summary_all_combined_false_positive_freq_plot.pdf", width = 6, height = 4)
+print(malariaem_freq_summary_all_combined_false_positive_freq_plot)
+dev.off()
+```
+
+
