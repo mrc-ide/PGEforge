@@ -305,7 +305,10 @@ results_ccc_grouped <- results_ccc_grouped %>%
 make_grouped_plot(results_ccc_grouped, "freq_ccc", "CCC", "Overall Plot of Concordance") +
   plot_annotation(caption = paste(strwrap("Population-level Concordance. Point estimates with 95% confidence intervals (CIs) for each group of simulation parameters: low vs. high COI (columns), medium vs. high recombination (rows), low vs. medium vs. high relatedness (x-axis), and each loci group (colors).",width = 100), collapse = "\n")) &
   theme(plot.caption = element_text(hjust = 0, size = 11))
+
+
 ```
+
 
 
 Now, to further visualize these concordances, we can plot them against each other. The main variable that the CCC seems to vary by is COI, so here we can see the alignment of expected and estimated allele frequencies faceted by COI.
@@ -366,8 +369,97 @@ Fig7b <- results %>%
     title = "Enrichment of False Positives"
   ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7)) + xlab("Estimated Frequency (of non-existent haplotypes)")
 
+
 (Fig7a | Fig7b) + plot_annotation(caption = paste(strwrap("Left: true frequency of values that do not exist in the malaria.em estimation (i.e. those that were falsely missed), accounting for the baseline allele frequency distribution. Right: estimated frequency of values that were predicted by malaria.em despite not being present in the original sample, accounting for baseline allele frequency distribution.",width = 100), collapse = "\n")) &
   theme(plot.caption = element_text(hjust = 0, size = 11))
+
+
+
+make_false_plots <- function(cutoff){
+
+
+##TODO add titles for versions with and without cutoffs
+
+## TODO add panels
+
+## obviously tradeoff; depends on your use case. Don't trust low frequency haplotypes too much
+Fig7a_lim <- results %>%
+  #filter(exp_freq > 0) %>% 
+  mutate(freq = ifelse(freq < cutoff, 0, freq)) %>%
+  filter(!(freq == 0 & allele_freq == 0)) %>%
+  ggplot(aes(x = allele_freq, y = as.numeric(freq == 0))) +
+  stat_summary_bin(    fun = "mean", geom = "bar", bins = 50, fill = "thistle", color = "white"  ) +
+  labs(
+    y = "Ratio (FN / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Negatives"
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7)) + xlab("True frequency of missed haplotypes")
+
+Fig7b_lim <- results %>%
+  #filter(obs_freq > 0) %>%
+  mutate(freq = ifelse(freq < cutoff, 0, freq)) %>%
+  filter(!(freq == 0 & allele_freq == 0)) %>%
+  ggplot(aes(x = freq, y = as.numeric(allele_freq == 0))) +
+  stat_summary_bin(fun = "mean", geom = "bar", bins = 50, fill = "thistle", color = "white"  ) +
+  labs(
+    y = "Ratio (FP / Total)", # use ratio to account for base line allele frequency distribution.
+    title = "Enrichment of False Positives"
+  ) + theme_bw() + coord_cartesian(ylim = c(0, 0.7)) + xlab("Estimated Frequency (of non-existent haplotypes)")
+
+
+return((Fig7a_lim | Fig7b_lim) + plot_annotation(title = paste0("With a freq > ", cutoff), caption = paste(strwrap("Left: true frequency of values that do not exist in the malaria.em estimation (i.e. those that were falsely missed), accounting for the baseline allele frequency distribution. Right: estimated frequency of values that were predicted by malaria.em despite not being present in the original sample, accounting for baseline allele frequency distribution.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11)))
+  
+}
+
+
+
+```
+
+## False Positive and Negative Values with Cutoffs {.tabset}
+
+To show how removing low-frequency alleles might impact the overall false postive and negative values, we generated those same plots for a variety of cutoffs.
+
+### 1e-10
+```{r FPN -10, echo = F, message = F, warning=FALSE}
+
+make_false_plots(1e-10)
+
+```
+
+### 1e-8
+```{r FPN -8, echo = F, message = F, warning=FALSE}
+
+make_false_plots(1e-8)
+
+```
+
+### 1e-6
+```{r FPN -6, echo = F, message = F, warning=FALSE}
+
+make_false_plots(1e-6)
+
+```
+
+
+### 1e-4
+```{r FPN 0.0001, echo = F, message = F, warning=FALSE}
+
+make_false_plots(0.0001)
+
+```
+
+### 0.001
+```{r FPN 0.001, echo = F, message = F, warning=FALSE}
+
+make_false_plots(0.001)
+
+```
+
+### 0.01
+```{r FPN 0.01, echo = F, message = F, warning=FALSE}
+
+make_false_plots(0.01)
+
 ```
 
 
@@ -383,7 +475,9 @@ make_bland_altman_plot_by_label(results %>%
                                   add_diff_mean(allele_freq, freq), "freq", method = "loess",
                                 linecolor = "magenta") + 
   facet_wrap(~Country, nrow = 2) +
-  ggtitle("Bland-Altmans by Country")
+  ggtitle("Bland-Altmans by Country") + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by initial country of the simulations. Point density is shown using color, with more densely-filled segments of the graph shown in more yellow. The pink line represents the best fit through the density.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
 ```
 
 ### By Group ID
@@ -396,7 +490,9 @@ make_bland_altman_plot_by_label(results %>%
                                   add_diff_mean(allele_freq, freq), "freq" , method = "loess",
                                 linecolor = "magenta") + 
   ggtitle("Bland-Altmans by Loci Group") +
-  facet_wrap(~`Loci Group`, nrow = 2)
+  facet_wrap(~`Loci Group`, nrow = 2) + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by loci group. Point density is shown using color, with more densely-filled segments of the graph shown in more yellow. The pink line represents the best fit through the density.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
 ```
 
 ### By COI_R
@@ -407,7 +503,9 @@ make_bland_altman_plot_by_label(results %>%
                                                                 0.5 ~ "Med COI/Prop. Polyclonal")) %>%
                                   add_diff_mean(allele_freq, freq), "freq" , method = "loess",
                                 linecolor = "magenta") +
-  facet_wrap(~coi_r, nrow = 2) + ggtitle("Bland-Altmans by COI")
+  facet_wrap(~coi_r, nrow = 2) + ggtitle("Bland-Altmans by COI") + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by COI/proportion polyclonal of the simulations. Point density is shown using color, with more densely-filled segments of the graph shown in more yellow. The pink line represents the best fit through the density.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
 ```
 
 ### By Relatedness
@@ -421,7 +519,9 @@ make_bland_altman_plot_by_label(results %>%
                                                           )) %>%
                                   add_diff_mean(allele_freq, freq), "freq" , method = "loess",
                                 linecolor = "magenta") +
-  facet_wrap(~pop_alpha, nrow = 2) + ggtitle("Bland-Altmans by Relatedness")
+  facet_wrap(~pop_alpha, nrow = 2) + ggtitle("Bland-Altmans by Relatedness")+ plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by the relatedness of the simulations. Point density is shown using color, with more densely-filled segments of the graph shown in more yellow. The pink line represents the best fit through the density.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
 ```
 
 
@@ -433,7 +533,7 @@ make_bland_altman_plot_by_label(results %>%
                                                               0.5 ~ "Med Recombination")) %>%
                                   add_diff_mean(allele_freq, freq), "freq", method = "loess",
                                 linecolor = "magenta") +
-  facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination") + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by recombination level of the simulations.",width = 100), collapse = "\n")) &
+  facet_wrap(~k_s, nrow = 2) + ggtitle("Bland-Altmans by Recombination") + plot_annotation(caption = paste(strwrap("Bland-Altman plots separated by recombination level of the simulations. Point density is shown using color, with more densely-filled segments of the graph shown in more yellow. The pink line represents the best fit through the density.",width = 100), collapse = "\n")) &
   theme(plot.caption = element_text(hjust = 0, size = 11))
 
 
@@ -453,6 +553,9 @@ results_ind <- results_ind %>% mutate(`Loci Group` =
                                                          "two_meddiv" ~ "Two, Med Diversity",
                                                          "four" ~ "Four"))
 
+
+results_ind_poly <- results_ind %>% filter(grepl("_", key_TOOL))
+
 a <- ggplot(results_ind %>% filter(!is.na(posterior_est)) %>%
                                      mutate(match = factor(match, 
                                                            levels = c(TRUE, FALSE), 
@@ -470,8 +573,26 @@ b <- ggplot(results_ind %>% filter(!is.na(posterior_est)) %>%
   facet_wrap(~`Loci Group`) + ggtitle("Density Plots") + 
   xlab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + ylab("Density")
 
-a/b + plot_annotation(title = "Comparing Posterior Estimates by Correctness of Sample",
-                      subtitle = "Match = True means the individual-level phasing was completely correct")
+
+
+a_poly <- ggplot(results_ind_poly %>% filter(!is.na(posterior_est)) %>%
+                                     mutate(match = factor(match, 
+                                                           levels = c(TRUE, FALSE), 
+                                                           labels = c("Correctly\nPhased",  "Incorrectly\nPhased"
+                                                                      ))), aes(x = match, y=posterior_est)) + 
+  geom_violin(alpha = 0.3, aes(fill = match)) + 
+  theme_bw() + scale_fill_manual(values = c("maroon", "darkblue")) + facet_wrap(~`Loci Group`) + ggtitle("Violin Plots") + ylab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + xlab(NULL)
+
+b_poly <- ggplot(results_ind_poly %>% filter(!is.na(posterior_est)) %>%
+              mutate(match = factor(match, levels = c(TRUE, FALSE), 
+                                    labels = c("Correctly\nPhased",  "Incorrectly\nPhased"))), 
+            aes(fill = match, x = posterior_est)) + 
+  geom_density(alpha = 0.3)  + theme_bw() + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  facet_wrap(~`Loci Group`) + ggtitle("Density Plots") + 
+  xlab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + ylab("Density")
+
+a_poly / b_poly
 
 ## TODO correctly phased vs incorrectly phased
 
@@ -483,6 +604,11 @@ results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
          id = str_split_i(population_name, "_", 4),
          short_name = paste(country, id, sep="_")) 
 
+results_ind_summary_poly <- results_ind_poly %>% group_by(population_name, group_id) %>%
+  dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
+  mutate(country = str_split_i(population_name, "_", 2),
+         id = str_split_i(population_name, "_", 4),
+         short_name = paste(country, id, sep="_")) 
 
 results_ind_summary_55 <- results_ind %>%
   filter(posterior_est > 0.55) %>% 
@@ -499,15 +625,28 @@ samples_lost_summary_55 <- results_ind %>%
 all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
               "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing")
 
+all_accuracy_poly <- make_boxplots(results_ind_summary_poly, "prop_perfect", "Proportion of Samples Correctly", "Efficacy of Sample-Level Phasing (Polyclonal Only)")
+
 post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
               "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
 
 prop_samples_lost <- make_boxplots(samples_lost_summary_55, "Lost", "Proportion of Samples Removed",
                                    "How much data was removed with Post. Est > 0.55?")
 
-all_accuracy 
+all_accuracy + plot_annotation(caption = 
+                                 paste(strwrap("Individual-level accuracy. Each point represents a single simulated population, and the proportion of samples within that population that were phased completely correctly.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 
-post_55 / prop_samples_lost
+
+a/b + plot_annotation(title = "Comparing Posterior Estimates by Correctness of Sample") + plot_annotation(caption = 
+                                 paste(strwrap("Posterior estimate violin plots: violin plots showing the posterior estimates of accuracy separated by whether the samples were correctly or incorrectly phased. Posterior estimate density plots: that same data as a density plot to allow for better visual thresholding.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
+post_55  + plot_annotation(caption = 
+                                 paste(strwrap("Individual-level accuracy with posterior estimate > 0.55. Samples with lower confidence were removed. Each point represents a single simulated population, and the proportion of samples within that population that were phased completely correctly.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
+prop_samples_lost
 
 #TODO maybe switch
 
