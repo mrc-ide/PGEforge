@@ -377,11 +377,6 @@ Fig7b <- results %>%
 
 make_false_plots <- function(cutoff){
 
-
-##TODO add titles for versions with and without cutoffs
-
-## TODO add panels
-
 ## obviously tradeoff; depends on your use case. Don't trust low frequency haplotypes too much
 Fig7a_lim <- results %>%
   #filter(exp_freq > 0) %>% 
@@ -592,11 +587,6 @@ b_poly <- ggplot(results_ind_poly %>% filter(!is.na(posterior_est)) %>%
   facet_wrap(~`Loci Group`) + ggtitle("Density Plots") + 
   xlab("Posterior Estimate") + labs(fill = "Sample\nAccuracy") + ylab("Density")
 
-a_poly / b_poly
-
-## TODO correctly phased vs incorrectly phased
-
-## TODO fix axis labels
 
 results_ind_summary <- results_ind %>% group_by(population_name, group_id) %>%
   dplyr::summarize(prop_perfect = sum(match)/ n(), .groups = "keep") %>% 
@@ -625,7 +615,6 @@ samples_lost_summary_55 <- results_ind %>%
 all_accuracy <- make_boxplots(results_ind_summary, "prop_perfect", 
               "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing")
 
-all_accuracy_poly <- make_boxplots(results_ind_summary_poly, "prop_perfect", "Proportion of Samples Correctly", "Efficacy of Sample-Level Phasing (Polyclonal Only)")
 
 post_55 <- make_boxplots(results_ind_summary_55, "prop_perfect", 
               "Proportion of Samples Correctly Phased", "Efficacy of Sample-Level Phasing (Post. Est > 0.55)")
@@ -648,8 +637,22 @@ post_55  + plot_annotation(caption =
 
 prop_samples_lost
 
-#TODO maybe switch
+```
 
+### Polyclonal subset
+
+Given the clear effect of polyclonality on malaria.em performance, we further subsetted the analyses to only consider polyclonal samples (at the given loci.)
+
+```{r polyclonal subset, echo = F, message=F, error = F, warning=F}
+a_poly / b_poly + plot_annotation(title = "Comparing Posterior Estimates by Correctness of Sample (Polyclonal)") + plot_annotation(caption = 
+                                 paste(strwrap("Posterior estimate violin plots: violin plots showing the posterior estimates of accuracy separated by whether the samples were correctly or incorrectly phased, among only samples that were polyclonal. Posterior estimate density plots: that same data as a density plot to allow for better visual thresholding.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
+
+
+
+all_accuracy_poly <- make_boxplots(results_ind_summary_poly, "prop_perfect", "Proportion of Samples Correctly", "Efficacy of Sample-Level Phasing (Polyclonal Only)")  + plot_annotation(caption = 
+                                 paste(strwrap("Individual-level accuracy. Each point represents a single simulated population subsetted to only the polyclonal samples in that population, and the proportion of samples within that population that were phased completely correctly.",width = 100), collapse = "\n")) &
+  theme(plot.caption = element_text(hjust = 0, size = 11))
 ```
 
 
@@ -659,8 +662,9 @@ Malaria.em seems to be working! However, there are a lot of open questions aroun
 
 
 * On a population-level, malaria.em is quite accurate. For all populations, concordance between the estimated and overall phased population-level frequencies was > 0.9.
-* On an individual-level, malaria.em seems to phase samples from low-COI populations accurately. Accuracy improves upon applying a posterior-estimate filter. Our sampling showed that 0.55 seemed appropriate, but this should be further validated.
+* On an individual-level, malaria.em seems to phase samples from low-COI populations accurately. Accuracy improves upon applying a posterior-estimate filter. 
+  + Our sampling showed that a posterior estimate cutoff of 0.55 seemed appropriate, but this should be further validated.
 * Malaria.em appears most sensitive to population COI/ polyclonality (i.e. is generally accurate on populations with a high proportion of single infections.) 
-* There are minimal false negatives, and most false positives are estimated at very low frequencies. The few false negatives represent a very small part of the overall population.
+* There are minimal false negatives, and most false positives are estimated at very low frequencies. The few false negatives represent a very small part of the overall population. 
+  + Applying a filter to exclude predicted haplotypes at a very low frequency might improve accuracy, but more validation is required to determine that cutoff. In our simulated dataset, removing samples at a predicted frequency < 0.001 appears to improve accuracy.
 
-#TODO add captions either fig.caption or first paragraph below figure
