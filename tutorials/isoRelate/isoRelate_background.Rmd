@@ -47,7 +47,7 @@ $$avePostPr = \frac{PostPr(IBD = 1)}{2} + PostPr(IBD = 2).$$
 
 ## Data formats
 
-To use this tool, *isoRelate* requires PED and MAP formats that contains unphased genotype data for SNPs. Previously, generated of ped and map files has not been adequately documented. This tutorial attempts to add additional steps to process vcf data into pedmap format for use in *isoRelate*.
+To use this tool, *isoRelate* requires PED and MAP files that contain unphased genotype data for SNPs. Those files can be prepared from a VCF with [PLINK](http://www.cog-genomics.org/plink2). A worked example that starts from PED and MAP files is in Lyndal Henden's vignette, linked under Existing resources.
 
 Please note: indels will cause problems when running isoRelate!
 
@@ -65,7 +65,7 @@ All SNPs  must have two alleles specified and each allele should be in a separat
 For single infections, genotypes should be specified as homozygous. 
 Either Both alleles should be missing (i.e. 0) or neither. Column labels are not required.
 
-Importantly the paternal ID, maternal ID and phenotype columns are not used by isoRelate, however are required for completeness of the pedigree. For this tutorial, these columns have not been included.
+The paternal ID, maternal ID and phenotype columns are not used by isoRelate, but they are required for a complete pedigree file.
 
 Examples of informative family IDs are the sample collection site or country, however family IDs can be the same as the isolate IDs.
 

@@ -133,6 +133,12 @@ website:
               file: tutorials/IDM/installation.Rmd
             - text: "Analyze data with `SNP-slice`"
               file: tutorials/IDM/analysis.Rmd
+          - section: "isoRelate"
+            contents:
+            - text: "Summary"
+              file: tutorials/isoRelate/isoRelate_background.Rmd
+            - text: "Installation"
+              file: tutorials/isoRelate/isoRelate_installation.Rmd
           - section: "malaria.em"
             contents:
             - text: "Summary"
