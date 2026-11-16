@@ -1,340 +1,309 @@
 ---
-title: FreqEstimationModel Benchmarking Results
-author: Kathryn Murie, Alfred Hubbard
+title: "FreqEstimationModel benchmarking"
+author: "Kathryn Murie"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-## Load in the Benchmarking Outputs
+This page compares FreqEstimationModel run with three different COI parameter settings, where COI is the average complexity of infection.
 
-```{r, warning=FALSE, message=FALSE}
+Average complexity of infection (`COI`) is set to 1, 3, or 5. `moi_max` is 8, `no_traces_preburnin` is 2500, and `thinning_interval` is 4 in every run.
+
+## Data
+Here we look at the simulated MAD4HATTER data, and compare FreqEstimationModel estimates with the simulated true frequencies.
+Unrealistic populations are dropped here: every population with no cotransmission, mean COI 1.26 with high cotransmission, and mean COI 5.47 with low cotransmission are removed.
+
+```{r}
 library(dplyr)
 library(ggplot2)
+library(here)
 library(jsonlite)
-library(magrittr)
+library(knitr)
 library(purrr)
 library(readr)
-library(stringr)
 library(tibble)
 library(tidyr)
-library(here)
+library(DescTools)
 
-inp <- list(
-  sim_info_dir = here("data", "pge-tools-benchmark", "simulations", "SpotMalaria"), 
-  tool_res_dir = here("data", "pge-tools-benchmark", "tool_results", "FEM"), 
-  tool_params = here("data", "pge-tools-benchmark", "tool_results", "FEM", "tool_params.json")
-)
-```
-
-First, all of the tool results, tool parameters, expected simulated values, and
-simulation parameters are read into a tibble.
-
-```{r}
-# Read all expected frequencies into one tibble ------------------------
-sim_truth <- tibble(
-    sim_truth_path = list.files(
-      inp$sim_info_dir, 
-      pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(
-    sim_truth = map(
-      sim_truth_path, 
-      read_tsv, 
-      col_types = cols(
-        .default = col_integer(), 
-        population_name = col_character(), 
-        country = col_character(), 
-        variant = col_character(), 
-        freq = col_double(), 
-        prev = col_double(), 
-        group_id = col_character()
-      ), 
-      progress = FALSE
-    )
-  ) %>%
-  select(-sim_truth_path) %>%
-  unnest(sim_truth) %>%
-  rename(
-    sim_id = population_name, 
-    exp_freq = freq, 
-    exp_prev = prev, 
-    exp_n_samp = sample_count
-  ) %>%
-  select(
-    -pop, 
-    -country, 
-    -aas_in_variant, 
-    -allele_count, 
-    -total_samples, 
-    -total_alleles
+root <- here("data", "pge-tools-benchmark", "MAD4HATTER")
+sim_dir <- file.path(root, "simulation_setup")
+summary_path <- file.path(root, "full", "FEM", "FEM_summary.tsv.gz")
+if (!dir.exists(sim_dir) || !file.exists(summary_path)) {
+  stop(
+    "The full-panel MAD4HATTER files are not in data/pge-tools-benchmark/MAD4HATTER/.\n",
+    "Expected ", sim_dir, " and ", summary_path,
+    call. = FALSE
   )
+}
 
-# Read in all simulation parameters into one tibble --------------------
-sim_params <- tibble(
-    sim_params_path = list.files(
-      inp$sim_info_dir, 
-      pattern = "simulation_parameters.json", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(
-    sim_params = map(
-      sim_params_path, 
-      jsonlite::fromJSON
-    )
-  ) %>%
-  select(-sim_params_path) %>%
-  mutate(sim_params = map(sim_params, as_tibble)) %>%
-  unnest(sim_params) %>%
-  select(
-    -collection_year, 
-    -obs_freq_monoclonal, 
-    -obs_non_recombinant, 
-    -mean_k, 
-    -sample_count, 
-    -est_between_sample_relatedness
-  ) %>%
-  rename(
-    sim_id = population_name, 
-    true_mean_coi = mean_coi
-  )
-sim_truth <- sim_truth %>%
-  left_join(sim_params, by = "sim_id")
-
-# Read in all FEM results into one tibble ------------------------------
-tool_results <- tibble(
-    tool_res_path = list.files(
-      inp$tool_res_dir, 
-      pattern = "*.tsv.gz", 
-      full.names = TRUE, 
-      recursive = TRUE
-    )
-  ) %>%
-  mutate(tool_res_dir = dirname(tool_res_path)) %>%
-  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
-  mutate(paramset_id = basename(tool_res_dir)) %>%
-  select(-tool_res_dir) %>%
-  mutate(
-    tool_res = map(
-      tool_res_path, 
-      read_tsv, 
-      col_types = cols(
-        .default = col_double(), 
-        sequence = col_character(), 
-        variant = col_character(), 
-        sample_total = col_integer(), 
-        group_id = col_character()
-      ), 
-      progress = FALSE
-    )
-  ) %>%
-  select(-tool_res_path) %>%
-  unnest(tool_res) %>%
-  rename(
-    obs_freq = freq, 
-    obs_prev = prev, 
-    obs_n_samp = sample_total
-  ) %>%
-  select(-sequence, -median_freq, -`CI_2.5`, -`CI_97.5`)
-print(tool_results)
-# Read in tool parameters, and join ------------------------------------
-tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+paramsets <- jsonlite::fromJSON(here("tutorials", "FreqEstimationModel", "fem.json")) %>%
   as_tibble() %>%
-  mutate(mean_coi_tool_param = paramset$coi) %>%
-  select(-loci_groups, -paramset)
-tool_results <- tool_results %>%
-  left_join(tool_params, by = "paramset_id")
-
-# Join everything into one tibble --------------------------------------
-tool_results_wtruth <- tool_results %>%
-  # Use an inner join because FEM also estimates frequencies for 
-  # subsets of the requested multilocus genotypes, and these 
-  # frequencies are not benchmarked
-  full_join(sim_truth, by = c("sim_id", "variant", "group_id"))
-```
-
-## Performance with Good COI Specification
-
-Next, performance is assessed when the specified COI is close to the true COI.
-This is done by finding the set of tool results for each simulation where the
-COI parameter was set the closest to the true COI.
-
-```{r}
-# Filter so that FEM COI parameter was close to the true mean COI -----
-tool_results_wtruth_goodcoi <- tool_results_wtruth %>%
-  mutate(coi_misspec = mean_coi_tool_param - true_mean_coi) %>%
-  group_by(sim_id, paramset_id, variant, group_id) %>%
-  filter(coi_misspec == min(abs(coi_misspec))) %>%
-  ungroup()
-```
-
-### Allele Frequency
-
-```{r}
-# Compute RMSE of frequency and prevalence -----------------------------
-goodcoi_rmse <- tool_results_wtruth_goodcoi %>%
-  group_by(
-    sim_id, 
-    paramset_id, 
-    country, 
-    group_id, 
-    pop_alpha, 
-    coi_p, 
-    coi_r, 
-    k_s
+  mutate(
+    coi = paramset$coi,
+    moi_max = paramset$moi_max,
+    no_traces_preburnin = paramset$no_traces_preburnin,
+    thinning_interval = paramset$thinning_interval,
+    paramset_label = paste0("COI = ", coi)
   ) %>%
-  summarize(
-    freq_rmse = sqrt(mean((obs_freq - exp_freq)^2)), 
-    prev_rmse = sqrt(mean((obs_prev - exp_prev)^2)), 
+  select(paramset_id, paramset_label, coi, moi_max, no_traces_preburnin, thinning_interval)
+
+paramsets %>%
+  select(-paramset_id) %>%
+  kable()
+```
+
+## Pair estimates with the simulated frequencies
+
+FreqEstimationModel also reports haplotypes that cover only part of a locus group. Those partial haplotypes are not scored. 
+
+Alleles present in the simulation but missing from a parameter set are given frequency 0. Alleles reported by the model but absent from the simulation are given expected frequency 0.
+
+```{r}
+n_aa_positions <- function(variant) {
+  vapply(variant, function(one) {
+    if (is.na(one) || !nzchar(one)) return(NA_integer_)
+    parts <- strsplit(one, ";", fixed = TRUE)[[1]]
+    sum(vapply(parts, function(part) {
+      fields <- strsplit(part, ":", fixed = TRUE)[[1]]
+      if (length(fields) < 2) return(0L)
+      length(strsplit(fields[[2]], "_", fixed = TRUE)[[1]])
+    }, integer(1)))
+  }, integer(1))
+}
+
+sim_params <- tibble(
+  path = list.files(sim_dir, pattern = "simulation_parameters.json", full.names = TRUE, recursive = TRUE)
+) %>%
+  mutate(params = map(path, jsonlite::fromJSON)) %>%
+  mutate(params = map(params, as_tibble)) %>%
+  select(-path) %>%
+  unnest(params) %>%
+  select(population_name, country, pop_alpha, coi_r, coi_p, k_s, mean_coi, coi_cat, cotransmission_cat)
+
+expected <- tibble(
+  path = list.files(
+    sim_dir,
+    pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+) %>%
+  mutate(truth = map(path, function(fn) {
+    read_tsv(fn, show_col_types = FALSE, col_types = cols(.default = col_character())) %>%
+      transmute(
+        population_name,
+        group_id,
+        variant,
+        expected_aas = as.integer(aas_in_variant),
+        expected_freq = as.double(freq)
+      )
+  })) %>%
+  select(-path) %>%
+  unnest(truth)
+
+group_aas <- expected %>% distinct(group_id, expected_aas)
+
+estimates <- read_tsv(summary_path, show_col_types = FALSE) %>%
+  filter(paramset_id %in% paramsets$paramset_id) %>%
+  mutate(observed_aas = n_aa_positions(variant))
+
+groups_run <- unique(estimates$group_id)
+expected_panel <- expected %>%
+  filter(group_id %in% groups_run) %>%
+  select(-expected_aas) %>%
+  crossing(paramset_id = unique(estimates$paramset_id))
+
+paired <- estimates %>%
+  full_join(expected_panel, by = c("population_name", "paramset_id", "group_id", "variant")) %>%
+  left_join(group_aas, by = "group_id") %>%
+  mutate(
+    freq = coalesce(freq, 0),
+    expected_freq = coalesce(expected_freq, 0),
+    observed_aas = coalesce(observed_aas, n_aa_positions(variant))
+  ) %>%
+  filter(is.na(observed_aas) | observed_aas == expected_aas) %>%
+  left_join(sim_params, by = "population_name") %>%
+  filter(!is.na(coi_cat), !is.na(cotransmission_cat)) %>%
+  filter(cotransmission_cat != "No_Cotransmission") %>%
+  filter(!(coi_cat == "MeanCOI=1.26" & cotransmission_cat == "High_Cotransmission")) %>%
+  filter(!(coi_cat == "MeanCOI=5.47" & cotransmission_cat == "Low_Cotransmission")) %>%
+  left_join(paramsets, by = "paramset_id") %>%
+  mutate(paramset_label = factor(paramset_label, levels = paramsets$paramset_label))
+```
+
+## Concordance and absolute error
+
+Lin's concordance correlation coefficient is computed on every allele in each parameter set. Mean absolute error is the mean of the absolute difference between the estimate and the simulated frequency.
+
+```{r}
+ccc_one <- function(expected_freq, freq) {
+  ok <- is.finite(expected_freq) & is.finite(freq)
+  expected_freq <- expected_freq[ok]
+  freq <- freq[ok]
+  if (length(freq) < 2 || sd(expected_freq) == 0 || sd(freq) == 0) {
+    return(tibble(freq_ccc = NA_real_, freq_ccc_lower = NA_real_, freq_ccc_upper = NA_real_))
+  }
+  fit <- DescTools::CCC(expected_freq, freq)
+  tibble(
+    freq_ccc = fit$rho.c$est,
+    freq_ccc_lower = fit$rho.c$lwr.ci,
+    freq_ccc_upper = fit$rho.c$upr.ci
+  )
+}
+
+concordance <- paired %>%
+  group_by(paramset_label) %>%
+  group_modify(~ ccc_one(.x$expected_freq, .x$freq)) %>%
+  ungroup()
+
+concordance %>%
+  mutate(across(starts_with("freq_ccc"), ~ round(.x, 3))) %>%
+  kable()
+
+ggplot(concordance, aes(x = paramset_label, y = freq_ccc, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  geom_errorbar(aes(ymin = freq_ccc_lower, ymax = freq_ccc_upper), width = 0.2) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Concordance correlation", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+mae <- paired %>%
+  group_by(paramset_label, coi_cat) %>%
+  summarise(freq_mae = mean(abs(freq - expected_freq)), .groups = "drop")
+
+ggplot(mae, aes(x = paramset_label, y = freq_mae, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  facet_wrap(~ coi_cat) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Mean absolute error", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 40, hjust = 1))
+```
+
+## Variant detection
+
+A simulated allele is detected when its estimate is above 0. Recall is the share of simulated alleles that are detected. Precision is the share of non-zero estimates that correspond to a simulated allele. Rare alleles are those whose simulated frequency is above 0 and at most 0.01. Recall for that subset is the rare-allele detection rate. False alleles have simulated frequency 0, so they are not part of that subset and precision is reported on all alleles.
+
+```{r}
+detection <- paired %>%
+  mutate(
+    detected = freq > 0,
+    present = expected_freq > 0,
+    rare = expected_freq > 0 & expected_freq <= 0.01,
+    TP = as.integer(present & detected),
+    FP = as.integer(!present & detected),
+    FN = as.integer(present & !detected)
+  )
+
+detection_summary <- detection %>%
+  group_by(paramset_label, group_id) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(c(recall, precision), names_to = "measure", values_to = "value")
+
+ggplot(detection_summary, aes(x = group_id, y = value, fill = paramset_label)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ measure) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = "Locus group", y = NULL, fill = NULL) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
+```
+
+```{r}
+rare_recall <- detection %>%
+  filter(rare) %>%
+  group_by(paramset_label) %>%
+  summarise(rare_recall = mean(detected), n_rare = n(), .groups = "drop")
+
+rare_recall %>%
+  mutate(rare_recall = round(rare_recall, 3)) %>%
+  kable()
+
+ggplot(rare_recall, aes(x = paramset_label, y = rare_recall, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(
+    x = NULL,
+    y = "Recall of alleles at or below 1%",
+    fill = NULL
+  ) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+## Frequencies below 1%
+
+Alleles whose simulated frequency is below 0.01 are left out. Estimates below 0.01 are left out as well, except when the simulated frequency is above 0.01. In that case the estimate is set to 0, so the call becomes a false negative. Precision, recall, and mean absolute error are calculated again on this set.
+
+```{r}
+filtered <- paired %>%
+  filter(!(expected_freq > 0 & expected_freq < 0.01)) %>%
+  mutate(missed_common = expected_freq > 0.01 & freq < 0.01) %>%
+  filter(freq >= 0.01 | missed_common) %>%
+  mutate(freq = if_else(missed_common, 0, freq))
+
+filtered_detection <- filtered %>%
+  mutate(
+    detected = freq > 0,
+    present = expected_freq > 0,
+    TP = as.integer(present & detected),
+    FP = as.integer(!present & detected),
+    FN = as.integer(present & !detected)
+  )
+
+filtered_summary <- filtered_detection %>%
+  group_by(paramset_label) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    freq_mae = mean(abs(freq - expected_freq)),
     .groups = "drop"
   )
 
-# Show all RMSEs as a boxplot ------------------------------------------
-goodcoi_rmse <- goodcoi_rmse %>%
-  mutate(
-    group_id = factor(
-      group_id, 
-      c(
-        "six_med_div", 
-        "six_low_div", 
-        "four_group1", 
-        "two_group1", 
-        "pfdhfr_pfdhps", 
-        "pfdhps", 
-        "pfdhfr"
-      ), 
-      labels = c(
-        "Six, Medium Diversity", 
-        "Six, Low Diversity", 
-        "Four", 
-        "Two", 
-        "pfdhfr/pfdhps", 
-        "pfdhps", 
-        "pfdhfr"
-      )
-    )
-  )
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = group_id, y = freq_rmse)) +
-  geom_boxplot() +
-  scale_x_discrete(
-  ) +
-  labs(x = "Loci Set", y = "RMSE of Allele Frequency Estimate") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+filtered_summary %>%
+  mutate(across(c(recall, precision, freq_mae), ~ round(.x, 3))) %>%
+  kable()
 ```
-
-These box plots shows the RMSE of allele frequency estimates based on all
-simulations (combining different parameter sets and replicates). Different boxes
-correspond to different loci sets. The median accuracy is comparable and fairly
-good regardless of the number of loci tested, but there are some high outliers
-for the medium diversity group of six loci.
-
-```{r out.width = "100%", fig.width = 9, fig.height = 7}
-# Create box plots of RMSE, separated by simulation parameters ---------
-goodcoi_rmse <- goodcoi_rmse %>%
-  mutate(
-    pop_alpha = factor(
-      pop_alpha, 
-      c("2.33", "9", "99"), 
-      labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
-    )
-  ) %>%
-  mutate(
-    k_s = factor(
-      k_s, 
-      c("0.5", "0.2"), 
-      labels = c("Med. Recombination", "High Recombination")
-    )
-  ) %>%
-  # coi_p was varied in synchronicity with coi_r to produce different 
-  # polyclonality levels, and thus coi_p is implicitly included when 
-  # using coi_r as a plotting aesthetic
-  mutate(
-    coi_r = factor(
-      coi_r, 
-      c("0.25", "0.5"), 
-      labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
-    )
-  )
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = pop_alpha, y = freq_rmse, color = group_id)) +
-  geom_boxplot() +
-  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
-  labs(
-    x = "Simulated Relatedness", 
-    y = "RMSE of Allele Frequency Estimate", 
-    color = "Loci Set"
-  ) +
-  theme(legend.position = "bottom")
-```
-
-These box plots also show allele frequency RMSE, but separated out in terms of
-the simulation parameters, which affected the between-sample relatedness, the
-COI, and the rate of recombination.
-
-These results show that accuracy improves as between-sample relatedness
-declines. Also, accuracy tends to be higher in the medium COI condition. The
-relationship between accuracy and group size is not straightforward: the two
-loci group tends to have the best accuracy, but the six loci, medium diversity
-group sometimes has the worst accuracy and sometimes the best.
-
-### Sample Prevalence
 
 ```{r}
-# Show all RMSEs as a boxplot ------------------------------------------
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = group_id, y = prev_rmse)) +
-  geom_boxplot() +
-  scale_x_discrete(
-  ) +
-  labs(x = "Loci Set", y = "RMSE of Sample Prevalence Estimate") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+filtered_mae <- filtered %>%
+  group_by(paramset_label, coi_cat) %>%
+  summarise(freq_mae = mean(abs(freq - expected_freq)), .groups = "drop")
+
+ggplot(filtered_mae, aes(x = paramset_label, y = freq_mae, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  facet_wrap(~ coi_cat) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Mean absolute error", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 40, hjust = 1))
 ```
 
-This box plot shows the RMSE of sample prevalence estimates based on all
-simulations (combining different parameter sets and replicates). Different boxes
-correspond to different loci sets. The accuracy of these estimates is generally
-pretty good, except for the six loci, medium diversity group.
+```{r}
+filtered_by_group <- filtered_detection %>%
+  group_by(paramset_label, group_id) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(c(recall, precision), names_to = "measure", values_to = "value")
 
-```{r out.width = "100%", fig.width = 9, fig.height = 7}
-# Create box plots of RMSE, separated by simulation parameters ---------
-goodcoi_rmse %>%
-  ggplot(mapping = aes(x = pop_alpha, y = prev_rmse, color = group_id)) +
-  geom_boxplot() +
-  facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
-  labs(
-    x = "Simulated Relatedness", 
-    y = "RMSE of Sample Prevalence Estimate", 
-    color = "Loci Set"
-  ) +
-  theme(legend.position = "bottom")
+ggplot(filtered_by_group, aes(x = group_id, y = value, fill = paramset_label)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ measure) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = "Locus group", y = NULL, fill = NULL) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
 ```
-
-These box plots also show sample prevalence RMSE, but separated out in terms of
-the simulation parameters, which affected the between-sample relatedness, the
-COI, and the rate of recombination.
-
-The accuracy of the prevalence estimates tends to be very good in the low COI
-simulations, except in the six loci, medium diversity group noted above.
-Accuracy is still pretty good in the medium COI condition, and very good for the
-two loci group. The level of recombination doesn't seem to have a big effect.
-
-## Summary and Next Steps
-
-These results show that FEM does fairly well at estimating allele frequencies,
-and quite well at estimating sample prevalence. Accuracy is notably worse in the
-six loci, medium diversity group. Testing larger and more diverse loci groups
-would be a valuable next step. Also, the relationships observed between allele
-frequency RMSE and simulation parameters did not always make sense. Further
-investigation would be a good idea. Finally, calculating RMSE for all alleles in
-each loci group may mask poor performance estimating the frequencies of
-individual alleles, particularly low frequency alleles. Additional investigation
-into the accuracy of low frequency allele estimates, to begin to establish
-thresholds of detection, is advised.
