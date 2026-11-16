@@ -1,5 +1,5 @@
 ---
-title: "THE REAL McCOIL"
+title: "Installing THE REAL McCOIL"
 output: html_document
 ---
 
@@ -7,25 +7,29 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Installation
 
-## Installation from Github 
-[THE REAL McCOIL](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005348), can be installed from the [EPPIcenter GitHub](https://github.com/EPPIcenter/THEREALMcCOIL) and built/"made" for your machine as below:
+THE REAL McCOIL categorical and proportional methods are included in the [`PGEcore`](https://github.com/PlasmoGenEpi/PGEcore) R package. The C code is compiled when the package is installed, so you do not need to clone the [EPPIcenter repository](https://github.com/EPPIcenter/THEREALMcCOIL) or run `R CMD SHLIB` yourself.
 
-1. Clone the code into the directory using the command `git clone https://github.com/EPPIcenter/THEREALMcCOIL.git`. 
-3. Navigate to the categorical method directory: `cd THEREALMcCOIL/categorical_method`
-4. Complete the make/installation: `R CMD SHLIB McCOIL_categorical_code.c llfunction_het.c` (Note, prior to running this make step, you may need to erase prior `.so` and `.o` files).
+`PGEcore` is installed from GitHub:
 
+```{r, eval=FALSE}
+# install.packages("pak")
+pak::pak("PlasmoGenEpi/PGEcore")
+```
 
-### Dependencies
-`THE REAL McCOIL` relies on the [Rcpp](https://cran.r-project.org/web/packages/Rcpp/index.html) package, which requires certain OS-specific dependencies: 
+Convergence diagnostics use the [`posterior`](https://mc-stan.org/posterior/) package. `PGEcore` lists it under Suggests, so install it as well:
 
-* Windows
-    - Download and install the appropriate version of [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R. On installation, ensure you check the box to arrange your system PATH as recommended by Rtools
-* Mac OS X
-    - Download and install [XCode](http://itunes.apple.com/us/app/xcode/id497799835?mt=12)
-    - Within XCode go to Preferences : Downloads and install the Command Line Tools
-* Linux (Debian/Ubuntu)
-    - Install the core software development utilities required for R package development as well as LaTeX by executing
-    ```
-    sudo apt-get install r-base-dev texlive-full
-    ```
+```{r, eval=FALSE}
+install.packages("posterior")
+```
+
+Package documentation, including the SNP-calls table this wrapper expects, is in the [PGEcore site](https://plasmogenepi.github.io/PGEcore/) (`vignette("input-formats", package = "PGEcore")`).
+
+### A compiler
+
+Installing `PGEcore` compiles the McCOIL C sources, so you need the same build tools as any R package with compiled code:
+
+* Windows: install [Rtools](https://cran.rstudio.com/bin/windows/Rtools/) for your version of R, and allow it to update your system PATH
+* macOS: install the Xcode Command Line Tools with `xcode-select --install`
+* Linux (Debian/Ubuntu): `sudo apt-get install r-base-dev`

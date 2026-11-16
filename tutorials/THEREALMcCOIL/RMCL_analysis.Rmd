@@ -1,0 +1,116 @@
+---
+title: "Analyze data with THE REAL McCOIL"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+This tutorial estimates complexity of infection (COI) with the categorical THE REAL McCOIL method, called through [`PGEcore::THEREALMcCOIL_wrapper()`](https://plasmogenepi.github.io/PGEcore/). Install the package with the [installation instructions](RMCL_installation.Rmd) before running the code below.
+
+COI is the number of distinct parasite genotypes within one host. The categorical method treats each biallelic SNP as homozygous reference, homozygous alternate, or heterozygous, and uses an MCMC to estimate COI and the frequency of the non-reference allele. Samples with more heterozygous sites support a higher COI, because a single clone cannot carry both alleles at a locus.
+
+```{r}
+library(PGEcore)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(DT)
+```
+
+## The data
+
+The example is the Vietnam field samples from the sanger 100-SNP *P. falciparum* barcode, described in the [SNP data section](../../website_docs/data_snps.qmd). The file is a VCF with allelic depths (`FORMAT/AD`).
+
+`THEREALMcCOIL_wrapper()` does not read a VCF. It reads a SNP-calls TSV with one row per observed allele and, at minimum, the columns `specimen_name`, `snp_name`, `reads`, `ref_base`, and `seq_base`. `vcf_to_snp_calls()` builds that table. `biallelic = TRUE` keeps sites with a single alternate allele, which is what both McCOIL models use.
+
+```{r}
+vcf_path <- "../../data/snp_barcode/sangerBarcode_SNP_INDEL_Pf3D7_ALL_v3.combined.filtered.vqslod6.biallelic_snp.Vietnam.vcf.gz"
+outdir <- tempdir()
+snp_calls_path <- file.path(outdir, "vietnam_snp_calls.tsv")
+
+snp_calls <- vcf_to_snp_calls(
+  vcf = vcf_path,
+  snp_calls_output = snp_calls_path,
+  biallelic = TRUE
+)
+
+snp_calls |>
+  slice_head(n = 5) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Run the categorical model
+
+`THEREALMcCOIL_wrapper()` writes three tables and also returns them:
+
+- `coi`: posterior median COI for each specimen (`specimen_name`, `coi`)
+- `slaf`: posterior median frequency of the non-reference allele at each SNP (`variant`, `snp_name`, `ref_base`, `seq_base`, `freq`). `variant` is `snp_name:seq_base`. The reference-allele frequency is `1 - freq`.
+- `convergence`: per-parameter MCMC diagnostics from the `posterior` package
+
+The package defaults are three chains of 10,000 iterations with a burn-in of 1,000, started from COIs of 1, 5, and 15. This page uses a shorter run so the example finishes quickly. Use the defaults for an analysis you will interpret, and check the convergence table before trusting the estimates.
+
+The same call is available from the command line as `exec/THEREALMcCOIL_wrapper` inside the installed package, with flags that match these arguments.
+
+```{r}
+fit <- THEREALMcCOIL_wrapper(
+  snp_calls = snp_calls_path,
+  slaf_output = file.path(outdir, "slaf.tsv"),
+  coi_output = file.path(outdir, "coi.tsv"),
+  convergence_output = file.path(outdir, "convergence_diag.tsv"),
+  convergence_summary_output = file.path(outdir, "convergence_summary.tsv"),
+  totalrun = 500L,
+  burnin = 100L,
+  seed = 321L
+)
+```
+
+## COI estimates
+
+```{r}
+fit$coi |>
+  datatable(
+    rownames = FALSE,
+    options = list(pageLength = 5, searching = TRUE)
+  )
+```
+
+```{r}
+ggplot(fit$coi, aes(x = coi)) +
+  geom_histogram(binwidth = 1, color = "white", fill = "#325b74") +
+  theme_linedraw() +
+  labs(x = "COI (posterior median)", y = "Samples")
+```
+
+## Allele frequencies
+
+```{r}
+fit$slaf |>
+  slice_head(n = 5) |>
+  kable(digits = 3) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Convergence
+
+Each COI and allele frequency has a row in `fit$convergence`, including an R-hat and an effective sample size. R-hat values near 1 and large effective sample sizes mean the chains agree. The short chain above is only a demonstration, so treat a large R-hat as a signal to rerun with the default `totalrun` and `burnin` rather than as a result.
+
+```{r}
+fit$convergence_summary |>
+  kable(digits = 2) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+```{r}
+fit$convergence |>
+  filter(grepl("^coi\\[", variable)) |>
+  slice_head(n = 5) |>
+  kable(digits = 2) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Summary
+
+`PGEcore` runs THE REAL McCOIL on a SNP-calls table and returns COI, single-locus allele frequencies, and MCMC diagnostics. This example used the categorical model. The proportional model (`model = "proportional"`) uses allele read counts instead of heterozygous and homozygous calls. Further arguments, including error rates and the number of chains, are documented in `?THEREALMcCOIL_wrapper`.

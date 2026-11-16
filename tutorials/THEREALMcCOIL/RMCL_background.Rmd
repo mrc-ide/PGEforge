@@ -27,10 +27,12 @@ df_summary |>
 
 ## Purpose
 
-THE REAL McCOIL is a method for estimating the complexity of infections within a malaria-infected host, where complexity of infection (COI) is defined as the number of distinct genotypic parasites within the host. This tutorial focuses on the categorical method for estimating COI. 
+THE REAL McCOIL is a method for estimating the complexity of infections within a malaria-infected host, where complexity of infection (COI) is defined as the number of distinct genotypic parasites within the host. This tutorial focuses on the categorical method for estimating COI. The worked example runs that method through [`PGEcore::THEREALMcCOIL_wrapper()`](https://github.com/PlasmoGenEpi/PGEcore).
 
 ## Existing resources
 [Chang, HH et al. 2017, PLoS Comp Biol](https://pubmed.ncbi.nlm.nih.gov/28125584/)
+
+[PGEcore documentation](https://plasmogenepi.github.io/PGEcore/)
 
 ## Citation
 Chang HH, Worby CJ, Yeka A, Nankabirwa J, Kamya MR, Staedke SG, Dorsey G, Murphy M, Neafsey DE, Jeffreys AE, Hubbart C, Rockett KA, Amato R, Kwiatkowski DP, Buckee CO, Greenhouse B. THE REAL McCOIL: A method for the concurrent estimation of the complexity of infection and SNP allele frequency for malaria parasites. PLoS Comput Biol. 2017 Jan 26;13(1):e1005348. doi: 10.1371/journal.pcbi.1005348. PMID: 28125584; PMCID: PMC5300274.  
