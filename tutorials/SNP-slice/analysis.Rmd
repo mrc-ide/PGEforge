@@ -4,24 +4,37 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ## Introduction
 
-For this tutorial, we will be using the `snp.slicer` package to estimate the complexity of infection (COI) and infer latent haplotypes from SNP data. Instructions to install this package may be found [here](installation.html)
+This tutorial estimates complexity of infection (COI) and multi-locus allele frequencies with SNP-Slice. The algorithm is from [Ju, Liu, and He (2024)](https://doi.org/10.1093/bioinformatics/btae344). Their [original repository](https://github.com/nianqiaoju/snp-slice) is a set of scripts rather than an R package, and those scripts are difficult to install and run.
 
-## The data
+The example uses [`snp.slicer`](https://github.com/plasmogenepi/snp.slicer), an R package that implements that algorithm. Install it with the [installation instructions](installation.Rmd) before running the code below.
 
-`snp.slicer` expects a `data.frame` of SNPs with columns `specimen_id`, `target_id`, `target_value`, and `target_count` representing the specimen identifier, target identifier, target value, and target read count, respectively. We will demonstrate using this package with the simulated SNP barcode data described [here](../../website_docs/data_description.html#simulated-1). We will load the data using the `vcfR` package.
-
-```{r, waning=FALSE, message=FALSE, error=FALSE}
+```{r}
 library(tidyverse)
 library(here)
 library(vcfR)
 library(snp.slicer)
+library(kableExtra)
+```
 
+## The data
+
+The data are the simulated sanger 100-SNP barcode: 100 polyclonal infections, 50 drawn from Bangladesh and 50 from Ghana. The file is described with the other [SNP barcode data](../../website_docs/data_snps.qmd).
+
+`snp_slice()` reads a data frame with one row per observed allele:
+
+- `specimen_id`: sample name
+- `target_id`: SNP name
+- `target_value`: allele code
+- `target_count`: read count for that allele
+
+The VCF stores allelic depth in `FORMAT/AD`. The two numbers are the reference-allele count and the alternate-allele count. Those become `target_value` `"0"` and `"1"`.
+
+```{r}
 vcf_data <- read.vcfR(
   here::here("data/snp_barcode/SpotMalariapfPanel_simData_sanger100.vcf.gz")
 )
@@ -33,12 +46,11 @@ read0 <- vcfR::masplit(
 ) |>
   as.data.frame() |>
   rownames_to_column(var = "specimen_id") |>
-  tidyr::pivot_longer(
+  pivot_longer(
     cols = -specimen_id,
     names_to = "target_id",
     values_to = "target_count"
   ) |>
-  # fill in target value with ref allele
   mutate(target_value = "0")
 
 read1 <- vcfR::masplit(
@@ -46,48 +58,77 @@ read1 <- vcfR::masplit(
 ) |>
   as.data.frame() |>
   rownames_to_column(var = "specimen_id") |>
-  tidyr::pivot_longer(
+  pivot_longer(
     cols = -specimen_id,
     names_to = "target_id",
     values_to = "target_count"
   ) |>
-  # fill in target value with alt allele
   mutate(target_value = "1")
 
 snpslice_data <- rbind(read0, read1) |>
   arrange(specimen_id, target_id)
 
-# run snp.slicer
-run <- snp.slicer::snp_slice(
+snpslice_data |>
+  slice_head(n = 6) |>
+  kable() |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+## Run SNP-Slice
+
+`snp_slice()` fits the model by MCMC. The default keeps 10,000 samples after burn-in. This page uses `n_sample = 100` so the example finishes quickly. Read the summary it prints: a short chain often has not converged, and those estimates are only there to show the output. Use the default `n_sample` for an analysis you will interpret.
+
+`model = "negative_binomial"` uses the read counts. `seed` makes this short run repeatable.
+
+```{r}
+run <- snp_slice(
   snpslice_data,
   model = "negative_binomial",
-  # set n_mcmc to 100 for quick demo
-  n_mcmc = 100,
-  store_mcmc = TRUE,
+  n_sample = 100,
+  seed = 1,
   verbose = FALSE
 )
 
 summary(run)
 ```
 
-`snp.slicer` exposes functionality to calculate multi locus allele frequencies using the posterior distribution of phased strain assignments. Here we will calculate the distribution for the collection `c("Pf3D7_01_v3_145515", "Pf3D7_01_v3_179347", "Pf3D7_01_v3_180554")`
+## Multi-locus allele frequencies
+
+`calculate_allele_frequencies()` treats a set of SNPs as one haplotype. Each row is one haplotype across the SNPs you name, in that order. In the allele string, `0` is the reference allele and `1` is the alternate allele. `frequency` is the proportion of inferred parasite strains that carry that haplotype, and the frequencies sum to 1.
+
+The default estimate is the final sample of the chain. Set `estimate = "posterior"` and rerun `snp_slice()` with `store_mcmc = TRUE` when you want a credible interval. That needs a longer chain than the one above.
 
 ```{r}
-af <- snp.slicer::calculate_allele_frequencies(
-  run, c("Pf3D7_01_v3_145515", "Pf3D7_01_v3_179347", "Pf3D7_01_v3_180554")
+allele_freqs <- calculate_allele_frequencies(
+  run,
+  c("Pf3D7_01_v3_145515", "Pf3D7_01_v3_179347", "Pf3D7_01_v3_180554")
 )
 
-af
+allele_freqs |>
+  kable(digits = 3) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
-We can also summarize the distribution of MOI using the strain allocation matrix
+## Complexity of infection
+
+`calculate_individual_coi()` returns one COI per specimen from that same final sample. The uncertainty columns are empty for a point estimate. They are filled when `estimate = "posterior"` and the MCMC samples were stored.
+
 ```{r}
-moi_dist <- data.frame(
-  specimen_id = run$model_info$processed_data$specimen_ids,
-  moi = run$allocation_matrix |> rowSums()
-)
+coi <- calculate_individual_coi(run)
 
-ggplot(moi_dist) +
-  geom_histogram(aes(x = moi))
+coi |>
+  slice_head(n = 6) |>
+  kable(digits = 2) |>
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
+```{r}
+ggplot(coi, aes(x = coi_estimate)) +
+  geom_histogram(binwidth = 1, color = "white", fill = "#325b74") +
+  theme_linedraw() +
+  labs(x = "COI", y = "Samples")
+```
+
+## Summary
+
+`snp.slicer` runs the SNP-Slice algorithm of Ju, Liu, and He on a table of allele read counts. This example estimated COI for each simulated infection and the frequency of haplotypes across three barcode SNPs. Cite the [Bioinformatics paper](https://doi.org/10.1093/bioinformatics/btae344) for the method. The original scripts remain in [nianqiaoju/snp-slice](https://github.com/nianqiaoju/snp-slice).
