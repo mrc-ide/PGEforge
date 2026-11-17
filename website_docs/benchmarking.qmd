@@ -3,4 +3,28 @@ title: "Systematic benchmarking of tools"
 format: html
 ---
 
-*Watch this space - coming soon!*
+These pages compare analysis tools on the simulated MAD^4^HatTeR datasets. How those datasets were made is described in [Simulated datasets](data_simulated.qmd).
+
+Each comparison keeps one parameter set per tool: the set with the highest Lin's concordance. For sample-level COI, that concordance is calculated on samples whose true COI is 2 through 9. The rule is applied separately on the full panel and on the 15-target panel.
+
+Checking convergence is important for tools that use Markov chain Monte Carlo ([MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), and [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd)). Summaries of convergence are on the individual tool benchmarking pages and are not used to change the chosen set.
+
+The comparisons keep four simulation regimes. Populations with no cotransmission are left out, as are low mean COI with high cotransmission and high mean COI with low cotransmission.
+
+- [Sample-level COI](../benchmarking/coi_sample.qmd)
+- [Population mean COI](../benchmarking/coi_mean.qmd)
+- [Effective COI](../benchmarking/moire_ecoi.qmd)
+- [Single-locus variant frequency](../benchmarking/freq_single_locus_variant.qmd)
+- [Single-locus microhaplotype frequency](../benchmarking/freq_single_microhaplotype.qmd)
+- [Multi-locus variant frequency](../benchmarking/freq_multi_locus_variant.qmd)
+
+The table shows which tools are evaluated on each page.
+
+| Page | Tools |
+| --- | --- |
+| [Sample-level COI](../benchmarking/coi_sample.qmd) | [Naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |
+| [Population mean COI](../benchmarking/coi_mean.qmd) | [Naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |
+| [Effective COI](../benchmarking/moire_ecoi.qmd) | [MOIRE](../tutorials/moire/moire_background.Rmd) |
+| [Single-locus variant frequency](../benchmarking/freq_single_locus_variant.qmd) | [Naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd), [incomplete data model](../tutorials/IDM/background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd) |
+| [Single-locus microhaplotype frequency](../benchmarking/freq_single_microhaplotype.qmd) | [MOIRE](../tutorials/moire/moire_background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd), naive microhaplotype frequency |
+| [Multi-locus variant frequency](../benchmarking/freq_multi_locus_variant.qmd) | [Naive multi-locus frequency](../tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd), [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd), [MultiLociBiallelicModel](../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |

@@ -1,0 +1,22 @@
+---
+title: "Multi-locus variant frequency"
+format: html
+---
+
+This page compares multi-locus variant frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison, and the rule for frequencies below 1%, are on the [benchmarking overview](../website_docs/benchmarking.qmd).
+
+The tools are [naive multi-locus frequency](../tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd), [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd), [MultiLociBiallelicModel](../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
+
+For each tool, the parameter set is the one with the highest Lin's concordance. All four tools are compared on biallelic groups, and those groups include the drug-resistance markers. Naive multi-locus frequency and SNP-slice are also compared on the multi-allelic groups. The reported summaries are Lin's concordance, mean absolute error, and variant detection.
+
+## Biallelic groups
+
+The results will be added when the final benchmark outputs are available.
+
+## Drug-resistance groups
+
+The results will be added when the final benchmark outputs are available.
+
+## Multi-allelic groups
+
+The results will be added when the final benchmark outputs are available.

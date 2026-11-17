@@ -1,0 +1,14 @@
+---
+title: "Single-locus microhaplotype frequency"
+format: html
+---
+
+This page compares single-locus microhaplotype frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison, and the rule for frequencies below 1%, are on the [benchmarking overview](../website_docs/benchmarking.qmd).
+
+The tools are [MOIRE](../tutorials/moire/moire_background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd), and a naive microhaplotype frequency calculated from presence and absence or weighted by the within-sample frequency.
+
+For each tool, the parameter set is the one with the highest Lin's concordance. The reported summaries are Lin's concordance, mean absolute error, and variant detection. The same summaries are reported by simulated frequency and by mean COI.
+
+## Full panel
+
+The results will be added when the final benchmark outputs are available.

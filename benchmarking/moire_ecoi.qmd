@@ -1,0 +1,16 @@
+---
+title: "Effective COI"
+format: html
+---
+
+This page compares [MOIRE](../tutorials/moire/moire_background.Rmd) effective COI with the simulated effective COI on the full MAD^4^HatTeR panel and on the 15-target panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
+
+The parameter set is the one chosen for MOIRE on the [sample-level COI page](coi_sample.qmd). The reported summary is Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI.
+
+## Full panel
+
+The results will be added when the final benchmark outputs are available.
+
+## 15-target panel
+
+The results will be added when the final benchmark outputs are available.
