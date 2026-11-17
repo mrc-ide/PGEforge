@@ -287,7 +287,7 @@ ggplot(filtered_by_group, aes(x = group_id, y = value, fill = paramset_label)) +
 
 ## Convergence
 
-Here we asses convergence of the model for the different parameter settings. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold (1.1 or 1.01). A chain that sits on one value is left out of the percentage. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
+Here we assess convergence of the model for the different parameter settings. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold (1.1 or 1.01). A chain that sits on one value is left out of the percentage. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
 
 ```{r}
 diag_path <- file.path(root, "full", "FEM", "convergence_diag.tsv.gz")
