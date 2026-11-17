@@ -187,8 +187,7 @@ ggplot(mae, aes(x = paramset_label, y = freq_mae, fill = paramset_label)) +
 ```
 
 ## Variant detection
-
-A simulated allele is detected when its estimate is above 0. Recall is the share of simulated alleles that are detected. Precision is the share of non-zero estimates that correspond to a simulated allele. Rare alleles are those whose simulated frequency is above 0 and at most 0.01. Recall for that subset is the rare-allele detection rate. False alleles have simulated frequency 0, so they are not part of that subset and precision is reported on all alleles.
+A simulated allele is detected when its estimate is above 0. Recall is the share of simulated alleles that are detected. Precision is the share of non-zero estimates that correspond to a simulated allele.
 
 ```{r}
 detection <- paired %>%
@@ -219,38 +218,16 @@ ggplot(detection_summary, aes(x = group_id, y = value, fill = paramset_label)) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
 ```
 
-```{r}
-rare_recall <- detection %>%
-  filter(rare) %>%
-  group_by(paramset_label) %>%
-  summarise(rare_recall = mean(detected), n_rare = n(), .groups = "drop")
-
-rare_recall %>%
-  mutate(rare_recall = round(rare_recall, 3)) %>%
-  kable()
-
-ggplot(rare_recall, aes(x = paramset_label, y = rare_recall, fill = paramset_label)) +
-  geom_col(width = 0.7) +
-  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
-  labs(
-    x = NULL,
-    y = "Recall of alleles at or below 1%",
-    fill = NULL
-  ) +
-  theme_bw() +
-  theme(legend.position = "none")
-```
-
 ## Frequencies below 1%
 
-Alleles whose simulated frequency is below 0.01 are left out. Estimates below 0.01 are left out as well, except when the simulated frequency is above 0.01. In that case the estimate is set to 0, so the call becomes a false negative. Precision, recall, and mean absolute error are calculated again on this set.
+A call is left out when both the estimate and the simulated frequency are below 0.01. When the estimate is below 0.01 and the simulated frequency is above 0.01, the estimate is set to 0, so the call is a false negative. Precision, recall, and mean absolute error are calculated on what remains.
+
+Alleles simulated below 1% are 4,397 of 8,090 simulated alleles (54%) and 3.1% of the simulated frequency. This filter removes 3,861 of them for COI = 1, 4,193 for COI = 3, and 4,323 for COI = 5. Recall falls from 0.998 to 0.955, 0.912, and 0.850 because an estimate below 1% is counted as a miss when the allele was simulated above 1%. Of those misses, 96%, 94%, and 89% were simulated between 1% and 2%, and they make up 0.5%, 1.0%, and 1.7% of the frequency of alleles simulated above 1%.
 
 ```{r}
 filtered <- paired %>%
-  filter(!(expected_freq > 0 & expected_freq < 0.01)) %>%
-  mutate(missed_common = expected_freq > 0.01 & freq < 0.01) %>%
-  filter(freq >= 0.01 | missed_common) %>%
-  mutate(freq = if_else(missed_common, 0, freq))
+  filter(!(freq < 0.01 & expected_freq < 0.01)) %>%
+  mutate(freq = if_else(freq < 0.01 & expected_freq > 0.01, 0, freq))
 
 filtered_detection <- filtered %>%
   mutate(
@@ -310,7 +287,7 @@ ggplot(filtered_by_group, aes(x = group_id, y = value, fill = paramset_label)) +
 
 ## Convergence
 
-Convergence was saved for the full panel only, in `full/FEM/convergence_diag.tsv.gz`. Each row is one haplotype indicator within a locus group. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold. A chain that sits on one value is left out of the percentage. FreqEstimationModel has no COI trace in this file. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
+Here we asses convergence of the model for the different parameter settings. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold (1.1 or 1.01). A chain that sits on one value is left out of the percentage. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
 
 ```{r}
 diag_path <- file.path(root, "full", "FEM", "convergence_diag.tsv.gz")
@@ -393,4 +370,4 @@ ggplot(fem_converged, aes(x = group_id, y = pct_converged_1_01, fill = paramset_
 
 ## Summary
 
-Use the COI = 3 setting. It has the highest concordance with the simulated frequencies (0.993). After calls below 1% are set aside, its mean absolute error is 0.015, the same as COI = 1 and about half the error of COI = 5 (0.031). Precision is 1 for every setting on that filtered set. COI = 1 recovers slightly more alleles simulated above 1% (recall 0.949, against 0.907 for COI = 3 and 0.847 for COI = 5), and all three settings detect alleles at or below 1% equally well (recall 0.996). Convergence does not rescue COI = 5: the median share of haplotype indicators with R-hat at or below 1.1 is 80% for COI = 3 and 83% for COI = 5, against 69% for COI = 1. COI = 5 is the setting to leave aside, because its frequencies agree less well with the simulation and it misses more alleles above 1%. These results are for FreqEstimationModel on its own. To see how the COI = 3 setting compares with other tools, see the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).
+Use the COI = 3 setting. It has the highest concordance with the simulated frequencies (0.993). After calls below 1% on both the estimate and the simulation are left out, and an estimate below 1% of an allele simulated above 1% is counted as a miss, mean absolute error is 0.015 for COI = 3 and for COI = 1, and 0.030 for COI = 5. Precision is 1 for every setting. Alleles simulated below 1% are 54% of simulated alleles and 3.1% of the frequency, and the filter removes 3,861, 4,193, and 4,323 of those 4,397 alleles. Recall falls from 0.998 to 0.955, 0.912, and 0.850. Of the alleles counted as misses because the estimate is below 1%, 96%, 94%, and 89% were simulated between 1% and 2%, and those alleles are 0.5%, 1.0%, and 1.7% of the frequency of alleles simulated above 1%. The median share of haplotype indicators with R-hat at or below 1.1 is 80% for COI = 3, 83% for COI = 5, and 69% for COI = 1. COI = 5 is the setting to leave aside, because its frequencies agree less well with the simulation. These results are for FreqEstimationModel on its own. To see how the COI = 3 setting compares with other tools, see the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).
