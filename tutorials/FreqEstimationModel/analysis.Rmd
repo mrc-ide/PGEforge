@@ -1,30 +1,153 @@
 ---
-title: "Give this whatever name you want"
+title: "Analyze data with FreqEstimationModel"
+author: "Kathryn Murie"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
+
+FreqEstimationModel estimates population-level haplotype frequencies from prevalence data. Each haplotype is a short sequence of biallelic alleles, at most seven loci. The model is fit with a Markov chain Monte Carlo sampler, and it also returns a multiplicity of infection (MOI) for each sample.
 
 ## The data
 
-These headings are placeholders, but you may want to start by giving a brief description of which data you will use. Remember you can point to the [main Data tab](https://mrc-ide.github.io/PGEforge/website_docs/data_description.html) for further details.
+Each row is one sample. Locus columns come first, and each column name contains `locus`. The entries are coded as:
 
-Remember to load any packages, including the tool that you are working on:
-```{r, warning=FALSE, message=FALSE, error=FALSE}
-library(tidyverse)
-library(here)
+- `0`, only the default allele
+- `1`, only the other allele
+- `0.5`, both alleles
+- `99`, missing
+
+Which allele is coded `0` is the user's choice. It can be the reference allele, the drug-sensitive allele, or any other default.
+
+This example uses the simulated three-locus dataset shipped with the package. The locus columns are the observations. The later columns are the simulated MOI and haplotype counts. They are not passed to the sampler. `preprocess_data()` keeps only the leading columns whose names contain `locus`.
+
+```{r}
+library(dplyr)
+library(FreqEstimationModel)
+library(ggplot2)
+library(kableExtra)
+library(knitr)
+
+data("Data_no_markers3_seed1", package = "FreqEstimationModel")
+
+locus_cols <- grep("locus", colnames(data_summary$Data))
+head(data_summary$Data[, locus_cols]) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
 ```
 
+## Fit the model
 
-## First analysis section
+The MOI prior is Poisson with mean 3, and the largest MOI the sampler will consider is 8. Missing locus calls are kept and treated as compatible with either allele. Two chains of 1000 iterations are saved here. A longer run, and a check that the chains agree, belongs in an analysis you report. The package vignette uses 10000 iterations and three chains.
 
-Make as many sections as you need. Try to break long documents out over multiple pages.
+```{r}
+no_traces_preburnin <- 1000
+no_mcmc_chains <- 2
+
+mcmc_variable_list <- list(
+  no_mcmc_chains = no_mcmc_chains,
+  no_traces_preburnin = no_traces_preburnin,
+  thinning_interval = 1,
+  NGS = FALSE,
+  log_like_zero = FALSE
+)
+
+moi_list <- list(
+  moi_hyperparameter = 3,
+  moi_size_hyperparameter = 0.5,
+  moi_prior = "Poisson",
+  moi_max = 8,
+  moi_prior_min2 = NULL,
+  moi_initial = NULL
+)
+
+processed_data_list <- preprocess_data(
+  data_summary,
+  log_like_zero = FALSE,
+  NGS = FALSE,
+  augment_missing_data = TRUE,
+  moi_prior_min2 = NULL
+)
+
+frequency_list <- list(
+  frequency_hyperparameter = rep(1, processed_data_list$no_haplotypes),
+  frequency_initial = NULL
+)
+
+set.seed(1)
+results <- mcmc_sampling(
+  processed_data_list,
+  moi_list,
+  frequency_list,
+  mcmc_variable_list
+)
+```
+
+`mcmc_sampling_parallel()` runs the same sampler with one chain per core. It is the function to use when the number of samples or loci makes a single process slow.
+
+## Haplotype frequencies
+
+The first half of each chain is discarded. The table is the posterior mean and 95% credible interval for every haplotype compatible with the data. The plot compares those means with the simulated frequencies.
+
+```{r}
+freq_store <- results$genotype_freq_store_chains
+burnin <- seq_len(nrow(freq_store) %/% 2)
+freq_draws <- freq_store[-burnin, , , drop = FALSE]
+
+pop_freq <- tibble(
+  haplotype = dimnames(freq_draws)[[2]],
+  mean = apply(freq_draws, 2, mean),
+  lower = apply(freq_draws, 2, quantile, probs = 0.025),
+  upper = apply(freq_draws, 2, quantile, probs = 0.975)
+)
+
+truth <- data_summary$Population_haplotype_frequencies
+pop_freq <- pop_freq %>%
+  mutate(simulated = as.numeric(truth[1, haplotype]))
+
+pop_freq %>%
+  mutate(across(c(mean, lower, upper, simulated), ~ round(.x, 3))) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+
+ggplot(pop_freq, aes(x = simulated, y = mean)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  geom_text(aes(label = haplotype), nudge_x = 0.03, size = 3) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+  labs(
+    x = "Simulated haplotype frequency",
+    y = "Posterior mean"
+  ) +
+  theme_bw()
+```
+
+Allele frequencies at a single locus are the haplotype frequencies summed over the haplotypes that carry that allele. The package vignette shows that sum, and also how to turn the same posterior draws into a prevalence.
+
+## Multiplicity of infection
+
+MOI for a sample is the sum of its haplotype counts. The table below gives the posterior mean and the 95% credible interval for the first samples.
+
+```{r}
+count_store <- results$genotype_count_store_chains
+count_draws <- count_store[-burnin, , , , drop = FALSE]
+moi_draws <- apply(count_draws, c(1, 2, 4), sum)
+
+moi_summary <- tibble(
+  sample = dimnames(count_draws)[[2]],
+  mean = apply(moi_draws, 2, mean),
+  lower = apply(moi_draws, 2, quantile, probs = 0.025),
+  upper = apply(moi_draws, 2, quantile, probs = 0.975)
+)
+
+head(moi_summary) %>%
+  mutate(across(c(mean, lower, upper), ~ round(.x, 2))) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
 
 ## Summary
 
-It's a good idea to round off with a summary of what we did.
-
-PS, note that the name of the tutorial on the PGEforge website can be whatever you want - it does not have to match the name of this tutorial.
+The sampler returns a posterior distribution of haplotype frequencies and of the MOI in each sample. This page uses a short run on the package's simulated three-locus data. Before reporting an estimate, run more than one chain for longer and check that they agree. The [package vignette](https://github.com/aimeertaylor/FreqEstimationModel/blob/master/vignettes/Quick_example.Rmd) shows the longer run, prevalence estimates, and a Gelman-Rubin diagnostic on the frequency chains.

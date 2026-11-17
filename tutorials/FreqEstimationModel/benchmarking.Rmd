@@ -8,13 +8,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-This page compares FreqEstimationModel run with three different COI parameter settings, where COI is the average complexity of infection.
+This page compares FreqEstimationModel run with three different COI parameter settings, where COI is the average complexity of infection. The comparison is for this tool on its own. How the setting chosen here compares with other tools is in the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).
 
 Average complexity of infection (`COI`) is set to 1, 3, or 5. `moi_max` is 8, `no_traces_preburnin` is 2500, and `thinning_interval` is 4 in every run.
 
 ## Data
 Here we look at the simulated MAD4HATTER data, and compare FreqEstimationModel estimates with the simulated true frequencies.
-Unrealistic populations are dropped here: every population with no cotransmission, mean COI 1.26 with high cotransmission, and mean COI 5.47 with low cotransmission are removed.
+Unrealistic populations are dropped here: every population with no cotransmission, mean COI 1.26 with high cotransmission, and mean COI 5.47 with low cotransmission are removed. FreqEstimationModel only works for biallelic loci, so we limit our analysis to loci groups of that type.
 
 ```{r}
 library(dplyr)
@@ -307,3 +307,90 @@ ggplot(filtered_by_group, aes(x = group_id, y = value, fill = paramset_label)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
 ```
+
+## Convergence
+
+Convergence was saved for the full panel only, in `full/FEM/convergence_diag.tsv.gz`. Each row is one haplotype indicator within a locus group. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold. A chain that sits on one value is left out of the percentage. FreqEstimationModel has no COI trace in this file. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
+
+```{r}
+diag_path <- file.path(root, "full", "FEM", "convergence_diag.tsv.gz")
+if (!file.exists(diag_path)) {
+  stop("Expected ", diag_path, call. = FALSE)
+}
+
+kept_pops <- sim_params %>%
+  filter(!is.na(coi_cat), !is.na(cotransmission_cat)) %>%
+  filter(cotransmission_cat != "No_Cotransmission") %>%
+  filter(!(coi_cat == "MeanCOI=1.26" & cotransmission_cat == "High_Cotransmission")) %>%
+  filter(!(coi_cat == "MeanCOI=5.47" & cotransmission_cat == "Low_Cotransmission")) %>%
+  pull(population_name)
+
+group_levels <- c("2_low_div", "2_med_div", "4_low_div", "4_med_div", "6_low_div", "6_med_div")
+
+fem_diag <- read_tsv(
+  diag_path,
+  show_col_types = FALSE,
+  col_select = c(population_name, paramset_id, group_id, mean, sd, rhat)
+) %>%
+  filter(population_name %in% kept_pops, paramset_id %in% paramsets$paramset_id) %>%
+  left_join(paramsets %>% select(paramset_id, paramset_label), by = "paramset_id") %>%
+  mutate(
+    paramset_label = factor(paramset_label, levels = paramsets$paramset_label),
+    group_id = factor(group_id, levels = group_levels),
+    moving = !is.na(sd) & sd > 0,
+    converged_1_1 = moving & is.finite(rhat) & rhat <= 1.1,
+    converged_1_01 = moving & is.finite(rhat) & rhat <= 1.01,
+    scored_1_1 = moving & (!is.finite(rhat) | rhat > 1.1) | converged_1_1,
+    scored_1_01 = moving & (!is.finite(rhat) | rhat > 1.01) | converged_1_01
+  )
+
+fem_converged <- fem_diag %>%
+  group_by(paramset_label, population_name, group_id) %>%
+  summarise(
+    pct_converged_1_1 = if_else(sum(scored_1_1) == 0, NA_real_, 100 * sum(converged_1_1) / sum(scored_1_1)),
+    pct_converged_1_01 = if_else(sum(scored_1_01) == 0, NA_real_, 100 * sum(converged_1_01) / sum(scored_1_01)),
+    .groups = "drop"
+  )
+
+fem_converged %>%
+  group_by(paramset_label) %>%
+  summarise(
+    median_pct_rhat_1_1 = median(pct_converged_1_1, na.rm = TRUE),
+    median_pct_rhat_1_01 = median(pct_converged_1_01, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(across(starts_with("median_pct"), ~ round(.x, 1))) %>%
+  kable()
+```
+
+```{r, fig.width=10, fig.height=5}
+ggplot(fem_converged, aes(x = group_id, y = pct_converged_1_1, fill = paramset_label)) +
+  geom_boxplot(width = 0.7, outlier.alpha = 0.4) +
+  facet_wrap(~ paramset_label, ncol = 3) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(
+    x = "Locus group",
+    y = "% of indicators with R-hat at or below 1.1",
+    fill = NULL
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "none")
+```
+
+```{r, fig.width=10, fig.height=5}
+ggplot(fem_converged, aes(x = group_id, y = pct_converged_1_01, fill = paramset_label)) +
+  geom_boxplot(width = 0.7, outlier.alpha = 0.4) +
+  facet_wrap(~ paramset_label, ncol = 3) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(
+    x = "Locus group",
+    y = "% of indicators with R-hat at or below 1.01",
+    fill = NULL
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "none")
+```
+
+## Summary
+
+Use the COI = 3 setting. It has the highest concordance with the simulated frequencies (0.993). After calls below 1% are set aside, its mean absolute error is 0.015, the same as COI = 1 and about half the error of COI = 5 (0.031). Precision is 1 for every setting on that filtered set. COI = 1 recovers slightly more alleles simulated above 1% (recall 0.949, against 0.907 for COI = 3 and 0.847 for COI = 5), and all three settings detect alleles at or below 1% equally well (recall 0.996). Convergence does not rescue COI = 5: the median share of haplotype indicators with R-hat at or below 1.1 is 80% for COI = 3 and 83% for COI = 5, against 69% for COI = 1. COI = 5 is the setting to leave aside, because its frequencies agree less well with the simulation and it misses more alleles above 1%. These results are for FreqEstimationModel on its own. To see how the COI = 3 setting compares with other tools, see the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).

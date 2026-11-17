@@ -1,7 +1,8 @@
 {
-  "hash": "eb7eb2013336a46fe34ea3c5271ca116",
+  "hash": "9f94a2d2347389251f184c2300efc04c",
   "result": {
-    "markdown": "---\ntitle: \"Installing (tool name)\"\noutput: html_document\n---\n\n\n\n\n## Step N: what to do\n\nShort explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.\n\n",
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Installing FreqEstimationModel\"\noutput: html_document\n---\n\n\n\n`FreqEstimationModel` is available from the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/FreqEstimationModel). The package imports `doMC`, so install it on macOS or Linux.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(\n  \"FreqEstimationModel\",\n  repos = c(\"https://plasmogenepi.r-universe.dev\", \"https://cloud.r-project.org\")\n)\n```\n:::\n\n\nConda is another option. The package is on [Bioconda](https://anaconda.org/bioconda/r-freqestimationmodel) as `r-freqestimationmodel`:\n\n\n::: {.cell}\n\n```{.bash .cell-code}\nconda install -c conda-forge -c bioconda r-freqestimationmodel\n```\n:::\n\n\nThe [package repository](https://github.com/aimeertaylor/FreqEstimationModel) also documents installation from GitHub, including the vignettes:\n\n\n::: {.cell}\n\n```{.r .cell-code}\ninstall.packages(\"devtools\")\ndevtools::install_github(\n  \"aimeertaylor/FreqEstimationModel\",\n  build_vignettes = TRUE,\n  dependencies = TRUE\n)\n```\n:::\n\n",
     "supporting": [],
     "filters": [
       "rmarkdown/pagebreak.lua"
