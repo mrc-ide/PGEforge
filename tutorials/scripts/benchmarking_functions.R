@@ -546,4 +546,213 @@ make_bland_altman_plot_by_label <- function(
 
 
 
+#' @title Concordance / Error Metrics (single or multiple observed columns)
+#' @keywords CCC RMSE MAE COI
+#'
+#' @description
+#' Compute metrics between an expected column and one or more observed columns.
+#' Each function accepts an optional set of grouping columns. If omitted, an
+#' overall (single-row) summary is returned.
+#'
+#' @param df A data frame.
+#' @param expected_col Unquoted column name of expected values.
+#' @param observed_cols One symbol or \code{c(sym1, sym2, ...)} of observed columns.
+#' @param group_cols Optional grouping columns supplied like
+#'   \code{c(population_name, paramset_id)}. If omitted or \code{NULL},
+#'   computes overall metrics (no grouping).
+#'
+#' @return A tibble with group columns (if any) and metric columns per observed variable.
+#'
+#' @importFrom dplyr group_by summarise distinct left_join bind_cols
+#' @importFrom rlang enquo enexpr is_call call_args as_quosure caller_env as_name
+#' @importFrom purrr map map_dbl
+#' @name vectorized_metrics
+
+
+# ---- CCC (DescTools::CCC) ----------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_ccc <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+  
+  # capture observed columns (symbol or c(...))
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+  
+  # capture grouping columns (NULL/omitted => no groups)
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      obs_name <- rlang::as_name(q)
+      one <- df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)), .groups = "drop") %>%
+        dplyr::mutate(
+          !!paste0(obs_name, "_ccc")       := purrr::map_dbl(.ccc, ~ .x$rho.c$est),
+          !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(.ccc, ~ .x$rho.c$lwr.ci),
+          !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(.ccc, ~ .x$rho.c$upr.ci)
+        ) %>%
+        dplyr::select(-.ccc)
+      out <- dplyr::left_join(out, one, by = join_by_cols)
+    }
+  } else {
+    pieces <- purrr::map(obs_quos, function(q) {
+      obs_name <- rlang::as_name(q)
+      tmp <- df %>% dplyr::summarise(.ccc = list(DescTools::CCC(!!expected_col, !!q)))
+      tibble::tibble(
+        !!paste0(obs_name, "_ccc")       := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$est),
+        !!paste0(obs_name, "_ccc_lower") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$lwr.ci),
+        !!paste0(obs_name, "_ccc_upper") := purrr::map_dbl(tmp$.ccc, ~ .x$rho.c$upr.ci)
+      )
+    })
+    out <- dplyr::bind_cols(pieces)
+  }
+  
+  out
+}
+
+# ---- RMSE --------------------------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_rmse <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+  
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+  
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  metric_fun <- function(q) {
+    obs_name <- rlang::as_name(q)
+    if (length(grp_quos) > 0) {
+      df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          !!paste0(obs_name, "_rmse") := {
+            x <- !!q; y <- !!expected_col
+            ok <- !is.na(x) & !is.na(y)
+            n  <- sum(ok)
+            if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+          },
+          .groups = "drop"
+        )
+    } else {
+      dplyr::summarise(df,
+                       !!paste0(obs_name, "_rmse") := {
+                         x <- !!q; y <- !!expected_col
+                         ok <- !is.na(x) & !is.na(y)
+                         n  <- sum(ok)
+                         if (n == 0) NA_real_ else sqrt(sum((x[ok] - y[ok])^2) / n)
+                       }
+      )
+    }
+  }
+  
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
+    }
+  } else {
+    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
+  }
+  
+  out
+}
+
+# ---- MAE ---------------------------------------------------------------------
+
+#' @rdname vectorized_metrics
+#' @export
+compute_mae <- function(df, expected_col, observed_cols, group_cols = NULL) {
+  stopifnot(is.data.frame(df))
+  expected_col <- rlang::enquo(expected_col)
+  
+  obs_expr <- rlang::enexpr(observed_cols)
+  obs_quos <- if (rlang::is_call(obs_expr, "c")) {
+    purrr::map(rlang::call_args(obs_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(obs_expr, env = rlang::caller_env()))
+  }
+  
+  grp_expr <- rlang::enexpr(group_cols)
+  grp_quos <- if (missing(group_cols) || is.null(grp_expr)) {
+    list()
+  } else if (rlang::is_call(grp_expr, "c")) {
+    purrr::map(rlang::call_args(grp_expr), rlang::as_quosure, env = rlang::caller_env())
+  } else {
+    list(rlang::as_quosure(grp_expr, env = rlang::caller_env()))
+  }
+  
+  metric_fun <- function(q) {
+    obs_name <- rlang::as_name(q)
+    if (length(grp_quos) > 0) {
+      df %>%
+        dplyr::group_by(!!!grp_quos) %>%
+        dplyr::summarise(
+          !!paste0(obs_name, "_mean_abs_error") := {
+            x <- !!q; y <- !!expected_col
+            ok <- !is.na(x) & !is.na(y)
+            if (!any(ok)) NA_real_ else mean(abs(x[ok] - y[ok]))
+          },
+          .groups = "drop"
+        )
+    } else {
+      dplyr::summarise(df,
+                       !!paste0(obs_name, "_mean_abs_error") := {
+                         x <- !!q; y <- !!expected_col
+                         ok <- !is.na(x) & !is.na(y)
+                         if (!any(ok)) NA_real_ else mean(abs(x[ok] - y[ok]))
+                       }
+      )
+    }
+  }
+  
+  if (length(grp_quos) > 0) {
+    out <- df %>% dplyr::distinct(!!!grp_quos)
+    join_by_cols <- names(out)
+    for (q in obs_quos) {
+      out <- dplyr::left_join(out, metric_fun(q), by = join_by_cols)
+    }
+  } else {
+    out <- dplyr::bind_cols(purrr::map(obs_quos, metric_fun))
+  }
+  
+  out
+}
+
+
+
+
+
 

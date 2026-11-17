@@ -10,5 +10,5 @@ ignore/
 *.html
 README_files
 data/pge-tools-benchmark/
-.ipynb_checkpoints/
-.virtual_documents/
+data/benchmarking/
+**/*.quarto_ipynb

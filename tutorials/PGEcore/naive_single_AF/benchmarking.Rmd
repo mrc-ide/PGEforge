@@ -1,0 +1,300 @@
+---
+title: "Benchmarking of PGEcore Naïve Single Locus Allele Frequency Tool"
+author: "Josphat N. Nyataya"
+output: html_document
+---
+
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(dplyr)
+library(ggplot2)
+library(jsonlite)
+library(magrittr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+library(tidyr)
+
+inp <- list(
+  sim_info_dir = "../../../data/benchmarking/simulations/SpotMalaria", 
+  tool_res_dir = "../../../data/benchmarking/tool_results/naive_slaf", 
+  tool_params = "../../../data/benchmarking/tool_results/naive_slaf.json"
+)
+
+source("../../scripts/benchmarking_functions.R")
+```
+
+```{r}
+# Read all expected frequencies into one tibble ------------------------
+sim_truth <- tibble(
+    sim_truth_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "population_aa_variants_freqs_prevs.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_truth = map(
+      sim_truth_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_integer(), 
+        population_name = col_character(), 
+        country = col_character(), 
+        GeneName = col_character(), 
+        transcript_id = col_character(), 
+        aa = col_character(), 
+        is_ref = col_logical(), 
+        freq = col_double(), 
+        prev = col_double()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-sim_truth_path) %>%
+  unnest(sim_truth) %>%
+  rename(
+    sim_id = population_name, 
+    exp_freq = freq, 
+    exp_prev = prev, 
+    exp_n_samp = sample_count
+  ) %>%
+  select(
+    -pop, 
+    -country, 
+    -allele_count, 
+    -GeneName, 
+    -is_ref, 
+    -total_pop_samples, 
+    -total_pop_alleles, 
+    -unique_alleles
+  )
+
+# Read in all simulation parameters into one tibble --------------------
+sim_params <- tibble(
+    sim_params_path = list.files(
+      inp$sim_info_dir, 
+      pattern = "simulation_parameters.json", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(
+    sim_params = map(
+      sim_params_path, 
+      jsonlite::fromJSON
+    )
+  ) %>%
+  select(-sim_params_path) %>%
+  mutate(sim_params = map(sim_params, as_tibble)) %>%
+  unnest(sim_params) %>%
+  select(
+    -collection_year, 
+    -obs_freq_monoclonal, 
+    -obs_non_recombinant, 
+    -mean_k, 
+    -sample_count, 
+    -est_between_sample_relatedness
+  ) %>%
+  rename(
+    sim_id = population_name, 
+    true_mean_coi = mean_coi
+  )
+sim_truth <- sim_truth %>%
+  left_join(sim_params, by = "sim_id")
+
+# Read in all FEM results into one tibble ------------------------------
+tool_results <- tibble(
+    tool_res_path = list.files(
+      inp$tool_res_dir, 
+      pattern = "*.tsv.gz", 
+      full.names = TRUE, 
+      recursive = TRUE
+    )
+  ) %>%
+  mutate(tool_res_dir = dirname(tool_res_path)) %>%
+  mutate(sim_id = basename(dirname(tool_res_dir))) %>%
+  mutate(paramset_id = basename(tool_res_dir)) %>%
+  select(-tool_res_dir) %>%
+  mutate(
+    tool_res = map(
+      tool_res_path, 
+      read_tsv, 
+      col_types = cols(
+        .default = col_double(), 
+        variant = col_character()
+      ), 
+      progress = FALSE
+    )
+  ) %>%
+  select(-tool_res_path) %>%
+  unnest(tool_res) %>%
+  rename(
+    obs_freq = freq
+  )
+
+# Read in tool parameters, and join ------------------------------------
+tool_params <- jsonlite::fromJSON(inp$tool_params) %>%
+  as_tibble() %>%
+  mutate(slaf_method = paramset$method) %>%
+  select(-paramset)
+tool_results <- tool_results %>%
+  left_join(tool_params, by = "paramset_id")
+
+# Join everything into one tibble --------------------------------------
+sim_truth <- sim_truth %>% mutate(variant = paste(transcript_id, aa_position, aa, sep = ":"))
+```
+
+```{r}
+# Combine the simulated and tool results into a single dataframe
+toolres_simtruth_combined <- full_join(sim_truth, tool_results, by = c("sim_id", "variant"))
+```
+
+```{r}
+# Run the means and difference of the observed and expected columns
+toolres_simtruth_combined <- add_diff_mean(toolres_simtruth_combined, expected_col = exp_freq, observed_col = obs_freq)
+```
+
+# Concordance
+
+False positives and false negatives were removed from this analysis to avoid non-infinite values in the plots.
+
+```{r}
+toolres_simtruth_combined_nomissing <- na.omit(toolres_simtruth_combined)
+```
+
+```{r}
+ tool_results_Concordance_Freq <- toolres_simtruth_combined_nomissing %>%
+         group_by(
+         slaf_method, 
+         pop_alpha, 
+         coi_r, 
+         k_s
+     )|>
+     summarize(conc_pt_est= CCC(exp_freq, obs_freq)$rho.c$est, 
+               conc_lwr_CI= CCC(exp_freq, obs_freq)$rho.c$lwr.ci, 
+               conc_upr_CI= CCC(exp_freq, obs_freq)$rho.c$upr.ci, .groups = "drop")|>
+     mutate(
+         group_id = factor(
+             slaf_method, 
+             c(
+                 "read_count", 
+                 "presence_absence"
+             ), 
+             labels = c(
+                 "read_count", 
+                 "presence_absence"
+             )
+         )
+     )|>
+     mutate(
+         pop_alpha = factor(
+             pop_alpha, 
+             c("2.33", "9", "99"), 
+             labels = c("High Sim. Rel", "Med. Sim. Rel", "Low Sim. Rel")
+         )
+     ) %>%
+     mutate(
+         k_s = factor(
+             k_s, 
+             c("0.5", "0.2"), 
+             labels = c("Med. Recombination", "High Recombination")
+         )
+     ) %>%
+     
+     mutate(
+         coi_r = factor(
+             coi_r, 
+             c("0.25", "0.5"), 
+             labels = c("Low COI/Prop. Polyclonal", "Med. COI/Prop. Polyclonal")
+         )
+     )
+```
+
+```{r}
+tool_results_Concordance_Freq %>%
+     ggplot(mapping = aes(x = pop_alpha, y = conc_pt_est, ymin= conc_lwr_CI, ymax= conc_upr_CI, color = slaf_method)) +
+     geom_pointrange(position = position_jitter(width = 0.2)) +        theme_bw()+
+     facet_grid(rows = vars(k_s), cols = vars(coi_r)) +
+     labs(
+         x = "Simulated Relatedness", 
+         y = "Concordance Correlation Coeffifient", 
+         color = "Method"
+     ) + geom_hline(yintercept= 0.95, color='red', lty=2)+
+     theme(legend.position = "bottom")-> Concordance_byScenario_prev
+ 
+print(Concordance_byScenario_prev)
+```
+
+In this figure we see clearly that the read count method of estimating allele frequency was consistent in both low and medium COI, whereas the presence_absence approach yielded lower correlation coefficients in the medium COI simulations.
+
+# Bland-Altman Plots
+
+False positives and false negatives were also removed to create these plots.
+
+```{r}
+# We split the data by slaf_method
+toolres_simtruth_combined_rc <- toolres_simtruth_combined_nomissing %>% filter(slaf_method == "read_count_prop")
+toolres_simtruth_combined_pa <- toolres_simtruth_combined_nomissing %>% filter(slaf_method == "presence_absence")
+```
+
+## Presence-Absence Method
+
+```{r message = FALSE}
+s2 <- make_bland_altman_plot_by_label(toolres_simtruth_combined_pa, label = "obs_freq", bins = 30) + transparentBackground
+s2
+```
+
+While the two measures show reasonable overall agreement, the plot reveals evidence of frequency-dependent bias, with overestimation at low frequencies and underestimation at high frequencies.
+
+## Read Count Method
+
+```{r message = FALSE}
+s1 <- make_bland_altman_plot_by_label(toolres_simtruth_combined_rc, label = "obs_freq", bins = 30) + transparentBackground 
+s1
+```
+
+The plot indicates overall good agreement between observed and expected frequencies, with some heteroscedasticity at intermediate frequencies but no strong evidence of consistent bias.
+
+# False Positives and False Negatives
+
+```{r}
+# To generate the contingency tables, we extract the TP, FN and FP
+combined_2 <- toolres_simtruth_combined %>% mutate(status = case_when(!is.na(obs_freq) & is.na(exp_freq) ~ "FP", is.na(obs_freq) & !is.na(exp_freq) ~ "FN", .default = "TP"))
+
+#summarize the counts
+count_summarize <- combined_2 %>% group_by(status) %>% summarise(count = n(), .groups = "drop")
+```
+
+```{r}
+# Convert the count_summary tibble to a dataframe and ensure the three columns are well labelled
+count_summarize_df <- as.data.frame(count_summarize)
+input <- as.data.frame(t(count_summarize_df))
+colnames(input)[1] <- "FN"
+colnames(input)[2] <- "FP"
+colnames(input)[3] <- "TP"
+input <- input[-1, ]
+input <- input %>% mutate(
+  TP = as.numeric(TP), 
+  FP = as.numeric(FP), 
+  FN = as.numeric(FN)
+)
+```
+
+```{r}
+# Generate the contingency table
+d1 <- input2 <- add_contigency_metrics_no_TN(input = input, summarize_first = F)
+d1
+```
+
+```{r}
+# Generate a radar plot but we first generate the metric map
+metric_map1 <- c("Sensitivity" = "sensitivity", "Precision" = "precision", "F1-score" = "f1_score", "FDR" = "fdr")
+g3 <- radar_by_metrics(input2, color_col = NULL, facet_col = NULL, metric_map = metric_map1, palette = NULL, title = "Perfomance radar", outer_pad = 0.12, ring_breaks = seq(0,1,0.25))
+g3
+```
+
+Overall, this method has excellent sensitivity (98.5%) and is therefore able to detect all positives with few false negatives. However, it also generated many false positives (precision=76.6%).
