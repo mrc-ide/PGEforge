@@ -42,7 +42,7 @@ head(data_summary$Data[, locus_cols]) %>%
 
 The MOI prior is Poisson with mean 3, and the largest MOI the sampler will consider is 8. Missing locus calls are kept and treated as compatible with either allele. Two chains of 1000 iterations are saved here. A longer run, and a check that the chains agree, belongs in an analysis you report. The package vignette uses 10000 iterations and three chains.
 
-```{r}
+```{r, results = "hide"}
 no_traces_preburnin <- 1000
 no_mcmc_chains <- 2
 
