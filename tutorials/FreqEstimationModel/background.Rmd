@@ -1,8 +1,8 @@
 ---
 title: "FreqEstimationModel"
 output: html_document
-author: "Shazia Ruybal-Pesántez"
-date: "2025-07-11"
+author: "Kathryn Murie"
+date: "2026-11-17"
 ---
 
 ```{r setup, include=FALSE}

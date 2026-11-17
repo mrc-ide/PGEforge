@@ -1,0 +1,373 @@
+---
+title: "FreqEstimationModel benchmarking"
+author: "Kathryn Murie"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+This page compares FreqEstimationModel run with three different COI parameter settings, where COI is the average complexity of infection. The comparison is for this tool on its own. How the setting chosen here compares with other tools is in the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).
+
+Average complexity of infection (`COI`) is set to 1, 3, or 5. `moi_max` is 8, `no_traces_preburnin` is 2500, and `thinning_interval` is 4 in every run.
+
+## Data
+Here we look at the simulated MAD4HATTER data, and compare FreqEstimationModel estimates with the simulated true frequencies.
+Unrealistic populations are dropped here: every population with no cotransmission, mean COI 1.26 with high cotransmission, and mean COI 5.47 with low cotransmission are removed. FreqEstimationModel only works for biallelic loci, so we limit our analysis to loci groups of that type.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(here)
+library(jsonlite)
+library(knitr)
+library(purrr)
+library(readr)
+library(tibble)
+library(tidyr)
+library(DescTools)
+
+root <- here("data", "pge-tools-benchmark", "MAD4HATTER")
+sim_dir <- file.path(root, "simulation_setup")
+summary_path <- file.path(root, "full", "FEM", "FEM_summary.tsv.gz")
+if (!dir.exists(sim_dir) || !file.exists(summary_path)) {
+  stop(
+    "The full-panel MAD4HATTER files are not in data/pge-tools-benchmark/MAD4HATTER/.\n",
+    "Expected ", sim_dir, " and ", summary_path,
+    call. = FALSE
+  )
+}
+
+paramsets <- jsonlite::fromJSON(here("tutorials", "FreqEstimationModel", "fem.json")) %>%
+  as_tibble() %>%
+  mutate(
+    coi = paramset$coi,
+    moi_max = paramset$moi_max,
+    no_traces_preburnin = paramset$no_traces_preburnin,
+    thinning_interval = paramset$thinning_interval,
+    paramset_label = paste0("COI = ", coi)
+  ) %>%
+  select(paramset_id, paramset_label, coi, moi_max, no_traces_preburnin, thinning_interval)
+
+paramsets %>%
+  select(-paramset_id) %>%
+  kable()
+```
+
+## Pair estimates with the simulated frequencies
+
+FreqEstimationModel also reports haplotypes that cover only part of a locus group. Those partial haplotypes are not scored. 
+
+Alleles present in the simulation but missing from a parameter set are given frequency 0. Alleles reported by the model but absent from the simulation are given expected frequency 0.
+
+```{r}
+n_aa_positions <- function(variant) {
+  vapply(variant, function(one) {
+    if (is.na(one) || !nzchar(one)) return(NA_integer_)
+    parts <- strsplit(one, ";", fixed = TRUE)[[1]]
+    sum(vapply(parts, function(part) {
+      fields <- strsplit(part, ":", fixed = TRUE)[[1]]
+      if (length(fields) < 2) return(0L)
+      length(strsplit(fields[[2]], "_", fixed = TRUE)[[1]])
+    }, integer(1)))
+  }, integer(1))
+}
+
+sim_params <- tibble(
+  path = list.files(sim_dir, pattern = "simulation_parameters.json", full.names = TRUE, recursive = TRUE)
+) %>%
+  mutate(params = map(path, jsonlite::fromJSON)) %>%
+  mutate(params = map(params, as_tibble)) %>%
+  select(-path) %>%
+  unnest(params) %>%
+  select(population_name, country, pop_alpha, coi_r, coi_p, k_s, mean_coi, coi_cat, cotransmission_cat)
+
+expected <- tibble(
+  path = list.files(
+    sim_dir,
+    pattern = "population_aa_multiloci_variants_freqs_prevs.tsv.gz",
+    full.names = TRUE,
+    recursive = TRUE
+  )
+) %>%
+  mutate(truth = map(path, function(fn) {
+    read_tsv(fn, show_col_types = FALSE, col_types = cols(.default = col_character())) %>%
+      transmute(
+        population_name,
+        group_id,
+        variant,
+        expected_aas = as.integer(aas_in_variant),
+        expected_freq = as.double(freq)
+      )
+  })) %>%
+  select(-path) %>%
+  unnest(truth)
+
+group_aas <- expected %>% distinct(group_id, expected_aas)
+
+estimates <- read_tsv(summary_path, show_col_types = FALSE) %>%
+  filter(paramset_id %in% paramsets$paramset_id) %>%
+  mutate(observed_aas = n_aa_positions(variant))
+
+groups_run <- unique(estimates$group_id)
+expected_panel <- expected %>%
+  filter(group_id %in% groups_run) %>%
+  select(-expected_aas) %>%
+  crossing(paramset_id = unique(estimates$paramset_id))
+
+paired <- estimates %>%
+  full_join(expected_panel, by = c("population_name", "paramset_id", "group_id", "variant")) %>%
+  left_join(group_aas, by = "group_id") %>%
+  mutate(
+    freq = coalesce(freq, 0),
+    expected_freq = coalesce(expected_freq, 0),
+    observed_aas = coalesce(observed_aas, n_aa_positions(variant))
+  ) %>%
+  filter(is.na(observed_aas) | observed_aas == expected_aas) %>%
+  left_join(sim_params, by = "population_name") %>%
+  filter(!is.na(coi_cat), !is.na(cotransmission_cat)) %>%
+  filter(cotransmission_cat != "No_Cotransmission") %>%
+  filter(!(coi_cat == "MeanCOI=1.26" & cotransmission_cat == "High_Cotransmission")) %>%
+  filter(!(coi_cat == "MeanCOI=5.47" & cotransmission_cat == "Low_Cotransmission")) %>%
+  left_join(paramsets, by = "paramset_id") %>%
+  mutate(paramset_label = factor(paramset_label, levels = paramsets$paramset_label))
+```
+
+## Concordance and absolute error
+
+Lin's concordance correlation coefficient is computed on every allele in each parameter set. Mean absolute error is the mean of the absolute difference between the estimate and the simulated frequency.
+
+```{r}
+ccc_one <- function(expected_freq, freq) {
+  ok <- is.finite(expected_freq) & is.finite(freq)
+  expected_freq <- expected_freq[ok]
+  freq <- freq[ok]
+  if (length(freq) < 2 || sd(expected_freq) == 0 || sd(freq) == 0) {
+    return(tibble(freq_ccc = NA_real_, freq_ccc_lower = NA_real_, freq_ccc_upper = NA_real_))
+  }
+  fit <- DescTools::CCC(expected_freq, freq)
+  tibble(
+    freq_ccc = fit$rho.c$est,
+    freq_ccc_lower = fit$rho.c$lwr.ci,
+    freq_ccc_upper = fit$rho.c$upr.ci
+  )
+}
+
+concordance <- paired %>%
+  group_by(paramset_label) %>%
+  group_modify(~ ccc_one(.x$expected_freq, .x$freq)) %>%
+  ungroup()
+
+concordance %>%
+  mutate(across(starts_with("freq_ccc"), ~ round(.x, 3))) %>%
+  kable()
+
+ggplot(concordance, aes(x = paramset_label, y = freq_ccc, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  geom_errorbar(aes(ymin = freq_ccc_lower, ymax = freq_ccc_upper), width = 0.2) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Concordance correlation", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+mae <- paired %>%
+  group_by(paramset_label, coi_cat) %>%
+  summarise(freq_mae = mean(abs(freq - expected_freq)), .groups = "drop")
+
+ggplot(mae, aes(x = paramset_label, y = freq_mae, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  facet_wrap(~ coi_cat) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Mean absolute error", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 40, hjust = 1))
+```
+
+## Variant detection
+A simulated allele is detected when its estimate is above 0. Recall is the share of simulated alleles that are detected. Precision is the share of non-zero estimates that correspond to a simulated allele.
+
+```{r}
+detection <- paired %>%
+  mutate(
+    detected = freq > 0,
+    present = expected_freq > 0,
+    rare = expected_freq > 0 & expected_freq <= 0.01,
+    TP = as.integer(present & detected),
+    FP = as.integer(!present & detected),
+    FN = as.integer(present & !detected)
+  )
+
+detection_summary <- detection %>%
+  group_by(paramset_label, group_id) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(c(recall, precision), names_to = "measure", values_to = "value")
+
+ggplot(detection_summary, aes(x = group_id, y = value, fill = paramset_label)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ measure) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = "Locus group", y = NULL, fill = NULL) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
+```
+
+## Frequencies below 1%
+
+A call is left out when both the estimate and the simulated frequency are below 0.01. When the estimate is below 0.01 and the simulated frequency is above 0.01, the estimate is set to 0, so the call is a false negative. Precision, recall, and mean absolute error are calculated on what remains.
+
+Alleles simulated below 1% are 4,397 of 8,090 simulated alleles (54%) and 3.1% of the simulated frequency. This filter removes 3,861 of them for COI = 1, 4,193 for COI = 3, and 4,323 for COI = 5. Recall falls from 0.998 to 0.955, 0.912, and 0.850 because an estimate below 1% is counted as a miss when the allele was simulated above 1%. Of those misses, 96%, 94%, and 89% were simulated between 1% and 2%, and they make up 0.5%, 1.0%, and 1.7% of the frequency of alleles simulated above 1%.
+
+```{r}
+filtered <- paired %>%
+  filter(!(freq < 0.01 & expected_freq < 0.01)) %>%
+  mutate(freq = if_else(freq < 0.01 & expected_freq > 0.01, 0, freq))
+
+filtered_detection <- filtered %>%
+  mutate(
+    detected = freq > 0,
+    present = expected_freq > 0,
+    TP = as.integer(present & detected),
+    FP = as.integer(!present & detected),
+    FN = as.integer(present & !detected)
+  )
+
+filtered_summary <- filtered_detection %>%
+  group_by(paramset_label) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    freq_mae = mean(abs(freq - expected_freq)),
+    .groups = "drop"
+  )
+
+filtered_summary %>%
+  mutate(across(c(recall, precision, freq_mae), ~ round(.x, 3))) %>%
+  kable()
+```
+
+```{r}
+filtered_mae <- filtered %>%
+  group_by(paramset_label, coi_cat) %>%
+  summarise(freq_mae = mean(abs(freq - expected_freq)), .groups = "drop")
+
+ggplot(filtered_mae, aes(x = paramset_label, y = freq_mae, fill = paramset_label)) +
+  geom_col(width = 0.7) +
+  facet_wrap(~ coi_cat) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = NULL, y = "Mean absolute error", fill = NULL) +
+  theme_bw() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 40, hjust = 1))
+```
+
+```{r}
+filtered_by_group <- filtered_detection %>%
+  group_by(paramset_label, group_id) %>%
+  summarise(
+    recall = if_else(sum(TP + FN) > 0, sum(TP) / sum(TP + FN), NA_real_),
+    precision = if_else(sum(TP + FP) > 0, sum(TP) / sum(TP + FP), NA_real_),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(c(recall, precision), names_to = "measure", values_to = "value")
+
+ggplot(filtered_by_group, aes(x = group_id, y = value, fill = paramset_label)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~ measure) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(x = "Locus group", y = NULL, fill = NULL) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1), legend.position = "bottom")
+```
+
+## Convergence
+
+Here we assess convergence of the model for the different parameter settings. An indicator is counted when its posterior standard deviation is above 0. It is converged when that standard deviation is above 0 and its R-hat is at or below the threshold (1.1 or 1.01). A chain that sits on one value is left out of the percentage. The box is the percentage within one population, and the populations are the same ones kept for the frequency comparison.
+
+```{r}
+diag_path <- file.path(root, "full", "FEM", "convergence_diag.tsv.gz")
+if (!file.exists(diag_path)) {
+  stop("Expected ", diag_path, call. = FALSE)
+}
+
+kept_pops <- sim_params %>%
+  filter(!is.na(coi_cat), !is.na(cotransmission_cat)) %>%
+  filter(cotransmission_cat != "No_Cotransmission") %>%
+  filter(!(coi_cat == "MeanCOI=1.26" & cotransmission_cat == "High_Cotransmission")) %>%
+  filter(!(coi_cat == "MeanCOI=5.47" & cotransmission_cat == "Low_Cotransmission")) %>%
+  pull(population_name)
+
+group_levels <- c("2_low_div", "2_med_div", "4_low_div", "4_med_div", "6_low_div", "6_med_div")
+
+fem_diag <- read_tsv(
+  diag_path,
+  show_col_types = FALSE,
+  col_select = c(population_name, paramset_id, group_id, mean, sd, rhat)
+) %>%
+  filter(population_name %in% kept_pops, paramset_id %in% paramsets$paramset_id) %>%
+  left_join(paramsets %>% select(paramset_id, paramset_label), by = "paramset_id") %>%
+  mutate(
+    paramset_label = factor(paramset_label, levels = paramsets$paramset_label),
+    group_id = factor(group_id, levels = group_levels),
+    moving = !is.na(sd) & sd > 0,
+    converged_1_1 = moving & is.finite(rhat) & rhat <= 1.1,
+    converged_1_01 = moving & is.finite(rhat) & rhat <= 1.01,
+    scored_1_1 = moving & (!is.finite(rhat) | rhat > 1.1) | converged_1_1,
+    scored_1_01 = moving & (!is.finite(rhat) | rhat > 1.01) | converged_1_01
+  )
+
+fem_converged <- fem_diag %>%
+  group_by(paramset_label, population_name, group_id) %>%
+  summarise(
+    pct_converged_1_1 = if_else(sum(scored_1_1) == 0, NA_real_, 100 * sum(converged_1_1) / sum(scored_1_1)),
+    pct_converged_1_01 = if_else(sum(scored_1_01) == 0, NA_real_, 100 * sum(converged_1_01) / sum(scored_1_01)),
+    .groups = "drop"
+  )
+
+fem_converged %>%
+  group_by(paramset_label) %>%
+  summarise(
+    median_pct_rhat_1_1 = median(pct_converged_1_1, na.rm = TRUE),
+    median_pct_rhat_1_01 = median(pct_converged_1_01, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(across(starts_with("median_pct"), ~ round(.x, 1))) %>%
+  kable()
+```
+
+```{r, fig.width=10, fig.height=5}
+ggplot(fem_converged, aes(x = group_id, y = pct_converged_1_1, fill = paramset_label)) +
+  geom_boxplot(width = 0.7, outlier.alpha = 0.4) +
+  facet_wrap(~ paramset_label, ncol = 3) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(
+    x = "Locus group",
+    y = "% of indicators with R-hat at or below 1.1",
+    fill = NULL
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "none")
+```
+
+```{r, fig.width=10, fig.height=5}
+ggplot(fem_converged, aes(x = group_id, y = pct_converged_1_01, fill = paramset_label)) +
+  geom_boxplot(width = 0.7, outlier.alpha = 0.4) +
+  facet_wrap(~ paramset_label, ncol = 3) +
+  scale_fill_manual(values = c("COI = 1" = "#325b74", "COI = 3" = "#c82f61", "COI = 5" = "#ebab35")) +
+  labs(
+    x = "Locus group",
+    y = "% of indicators with R-hat at or below 1.01",
+    fill = NULL
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1), legend.position = "none")
+```
+
+## Summary
+
+Use the COI = 3 setting. It has the highest concordance with the simulated frequencies (0.993). After calls below 1% on both the estimate and the simulation are left out, and an estimate below 1% of an allele simulated above 1% is counted as a miss, mean absolute error is 0.015 for COI = 3 and for COI = 1, and 0.030 for COI = 5. Precision is 1 for every setting. Alleles simulated below 1% are 54% of simulated alleles and 3.1% of the frequency, and the filter removes 3,861, 4,193, and 4,323 of those 4,397 alleles. Recall falls from 0.998 to 0.955, 0.912, and 0.850. Of the alleles counted as misses because the estimate is below 1%, 96%, 94%, and 89% were simulated between 1% and 2%, and those alleles are 0.5%, 1.0%, and 1.7% of the frequency of alleles simulated above 1%. The median share of haplotype indicators with R-hat at or below 1.1 is 80% for COI = 3, 83% for COI = 5, and 69% for COI = 1. COI = 5 is the setting to leave aside, because its frequencies agree less well with the simulation. These results are for FreqEstimationModel on its own. To see how the COI = 3 setting compares with other tools, see the [multi-locus variant frequency benchmarking](../../benchmarking/benchmarking_freq_tools_multi_locus_variant.html).

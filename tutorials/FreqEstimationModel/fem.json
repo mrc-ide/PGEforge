@@ -1,0 +1,32 @@
+[
+    {
+        "paramset_id": "fem_coi1",
+        "paramset": {
+            "coi": 1,
+            "moi_max": 8,
+            "no_traces_preburnin": 2500,
+            "thinning_interval": 4
+        },
+        "loci_groups": "biallelic_only_loci_groups_aa_level.tsv"
+    },
+    {
+        "paramset_id": "fem_coi3",
+        "paramset": {
+            "coi": 3,
+            "moi_max": 8,
+            "no_traces_preburnin": 2500,
+            "thinning_interval": 4
+        },
+        "loci_groups": "biallelic_only_loci_groups_aa_level.tsv"
+    },
+    {
+        "paramset_id": "fem_coi5",
+        "paramset": {
+            "coi": 5,
+            "moi_max": 8,
+            "no_traces_preburnin": 2500,
+            "thinning_interval": 4
+        },
+        "loci_groups": "biallelic_only_loci_groups_aa_level.tsv"
+    }
+]
