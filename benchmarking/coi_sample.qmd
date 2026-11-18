@@ -7,13 +7,13 @@ execute:
   message: false
 ---
 
-This page compares sample-level complexity of infection on the full MAD^4^HatTeR panel and on the 15-target panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
+This presents between-tool benchmarking of sample-level COI estimates. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).
 
-The tools are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
+The tools benchmarked are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
 
-For each tool and each panel, the parameter set is the one with the highest Lin's concordance on samples whose true COI is 2 through 9. The reported summaries are Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated COI. Monoclonal samples are summarised on their own. Error is also summarised for each true COI from 1 through 9.
+For each tool and each panel, tool comparisons are made with the parameter set with the highest Lin's CCC on samples whose true COI is 2 through 9.
 
-Population mean COI is on a [separate page](coi_mean.qmd). Effective COI is on its [own page](moire_ecoi.qmd) and uses the MOIRE parameter set chosen here.
+Population mean COI is on a [separate page](coi_mean.qmd). Effective COI is on its [own page](ecoi.qmd).
 
 ```{r}
 #| include: false
@@ -26,7 +26,7 @@ mini_sample <- sample_coi_results("subselection")
 ## Full panel
 
 ```{r}
-#| fig-cap: "Estimates for the parameter set with the highest Lin's concordance on samples whose simulated COI is 2 through 9. Boxes show samples with simulated COI 1 through 9. The line is equality, and the vertical axis stops at 15."
+#| fig-cap: "COI estimates for all simulated samples with a true COI of 1 through 9. The line is equality, and the vertical axis stops at 15."
 #| fig-width: 8
 #| fig-height: 6.5
 plot_sample_coi(full_sample)
