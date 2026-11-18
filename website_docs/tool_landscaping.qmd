@@ -12,7 +12,7 @@ In line with the scope of PGEforge, we focus our efforts on landscaping availabl
 - Focus on downstream analysis tools. This includes tools whose primary goal is to extract signal from pre-processed data, but does not include tools that are primarily used within upstream bioinformatic steps, such as variant callers and quality filters.
 - Focus on *Plasmodium* genetics, including both *P. falciparum* and *P. vivax*. 
 
-In our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. *Plasmodium* genomic epidemiology tools), please see our [contributor guidelines](how_to_contribute.qmd) and some of our planned areas of [future work](future_work.qmd).
+In our initial landscaping, we did not consider applications to mosquito genetics or many broader population genetics tools, despite some tools and techniques being applicable for these purposes. However, we encourage contributions to this and anything else within the scope of PGEforge (i.e. *Plasmodium* genomic epidemiology tools), please see our [contributor guidelines](how_to_contribute.qmd).
 
 ## Landscaping matrix
 ```{r setup, include=FALSE}
