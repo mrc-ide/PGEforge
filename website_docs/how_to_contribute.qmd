@@ -72,6 +72,16 @@ You can find the templates for all of these documents in our [Github repository]
 
 **Please make sure to follow our [GitHub contribution guidelines](#contributing-guidelines-for-github).**
 
+## Proposed governance of benchmarking
+
+This is a proposal for how benchmarking contributions are reviewed. It is open for comment and can be changed under community guidance.
+
+Benchmarking would have core maintainers. Anyone can open a pull request that benchmarks a tool. The contributor does not have to be an author of that tool.
+
+A benchmarking pull request needs two reviews before it is accepted. One review must be from a core maintainer. The second review can be from a core maintainer or from anyone else.
+
+You become a core maintainer once a set of benchmarking results you contributed has been accepted, or once you have reviewed two other people's benchmarking.
+
 ## Add yourself as a contributor
 Everyone who contributes to PGEforge is listed as a [contributor](contributors.qmd). 
 
