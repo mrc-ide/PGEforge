@@ -3,10 +3,14 @@ title: "Simulated datasets"
 format: html
 ---
 
-The [between-tool comparisons](benchmarking.qmd) use simulated amplicon data. Ancestral populations are built from publicly available monoclonal *Plasmodium falciparum* genomes from Ghana (2016–2017) and Cambodia (2016–2017). [recombuddy](https://github.com/PlasmoGenEpi/recombuddy) recombines those ancestral chromosomes into new populations. Each new population has a known complexity of infection, a known amount of cotransmission, and a known amount of between-sample relatedness. Microhaplotypes are then taken for the MAD^4^HatTeR panel. Library preparation and sequencing error are simulated, microhaplotypes are called from the simulated reads, and the tools are run on those calls.
+The [between-tool comparisons](benchmarking.qmd) use simulated amplicon data. To generate this data:
+1. Ancestral populations were built from publicly available monoclonal *Plasmodium falciparum* genomes from Ghana (2016–2017) and Cambodia (2016–2017).
+2. [recombuddy](https://github.com/PlasmoGenEpi/recombuddy) was used to simulate recombination events, parameterized to reflect various epidemiological environments, and combine them with the ancestral genomes to generate simulated populations. Microhaplotypes corresponding to the MAD^4^HatTeR panel were then constructed from these populations.
+3. Library preparation and sequencing error were simulated with TAPPS.
+4. Microhaplotypes were called with the MAD^4^HatTeR pipeline.
 
-Two versions of the panel are used. The full panel is MAD^4^HatTeR. The 15-target panel keeps 15 high-diversity targets that are far enough apart on the genome to be treated as independent.
+![How the simulated datasets were made. **A.** Ancestral genomes were recombined, PCR and sequencing error were simulated, and amplicons were called. **B.** An example of recombuddy building a new population from ancestral chromosomes. Each sample becomes a known set of those chromosomes.](img/benchmarking_figure1.png)
 
-![How the simulated datasets are made. **A.** Ancestral genomes are recombined, sequenced with simulated error, called, and passed to the tools. **B.** recombuddy builds a new population from ancestral chromosomes. Each sample is a known set of those chromosomes.](img/benchmarking_figure1.png)
+Two versions of these simulated amplicons were used for benchmarking: 1) the full MAD^4^HatTeR panel and 2) a subset of 15 high-diversity targets that are far enough apart on the genome to be physically unlinked.
 
 The simulated files will be linked from this page when they are archived. Each set of files will be cited by its archive record, such as a Zenodo DOI. A comprehensive description of the method for making the simulated dataset will be included in an upcoming publication that will be cited when available. The tool comparison can be found on the [benchmarking overview](benchmarking.qmd).
