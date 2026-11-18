@@ -11,6 +11,8 @@ Checking convergence is important for tools that use Markov chain Monte Carlo ([
 
 The comparisons keep four simulation regimes. Populations with no cotransmission are left out, as are low mean COI with high cotransmission and high mean COI with low cotransmission.
 
+On the multi-locus frequency page, Lin's concordance and mean absolute error remove a row only when both the estimate and the simulated frequency are below 1%. An estimate below 1% for an allele simulated above 1% is counted as a miss. Precision and recall on that page are shown with and without that rule. The single-locus variant and microhaplotype frequency pages keep every allele that has both a simulated frequency and an estimate.
+
 - [Sample-level COI](../benchmarking/coi_sample.qmd)
 - [Population mean COI](../benchmarking/coi_mean.qmd)
 - [Effective COI](../benchmarking/moire_ecoi.qmd)

@@ -1,14 +1,61 @@
 ---
 title: "Single-locus microhaplotype frequency"
 format: html
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-This page compares single-locus microhaplotype frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison, and the rule for frequencies below 1%, are on the [benchmarking overview](../website_docs/benchmarking.qmd).
+This page compares single-locus microhaplotype frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd). Every allele with both a simulated frequency and an estimate is kept, including frequencies below 1%.
 
 The tools are [MOIRE](../tutorials/moire/moire_background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd), and a naive microhaplotype frequency calculated from presence and absence or weighted by the within-sample frequency.
 
 For each tool, the parameter set is the one with the highest Lin's concordance. The reported summaries are Lin's concordance, mean absolute error, and variant detection. The same summaries are reported by simulated frequency and by mean COI.
 
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+mhap_freq <- microhap_results()
+```
+
 ## Full panel
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Estimates against simulated frequency for the parameter set with the highest Lin's concordance. Frequencies below 1% are included. The line is equality."
+#| fig-width: 8
+#| fig-height: 8
+plot_frequency(mhap_freq)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error within each population, in simulated-frequency bins of 0.2, for the parameter set with the highest Lin's concordance."
+#| fig-width: 8
+#| fig-height: 5
+plot_frequency_mae(mhap_freq, mhap_colours, mhap_tool_order)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$metrics,
+  digits = 3,
+  caption = "Lin's concordance and mean absolute error use every allele with both a simulated frequency and an estimate. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$by_freq,
+  digits = 3,
+  caption = "The same summaries by simulated frequency. Detection is not defined for alleles simulated below 1%."
+)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$by_mean,
+  digits = 3,
+  caption = "The same summaries by mean-COI category."
+)
+```

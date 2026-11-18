@@ -1,18 +1,68 @@
 ---
 title: "Population mean COI"
 format: html
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 This page compares population mean complexity of infection on the full MAD^4^HatTeR panel and on the 15-target panel. Mean COI is the mean of the per-sample estimates in a population, compared with the mean of the simulated per-sample COI. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
 
 The tools are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd). Sample-level COI for the same tools is on the [sample-level page](coi_sample.qmd).
 
-For each tool and each panel, the parameter set is the one with the highest Lin's concordance across the population means. The reported summaries are Lin's concordance, mean absolute error, and mean bias. Bias is the estimated mean minus the simulated mean. The same summaries are reported by mean-COI category, between-sample relatedness, and cotransmission.
+For each tool and each panel, the parameter set is the one with the highest Lin's concordance across the population means. Low, medium, and high mean COI were each simulated at one relatedness: mean COI 1.26 at 30% related, 3.41 at 1% related, and 5.47 at 0.1% related.
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+full_mean <- mean_coi_results("full")
+mini_mean <- mean_coi_results("subselection")
+```
 
 ## Full panel
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Each point is a population. The parameter set is the one with the highest Lin's concordance across population means. The line is equality."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_mean_coi(full_mean)
+```
+
+```{r}
+#| fig-cap: "Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_by_level(full_mean)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error for every tool at low, medium, and high simulated mean COI."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_mae_by_level(full_mean)
+```
 
 ## 15-target panel
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Each point is a population. The parameter set is the one with the highest Lin's concordance across population means. The line is equality."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_mean_coi(mini_mean)
+```
+
+```{r}
+#| fig-cap: "Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_by_level(mini_mean)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error for every tool at low, medium, and high simulated mean COI."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_mae_by_level(mini_mean)
+```

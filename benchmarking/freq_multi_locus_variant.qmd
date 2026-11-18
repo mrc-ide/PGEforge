@@ -1,22 +1,116 @@
 ---
 title: "Multi-locus variant frequency"
 format: html
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 This page compares multi-locus variant frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison, and the rule for frequencies below 1%, are on the [benchmarking overview](../website_docs/benchmarking.qmd).
 
 The tools are [naive multi-locus frequency](../tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd), [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd), [MultiLociBiallelicModel](../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
 
-For each tool, the parameter set is the one with the highest Lin's concordance. All four tools are compared on biallelic groups, and those groups include the drug-resistance markers. Naive multi-locus frequency and SNP-slice are also compared on the multi-allelic groups. The reported summaries are Lin's concordance, mean absolute error, and variant detection.
+For each tool, the parameter set is the one with the highest Lin's concordance. All four tools are compared on the biallelic diversity groups. Naive multi-locus frequency and SNP-slice are compared on the drug-resistance groups and on the multi-allelic groups. The reported summaries are Lin's concordance, mean absolute error, and variant detection. Precision and recall of called alleles are shown with and without the 1% rule. A call is an estimate above 0.
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+biallelic <- multi_locus_results("biallelic")
+drug <- multi_locus_results("drug")
+mixed <- multi_locus_results("mixed")
+```
 
 ## Biallelic groups
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Estimates against simulated frequency after the 1% rule, for the parameter set with the highest Lin's concordance on the biallelic diversity groups. The line is equality."
+#| fig-width: 8
+#| fig-height: 8
+plot_frequency(biallelic)
+```
+
+```{r}
+#| fig-cap: "Precision and recall without the 1% rule, for the parameter set with the highest Lin's concordance. Precision is the share of calls that were simulated. Recall is the share of simulated alleles that were called."
+#| fig-width: 9
+#| fig-height: 5
+plot_precision_recall(biallelic$precision_recall)
+```
+
+```{r}
+#| fig-cap: "Precision and recall after the 1% rule. A row is removed when both the estimate and the simulated frequency are below 1%. An estimate below 1% for an allele simulated above 1% is counted as not called."
+#| fig-width: 9
+#| fig-height: 5
+plot_precision_recall(biallelic$precision_recall_filtered)
+```
+
+```{r}
+knitr::kable(
+  biallelic$metrics,
+  digits = 3,
+  caption = "Lin's concordance and mean absolute error use the rows kept by the 1% rule. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+)
+```
 
 ## Drug-resistance groups
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Estimates against simulated frequency after the 1% rule, for the parameter set with the highest Lin's concordance on the drug-resistance groups. The line is equality."
+#| fig-width: 8
+#| fig-height: 4.5
+plot_frequency(drug)
+```
+
+```{r}
+#| fig-cap: "Precision and recall without the 1% rule, for the parameter set with the highest Lin's concordance. Precision is the share of calls that were simulated. Recall is the share of simulated alleles that were called."
+#| fig-width: 9
+#| fig-height: 5
+plot_precision_recall(drug$precision_recall)
+```
+
+```{r}
+#| fig-cap: "Precision and recall after the 1% rule. A row is removed when both the estimate and the simulated frequency are below 1%. An estimate below 1% for an allele simulated above 1% is counted as not called."
+#| fig-width: 9
+#| fig-height: 5
+plot_precision_recall(drug$precision_recall_filtered)
+```
+
+```{r}
+knitr::kable(
+  drug$metrics,
+  digits = 3,
+  caption = "Lin's concordance and mean absolute error use the rows kept by the 1% rule. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+)
+```
 
 ## Multi-allelic groups
 
-The results will be added when the final benchmark outputs are available.
+```{r}
+#| fig-cap: "Estimates against simulated frequency after the 1% rule, for the parameter set with the highest Lin's concordance on the multi-allelic groups. The line is equality."
+#| fig-width: 8
+#| fig-height: 4.5
+plot_frequency(mixed)
+```
+
+```{r}
+#| fig-cap: "Precision and recall without the 1% rule, for the parameter set with the highest Lin's concordance. Precision is the share of calls that were simulated. Recall is the share of simulated alleles that were called."
+#| fig-width: 11
+#| fig-height: 5.2
+plot_precision_recall(mixed$precision_recall)
+```
+
+```{r}
+#| fig-cap: "Precision and recall after the 1% rule. A row is removed when both the estimate and the simulated frequency are below 1%. An estimate below 1% for an allele simulated above 1% is counted as not called."
+#| fig-width: 11
+#| fig-height: 5.2
+plot_precision_recall(mixed$precision_recall_filtered)
+```
+
+```{r}
+knitr::kable(
+  mixed$metrics,
+  digits = 3,
+  caption = "Lin's concordance and mean absolute error use the rows kept by the 1% rule. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+)
+```
