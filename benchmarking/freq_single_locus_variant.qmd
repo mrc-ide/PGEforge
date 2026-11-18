@@ -7,7 +7,7 @@ execute:
   message: false
 ---
 
-This page compares single-locus variant frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd). Every allele with both a simulated frequency and an estimate is kept, including frequencies below 1%.
+This page compares single-locus variant frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
 
 The tools are [naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd), the [incomplete data model](../tutorials/IDM/background.Rmd), and single-locus allele frequency derived from [dcifer](../tutorials/dcifer/dcifer_background.Rmd) microhaplotype frequencies.
 
@@ -23,7 +23,7 @@ variant_freq <- single_variant_results()
 ## Full panel
 
 ```{r}
-#| fig-cap: "Estimates against simulated frequency for the parameter set with the highest Lin's concordance. Frequencies below 1% are included. The line is equality."
+#| fig-cap: "Estimates against simulated frequency for the parameter set with the highest Lin's concordance. The line is equality."
 #| fig-width: 8
 #| fig-height: 8
 plot_frequency(variant_freq)
