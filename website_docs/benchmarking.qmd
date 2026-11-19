@@ -3,4 +3,24 @@ title: "Systematic benchmarking of tools"
 format: html
 ---
 
-*Watch this space - coming soon!*
+These pages describe benchmarking of analysis tools using simulated MAD^4^HatTeR datasets. How those datasets were made is described in [Simulated datasets](data_simulated.qmd).
+
+Tools were run on all simulated datasets and with a variety of parameterizations, to evaluate performance under both different epidemiological conditions (simulated populations) and different tool execution modes. Comparisons of tool performance with different parameter sets are explored on the individual benchmarking pages for each tool (currently, the individual tool benchmarking pages are under construction, but will be added to the section for each tool once complete). Comparisons between tools are made using the best parameter set for each tool, defined as the parameter set that yielded the highest Lin's concordance correlation coefficient (CCC) between tool estimates and simulated truth.
+
+Checking convergence is important for tools that use Markov chain Monte Carlo ([MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), and [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd)). Summaries of convergence are also on the individual tool benchmarking pages.
+
+The benchmarking page for each metric, and the tools benchmarked, are listed
+below.
+
+| Metric Benchmarked | Tools |
+| --- | --- |
+| [Sample-level COI](../benchmarking/coi_sample.qmd) | [Naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |
+| [Population mean COI](../benchmarking/coi_mean.qmd) | [Naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |
+| [Effective COI](../benchmarking/ecoi.qmd) | [MOIRE](../tutorials/moire/moire_background.Rmd) |
+| [Single-locus amino acid allele frequency](../benchmarking/freq_single_locus_variant.qmd) | [Naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd), [incomplete data model](../tutorials/IDM/background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd) |
+| [Single-locus microhaplotype allele frequency](../benchmarking/freq_single_microhaplotype.qmd) | [MOIRE](../tutorials/moire/moire_background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd), [Naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd) |
+| [Multi-locus amino acid allele frequency](../benchmarking/freq_multi_locus_variant.qmd) | [Naive multi-locus frequency](../tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd), [FreqEstimationModel](../tutorials/FreqEstimationModel/background.Rmd), [MultiLociBiallelicModel](../tutorials/MultiLociBiallelicModel/MultiLociBiallelicModel_background.qmd), [SNP-slice](../tutorials/SNP-slice/background.Rmd) |
+
+The tools were all executed using the [PGE Nextflow tool benchmarking pipeline](https://github.com/PlasmoGenEpi/pge-tools-benchmark). This pipeline
+provides a straightforward method for executing many tool-parameter
+combinations, but its use is not required.

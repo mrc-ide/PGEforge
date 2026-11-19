@@ -26,6 +26,8 @@ For a subset of [use cases](use_cases.qmd), we have outlined how specific [analy
 
 :::aside
 To estimate drug resistance marker prevalence, raw genetic data is processed through allele calling and subsequent steps vary depending on the complexity of infection (COI) and whether the population is monoclonal or polyclonal (including monoclonal and/or polyclonal infections). If the population is monoclonal, allele prevalence (prev) and allele frequencies (AF) at a single locus can be estimated directly and will be identical. Additionally, multi-locus prev, AF and copy number variation (CNV) or deletions (del) can be estimated directly if relevant. If the population is polyclonal and phasing is possible, the analysis follows the same pathway as for a monoclonal population. If phasing is not possible or not performed, additional steps are required depending on whether unambiguous multilocus genotypes can be obtained and whether the sequencing (seq) method utilized detects CNV or deletions in polyclonal infections.
+
+A pipeline for this use case is available. See [Implemented pipelines](implemented_pipelines.qmd).
 :::
 
 ### Estimating transmission intensity

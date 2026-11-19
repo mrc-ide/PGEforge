@@ -1,5 +1,18 @@
 project:
   type: website
+  # Individual tool benchmarking pages stay in the repo, but are not part of
+  # the published site. Between-tool comparisons under benchmarking/ are.
+  render:
+    - "*.qmd"
+    - "**/*.qmd"
+    - "**/*.Rmd"
+    - "**/*.md"
+    - "!**/README.md"
+    - "!data/**"
+    - "!**/*.knit.md"
+    - "!tutorials/IDM/IDM_benchmarking.qmd"
+    - "!tutorials/PGEcore/**/benchmarking.Rmd"
+    - "!tutorials/PGEcore/**/benchmarking.qmd"
 
 # COLORS:
 # magenta: #c82f61
@@ -46,6 +59,8 @@ website:
             file: website_docs/data_snps.qmd
           - text: "pfhrp2/3 deletion counts"
             file: website_docs/data_counts.qmd
+          - text: "Simulated datasets"
+            file: website_docs/data_simulated.qmd
       - href: website_docs/tool_landscaping.qmd
       - section: website_docs/software_standards.qmd
         contents:
@@ -171,26 +186,18 @@ website:
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_COI/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_COI/benchmarking.Rmd
               - section: "Naive single-locus allele freq"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_single_AF/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_single_AF/benchmarking.Rmd
               - section: "Naive single-locus allele prev"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_single_AP/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_single_AP/benchmarking.Rmd
               - section: "Naive multi-locus genotype freq/prev"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_MLG_AF_AP/benchmarking.Rmd
           - section: "SNP-slice"
             contents:
             - text: "Summary"
@@ -223,8 +230,24 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
-          - text: "Benchmarking"
+          - text: "Implemented pipelines"
+            file: website_docs/implemented_pipelines.qmd
+      - section: "Benchmarking"
+        contents:
+          - text: "Overview"
             file: website_docs/benchmarking.qmd
+          - text: "Sample-level COI"
+            file: benchmarking/coi_sample.qmd
+          - text: "Population mean COI"
+            file: benchmarking/coi_mean.qmd
+          - text: "Effective COI"
+            file: benchmarking/ecoi.qmd
+          - text: "Single-locus variant frequency"
+            file: benchmarking/freq_single_locus_variant.qmd
+          - text: "Single-locus microhaplotype frequency"
+            file: benchmarking/freq_single_microhaplotype.qmd
+          - text: "Multi-locus variant frequency"
+            file: benchmarking/freq_multi_locus_variant.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd

@@ -1,0 +1,17 @@
+{
+  "hash": "42211b11204807ee8b6aee4322c505bf",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Population mean COI\"\nformat: html\nexecute:\n  echo: false\n  warning: false\n  message: false\n---\n\nThis page presents between-tool benchmarking of population mean COI estimates. Mean COI is the computed as the mean of the per-sample estimates in a population, which are benchmarked [here](coi_sample.qmd). The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).\n\nThe tools benchmarked are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).\n\nFor each tool and each panel, tool comparisons are made with the parameter set with the highest Lin's CCC.\n\n\n\n## Full panel\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Simulated versus estimated population mean COI. Each point is a population. The line is equality.](coi_mean_files/figure-html/unnamed-chunk-2-1.png){width=768}\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category.](coi_mean_files/figure-html/unnamed-chunk-3-1.png){width=768}\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Mean absolute error for every tool at low, medium, and high simulated mean COI.](coi_mean_files/figure-html/unnamed-chunk-4-1.png){width=768}\n:::\n:::\n\n\n## 15-target panel\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Simulated versus estimated population mean COI. Each point is a population. The line is equality.](coi_mean_files/figure-html/unnamed-chunk-5-1.png){width=768}\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category.](coi_mean_files/figure-html/unnamed-chunk-6-1.png){width=768}\n:::\n:::\n\n\n\n::: {.cell}\n::: {.cell-output-display}\n![Mean absolute error for every tool at low, medium, and high simulated mean COI.](coi_mean_files/figure-html/unnamed-chunk-7-1.png){width=768}\n:::\n:::\n\n",
+    "supporting": [
+      "coi_mean_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

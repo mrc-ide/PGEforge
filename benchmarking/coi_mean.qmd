@@ -1,0 +1,68 @@
+---
+title: "Population mean COI"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+This page presents between-tool benchmarking of population mean COI estimates. Mean COI is the computed as the mean of the per-sample estimates in a population, which are benchmarked [here](coi_sample.qmd). The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).
+
+The tools benchmarked are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
+
+For each tool and each panel, tool comparisons are made with the parameter set with the highest Lin's CCC.
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+full_mean <- mean_coi_results("full")
+mini_mean <- mean_coi_results("subselection")
+```
+
+## Full panel
+
+```{r}
+#| fig-cap: "Simulated versus estimated population mean COI. Each point is a population. The line is equality."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_mean_coi(full_mean)
+```
+
+```{r}
+#| fig-cap: "Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_by_level(full_mean)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error for every tool at low, medium, and high simulated mean COI."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_mae_by_level(full_mean)
+```
+
+## 15-target panel
+
+```{r}
+#| fig-cap: "Simulated versus estimated population mean COI. Each point is a population. The line is equality."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_mean_coi(mini_mean)
+```
+
+```{r}
+#| fig-cap: "Mean estimate for every tool at low, medium, and high simulated mean COI. The red line is the mean of the simulated population means in that category."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_by_level(mini_mean)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error for every tool at low, medium, and high simulated mean COI."
+#| fig-width: 8
+#| fig-height: 5
+plot_mean_mae_by_level(mini_mean)
+```
