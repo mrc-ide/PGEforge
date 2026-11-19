@@ -1,0 +1,16 @@
+---
+title: "Implemented pipelines"
+format: html
+---
+
+These are analysis workflows that can be run now, or that are in development. These pipelines are assembled from tools described on this website. Multiple tools are available for most steps. Default tool choices are guided by the [benchmarking](benchmarking.qmd).
+
+## Drug resistance
+
+A drug resistance pipeline is available on nf-core as [nf-core/plasmodiumdrugres](https://nf-co.re/plasmodiumdrugres). This pipeline estimates allele frequencies and prevalences at both single-locus and multi-locus levels. Microhaplotype data are taken as input and can be supplied in the form of an allele table or a [PMO file](https://plasmogenepi.github.io/PMO_Docs/).
+
+A version of this pipeline is also available on [Terra](https://terra.bio). The pipeline can be loaded into a workspace and run there, although there is not a featured workspace yet. Reach out to [Kathryn Murie](mailto:kathryn.murie@ucsf.edu) if you would like help trying it out on Terra before it is publically available in a workspace.
+
+## Population genetics
+
+A population genetics pipeline has been [proposed and approved by nf-core](https://github.com/nf-core/proposals/issues/161). It is under development. Stay tuned, and reach out to [Kathryn Murie](mailto:kathryn.murie@ucsf.edu) if you would like to try out a pre-release version.
