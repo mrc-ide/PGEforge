@@ -7,9 +7,9 @@ execute:
   message: false
 ---
 
-This page compares [MOIRE](../tutorials/moire/moire_background.Rmd) effective COI with the simulated effective COI on the full MAD^4^HatTeR panel and on the 15-target panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
+This page compares [MOIRE](../tutorials/moire/moire_background.Rmd) effective COI with the simulated effective COI. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).
 
-The parameter set is the one chosen for MOIRE on the [sample-level COI page](coi_sample.qmd). The reported summary is Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI.
+The parameter set is the one chosen for MOIRE on the [sample-level COI page](coi_sample.qmd).
 
 ```{r}
 #| include: false
@@ -22,7 +22,7 @@ mini_ecoi <- ecoi_results("subselection")
 ## Full panel
 
 ```{r}
-#| fig-cap: "MOIRE effective COI against the simulated effective COI, using the parameter set chosen for MOIRE on the sample-level COI page. The line is equality."
+#| fig-cap: "MOIRE effective COI against the simulated effective COI. The line is equality."
 #| fig-width: 6.5
 #| fig-height: 5.5
 plot_ecoi(full_ecoi)
@@ -32,14 +32,14 @@ plot_ecoi(full_ecoi)
 knitr::kable(
   full_ecoi$metrics,
   digits = 3,
-  caption = "Lin's concordance, mean absolute error, and bias. Bias is the estimate minus the simulated effective COI."
+  caption = "Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI."
 )
 ```
 
 ## 15-target panel
 
 ```{r}
-#| fig-cap: "MOIRE effective COI against the simulated effective COI, using the parameter set chosen for MOIRE on the sample-level COI page. The line is equality."
+#| fig-cap: "MOIRE effective COI against the simulated effective COI. The line is equality."
 #| fig-width: 6.5
 #| fig-height: 5.5
 plot_ecoi(mini_ecoi)
@@ -49,6 +49,6 @@ plot_ecoi(mini_ecoi)
 knitr::kable(
   mini_ecoi$metrics,
   digits = 3,
-  caption = "Lin's concordance, mean absolute error, and bias. Bias is the estimate minus the simulated effective COI."
+  caption = "Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI."
 )
 ```

@@ -1,5 +1,5 @@
 ---
-title: "Single-locus variant frequency"
+title: "Single-locus amino acid allele frequency"
 format: html
 execute:
   echo: false
@@ -7,11 +7,11 @@ execute:
   message: false
 ---
 
-This page compares single-locus variant frequency on the full MAD^4^HatTeR panel. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). The populations kept for the comparison are listed on the [benchmarking overview](../website_docs/benchmarking.qmd).
+This page presents between-tool benchmarking of single-locus amino acid allele frequency estimates. Single-locus microhaplotype allele frequency is benchmarked [here](freq_single_microhaplotype.qmd). The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). All estimates on this page use the full, 165-target MAD^4^HatTeR panel.
 
-The tools are [naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd), the [incomplete data model](../tutorials/IDM/background.Rmd), and single-locus allele frequency derived from [dcifer](../tutorials/dcifer/dcifer_background.Rmd) microhaplotype frequencies.
+The tools are [naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd), the [incomplete data model](../tutorials/IDM/background.Rmd), and [dcifer](../tutorials/dcifer/dcifer_background.Rmd).
 
-For each tool, the parameter set is the one with the highest Lin's concordance. The reported summaries are Lin's concordance, mean absolute error, and variant detection. The same summaries are reported by simulated frequency and by mean COI.
+For each tool, tool comparisons are made with the parameter set with the highest Lin's CCC.
 
 ```{r}
 #| include: false
@@ -20,17 +20,15 @@ source(bench_src[file.exists(bench_src)][1])
 variant_freq <- single_variant_results()
 ```
 
-## Full panel
-
 ```{r}
-#| fig-cap: "Estimates against simulated frequency for the parameter set with the highest Lin's concordance. The line is equality."
+#| fig-cap: "Estimated frequency versus simulated frequency. The line is equality."
 #| fig-width: 8
 #| fig-height: 8
 plot_frequency(variant_freq)
 ```
 
 ```{r}
-#| fig-cap: "Mean absolute error within each population, in simulated-frequency bins of 0.2, for the parameter set with the highest Lin's concordance."
+#| fig-cap: "Mean absolute error within each population, in simulated-frequency bins of 0.2."
 #| fig-width: 8
 #| fig-height: 5
 plot_frequency_mae(variant_freq, variant_colours, variant_tool_order)
@@ -40,7 +38,7 @@ plot_frequency_mae(variant_freq, variant_colours, variant_tool_order)
 knitr::kable(
   variant_freq$metrics,
   digits = 3,
-  caption = "Lin's concordance and mean absolute error use every allele with both a simulated frequency and an estimate. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+  caption = "Lin's concordance, mean absolute error, and detection for the best parameter set for each tool. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
 )
 ```
 
@@ -48,7 +46,7 @@ knitr::kable(
 knitr::kable(
   variant_freq$by_freq,
   digits = 3,
-  caption = "The same summaries by simulated frequency. Detection is not defined for alleles simulated below 1%."
+  caption = "The same summaries binned by simulated frequency. Detection is not defined for alleles simulated below 1%."
 )
 ```
 

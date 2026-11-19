@@ -11,6 +11,8 @@ This presents between-tool benchmarking of sample-level COI estimates. The simul
 
 The tools benchmarked are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
 
+The reported summaries are Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated COI.
+
 For each tool and each panel, tool comparisons are made with the parameter set with the highest Lin's CCC on samples whose true COI is 2 through 9.
 
 Population mean COI is on a [separate page](coi_mean.qmd). Effective COI is on its [own page](ecoi.qmd).
@@ -33,7 +35,7 @@ plot_sample_coi(full_sample)
 ```
 
 ```{r}
-#| fig-cap: "Lin's concordance within each population for that parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
+#| fig-cap: "Lin's concordance within each population for the best parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
 #| fig-width: 6.5
 #| fig-height: 4.5
 plot_sample_ccc(full_sample)
@@ -43,7 +45,7 @@ plot_sample_ccc(full_sample)
 knitr::kable(
   full_sample$metrics,
   digits = 3,
-  caption = "Lin's concordance, mean absolute error, and bias on samples whose simulated COI is 2 through 9. A monoclonal call is an estimate below 1.5 among samples whose simulated COI is 1."
+  caption = "Lin's concordance, mean absolute error, and mean bias on samples whose simulated COI is 2 through 9. Monoclonal recall is the proportion of samples with simulated COI of 1 with an estimate < 1.5."
 )
 ```
 
@@ -71,14 +73,14 @@ plot_monoclonal(full_sample)
 ## 15-target panel
 
 ```{r}
-#| fig-cap: "Estimates for the parameter set with the highest Lin's concordance on samples whose simulated COI is 2 through 9. Boxes show samples with simulated COI 1 through 9. The line is equality, and the vertical axis stops at 15."
+#| fig-cap: "COI estimates for all simulated samples with a true COI of 1 through 9. The line is equality, and the vertical axis stops at 15."
 #| fig-width: 8
 #| fig-height: 6.5
 plot_sample_coi(mini_sample)
 ```
 
 ```{r}
-#| fig-cap: "Lin's concordance within each population for that parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
+#| fig-cap: "Lin's concordance within each population for the best parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
 #| fig-width: 6.5
 #| fig-height: 4.5
 plot_sample_ccc(mini_sample)
@@ -88,7 +90,7 @@ plot_sample_ccc(mini_sample)
 knitr::kable(
   mini_sample$metrics,
   digits = 3,
-  caption = "Lin's concordance, mean absolute error, and bias on samples whose simulated COI is 2 through 9. A monoclonal call is an estimate below 1.5 among samples whose simulated COI is 1."
+  caption = "Lin's concordance, mean absolute error, and mean bias on samples whose simulated COI is 2 through 9. Monoclonal recall is the proportion of samples with simulated COI of 1 with an estimate < 1.5."
 )
 ```
 

@@ -267,21 +267,21 @@ sample_coi_results <- function(panel) {
     summarise(
       `Lin's CCC` = lin_ccc(estimate, COI),
       MAE = mean(abs(estimate - COI)),
-      Bias = mean(estimate - COI),
+      `Mean Bias` = mean(estimate - COI),
       Samples = n(),
       .groups = "drop"
     )
   mono <- chosen %>%
     filter(abs(COI - 1) < 1e-6) %>%
     group_by(tool) %>%
-    summarise(`Monoclonal calls` = mean(estimate < 1.5), .groups = "drop")
+    summarise(`Monoclonal recall` = mean(estimate < 1.5), .groups = "drop")
   metrics <- metrics %>%
     left_join(mono, by = "tool") %>%
     arrange(tool) %>%
     transmute(
       Tool = as.character(tool),
-      `Parameter set` = paramset_id,
-      `Lin's CCC`, MAE, Bias, Samples, `Monoclonal calls`
+      `Best parameter set` = paramset_id,
+      `Lin's CCC`, MAE, `Mean Bias`, Samples, `Monoclonal recall`
     )
   ccc_by_pop <- chosen %>%
     filter(COI >= 2, COI <= 9) %>%
@@ -327,7 +327,7 @@ plot_sample_coi <- function(results) {
     scale_fill_manual(values = coi_colours, guide = "none") +
     scale_y_continuous(breaks = seq(0, 15, by = 5)) +
     coord_cartesian(ylim = c(0, 15)) +
-    labs(x = "Simulated COI", y = "Estimate") +
+    labs(x = "Simulated COI", y = "Estimated COI") +
     theme_bench()
 }
 
@@ -369,9 +369,9 @@ plot_monoclonal <- function(results) {
   d <- results$metrics %>%
     mutate(
       tool = order_tools(Tool, coi_tool_order),
-      label = sprintf("%.1f%%", `Monoclonal calls` * 100)
+      label = sprintf("%.1f%%", `Monoclonal recall` * 100)
     )
-  ggplot(d, aes(`Monoclonal calls`, tool, fill = tool)) +
+  ggplot(d, aes(`Monoclonal recall`, tool, fill = tool)) +
     geom_col(width = 0.72) +
     geom_label(
       aes(label = label),
@@ -387,7 +387,7 @@ plot_monoclonal <- function(results) {
       labels = function(x) paste0(round(100 * x), "%"),
       expand = expansion(mult = c(0, 0.02))
     ) +
-    labs(x = "Called monoclonal", y = NULL) +
+    labs(x = "Monoclonal recall", y = NULL) +
     theme_bench()
 }
 
@@ -411,15 +411,15 @@ mean_coi_results <- function(panel) {
     summarise(
       `Lin's CCC` = lin_ccc(estimate, truth),
       MAE = mean(abs(estimate - truth)),
-      Bias = mean(estimate - truth),
+      `Mean Bias` = mean(estimate - truth),
       Populations = n(),
       .groups = "drop"
     ) %>%
     arrange(tool) %>%
     transmute(
       Tool = as.character(tool),
-      `Parameter set` = paramset_id,
-      `Lin's CCC`, MAE, Bias, Populations
+      `Best parameter set` = paramset_id,
+      `Lin's CCC`, MAE, `Mean Bias`, Populations
     )
   by_mean <- stratum_table(chosen, "mean_coi", "Mean COI") %>%
     left_join(
@@ -428,7 +428,7 @@ mean_coi_results <- function(panel) {
     ) %>%
     transmute(
       Tool, `Mean COI`, Relatedness = relatedness,
-      `Lin's CCC`, MAE, Bias
+      `Lin's CCC`, MAE, `Mean Bias`
     )
   by_cot <- stratum_table(chosen, "cotransmission", "Cotransmission")
   out <- list(
@@ -448,14 +448,14 @@ stratum_table <- function(chosen, column, label) {
     summarise(
       `Lin's CCC` = lin_ccc(estimate, truth),
       MAE = mean(abs(estimate - truth)),
-      Bias = mean(estimate - truth),
+      `Mean Bias` = mean(estimate - truth),
       .groups = "drop"
     ) %>%
     arrange(tool, .data[[column]]) %>%
     transmute(
       Tool = as.character(tool),
       !!label := .data[[column]],
-      `Lin's CCC`, MAE, Bias
+      `Lin's CCC`, MAE, `Mean Bias`
     )
 }
 
@@ -475,7 +475,7 @@ plot_mean_coi <- function(results) {
     geom_point(size = 1.8, alpha = 0.85) +
     facet_wrap(~tool, ncol = 3) +
     scale_colour_manual(values = coi_colours, guide = "none") +
-    labs(x = "Mean simulated COI", y = "Mean estimate") +
+    labs(x = "Simulated mean COI", y = "Estimated mean COI") +
     theme_bench() +
     coord_fixed()
 }
@@ -514,7 +514,7 @@ plot_mean_by_level <- function(results) {
       linewidth = 0.6
     ) +
     scale_fill_manual(values = coi_colours, name = NULL) +
-    labs(x = "Mean COI", y = "Mean estimate") +
+    labs(x = "Simulated mean COI category", y = "Estimated mean COI") +
     theme_bench("bottom")
 }
 
@@ -522,7 +522,7 @@ plot_mean_mae_by_level <- function(results) {
   ggplot(mean_coi_level_df(results), aes(level, abs_err, fill = tool)) +
     geom_boxplot(outlier.size = 0.5, linewidth = 0.3) +
     scale_fill_manual(values = coi_colours, name = NULL) +
-    labs(x = "Mean COI", y = "Mean absolute error") +
+    labs(x = "Simulated mean COI category", y = "Mean absolute error") +
     theme_bench("bottom")
 }
 
@@ -530,7 +530,7 @@ ecoi_results <- function(panel) {
   key <- paste0("ecoi_results_", panel)
   if (!is.null(.bench[[key]])) return(.bench[[key]])
   sample_choice <- sample_coi_results(panel)$metrics
-  paramset <- sample_choice$`Parameter set`[sample_choice$Tool == "MOIRE"]
+  paramset <- sample_choice$`Best parameter set`[sample_choice$Tool == "MOIRE"]
   if (length(paramset) != 1) stop("MOIRE sample-level parameter set was not found.")
   raw <- read_chars(
     file.path(panel_dir(panel), "MOIRE", "effective_coi_summary.tsv.gz"),
@@ -554,10 +554,10 @@ ecoi_results <- function(panel) {
   if (!nrow(chosen)) stop("Effective COI estimates did not match the simulated samples.")
   metrics <- tibble(
     Tool = "MOIRE",
-    `Parameter set` = paramset,
+    `Best parameter set` = paramset,
     `Lin's CCC` = lin_ccc(chosen$estimate, chosen$eCOI),
     MAE = mean(abs(chosen$estimate - chosen$eCOI)),
-    Bias = mean(chosen$estimate - chosen$eCOI),
+    `Mean Bias` = mean(chosen$estimate - chosen$eCOI),
     Samples = nrow(chosen)
   )
   out <- list(metrics = metrics, plot_df = chosen, panel = panel)
@@ -773,7 +773,7 @@ prepare_frequency <- function(estimates, truth, preferred = tool_levels, apply_r
     arrange(tool) %>%
     transmute(
       Tool = as.character(tool),
-      `Parameter set` = paramset_id,
+      `Best parameter set` = paramset_id,
       `Lin's CCC`, MAE, Detection, Alleles
     )
   by_freq <- chosen %>%
@@ -858,7 +858,7 @@ plot_frequency_mae <- function(results, colours, preferred) {
 
 presence_calls <- function(estimates, truth, metrics) {
   winners <- metrics %>%
-    transmute(tool = as.character(Tool), paramset_id = as.character(`Parameter set`))
+    transmute(tool = as.character(Tool), paramset_id = as.character(`Best parameter set`))
   chosen <- estimates %>%
     inner_join(winners, by = c("tool", "paramset_id"))
   coverage <- chosen %>% distinct(tool, paramset_id, population_name)
@@ -946,7 +946,7 @@ plot_frequency <- function(results) {
     scale_fill_gradient(low = "#f4f7f9", high = "#325b74", trans = "log10") +
     coord_fixed(xlim = c(0, 1), ylim = c(0, 1)) +
     facet_wrap(~tool, ncol = 2) +
-    labs(x = "Simulated frequency", y = "Estimate", fill = "Alleles") +
+    labs(x = "Simulated frequency", y = "Estimated frequency", fill = "Alleles") +
     theme_bench("right")
 }
 
