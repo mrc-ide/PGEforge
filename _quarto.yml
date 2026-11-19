@@ -223,6 +223,8 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
+          - text: "Implemented pipelines"
+            file: website_docs/implemented_pipelines.qmd
           - text: "Benchmarking"
             file: website_docs/benchmarking.qmd
       - section: "How to contribute"
