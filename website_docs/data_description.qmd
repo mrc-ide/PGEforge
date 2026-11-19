@@ -89,5 +89,6 @@ More details on the datasets hosted on PGEforge can be found in the links below:
 -   [Microhaplotype data](data_mhaps.qmd)
 -   [SNP barcoding data](data_snps.qmd)
 -   [*pfhrp2/3* deletion count data](data_counts.qmd)
+-   [Simulated datasets](data_simulated.qmd)
 
 They can be accessed at the [PGEforge/data](https://github.com/mrc-ide/PGEforge/tree/main/data) folder on Github.

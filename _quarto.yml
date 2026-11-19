@@ -46,6 +46,8 @@ website:
             file: website_docs/data_snps.qmd
           - text: "pfhrp2/3 deletion counts"
             file: website_docs/data_counts.qmd
+          - text: "Simulated datasets"
+            file: website_docs/data_simulated.qmd
       - href: website_docs/tool_landscaping.qmd
       - section: website_docs/software_standards.qmd
         contents:
@@ -223,8 +225,22 @@ website:
             file: website_docs/use_cases_functionalities.qmd
           - text: "Workflows"
             file: website_docs/workflows.qmd
-          - text: "Benchmarking"
+      - section: "Benchmarking"
+        contents:
+          - text: "Overview"
             file: website_docs/benchmarking.qmd
+          - text: "Sample-level COI"
+            file: benchmarking/coi_sample.qmd
+          - text: "Population mean COI"
+            file: benchmarking/coi_mean.qmd
+          - text: "Effective COI"
+            file: benchmarking/ecoi.qmd
+          - text: "Single-locus variant frequency"
+            file: benchmarking/freq_single_locus_variant.qmd
+          - text: "Single-locus microhaplotype frequency"
+            file: benchmarking/freq_single_microhaplotype.qmd
+          - text: "Multi-locus variant frequency"
+            file: benchmarking/freq_multi_locus_variant.qmd
       - section: "How to contribute"
         contents:
           - website_docs/how_to_contribute.qmd
