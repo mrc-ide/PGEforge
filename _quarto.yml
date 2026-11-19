@@ -234,7 +234,7 @@ website:
           - text: "Population mean COI"
             file: benchmarking/coi_mean.qmd
           - text: "Effective COI"
-            file: benchmarking/moire_ecoi.qmd
+            file: benchmarking/ecoi.qmd
           - text: "Single-locus variant frequency"
             file: benchmarking/freq_single_locus_variant.qmd
           - text: "Single-locus microhaplotype frequency"
