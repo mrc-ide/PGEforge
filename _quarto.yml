@@ -1,5 +1,18 @@
 project:
   type: website
+  # Individual tool benchmarking pages stay in the repo, but are not part of
+  # the published site. Between-tool comparisons under benchmarking/ are.
+  render:
+    - "*.qmd"
+    - "**/*.qmd"
+    - "**/*.Rmd"
+    - "**/*.md"
+    - "!**/README.md"
+    - "!data/**"
+    - "!**/*.knit.md"
+    - "!tutorials/IDM/IDM_benchmarking.qmd"
+    - "!tutorials/PGEcore/**/benchmarking.Rmd"
+    - "!tutorials/PGEcore/**/benchmarking.qmd"
 
 # COLORS:
 # magenta: #c82f61
@@ -173,26 +186,18 @@ website:
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_COI/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_COI/benchmarking.Rmd
               - section: "Naive single-locus allele freq"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_single_AF/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_single_AF/benchmarking.Rmd
               - section: "Naive single-locus allele prev"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_single_AP/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_single_AP/benchmarking.Rmd
               - section: "Naive multi-locus genotype freq/prev"
                 contents:
                 - text: "Summary"
                   file: tutorials/PGEcore/naive_MLG_AF_AP/background.Rmd
-                - text: "Benchmarking"
-                  file: tutorials/PGEcore/naive_MLG_AF_AP/benchmarking.Rmd
           - section: "SNP-slice"
             contents:
             - text: "Summary"
