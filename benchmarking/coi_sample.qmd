@@ -1,0 +1,116 @@
+---
+title: "Sample-level COI"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+This presents between-tool benchmarking of sample-level COI estimates. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).
+
+The tools benchmarked are [naive COI](../tutorials/PGEcore/naive_COI/background.Rmd), [MOIRE](../tutorials/moire/moire_background.Rmd), [TheREALMcCOIL](../tutorials/THEREALMcCOIL/RMCL_background.Rmd), [coiaf](../tutorials/coiaf/coiaf_background.Rmd), and [SNP-slice](../tutorials/SNP-slice/background.Rmd).
+
+The reported summaries are Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated COI.
+
+For each tool and each panel, tool comparisons are made with the parameter set with the highest Lin's CCC on samples whose true COI is 2 through 9.
+
+Population mean COI is on a [separate page](coi_mean.qmd). Effective COI is on its [own page](ecoi.qmd).
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+full_sample <- sample_coi_results("full")
+mini_sample <- sample_coi_results("subselection")
+```
+
+## Full panel
+
+```{r}
+#| fig-cap: "COI estimates for all simulated samples with a true COI of 1 through 9. The line is equality, and the vertical axis stops at 15."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_sample_coi(full_sample)
+```
+
+```{r}
+#| fig-cap: "Lin's concordance within each population for the best parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
+#| fig-width: 6.5
+#| fig-height: 4.5
+plot_sample_ccc(full_sample)
+```
+
+```{r}
+knitr::kable(
+  full_sample$metrics,
+  digits = 3,
+  caption = "Lin's concordance, mean absolute error, and mean bias on samples whose simulated COI is 2 through 9. Monoclonal recall is the proportion of samples with simulated COI of 1 with an estimate < 1.5."
+)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error within each population at each simulated COI from 1 through 9. Populations with a mean absolute error of 6 or above are omitted."
+#| fig-width: 8
+#| fig-height: 5
+plot_sample_mae(full_sample)
+```
+
+```{r}
+#| fig-cap: "Mean error within each population at each simulated COI from 1 through 9. Mean error is the estimate minus the simulated COI. The red line is zero. Populations with a mean absolute error of 6 or above are omitted."
+#| fig-width: 8
+#| fig-height: 5
+plot_sample_error(full_sample)
+```
+
+```{r}
+#| fig-cap: "Share of samples with simulated COI 1 whose estimate is below 1.5."
+#| fig-width: 7
+#| fig-height: 3.2
+plot_monoclonal(full_sample)
+```
+
+## 15-target panel
+
+```{r}
+#| fig-cap: "COI estimates for all simulated samples with a true COI of 1 through 9. The line is equality, and the vertical axis stops at 15."
+#| fig-width: 8
+#| fig-height: 6.5
+plot_sample_coi(mini_sample)
+```
+
+```{r}
+#| fig-cap: "Lin's concordance within each population for the best parameter set, on samples whose simulated COI is 2 through 9. The dotted line is at 0.95."
+#| fig-width: 6.5
+#| fig-height: 4.5
+plot_sample_ccc(mini_sample)
+```
+
+```{r}
+knitr::kable(
+  mini_sample$metrics,
+  digits = 3,
+  caption = "Lin's concordance, mean absolute error, and mean bias on samples whose simulated COI is 2 through 9. Monoclonal recall is the proportion of samples with simulated COI of 1 with an estimate < 1.5."
+)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error within each population at each simulated COI from 1 through 9. Populations with a mean absolute error of 6 or above are omitted."
+#| fig-width: 8
+#| fig-height: 5
+plot_sample_mae(mini_sample)
+```
+
+```{r}
+#| fig-cap: "Mean error within each population at each simulated COI from 1 through 9. Mean error is the estimate minus the simulated COI. The red line is zero. Populations with a mean absolute error of 6 or above are omitted."
+#| fig-width: 8
+#| fig-height: 5
+plot_sample_error(mini_sample)
+```
+
+```{r}
+#| fig-cap: "Share of samples with simulated COI 1 whose estimate is below 1.5."
+#| fig-width: 7
+#| fig-height: 3.2
+plot_monoclonal(mini_sample)
+```

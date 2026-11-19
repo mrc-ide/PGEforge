@@ -1,0 +1,59 @@
+---
+title: "Single-locus microhaplotype allele frequency"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+This page presents between-tool benchmarking of single-locus microhaplotype allele frequency estimates. Single-locus amino acid allele frequency is benchmarked [here](freq_single_locus_variant.qmd). The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd). All estimates on this page use the full, 165-target MAD^4^HatTeR panel.
+
+The tools are [MOIRE](../tutorials/moire/moire_background.Rmd), [dcifer](../tutorials/dcifer/dcifer_background.Rmd), and [naive single-locus allele frequency](../tutorials/PGEcore/naive_single_AF/background.Rmd).
+
+For each tool, the parameter set used for comparison is the one with the highest Lin's concordance.
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+mhap_freq <- microhap_results()
+```
+
+```{r}
+#| fig-cap: "Estimated frequency versus simulated frequency. The line is equality."
+#| fig-width: 8
+#| fig-height: 8
+plot_frequency(mhap_freq)
+```
+
+```{r}
+#| fig-cap: "Mean absolute error within each population, in simulated-frequency bins of 0.2, for the parameter set with the highest Lin's concordance."
+#| fig-width: 8
+#| fig-height: 5
+plot_frequency_mae(mhap_freq, mhap_colours, mhap_tool_order)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$metrics,
+  digits = 3,
+  caption = "Lin's concordance, mean absolute error, and detection for the best parameter set for each tool. Detection is the share of alleles simulated at 1% or above whose estimate is above 0."
+)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$by_freq,
+  digits = 3,
+  caption = "The same summaries binned by simulated frequency. Detection is not defined for alleles simulated below 1%."
+)
+```
+
+```{r}
+knitr::kable(
+  mhap_freq$by_mean,
+  digits = 3,
+  caption = "The same summaries by mean-COI category."
+)
+```

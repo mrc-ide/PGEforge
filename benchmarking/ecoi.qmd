@@ -1,0 +1,54 @@
+---
+title: "Effective COI"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+This page compares [MOIRE](../tutorials/moire/moire_background.Rmd) effective COI with the simulated effective COI. The simulated data are described in [Simulated datasets](../website_docs/data_simulated.qmd).
+
+The parameter set is the one chosen for MOIRE on the [sample-level COI page](coi_sample.qmd).
+
+```{r}
+#| include: false
+bench_src <- c("benchmark_data.R", file.path("benchmarking", "benchmark_data.R"))
+source(bench_src[file.exists(bench_src)][1])
+full_ecoi <- ecoi_results("full")
+mini_ecoi <- ecoi_results("subselection")
+```
+
+## Full panel
+
+```{r}
+#| fig-cap: "MOIRE effective COI against the simulated effective COI. The line is equality."
+#| fig-width: 6.5
+#| fig-height: 5.5
+plot_ecoi(full_ecoi)
+```
+
+```{r}
+knitr::kable(
+  full_ecoi$metrics,
+  digits = 3,
+  caption = "Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI."
+)
+```
+
+## 15-target panel
+
+```{r}
+#| fig-cap: "MOIRE effective COI against the simulated effective COI. The line is equality."
+#| fig-width: 6.5
+#| fig-height: 5.5
+plot_ecoi(mini_ecoi)
+```
+
+```{r}
+knitr::kable(
+  mini_ecoi$metrics,
+  digits = 3,
+  caption = "Lin's concordance, mean absolute error, and mean bias. Bias is the estimate minus the simulated effective COI."
+)
+```
