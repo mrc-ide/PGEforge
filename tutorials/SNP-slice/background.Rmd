@@ -27,12 +27,15 @@ df_summary |>
 
 ## Purpose
 
-The `SNP-slice` algorithm enables reconstruction of SNP haplotypes from bi-allelic data, allowing for inference of haplotype/strain frequencies.
+The SNP-Slice algorithm reconstructs haplotypes from biallelic SNP read counts and estimates the complexity of infection and the frequency of those haplotypes. It was developed by Nianqiao Ju, Jiawei Liu, and Qixin He.
+
+The original implementation is a collection of scripts in the [`SNP-slice` repository](https://github.com/nianqiaoju/snp-slice), not an R package. Installing and running those scripts is difficult to repeat. [`snp.slicer`](https://github.com/plasmogenepi/snp.slicer) packages the same algorithm for R, with one input table and functions for complexity of infection and multi-locus allele frequencies. The worked example uses `snp.slicer`. The method to cite is still Ju et al. 2024.
 
 ## Existing resources
 
-The [`SNP-slice` GitHub repository](https://github.com/nianqiaoju/snp-slice) includes scripts for implementing the SNP-slice algorithm, as well as scripts for analyzing output and generating figures. 
+- Original scripts: [nianqiaoju/snp-slice](https://github.com/nianqiaoju/snp-slice)
+- R package used in this tutorial: [plasmogenepi/snp.slicer](https://github.com/plasmogenepi/snp.slicer)
 
 ## Citation
 
-The publication associated with the `SNP-slice` algorithm and analysis scripts can be found [here (Ju et al 2024 Bioinformatics)](https://doi.org/10.1093/bioinformatics/btae344).
+Ju N, Liu J, He Q. SNP-slice resolves mixed infections: simultaneously unveiling strain haplotypes and linking them to hosts. Bioinformatics. 2024;40(6):btae344. [doi:10.1093/bioinformatics/btae344](https://doi.org/10.1093/bioinformatics/btae344).

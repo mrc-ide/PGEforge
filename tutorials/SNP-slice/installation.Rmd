@@ -1,5 +1,5 @@
 ---
-title: "Installing (tool name)"
+title: "Installing snp.slicer"
 output: html_document
 ---
 
@@ -7,7 +7,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Step N: what to do
+SNP-Slice was published as a set of analysis scripts in the [original repository](https://github.com/nianqiaoju/snp-slice). Those scripts are not an R package, and getting them installed and running is difficult. [`snp.slicer`](https://github.com/plasmogenepi/snp.slicer) is the R package implementation of that algorithm. This tutorial uses `snp.slicer`.
 
-Short explanation. For most tools we will use Max's [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/builds), which greatly simplifies installation. For other tools, please list the steps as needed.
+The package is on the [plasmogenepi.r-universe](https://plasmogenepi.r-universe.dev/snp.slicer). Install it with:
 
+```{r, eval=FALSE}
+install.packages(
+  "snp.slicer",
+  repos = c(
+    "https://plasmogenepi.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+```
